@@ -3,8 +3,6 @@ TODO-list
 
 powerwalk.model
 -----------------
-- [DONE] 
-- Offset fixen
 - voltooi GameObject en Collision
 - maak subklassen van GameObject die objecten in de RSBot environment representeren.
 -- Wall
@@ -21,8 +19,8 @@ powerwalk.control
 -----------------
 - maak een PathFinder klasse
 - maak een Interactor klasse
-- maak een Walker klasse (mbv org.powerbot.game.api.methods.Walking)
+- maak een Walker klasse (misschien mbv org.powerbot.game.api.methods.Walking)
 
 powerwalk.view
 --------------
-- denk na over gui design
+- denk na over gui design (PATRICK: nu een conceptversie, powerwalk.view.MainFrame)

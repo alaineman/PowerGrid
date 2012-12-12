@@ -1,12 +1,12 @@
 package powerwalk.control;
 
-import powerwalk.model.GameObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.Bot;
+import powerwalk.model.GameObject;
 
 /**
  * This class collects data from the RSBot environment and stores it in the singleton WorldMap-object
@@ -69,7 +69,7 @@ public class Mapper extends Thread {
      * Otherwise, it sets the mapping policy to MAP_NONE and lets the Mapper end gracefully.
      * </p>
      * <p>
-     * Please note that the Mapper might not be stopped yet when this method returns.
+     * Please note that the Mapper might not be stopped directly when this method returns.
      * However, after this method returns, it is possible to start a new Mapper.
      * </p>
      */

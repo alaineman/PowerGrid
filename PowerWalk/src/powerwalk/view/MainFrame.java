@@ -1,0 +1,112 @@
+package powerwalk.view;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import powerwalk.Bot;
+
+/**
+ * Concept GUI layout for PowerWalk.
+ * Uses active searching to search for matching destinations in the destinationList.
+ * @author P.Kramer
+ */
+public class MainFrame extends JFrame {
+    
+    private JTextField destinationField = new JTextField();
+    private JPanel entryList = new JPanel();
+    
+    public static void main(String[] args) { new MainFrame(); }
+    
+    public MainFrame() {
+        createAndShowGUI();
+    }
+    
+    private void createAndShowGUI() {
+        setLayout(new BorderLayout());
+        
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel top = new JPanel();
+        top.setLayout(new BorderLayout());
+        top.add(new JLabel("  destination: "),"West");
+        top.add(destinationField,"Center");
+        
+        add(top,"North");
+        
+        entryList.setLayout(new GridBagLayout());
+        entryList.setBackground(Color.WHITE);
+        
+        destinationField.addKeyListener(new KeyListener() {
+            @Override public void keyTyped(KeyEvent ke) {
+                setResults(destinationField.getText());
+            }
+            @Override public void keyPressed(KeyEvent ke) {}
+            @Override public void keyReleased(KeyEvent ke) {}
+        });
+        
+        setResults("");
+        
+        add(entryList,"Center");
+        
+        setSize(480,320);
+        setVisible(true);
+    }
+    
+    
+    
+    private void setResults(String query) {
+        entryList.removeAll();
+        ArrayList<String> results = new ArrayList<>();
+        // TODO (--) implement search algorithm for destinations
+        // //add matching destinations to list (max (int)(entryList.getHeight()/entry.getHeight()) items)
+        // for (String destination : matchingDestinations) {
+        //     results.add(destination);
+        //     if (results.size >= (int)(entryList.getHeight()/32)) {
+        //         break;
+        //     }
+        // }
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx=0;
+        gbc.gridy=0;
+        gbc.weightx=1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        
+        for (String dest : results) {
+            entryList.add(createEntryFromLocation(dest));
+            gbc.gridy++;
+        }
+        revalidate();
+    }
+    
+    private JPanel createEntryFromLocation(final String name) {
+        // Note: name is final here because it needs to be used in an inner class.
+        
+        JPanel entry = new JPanel();
+        entry.setBackground(Color.LIGHT_GRAY);
+        entry.setBorder(new LineBorder(Color.BLACK));
+        entry.setLayout(new BorderLayout());
+        
+        JButton travel = new JButton("Travel here");
+        travel.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent ae) {
+                Bot.getBot().travelTo(name); // not yet implemented
+            }
+        });
+        entry.add(new JLabel("  " + name),"Center");
+        entry.add(travel,"East");
+        
+        return new JPanel();
+    }
+}

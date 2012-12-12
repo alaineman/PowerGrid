@@ -4,3 +4,4 @@
 *.war
 *.ear
 /PowerWalk/nbproject/private/
+/PowerWalk/build/

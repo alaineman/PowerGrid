@@ -3,7 +3,7 @@ TODO-list
 
 powerwalk.model
 -----------------
-- Grid-klasse maken en WorldMap en DungeonMap deze laten gebruiken << Grid contains arrays for each tile, indexed by depth (use offset due to neg. value)
+- [DONE] 
 - Offset fixen
 - voltooi GameObject en Collision
 - maak subklassen van GameObject die objecten in de RSBot environment representeren.

@@ -1,7 +1,5 @@
 package powerwalk.model;
 
-import java.awt.Point;
-
 /**
  * This class represents an object from the RSbot environment.
  * 
@@ -11,6 +9,7 @@ import java.awt.Point;
 public class GameObject {
     private int x;
     private int y;
+    private int z;
     
     private int rawNumber;
     
@@ -26,6 +25,10 @@ public class GameObject {
         this.y = y;
         this.rawNumber = rawNumber;
     }
+    public GameObject(int x,int y,int z,int rawNumber) {
+        this(x,y,rawNumber);
+        this.z = z;
+    }
     
     /**
      * returns the position of this GameObject. 
@@ -33,7 +36,7 @@ public class GameObject {
      * @return the position of this GameObject.
      */
     public Point getPosition() {
-        return new Point(x,y);
+        return new Point(x,y,z);
     }
     
     /**
@@ -53,6 +56,7 @@ public class GameObject {
         int hash = 3;
         hash = 47 * hash + this.x;
         hash = 47 * hash + this.y;
+        hash = 47 * hash + this.z;
         hash = 47 * hash + this.rawNumber;
         return hash;
     }
@@ -85,6 +89,6 @@ public class GameObject {
      * 
      */
     @Override public String toString() {
-        return "<gameobject xpos=\"" + x + "\" ypos=\"" + y + "\" raw=\"" + rawNumber + "\" />";
+        return "<gameobject xpos=\"" + x + "\" ypos=\"" + y + "\" zpos=\"" + z + "\"raw=\"" + rawNumber + "\" />";
     }
 }

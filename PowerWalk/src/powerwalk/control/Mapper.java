@@ -1,12 +1,12 @@
 package powerwalk.control;
 
 import powerwalk.model.GameObject;
-import powerwalk.model.WorldMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
+import powerwalk.Bot;
 
 /**
  * This class collects data from the RSBot environment and stores it in the singleton WorldMap-object
@@ -99,7 +99,7 @@ public class Mapper extends Thread {
             for (SceneObject o : objects) {
                 Tile tile = o.getLocation();
                 GameObject go = new GameObject(tile.getX(),tile.getY(),o.getType());
-                GameObject orig = WorldMap.getWorldMap().set(go);
+                GameObject orig = Bot.getBot().getWorldMap().set(go.getPosition(),go);
                 if (orig != null) {
                     Logger.getLogger("Mapper").log(Level.INFO, "{0} is overwritten by {1}", new Object[] {orig, go});
                 }

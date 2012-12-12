@@ -1,5 +1,7 @@
-package powerwalk.mapping;
+package powerwalk.control;
 
+import powerwalk.model.GameObject;
+import powerwalk.model.WorldMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.powerbot.game.api.methods.node.SceneEntities;

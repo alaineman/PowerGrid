@@ -1,4 +1,6 @@
-package powerwalk.mapping;
+package powerwalk.model;
+
+import powerwalk.model.GameObject;
 
 /**
  * represents a collision object on the world map

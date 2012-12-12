@@ -1,4 +1,4 @@
-package powerwalk.mapping;
+package powerwalk.model;
 
 import java.awt.Point;
 

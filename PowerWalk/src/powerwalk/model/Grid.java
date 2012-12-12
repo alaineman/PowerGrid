@@ -19,6 +19,12 @@ public class Grid {
         data = new HashMap<>();
     }
     
+    /**
+     * Sets the offset to the given value.
+     * This does not change the location of the elements on the Grid, so the 
+     * elements of this Grid may be in the wrong place after calling this method.
+     * @param p the new offset
+     */
     public void setOffset(Point p) {
         offset = p.add(new Point(0,0));
     }
@@ -34,11 +40,12 @@ public class Grid {
             data.put(p.x, column);
         }
         GameObject[] cell = column.get(p.y);
+        
         if (cell == null) {
-            cell = new GameObject[p.z];
+            cell = new GameObject[p.z+1];
             column.put(p.y,cell);
-        } else if (cell.length < p.z) {
-            GameObject[] largerCell = new GameObject[p.z];
+        } else if (cell.length < p.z+1) {
+            GameObject[] largerCell = new GameObject[p.z+1];
             System.arraycopy(cell, 0, largerCell, 0, cell.length);
             column.put(p.y,largerCell);
         }

@@ -98,7 +98,7 @@ public class Mapper extends Thread {
             
             for (SceneObject o : objects) {
                 Tile tile = o.getLocation();
-                GameObject go = new GameObject(tile.getX(),tile.getY(),o.getType());
+                GameObject go = new GameObject(tile.getX(),tile.getY(),tile.getPlane(),o.getType());
                 GameObject orig = Bot.getBot().getWorldMap().set(go.getPosition(),go);
                 if (orig != null) {
                     Logger.getLogger("Mapper").log(Level.INFO, "{0} is overwritten by {1}", new Object[] {orig, go});

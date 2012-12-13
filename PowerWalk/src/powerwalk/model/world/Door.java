@@ -12,7 +12,7 @@ import powerwalk.model.Interactable;
  */
 public class Door extends GameObject implements Interactable {
     /** Raw values that represent doors in the RSBot environment */
-    public static final int[] values = {};
+    public static final int[] values = {15536,24387,24388};
     
     public Door(int x,int y,int z,int rawValue) {
         super(x,y,z,rawValue);
@@ -44,6 +44,8 @@ public class Door extends GameObject implements Interactable {
      * 
      * @param method the method of interaction with this door
      * @throws UnsupportedOperationException when the given method is not supported
+     * @throws IllegalStateException when open is called when the door is open, 
+     *                               or close is called when the door is closed.
      */
     @Override public void interact(String method) {
         throw new UnsupportedOperationException("Not supported yet.");

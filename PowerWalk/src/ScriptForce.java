@@ -61,28 +61,28 @@ public class ScriptForce {
                                 if(method.getName().equals("getDefinition")) {
                                         final String name = method.getReturnType().getName();
                                         ScriptDef = RSBot.loadClass(name);
-                                        Logger.log(level, "[Class] ScriptDefinition[" + name + "] class loaded.");
+                                        Logger.log(level, "[Class] ScriptDefinition[{0}] class loaded.", name);
                                         break;
                                 }
                         for(final Class<?> clazz : classes) {
                                 if(JFrame.class.isAssignableFrom(clazz)) {
                                         if(Reflect.inter(clazz, WindowListener.class)) {
                                                 Canvas = RSBot.loadClass(clazz.getName());
-                                                Logger.log(level, "[Class] Canvas[" + clazz.getName() + "] class loaded.");
+                                                Logger.log(level, "[Class] Canvas[{0}] class loaded.", clazz.getName());
                                         }
                                 } else if(JToolBar.class.isAssignableFrom(clazz)) {
                                         Toolbar = RSBot.loadClass(clazz.getName());
-                                        Logger.log(level, "[Class] Toolbar[" + clazz.getName() + "] class loaded.");
+                                        Logger.log(level, "[Class] Toolbar[{0}] class loaded.", clazz.getName());
                                 } else if(clazz.getName().endsWith("Bot")) {
                                         Bot = RSBot.loadClass(clazz.getName());
-                                        Logger.log(level, "[Class] Bot[" + clazz.getName() + "] class loaded.");
+                                        Logger.log(level, "[Class] Bot[{0}] class loaded.", clazz.getName());
                                 } else if(clazz.getModifiers() == (Modifier.PUBLIC | Modifier.FINAL)) {
                                         if(Reflect.method(clazz, Map.class, Modifier.PUBLIC | Modifier.SYNCHRONIZED, int.class) != null) {
                                                 Network = RSBot.loadClass(clazz.getName());
-                                                Logger.log(level, "[Class] Network[" + clazz.getName() + "] class loaded;");
+                                                Logger.log(level, "[Class] Network[{0}] class loaded;", clazz.getName());
                                         } else if(Reflect.inter(clazz, Runnable.class)) {
                                                 Socket = RSBot.loadClass(clazz.getName());
-                                                Logger.log(level, "[Class] Socket[" + clazz.getName() + "] class loaded.");
+                                                Logger.log(level, "[Class] Socket[{0}] class loaded.", clazz.getName());
                                         }
                                 }
                         }
@@ -185,7 +185,7 @@ public class ScriptForce {
                                                                 Logger.log(level, "Force logged out, this prevents the tab from closing.");
                                                         }
                                                 }
-                                        } catch(final Exception _e) {
+                                        } catch(final SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException _e) {
                                                 //_e.printStackTrace(System.err);
                                         }
                                 }
@@ -242,12 +242,12 @@ public class ScriptForce {
                                                                                 toolbarUpdate.invoke(toolbar);
                                                                         } else
                                                                                 Logger.log(level, "Unable to update toolbar when loading script, this method requires manual updating.");
-                                                                } catch(final Exception ignored) {
+                                                                } catch(final IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ignored) {
                                                                         Logger.log(level, "RSBot gave off an error while executing the script, make sure another isn't already running.");
                                                                 }
                                                         }
                                                 }
-                                        } catch(final Exception _e) {
+                                        } catch(final ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException | MalformedURLException | SecurityException | IllegalArgumentException _e) {
                                                 _e.printStackTrace(System.err);
                                         }
                                 }
@@ -279,7 +279,7 @@ public class ScriptForce {
                                                         final Class<?> clazz = loadClass(file);
                                                         if(clazz.getAnnotation(Manifest.class) != null)
                                                                 valid.add(file.getName().replaceFirst("\\.class", ""));
-                                                } catch(final Exception e) {
+                                                } catch(final ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException | MalformedURLException e) {
                                                         e.printStackTrace(System.err);
                                                 }
                                         }
@@ -288,10 +288,12 @@ public class ScriptForce {
                                 for(int i = 0; i < valid.size(); i++)
                                         model[i][0] = valid.get(i);
                                 return new DefaultTableModel(model, new String[]{"Script"}) {
+                                    @Override
                                         public final Class<?> getColumnClass(final int columnIndex) {
                                                 return String.class;
                                         }
 
+                                    @Override
                                         public final boolean isCellEditable(final int rowIndex, final int columnIndex) {
                                                 return false;
                                         }

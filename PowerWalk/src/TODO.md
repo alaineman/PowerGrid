@@ -5,7 +5,7 @@ powerwalk.model
 -----------------
 - voltooi GameObject en Collision (PATRICK: they grow as needed. Remove this item when you agree to this)
 - maak subklassen van GameObject die objecten in de RSBot environment representeren.
-    - Wall (PATRICK: implemented, but waiting for RSBot client patch in order to retrieve wall values)
+    - Wall (PATRICK: implemented, but need to fetch wall values)
     - Entity (PATRICK: same as Wall)
     - Door (PATRICK: only have to work out how to interact with objects in the RSBot environment)
 

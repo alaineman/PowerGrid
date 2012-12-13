@@ -1,5 +1,8 @@
 package powerwalk;
 
+import java.awt.BorderLayout;
+import java.awt.Canvas;
+import javax.swing.JFrame;
 import powerwalk.model.Grid;
 
 /**
@@ -26,4 +29,5 @@ public class Bot {
     public void travelTo(String dest) {} //TODO (--) implement travelTo stub method
     
     public void gotoNearest(String dest) {} //TODO (--) implement gotoNearest stub method
+
 }

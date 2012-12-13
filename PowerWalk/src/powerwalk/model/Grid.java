@@ -3,13 +3,14 @@ package powerwalk.model;
 import java.util.HashMap;
 
 /**
- * Three-dimensional data structure. 
+ * Three-dimensional data structure for GameObjects.
  * @author P.Kramer
  */
 public class Grid {
     
     private HashMap<Integer,HashMap<Integer,GameObject[]>> data;
     private Point offset = new Point(0,0,0);
+    private int size = 0;
     
     /**
      * Creates a new Grid with the given maximum dimensions.
@@ -75,6 +76,9 @@ public class Grid {
                 data.get(p.x).put(p.y,null);
             }
         }
+        if (original == null && o != null) size++;
+        if (original != null && o == null) size--;
+        System.out.println(size); //XXX remove debug line when set(Point,GameObject) tested
         return original;
     }
     
@@ -88,6 +92,11 @@ public class Grid {
         return set(p,null);
     }
     
+    /**
+     * Returns the element at the given Point in the Grid
+     * @param p the Point to look up
+     * @return the value stored at Point p
+     */
     public GameObject get(Point p) {
         p = p.subtract(offset);
         GameObject elem = null;

@@ -16,7 +16,7 @@ powerwalk
 
 powerwalk.control
 -----------------
-- maak een PathFinder klasse
+- maak een PathFinder klasse (Vincent: nadenken over slimme algoritm die korste route vindt.)
 - maak een Interactor klasse
 - maak een Walker klasse (misschien mbv org.powerbot.game.api.methods.Walking)
 

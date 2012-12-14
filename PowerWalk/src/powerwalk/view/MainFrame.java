@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import powerwalk.Bot;
 import powerwalk.model.Destinations;
@@ -53,7 +54,11 @@ public class MainFrame extends JFrame {
         
         destinationField.addKeyListener(new KeyListener() {
             @Override public void keyTyped(KeyEvent ke) {
-                setResults(destinationField.getText());
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        setResults(destinationField.getText());
+                    }
+                });
             }
             @Override public void keyPressed(KeyEvent ke) {}
             @Override public void keyReleased(KeyEvent ke) {}
@@ -79,11 +84,10 @@ public class MainFrame extends JFrame {
             s = s.toLowerCase();
             if (s.contains(query)) {
                 results.add(s);
-                if (results.size() >= (int)(entryList.getHeight()/32)) {
-                    break;
-                }
             }
         }
+        
+        System.out.println("Results: " + results);
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx=0;

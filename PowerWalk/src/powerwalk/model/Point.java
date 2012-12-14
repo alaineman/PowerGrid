@@ -14,7 +14,9 @@ public class Point implements Comparable<Point> {
     /** The Z-coordinate of this Point */
     public int z;
     /** The f-score of the Point, used in the Pathfinding */
-    public int f_score = 0;
+    public double f_score = 0;
+    /** The previous Point, used in the Pathfinding */
+    public Point previous;
     /**
      * Creates a new Point with the given coordinates. 
      * The z-coordinate is taken as 0.
@@ -76,6 +78,12 @@ public class Point implements Comparable<Point> {
         return new Point(x-offset.x,y-offset.y,z-offset.z);
     }
     
+    public Point[] getAdjacentPoints(){
+        //Points are top, right, bottom, left        
+        Point[] res = {new Point(x, y+1, z), new Point(x+1, y, z), new Point(x, y-1, z), new Point(x-1, y, z)};        
+        return res;
+    }
+    
     /**
      * Returns whether this Point is equal to the given object.
      * This Point is equal if and only if:
@@ -124,6 +132,7 @@ public class Point implements Comparable<Point> {
     }
     
     @Override public int compareTo(Point p) {
-        return p.f_score-f_score;
+        return (int)(p.f_score- f_score);
     }
+   
 }

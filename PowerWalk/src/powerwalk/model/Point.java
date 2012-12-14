@@ -80,7 +80,7 @@ public class Point implements Comparable<Point> {
     
     public Point[] getAdjacentPoints(){
         //Points are top, right, bottom, left        
-        Point[] res = {new Point(x, y+1, z), new Point(x+1, y, z), new Point(x, y-1, z), new Point(x-1, y, z)};        
+        Point[] res = {new Point(x, y-1, z), new Point(x+1, y, z), new Point(x, y+1, z), new Point(x-1, y, z)};        
         return res;
     }
     
@@ -132,7 +132,7 @@ public class Point implements Comparable<Point> {
     }
     
     @Override public int compareTo(Point p) {
-        return (int)(p.f_score- f_score);
+        return (int)(f_score- p.f_score);
     }
    
 }

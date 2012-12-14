@@ -113,7 +113,7 @@ public class MainFrame extends JFrame {
         JButton travel = new JButton("Travel here");
         travel.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent ae) {
-                Bot.getBot().travelTo(name);
+                Bot.getBot().travelTo(name,true);
             }
         });
         entry.add(new JLabel("  " + name),"Center");

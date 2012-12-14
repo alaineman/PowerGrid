@@ -34,7 +34,7 @@ public abstract class PathFinder {
         HashMap<Point, Double> pathCost = new HashMap<>();
         HashMap<Point,Point> came_from = new HashMap<>();
         
-        pathCost.put(start, 0d);
+        pathCost.put(start, 1d);
         
         start.f_score = heuristicCost(start, goal);
         
@@ -45,19 +45,20 @@ public abstract class PathFinder {
             Point current = pending.poll();
             if (current.equals(goal)) {
                 ArrayList<Point> fullPath = reconstruct(came_from,goal);
-                return reducePoints(fullPath,maxDist);
+                return fullPath;//reducePoints(fullPath,maxDist);
             }
             closedSet.add(current);
             Point[] adjacents = current.getAdjacentPoints();
-            for (Point p : adjacents) {
+            for (int i=0;i<adjacents.length;i++) {
+                Point p = adjacents[i];
                 if (closedSet.contains(p) || isCollision(p)) {
                     continue;
                 }
-                double tempPathCost = pathCost.get(p) + 1;
+                double tempPathCost = pathCost.get(current) + 1;
                 
                 boolean isPending = pending.contains(p);
-                if (!isPending || tempPathCost <= pathCost.get(p)) {
-                    p.previous = current;
+                if (!isPending || tempPathCost <= pathCost.get(p) || pathCost.get(p) == 0) {
+                    came_from.put(p, current);
                     pathCost.put(p, tempPathCost);
                     p.f_score = tempPathCost + heuristicCost(p,goal);
                     if (!isPending) {

@@ -35,10 +35,6 @@ public class PathFinder {
      * @return see description.
      */
     public boolean isCollision(Point target){
-        if(Bot.getBot().getWorldMap().get(target) instanceof Collision){
-            return true;
-        } else {
-            return false;
-        }
+        return (Bot.getBot().getWorldMap().get(target) instanceof Collision);
     }
 }

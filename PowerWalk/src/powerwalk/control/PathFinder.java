@@ -14,6 +14,16 @@ public class PathFinder {
 
     public ArrayList<Point> calculatePath(Point start, Point goal) {
         
+        //Initialize the A* algorith.
+        ArrayList<Point> closedSet = new ArrayList<Point>();
+        ArrayList<Point> openSet = new ArrayList<Point>(); 
+        openSet.add(start);
+        
+        
+        
+        
+        
+        
         return null;
     }
 

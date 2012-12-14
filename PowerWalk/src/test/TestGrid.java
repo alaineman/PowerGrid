@@ -23,6 +23,11 @@ public class TestGrid {
             System.out.println("failure: object was " + o);
         }
         
+        // size() for empty
+        System.out.print("g.size() is empty\t\t\t");
+        if (g.size() == 0) System.out.println("succes");
+        else System.out.println("failure: size was " + g.size());
+        
         //store in Grid
         System.out.print("g.get()/g.set() single value\t\t");
         o = new GameObject(4,7,8,46645);
@@ -68,5 +73,21 @@ public class TestGrid {
         } else if (o.getRawNumber() == 7667) {
             System.out.println("succes");
         } else System.out.println("failure: object was " + o);
+        g.setOffset(new Point(0,0,0));
+        
+        // size() after set
+        System.out.print("size() after set\t\t\t");
+        int size = g.size();
+        o = new GameObject(3,8,4,23735);
+        g.set(o.getPosition(),o);
+        if (g.size() == size+1) System.out.println("succes");
+        else System.out.println("failure: was " + g.size());
+        
+        // size() after delete
+        System.out.print("size() after add\t\t\t");
+        size = g.size();
+        g.delete(o.getPosition());
+        if (g.size() == size-1) System.out.println("succes");
+        else System.out.println("failure: was " + g.size());
     }
 }

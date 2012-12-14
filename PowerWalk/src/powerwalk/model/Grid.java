@@ -53,6 +53,14 @@ public class Grid {
     }
     
     /**
+     * returns the amount of elements in the Grid
+     * @return the amount of elements in the Grid
+     */
+    public int size() {
+        return size;
+    }
+    
+    /**
      * Sets a GameObject at the given position and returns the GameObject previously at this position
      * @param p the Point to set the GameObject to
      * @param o the GameObject to set
@@ -78,7 +86,6 @@ public class Grid {
         }
         if (original == null && o != null) size++;
         if (original != null && o == null) size--;
-        System.out.println(size); //XXX remove debug line when set(Point,GameObject) tested
         return original;
     }
     

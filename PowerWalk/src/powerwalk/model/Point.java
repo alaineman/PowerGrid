@@ -36,6 +36,14 @@ public class Point {
     }
     
     /**
+     * Creates a Point with the same Position as the given Point
+     * @param p The Position this Point will refer to
+     */
+    public Point(Point p) {
+        this(p.x,p.y,p.z);
+    }
+    
+    /**
      * Returns the result of adding the given point to this Point.
      * @param p the Point to add
      * @return the sum of this Point and Point p

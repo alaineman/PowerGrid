@@ -2,9 +2,14 @@ package powerwalk.model.world;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.powerbot.game.api.methods.node.SceneEntities;
+import org.powerbot.game.api.wrappers.Tile;
+import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.control.ToolBox;
 import powerwalk.model.GameObject;
 import powerwalk.model.Interactable;
+import powerwalk.model.OutOfReachException;
+import powerwalk.model.Point;
 
 /**
  * Class representing a Door in the RSBot environment
@@ -23,7 +28,7 @@ public class Door extends GameObject implements Interactable {
     /**
      * Tries to open / close the door
      */
-    @Override public void interact() {
+    @Override public void interact() throws OutOfReachException {
         try { interact("open"); } 
         catch (UnsupportedOperationException e) {
             try { interact("close"); }
@@ -46,9 +51,21 @@ public class Door extends GameObject implements Interactable {
      * @throws UnsupportedOperationException when the given method is not supported
      * @throws IllegalStateException when open is called when the door is open, 
      *                               or close is called when the door is closed.
+     * @throws OutOfReachException when the door could not be reached
      */
-    @Override public void interact(String method) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    @Override public void interact(String method) throws OutOfReachException {
+        Point p = getPosition();
+        Tile t = new Tile(p.x,p.y,p.z);
+        SceneObject[] ss = SceneEntities.getLoaded(t);
+        for (SceneObject s : ss) {
+            if (s.getType() == getRawNumber()) {
+                if (!s.interact(method)) {
+                    throw new UnsupportedOperationException("This interaction is not supported");
+                }
+                break;
+            }
+        }
+        throw new OutOfReachException(p,"This Door could not be found at the given position");
     }
     
 }

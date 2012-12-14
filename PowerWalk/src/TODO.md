@@ -7,7 +7,7 @@ powerwalk.model
 - maak subklassen van GameObject die objecten in de RSBot environment representeren.
     - Wall (PATRICK: implemented, but still have to fetch more wall values)
     - Entity (PATRICK: same as Wall)
-    - Door (PATRICK: only have to work out how to interact with objects in the RSBot environment)
+    - Door (PATRICK: began working on interaction, but I'm unsure how to find out about the door's state in the RSBot environment)
 
 powerwalk
 ---------

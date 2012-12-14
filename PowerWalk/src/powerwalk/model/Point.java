@@ -6,14 +6,15 @@ import org.powerbot.game.api.wrappers.Tile;
  * Three dimensional Point.
  * @author P.Kramer
  */
-public class Point {
+public class Point implements Comparable<Point> {
     /** The X-coordinate of this Point */
     public int x;
     /** The Y-coordinate of this Point */
     public int y;
     /** The Z-coordinate of this Point */
     public int z;
-    
+    /** The f-score of the Point, used in the Pathfinding */
+    public int f_score = 0;
     /**
      * Creates a new Point with the given coordinates. 
      * The z-coordinate is taken as 0.
@@ -120,5 +121,9 @@ public class Point {
     
     public static Point fromTile(Tile t) {
         return new Point(t.getX(),t.getY(),t.getPlane());
+    }
+    
+    @Override public int compareTo(Point p) {
+        return p.f_score-f_score;
     }
 }

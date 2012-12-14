@@ -9,14 +9,24 @@ import powerwalk.model.Destinations;
  */
 public class Starter extends ActiveScript {
 
+    private static Task currentTask = null;
+    
     @Override public int loop() {
         if (Bot.getBot().tasksPending() > 0) {
-            Task t = Bot.getBot().retrieveTask();
-            t.execute();
+            currentTask = Bot.getBot().retrieveTask();
+            currentTask.execute();
             return 20;
         } else {
             return 5;
         }
+    }
+    
+    /**
+     * returns the currently running task.
+     * @return the currently running task
+     */
+    public static Task currentTask() {
+        return currentTask;
     }
     
     /**
@@ -33,7 +43,7 @@ public class Starter extends ActiveScript {
     public synchronized static void purge() {
         // purge the destination list used by the travelTo(String dest) command
         Destinations.purge();
-        //TODO reduce World Map
+        //TODO (--) reduce World Map
     }
     
 }

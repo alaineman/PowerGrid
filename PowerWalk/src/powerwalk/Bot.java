@@ -1,9 +1,15 @@
 package powerwalk;
 
+import java.util.ArrayList;
 import java.util.PriorityQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.powerbot.game.api.methods.Walking;
-import org.powerbot.game.api.wrappers.Tile;
+import org.powerbot.game.api.methods.interactive.Players;
+import powerwalk.control.PathFinder;
+import powerwalk.model.Destinations;
 import powerwalk.model.Grid;
+import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 
 /**
@@ -39,23 +45,65 @@ public class Bot {
      * registers a Task that moves to the destination specified in dest.
      * 
      * @param dest The target destination
+     * @param asap whether to insert this task before other tasks in the queue
      */
-    public void travelTo(String dest) { //TODO (--) implement travelTo stub method 
-        
+    public void travelTo(String dest,boolean asap) {
+        Point p = Point.fromTile(Destinations.getDestination(dest));
+        travelTo(p,asap);
     }
     
     /**
      * Registers a Task that moves to the specified Point in the World
      * @param p The Point to move to
+     * @param asap whether to insert this task before other tasks in the queue
      */
-    public void travelTo(Point p) { 
-        final Tile t = p.toTile();
-        Task travelTask = new Task(0) {
-            @Override public void execute() {
-                Walking.walk(t); //XXX replace with own move algorithm when we have one
-            }
-        };
-        taskQueue.offer(travelTask);
+    public void travelTo(Point p, boolean asap) { 
+        
+        try { 
+            final ArrayList<Point> path = PathFinder.calculatePath(Bot.getBot().getPosition(), p);
+            int priority = (asap ? Integer.MAX_VALUE : 0);
+            Task travelTask = new Task(priority) {
+                private boolean stopNow = false;
+                @Override public void execute() {
+                    int targetPoint = 1;
+                    int threshold = (int)(3 + 3 * Math.random());
+                    while (targetPoint < path.size()) {
+                        Point playerPos = getPosition();
+                        if (stopNow) { // we have to stop
+                            // set move to current position
+                            Walking.walk(playerPos.toTile());
+                            break;
+                        }
+                        
+                        // are we there yet?
+                        int dx = playerPos.x - path.get(targetPoint).x;
+                        int dy = playerPos.y - path.get(targetPoint).y;
+                        double dist_to_point = Math.sqrt( dx*dx + dy*dy );
+                        if (dist_to_point < threshold) {
+                            // yes, we are close enough
+                            targetPoint++;
+                            threshold = (int)(3 + 3 * Math.random());
+                            Walking.walk(path.get(targetPoint).toTile());
+                        }
+                    }
+                }
+                @Override public void cancel() {
+                    stopNow = true;
+                }
+            };
+            taskQueue.offer(travelTask); 
+        } catch (OutOfReachException e) {
+            Logger.getLogger("Bot").log(Level.WARNING, "The path could not be computed", e);
+        }
+        
+    }
+    
+    /**
+     * returns the Player's current Position
+     * @return the Player's current Position
+     */
+    public Point getPosition() {
+        return Point.fromTile(Players.getLocal().getLocation());
     }
     
     /**
@@ -81,5 +129,15 @@ public class Bot {
     
     public int tasksPending() {
         return taskQueue.size();
+    }
+    
+    /**
+     * clears the task queue and attempts to cancel the running task, if any.
+     * <p>When this method returns, the current task doesn't need to have be stopped directly.</p>
+     * <p>Note that Tasks that do not override the cancel() method cannot be canceled</p>
+     */
+    public void becomeIdle() {
+        taskQueue.clear();
+        Starter.currentTask().cancel();
     }
 }

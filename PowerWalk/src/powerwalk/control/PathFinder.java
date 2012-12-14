@@ -2,69 +2,117 @@ package powerwalk.control;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.PriorityQueue;
 import powerwalk.Bot;
 import powerwalk.model.Collision;
+import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 
 /**
- * This class finds a defined path between 2 points.
+ * This Utility class deals with finding a path between two Points in the RSBot environment.
  *
- * @author Vincent W
+ * @author Vincent W, P.Kramer
  */
-public class PathFinder {
-
-    public ArrayList<Point> calculatePath(Point start, Point goal) {
+public abstract class PathFinder {
+    
+    /** The maximum distance between two Points in the result Path. */
+    public static final int maxDist = 20; //TODO (0) check the display range of the minimap to set maxDist
+    
+    /**
+     * Calculates a path between start and goal using the A* algorithm.
+     * @param start The start Point
+     * @param goal The goal Point
+     * @return A Path from start to goal
+     * @throws OutOfReachException When no path between start and goal exists
+     */
+    public static ArrayList<Point> calculatePath(Point start, Point goal) throws OutOfReachException {
 
         //Initialize the A* algorith.
-        ArrayList<Point> closedSet = new ArrayList<Point>();
-        HashMap<Point, Integer> pathCost = new HashMap<>();
-        pathCost.put(start, 0);
-        start.f_score = pathCost.get(start) + heuristicCost(start, goal);
+        HashSet<Point> closedSet = new HashSet<>();
         PriorityQueue<Point> pending = new PriorityQueue<>();
+        HashMap<Point, Double> pathCost = new HashMap<>();
+        HashMap<Point,Point> came_from = new HashMap<>();
+        
+        pathCost.put(start, 0d);
+        
+        start.f_score = heuristicCost(start, goal);
+        
         pending.offer(start);
-        double tempPathCost = 0;
 
         //Start the spread
         while (!pending.isEmpty()) {
             Point current = pending.poll();
-            Point[] adjacents = current.getAdjacentPoints();
+            if (current.equals(goal)) {
+                ArrayList<Point> fullPath = reconstruct(came_from,goal);
+                return reducePoints(fullPath,maxDist);
+            }
             closedSet.add(current);
+            Point[] adjacents = current.getAdjacentPoints();
             for (Point p : adjacents) {
                 if (closedSet.contains(p) || isCollision(p)) {
                     continue;
                 }
-                p.previous = current; //wanneer moet dit?
-                tempPathCost = pathCost.get(p) + 1;
+                double tempPathCost = pathCost.get(p) + 1;
+                
+                boolean isPending = pending.contains(p);
+                if (!isPending || tempPathCost <= pathCost.get(p)) {
+                    p.previous = current;
+                    pathCost.put(p, tempPathCost);
+                    p.f_score = tempPathCost + heuristicCost(p,goal);
+                    if (!isPending) {
+                        pending.offer(p);
+                    }
+                }
+                
                 p.f_score = pathCost.get(current) + 1;
                 pending.offer(p);
             }
         }
-
-
-        return null;
+        throw new OutOfReachException(goal,"Destination could not be reached");
     }
-
-    /**
-     * Calculates the cost between 2 points using the Euclidean distance.
-     *
-     * @param start the base Point to calculate from
-     * @param goal the end Point of the calculation.
-     * @return returns the cost as a Double
-     */
-    public double heuristicCost(Point start, Point goal) {
+    
+    private static double heuristicCost(Point start, Point goal) {
+        // calculates the length between start and goal
         int dx = start.x - goal.x;
         int dy = start.y - goal.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
-
-    /**
-     * Check whether a Point it's GameObject is a Collision or not.
-     *
-     * @param target the given Point to check.
-     * @return see description.
-     */
-    public boolean isCollision(Point target) {
+    
+    private static boolean isCollision(Point target) {
+        // checks whether target contains a Collision-object
         return (Bot.getBot().getWorldMap().get(target) instanceof Collision);
+    }
+    
+    private static ArrayList<Point> reconstruct(HashMap<Point,Point> came_from, Point current) {
+        // reconstruct the path from the came_from HashMap
+        Point previous = came_from.get(current);
+        if (previous == null) {
+            ArrayList<Point> thePath = new ArrayList<>();
+            thePath.add(current);
+            return thePath;
+        } else {
+            ArrayList<Point> thePath = reconstruct(came_from,  came_from.get(current));
+            thePath.add(current);
+            return thePath;
+        }
+    }
+    
+    private static ArrayList<Point> reducePoints(ArrayList<Point> path, int maxDistance) {
+        // The Greedy algorithm reducing the points the Bot will click
+        ArrayList<Point> selected = new ArrayList<>();
+        int distSinceLastSelected = 0;
+        int targetDistance = maxDistance - (int)(5 + 5 * Math.random());
+        for (Point p : path) {
+            if (distSinceLastSelected < targetDistance) {
+                distSinceLastSelected++;
+            } else {
+                // set a new targetDistance
+                targetDistance = maxDistance - (int)(5 + 5 * Math.random()); 
+                selected.add(p);
+                distSinceLastSelected = 0;
+            }
+        }
+        return selected;
     }
 }

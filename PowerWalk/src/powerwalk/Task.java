@@ -40,6 +40,17 @@ public abstract class Task implements Comparable<Task> {
     @Override public int compareTo(Task t) {
         return priority-t.getPriority();
     }
-
     
+    /**
+     * Cancels this Task as quickly as possible.
+     * 
+     * <p>By default this method does nothing. Subclasses of this class should 
+     * override this method when the action is taking quite some time to 
+     * complete.</p>
+     * 
+     * <p>This method should return without throwing exceptions and calling 
+     * cancel on a running task should not cause exceptions to occur in the 
+     * execute method.</p>
+     */
+    public void cancel() {}
 }

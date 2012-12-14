@@ -9,7 +9,6 @@ import powerwalk.control.ToolBox;
 import powerwalk.model.GameObject;
 import powerwalk.model.Interactable;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 
 /**
  * Class representing a Door in the RSBot environment
@@ -54,8 +53,7 @@ public class Door extends GameObject implements Interactable {
      * @throws OutOfReachException when the door could not be reached
      */
     @Override public void interact(String method) throws OutOfReachException {
-        Point p = getPosition();
-        Tile t = new Tile(p.x,p.y,p.z);
+        Tile t = getPosition().toTile();
         SceneObject[] ss = SceneEntities.getLoaded(t);
         for (SceneObject s : ss) {
             if (s.getType() == getRawNumber()) {
@@ -65,7 +63,7 @@ public class Door extends GameObject implements Interactable {
                 break;
             }
         }
-        throw new OutOfReachException(p,"This Door could not be found at the given position");
+        throw new OutOfReachException(getPosition(),"This Door could not be found at the given position");
     }
     
 }

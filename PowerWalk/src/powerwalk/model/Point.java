@@ -1,5 +1,7 @@
 package powerwalk.model;
 
+import org.powerbot.game.api.wrappers.Tile;
+
 /**
  * Three dimensional Point.
  * @author P.Kramer
@@ -110,5 +112,13 @@ public class Point {
      */
     @Override public String toString() {
         return "<point x=\"" + x + "\" y=\"" + y + "\" z=\"" + z + "\" />";
+    }
+    
+    public Tile toTile() {
+        return new Tile(x,y,z);
+    }
+    
+    public static Point fromTile(Tile t) {
+        return new Point(t.getX(),t.getY(),t.getPlane());
     }
 }

@@ -2,6 +2,7 @@ package powerwalk.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -9,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import powerwalk.Bot;
+import powerwalk.model.Destinations;
 
 /**
  * Concept GUI layout for PowerWalk.
@@ -69,14 +72,19 @@ public class MainFrame extends JFrame {
     private void setResults(String query) {
         entryList.removeAll();
         ArrayList<String> results = new ArrayList<>();
-        // TODO (--) implement search algorithm for destinations
-        // //add matching destinations to list (max (int)(entryList.getHeight()/entry.getHeight()) items)
-        // for (String destination : matchingDestinations) {
-        //     results.add(destination);
-        //     if (results.size >= (int)(entryList.getHeight()/32)) {
-        //         break;
-        //     }
-        // }
+        query = query.toLowerCase();
+        
+        Set<String> ds = Destinations.getAvailableDestinations();
+        for (String s : ds) {
+            s = s.toLowerCase();
+            if (s.contains(query)) {
+                results.add(s);
+                if (results.size() >= (int)(entryList.getHeight()/32)) {
+                    break;
+                }
+            }
+        }
+        
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx=0;
         gbc.gridy=0;
@@ -101,12 +109,12 @@ public class MainFrame extends JFrame {
         JButton travel = new JButton("Travel here");
         travel.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent ae) {
-                Bot.getBot().travelTo(name); // not yet implemented
+                Bot.getBot().travelTo(name);
             }
         });
         entry.add(new JLabel("  " + name),"Center");
         entry.add(travel,"East");
-        
+        entry.setPreferredSize(new Dimension(120,24));
         return new JPanel();
     }
 }

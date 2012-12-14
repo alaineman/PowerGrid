@@ -1,6 +1,7 @@
 package powerwalk.control;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import powerwalk.Bot;
 import powerwalk.model.Collision;
 import powerwalk.model.Point;
@@ -17,9 +18,10 @@ public class PathFinder {
         //Initialize the A* algorith.
         ArrayList<Point> closedSet = new ArrayList<Point>();
         ArrayList<Point> openSet = new ArrayList<Point>(); 
-        openSet.add(start);
+        openSet.add(start);      
         
-        
+        HashMap<Point, Integer> pathCost = new HashMap<>();
+        pathCost.put(start,0);
         
         
         

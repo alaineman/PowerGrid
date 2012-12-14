@@ -8,5 +8,8 @@
         <location pos="" />
         <location pos="" />
     </special>
+    <special name="DepositBox">
+        <location pos="" />
+    </special>
     <!-- Etcetera -->
 </speciallocations>

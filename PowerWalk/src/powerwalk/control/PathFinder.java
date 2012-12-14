@@ -17,7 +17,7 @@ import powerwalk.model.Point;
 public abstract class PathFinder {
     
     /** The maximum distance between two Points in the result Path. */
-    public static final int maxDist = 20; //TODO (0) check the display range of the minimap to set maxDist
+    public static final int maxDist = 15;
     
     /**
      * Calculates a path between start and goal using the A* algorithm.
@@ -45,10 +45,11 @@ public abstract class PathFinder {
             Point current = pending.poll();
             if (current.equals(goal)) {
                 ArrayList<Point> fullPath = reconstruct(came_from,goal);
-                return fullPath;//reducePoints(fullPath,maxDist);
+                return reducePoints(fullPath,maxDist);
             }
             closedSet.add(current);
             Point[] adjacents = current.getAdjacentPoints();
+            //TODO (0) if (current == start) adjacents += all teleport points
             for (int i=0;i<adjacents.length;i++) {
                 Point p = adjacents[i];
                 if (closedSet.contains(p) || isCollision(p)) {
@@ -103,13 +104,13 @@ public abstract class PathFinder {
         // The Greedy algorithm reducing the points the Bot will click
         ArrayList<Point> selected = new ArrayList<>();
         int distSinceLastSelected = 0;
-        int targetDistance = maxDistance - (int)(5 + 5 * Math.random());
+        int targetDistance = maxDistance - (int)(2 + 5 * Math.random());
         for (Point p : path) {
-            if (distSinceLastSelected < targetDistance) {
+            if (distSinceLastSelected < targetDistance /* && instanceAt(p) != interactable */) {
                 distSinceLastSelected++;
             } else {
                 // set a new targetDistance
-                targetDistance = maxDistance - (int)(5 + 5 * Math.random()); 
+                targetDistance = maxDistance - (int)(2 + 5 * Math.random()); 
                 selected.add(p);
                 distSinceLastSelected = 0;
             }

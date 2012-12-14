@@ -8,7 +8,9 @@ import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.interactive.Players;
 import powerwalk.control.PathFinder;
 import powerwalk.model.Destinations;
+import powerwalk.model.GameObject;
 import powerwalk.model.Grid;
+import powerwalk.model.Interactable;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 
@@ -84,6 +86,14 @@ public class Bot {
                             targetPoint++;
                             threshold = (int)(3 + 3 * Math.random());
                             Walking.walk(path.get(targetPoint).toTile());
+                            GameObject g = getWorldMap().get(path.get(targetPoint));
+                            if (g instanceof Interactable) {
+                                try {
+                                    ((Interactable)g).interact(); // default action
+                                } catch (OutOfReachException ex) {
+                                    Logger.getLogger("Bot").log(Level.SEVERE, "Could not reach interactable", ex);
+                                }
+                            }
                         }
                     }
                 }

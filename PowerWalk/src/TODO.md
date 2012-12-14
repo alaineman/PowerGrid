@@ -3,22 +3,26 @@ TODO-list
 
 powerwalk.model
 -----------------
-- voltooi GameObject en Collision (PATRICK: they grow as needed. Remove this item when you agree to this)
-- maak subklassen van GameObject die objecten in de RSBot environment representeren.
+- maak subklassen van GameObject die objecten in de RSBot environment representeren. (->PATRICK)
+    - Item !!! (alle items)
+    - TeleportItem extends Item implements Teleportable
     - Wall (PATRICK: implemented, but still have to fetch more wall values)
     - Entity (PATRICK: same as Wall)
     - Door (PATRICK: began working on interaction, but I'm unsure how to find out about the door's state in the RSBot environment)
+    - Gate
+    - (abstract class Elevator) => Ladder / Stairs / Hatch / Rope (climb up / climb down)
 
-powerwalk
----------
-- maak entrypoint voor plugin
-- laat de Bot-klasse methodes in de control package aanroepen
+- Interactions and Teleports (->VINCENT)
+    - ComplexInteractable extends Interactable
+    - Teleportable extends ComplexInteractable
+    - Teleportable.use()
+    - other Teleports 
+    - Lodestones
+    - ... 
 
 powerwalk.control
 -----------------
-- maak een PathFinder klasse (Vincent: nadenken over slimme algoritm die korste route vindt.)
-- maak een Interactor klasse
-- maak een Walker klasse (misschien mbv org.powerbot.game.api.methods.Walking)
+- Mapper de World Map laten opslaan in XML
 
 powerwalk.view
 --------------

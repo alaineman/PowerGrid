@@ -15,7 +15,7 @@ general
 powerwalk.model
 -----------------
 - Make subclasses of GameObject that represent objects in the RSBot environment. (->PATRICK)
-    - [c] Item
+    - [c] Item (in progress)
     - [c] TeleportItem extends Item implements Teleportable
     - [d] Wall 
     - [c] Entity
@@ -24,9 +24,9 @@ powerwalk.model
     - [c] abstract class Elevator 
         - [m] Elevator.up()
         - [m] Elevator.down()
-        - [c] Ladder 
-        - [c] Stairs 
-        - [c] Hatch 
+        - [c] Ladder
+        - [c] Stairs
+        - [c] Hatch
         - [c] Rope
 
 - Interactions and Teleports (->VINCENT)

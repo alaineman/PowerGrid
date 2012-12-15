@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import powerwalk.Bot;
 import powerwalk.control.PathFinder;
-import powerwalk.model.Collision;
 import powerwalk.model.Grid;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
@@ -19,6 +18,7 @@ public class TestPathFinder {
     
     /*
      * Tests the functionality of the PathFinder
+     * The PathFinder passed this test
      */
     
     public static void main(String[] args) {
@@ -28,6 +28,7 @@ public class TestPathFinder {
             worldmap.set(w.getPosition(),w);
         }
         
+        // print the maze defined by createMaze()
         for (int x=0;x<16;x++) {
             for (int y=0;y<16;y++) {
                 if (Bot.getBot().getWorldMap().get(new Point(x,y,0)) != null) {
@@ -42,7 +43,8 @@ public class TestPathFinder {
         Point start = new Point(1,8,0);
         Point end = new Point(14,1,0);
         
-        try { /* wow */
+        // print the path that is calculated by PathFinder.calculatePath(start,end)
+        try {
             ArrayList<Point> path = PathFinder.calculatePath(start, end);
             for (Point p : path) {
                 System.out.println(p);
@@ -52,6 +54,7 @@ public class TestPathFinder {
         }
     }
     
+    // creates the Maze used for testing
     public static ArrayList<Wall> createMaze() {
         ArrayList<Wall> m = new ArrayList<>();
         
@@ -65,8 +68,6 @@ public class TestPathFinder {
                 }
             }
         } catch (IOException iox) {}
-        
-        
         
         return m;
     }

@@ -1,29 +1,47 @@
 TODO-list
 =========
 
+[c] means that the list item is a class name that has to be implemented
+[m] means that the list item is a method name that has to be implemented
+[i] means that the list item is a interface name that has to be implemented
+[d] means more data about the class has to be collected
+
+general
+-------
+- Add JavaDoc comments to public methods that don't have it.
+- Make a class Tree describing what each class does.
+- Optional: write documentation for other script writers about the top-level methods of powerwalk
+
 powerwalk.model
 -----------------
-- maak subklassen van GameObject die objecten in de RSBot environment representeren. (->PATRICK)
-    - Item !!! (alle items)
-    - TeleportItem extends Item implements Teleportable
-    - Wall (PATRICK: implemented, but still have to fetch more wall values)
-    - Entity (PATRICK: same as Wall)
-    - Door (PATRICK: began working on interaction, but I'm unsure how to find out about the door's state in the RSBot environment)
-    - Gate
-    - (abstract class Elevator) => Ladder / Stairs / Hatch / Rope (climb up / climb down)
+- Make subclasses of GameObject that represent objects in the RSBot environment. (->PATRICK)
+    - [c] Item
+    - [c] TeleportItem extends Item implements Teleportable
+    - [d] Wall 
+    - [c] Entity
+    - [d] Door
+    - [c] Gate
+    - [c] abstract class Elevator 
+        - [m] Elevator.up()
+        - [m] Elevator.down()
+        - [c] Ladder 
+        - [c] Stairs 
+        - [c] Hatch 
+        - [c] Rope
 
 - Interactions and Teleports (->VINCENT)
-    - ComplexInteractable extends Interactable
-    - Teleportable extends ComplexInteractable
-    - Teleportable.use()
-    - other Teleports 
-    - Lodestones
-    - ... 
+    - [i] ComplexInteractable extends Interactable
+    - [i] Teleportable extends ComplexInteractable
+    - [m] Teleportable.teleport()
+    - [c] Lodestone
+    - [c] ... (other Teleportables)
 
 powerwalk.control
 -----------------
-- Mapper de World Map laten opslaan in XML
+- [m] Mapper.save()
 
 powerwalk.view
 --------------
-- denk na over gui design (PATRICK: nu een conceptversie, powerwalk.view.MainFrame)
+- Fix destination list
+- Allow "travel to" command for each destination
+- Embed more functionality from the Bot class

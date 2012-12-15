@@ -1,7 +1,15 @@
 package powerwalk;
 
 import org.powerbot.core.script.ActiveScript;
+import org.powerbot.game.api.Manifest;
 import powerwalk.model.Destinations;
+
+@Manifest( 
+        authors     = "alaineman", 
+        name        = Starter.productName, 
+        description = "Runs all day!", 
+        version     = Starter.version 
+         )
 
 /**
  * Starter class for the entire plug-in 
@@ -9,12 +17,21 @@ import powerwalk.model.Destinations;
  */
 public class Starter extends ActiveScript {
 
+    public static final String productName = "PowerWalk";
+    public static final double version = 0.1;
+    
     private static Task currentTask = null;
     
+    /**
+     * executes a Task from the TaskQueue.
+     * @return an integer specifying the amount of milliseconds the caller 
+     *         should wait before calling this method again.
+     */
     @Override public int loop() {
         if (Bot.getBot().tasksPending() > 0) {
             currentTask = Bot.getBot().retrieveTask();
             currentTask.execute();
+            currentTask = null;
             return 20;
         } else {
             return 5;
@@ -23,7 +40,7 @@ public class Starter extends ActiveScript {
     
     /**
      * returns the currently running task.
-     * @return the currently running task
+     * @return the currently running task, or null is no task is running
      */
     public static Task currentTask() {
         return currentTask;

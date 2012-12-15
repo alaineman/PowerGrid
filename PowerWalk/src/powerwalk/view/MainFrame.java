@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import powerwalk.Bot;
+import powerwalk.Starter;
 import powerwalk.model.Destinations;
 
 /**
@@ -34,6 +35,7 @@ public class MainFrame extends JFrame {
     public static void main(String[] args) { new MainFrame(); }
     
     public MainFrame() {
+        super(Starter.productName + " - " + Starter.version);
         createAndShowGUI();
     }
     

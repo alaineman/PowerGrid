@@ -22,12 +22,14 @@ powerwalk.model
     - [c] Rope
 
 - Interactions and Teleports (->VINCENT)
+    - [c] Boat
     - [c] ... (other Teleportables)
 
 powerwalk.control
 -----------------
 - [m] Mapper.save() (->PATRICK)
 - [m] Mapper.load() (->PATRICK)
+- [m] ToolBox.getXMLTree(File) (->PATRICK)
 - [c] WidgetManager
     -[m] openQuestWidget()
     -[m] openNoticeboard()

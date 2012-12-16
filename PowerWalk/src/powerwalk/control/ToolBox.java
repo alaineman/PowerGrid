@@ -1,8 +1,15 @@
 package powerwalk.control;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import powerwalk.model.XMLNode;
 
 /**
  * Utility class providing shortcuts to standard commonly used tasks
@@ -103,5 +110,43 @@ public abstract class ToolBox {
         String res = xml.substring(start,end);
         if (res.startsWith("/")) res = res.substring(1,res.length());
         return res;
+    }
+    
+    
+    public static XMLNode getXMLTree(InputStream in) {
+        ArrayList<String> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            while (reader.ready()) {
+                lines.add(reader.readLine());
+            }
+            return getXMLTree(lines);
+        } catch (IOException iox) {
+            return null;
+        }
+        
+    }
+    
+    public static XMLNode getXMLTree(ArrayList<String> lines) {
+        return getXMLTree(lines,0);
+    }
+    
+    private static int lineIndex = -1;
+    private static XMLNode getXMLTree(ArrayList<String> lines, int start) {
+        lineIndex = start;
+        String root = lines.get(start);
+        HashMap<String,String> attributes = getAttributes(root);
+        String tag = getTagFromXML(root);
+        ArrayList<XMLNode> children = new ArrayList<>(5);
+        if (!root.contains("/>")) {
+            for (;lineIndex<lines.size();lineIndex++) {
+                String current = lines.get(lineIndex);
+                if (current.contains("</" + tag + ">")) {
+                    break;
+                }
+                
+                XMLNode child = getXMLTree(lines,i);
+            }
+        }
+        return new XMLNode(tag,attributes,children);
     }
 }

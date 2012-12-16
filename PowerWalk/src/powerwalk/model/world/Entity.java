@@ -2,7 +2,7 @@ package powerwalk.model.world;
 
 import powerwalk.control.ToolBox;
 import powerwalk.model.GameObject;
-import powerwalk.model.Interactable;
+import powerwalk.model.interact.Interactable;
 
 /**
  * Class representing mobile objects from the RSBot environment

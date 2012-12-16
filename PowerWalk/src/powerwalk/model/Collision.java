@@ -2,7 +2,8 @@ package powerwalk.model;
 
 /**
  * represents a collision object on the world map
- * @author Vincent W, P.Kramer
+ * @author Vincent W
+ * @author P.Kramer
  */
 public class Collision extends GameObject {
     

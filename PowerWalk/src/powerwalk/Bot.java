@@ -10,7 +10,7 @@ import powerwalk.control.PathFinder;
 import powerwalk.model.Destinations;
 import powerwalk.model.GameObject;
 import powerwalk.model.Grid;
-import powerwalk.model.Interactable;
+import powerwalk.model.interact.Interactable;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 

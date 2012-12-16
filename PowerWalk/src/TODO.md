@@ -30,9 +30,6 @@ powerwalk.model
         - [c] Rope
 
 - Interactions and Teleports (->VINCENT)
-    - [i] ComplexInteractable extends Interactable
-    - [i] Teleportable extends ComplexInteractable
-    - [m] Teleportable.teleport()
     - [c] Lodestone
     - [c] ... (other Teleportables)
 

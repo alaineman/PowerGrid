@@ -14,6 +14,11 @@ import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.world.Wall;
 
+/**
+ * 
+ * @author vync job, 
+ * @author P.Kramer
+ */
 public class TestPathFinder {
     
     /*

@@ -7,7 +7,7 @@ import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.control.ToolBox;
 import powerwalk.model.GameObject;
-import powerwalk.model.Interactable;
+import powerwalk.model.interact.Interactable;
 import powerwalk.model.OutOfReachException;
 
 /**

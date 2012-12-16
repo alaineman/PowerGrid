@@ -21,7 +21,7 @@ public abstract class Transportable extends Teleportable {
      * @param z the z-coordinate of the <code>Teleportable</code>
      * @param rawNumber the raw value for this object from the RSBot environment
      */
-    public Transportable(int x,int y,int z,int rawNumber, Collection<Transportable> dests) {
+    public Transportable(int x,int y,int z,int rawNumber, Collection<? extends Transportable> dests) {
         super(x, y, z, rawNumber);
         destinations = new ArrayList<>(dests);
     }    
@@ -32,7 +32,14 @@ public abstract class Transportable extends Teleportable {
      *         Transportable cannot be used to travel to Transportable dest.
      * @param dest the Point of destination.
      */
-    public abstract void follow(Transportable dest) throws OutOfReachException;
+    public void follow(Transportable dest) throws OutOfReachException {
+        handle(dest);
+        waitForCompletion(dest);
+    };
+    
+    protected abstract void handle(Transportable dest);
+    
+    protected abstract void waitForCompletion(Transportable dest);
     
     /**
      * Teleports you to the first destination Point.
@@ -41,7 +48,7 @@ public abstract class Transportable extends Teleportable {
     @Override public void follow() throws OutOfReachException {
         if(!destinations.isEmpty()){
             follow(destinations.get(0));
-        }
+        }        
     }
     
     /**

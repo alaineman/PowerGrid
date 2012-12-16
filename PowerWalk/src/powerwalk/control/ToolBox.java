@@ -112,25 +112,34 @@ public abstract class ToolBox {
         return res;
     }
     
-    
+    /**
+     * Parses an XML Tree from the given InputStream
+     * @param in the InputStream to parse an XMLTree from
+     * @return the XMLTree given by the InputStream
+     */
     public static XMLNode getXMLTree(InputStream in) {
         ArrayList<String> lines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             while (reader.ready()) {
                 lines.add(reader.readLine());
             }
-            return getXMLTree(lines);
+            return getXMLTree(lines,0);
         } catch (IOException iox) {
             return null;
         }
         
     }
     
+    /**
+     * Creates an XML Tree from the given list of lines, where every String element represents one XML Tag
+     * @param lines a List of XML Strings
+     * @return an XML tree created from the list of XML Strings
+     */
     public static XMLNode getXMLTree(ArrayList<String> lines) {
         return getXMLTree(lines,0);
     }
     
-    private static int lineIndex = -1;
+    private static int lineIndex = 0;
     private static XMLNode getXMLTree(ArrayList<String> lines, int start) {
         lineIndex = start;
         String root = lines.get(start);
@@ -138,13 +147,13 @@ public abstract class ToolBox {
         String tag = getTagFromXML(root);
         ArrayList<XMLNode> children = new ArrayList<>(5);
         if (!root.contains("/>")) {
+            lineIndex++;
             for (;lineIndex<lines.size();lineIndex++) {
                 String current = lines.get(lineIndex);
                 if (current.contains("</" + tag + ">")) {
                     break;
                 }
-                
-                XMLNode child = getXMLTree(lines,i);
+                children.add(getXMLTree(lines,lineIndex));
             }
         }
         return new XMLNode(tag,attributes,children);

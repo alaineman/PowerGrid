@@ -2,6 +2,7 @@ package powerwalk.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
  * 
@@ -32,5 +33,19 @@ public class XMLNode {
     
     public String get(String att) {
         return attributes.get(att);
+    }
+    
+    public String toString(String prefix) {
+        
+        String res = prefix + "<" + tag + " ";
+        for (Entry<String,String> att : attributes.entrySet()) {
+            res += att.getKey() + "=\"" + att.getValue() + "\" ";
+        }
+        res += ">\n";
+        for (XMLNode n : childs) {
+            res += prefix + n.toString(prefix + "  ");
+        }
+        res += prefix + "</" + tag + ">\n";
+        return res;
     }
 }

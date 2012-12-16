@@ -6,12 +6,12 @@ Walking plug-in for RSBot.
 
 Current functionality
 ---------------------
-None at the moment, actually.
+- The Bot can find paths between two points.
 
 
 First upcoming functionality
 ----------------------------
-The Bot is able to find paths using data from the RSBot environment.
+The Bot is able to follow the path he computed.
 
 
 Long-term planning

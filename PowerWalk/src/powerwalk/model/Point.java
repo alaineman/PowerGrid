@@ -84,6 +84,10 @@ public class Point implements Comparable<Point> {
         return res;
     }
     
+    public static Point fromString(String s){
+        return new Point(0,0);
+    }
+    
     /**
      * Returns whether this Point is equal to the given object.
      * This Point is equal if and only if:

@@ -30,12 +30,15 @@ powerwalk.model
         - [c] Rope
 
 - Interactions and Teleports (->VINCENT)
-    - [c] Lodestone
     - [c] ... (other Teleportables)
 
 powerwalk.control
 -----------------
 - [m] Mapper.save()
+- [c] WidgetManager
+    -[m] openQuestWidget()
+    -[m] openNoticeboard()
+    -[m] openXXX() .... etc
 
 powerwalk.view
 --------------

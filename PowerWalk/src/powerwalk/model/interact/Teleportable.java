@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package powerwalk.model.interact;
 
 import java.util.HashMap;
@@ -11,13 +7,19 @@ import powerwalk.model.Item;
 import powerwalk.model.OutOfReachException;
 
 /**
- *
- * @author vync job
+ * @author P.Kramer
+ * @author Alaineman
  */
 public abstract class Teleportable extends GameObject implements ComplexInteractable {
     
     
-    
+    /**
+     * 
+     * @param x
+     * @param y
+     * @param z
+     * @param rawNumber 
+     */
     public Teleportable(int x,int y,int z,int rawNumber){
         super(x, y, z, rawNumber);
         
@@ -27,14 +29,33 @@ public abstract class Teleportable extends GameObject implements ComplexInteract
      * Cost to perform this transport.
      * @return a Map containing the required Items for the transport.
      */
-    public abstract HashMap<Item, Integer> getCost();
+   public HashMap<Item, Integer> getCost() {
+        return new HashMap<>();
+    }
     
+    /**
+     * 
+     * @throws OutOfReachException 
+     */
     public abstract void follow() throws OutOfReachException;
+    
+    
+    @Override
+    public void interact() throws OutOfReachException {
+        follow();
+    }
+    
+    @Override
+    public void interact(String method) throws OutOfReachException {
+        follow();
+    }
     
     /**
      * Returns the Quests needed for this Teleprotable.
      * @return the required Quests.
      */
-    public abstract Quest[] getRequiredQuests();
+    public Quest[] getRequiredQuests() {
+        return new Quest[0];
+    }
     
 }

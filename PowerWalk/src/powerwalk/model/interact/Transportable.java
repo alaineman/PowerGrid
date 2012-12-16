@@ -10,6 +10,7 @@ import java.util.HashMap;
 import org.powerbot.game.api.methods.tab.Quest;
 import powerwalk.model.GameObject;
 import powerwalk.model.Item;
+import powerwalk.model.OutOfReachException;
 
 /**
  * Represents a GameObject that allows a transport to another Transportable.
@@ -41,7 +42,18 @@ public abstract class Transportable extends Teleportable {
      * @throws OutOfReachException when the requirements are not met.
      * @param dest the Point of destination.
      */
-    public abstract void follow(String dest);
+    public abstract void follow(Transportable dest) throws OutOfReachException;
+    
+    /**
+     * 
+     * @throws OutOfReachException 
+     */
+    @Override
+    public void follow() throws OutOfReachException{
+        if(!destinations.isEmpty()){
+            follow(destinations.get(0));
+        }
+    }
     
     /**
      * Returns available destinations for this Transportable.

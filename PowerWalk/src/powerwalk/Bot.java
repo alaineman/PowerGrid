@@ -10,15 +10,16 @@ import powerwalk.control.PathFinder;
 import powerwalk.model.Destinations;
 import powerwalk.model.GameObject;
 import powerwalk.model.Grid;
-import powerwalk.model.interact.Interactable;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
+import powerwalk.model.interact.Interactable;
 
 /**
  * Bot-class representing the Player. 
  * The Bot can execute high-level tasks such as "travel to [destination]", 
  * "go to nearest [place of interest]", and others.
- * @author Vincent W, P.Kramer
+ * @author Vincent W
+ * @author P.Kramer
  */
 public class Bot {
     private static Bot theBot = new Bot();
@@ -120,7 +121,9 @@ public class Bot {
      * registers a Task that moves to the nearest destination that matches the description in dest.
      * @param dest The target destination
      */
-    void gotoNearest(String dest) {} //TODO (--) implement gotoNearest stub method
+    void gotoNearest(String dest) {
+        throw new UnsupportedOperationException("not yet supported");
+    } //TODO (--) implement gotoNearest stub method
     
     /**
      * Queues the given Runnable in the Bot. 
@@ -133,21 +136,34 @@ public class Bot {
         taskQueue.offer(task);
     }
     
+    /**
+     * Polls the first task in the task Queue
+     * @return the Task to be executed next
+     */
     Task retrieveTask() {
         return taskQueue.poll();
     }
     
+    /**
+     * Returns the amount of pending tasks
+     * @return the amount of pending tasks
+     */
     public int tasksPending() {
         return taskQueue.size();
     }
     
     /**
      * clears the task queue and attempts to cancel the running task, if any.
-     * <p>When this method returns, the current task doesn't need to have be stopped directly.</p>
-     * <p>Note that Tasks that do not override the cancel() method cannot be canceled</p>
+     * <p>When this method returns, the current task doesn't need to have be 
+     * stopped directly.</p>
+     * <p>Note that Tasks that do not override the cancel() method cannot be 
+     * canceled. Most Tasks created by PowerWalk are cancelable</p>
+     * 
+     * 
      */
     public void becomeIdle() {
         taskQueue.clear();
-        Starter.currentTask().cancel();
+        Task current = Starter.currentTask();
+        if (current != null) current.cancel();
     }
 }

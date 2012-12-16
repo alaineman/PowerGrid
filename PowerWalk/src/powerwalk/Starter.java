@@ -4,20 +4,22 @@ import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import powerwalk.model.Destinations;
 
-@Manifest( 
+/**
+ * Starter and Task Manager class for the entire plug-in 
+ * @author P.Kramer
+ * @author Alaineman
+ */
+@Manifest(
         authors     = "alaineman", 
         name        = Starter.productName, 
         description = "Runs all day!", 
         version     = Starter.version 
          )
-
-/**
- * Starter class for the entire plug-in 
- * @author P.Kramer
- */
 public class Starter extends ActiveScript {
-
+    
+    /** The name of the Plug-in */
     public static final String productName = "PowerWalk";
+    /** The version number */
     public static final double version = 0.1;
     
     private static Task currentTask = null;
@@ -60,7 +62,8 @@ public class Starter extends ActiveScript {
     public synchronized static void purge() {
         // purge the destination list used by the travelTo(String dest) command
         Destinations.purge();
-        //TODO (--) reduce World Map
+        
+        // purge the World Map (takes potentially really, really long)
+        Bot.getBot().getWorldMap().purge();
     }
-    
 }

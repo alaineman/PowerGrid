@@ -84,10 +84,6 @@ public class Point implements Comparable<Point> {
         return res;
     }
     
-    public static Point fromString(String s){
-        return new Point(0,0);
-    }
-    
     /**
      * Returns whether this Point is equal to the given object.
      * This Point is equal if and only if:
@@ -120,21 +116,56 @@ public class Point implements Comparable<Point> {
     
     /**
      * Returns a String-representation of this Point.
-     * The returned String is a valid XML tag.
-     * @return an XML-tag that represents this String
+     * The returned string is of the form "(x,y,z)"
+     * @return a String-representation of this Point
      */
     @Override public String toString() {
-        return "<point x=\"" + x + "\" y=\"" + y + "\" z=\"" + z + "\" />";
+        return "(" + x + "," + y + "," + z + ")";
     }
     
+    /**
+     * Parses a Point from a String that contains one or more values separated by "," and surrounded by braces.
+     * 
+     * @param s the String to parse
+     * @throws NumberFormatException when one or more values could not be parsed
+     * @return the Point denoted by this String
+     */
+    public static Point fromString(String s) {
+        int start = s.indexOf("(")+1;
+        int end   = s.indexOf(")");
+        String[] vals = s.substring(start,end).split(",");
+        int x=0,y=0,z=0;
+        if (vals.length>0) x = Integer.parseInt(vals[0]);
+        if (vals.length>1) y = Integer.parseInt(vals[1]);
+        if (vals.length>2) z = Integer.parseInt(vals[2]);
+        
+        return new Point(x,y,z);
+    }
+    
+    /**
+     * Returns a Tile-representative of this Point
+     * @return a Tile object indicating the same location as this Point
+     */
     public Tile toTile() {
         return new Tile(x,y,z);
     }
     
+    /**
+     * Returns a Point-representative of the given Tile
+     * @param t the Tile to create a Point object for.
+     * @return a Point object indicating the same location as the given Tile
+     */
     public static Point fromTile(Tile t) {
         return new Point(t.getX(),t.getY(),t.getPlane());
     }
     
+    /**
+     * returns the difference in f_score between this Point and the given Point.
+     * <p>This method will soon become obsolete.</p>
+     * @param p the Point to compare to
+     * @return the difference in f_score
+     */
+    // TODO remove this and move to PathFinder to reduce "method pollution"
     @Override public int compareTo(Point p) {
         return (int)(f_score- p.f_score);
     }

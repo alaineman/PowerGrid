@@ -1,6 +1,7 @@
 package powerwalk.model;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
  * Three-dimensional data structure for GameObjects.
@@ -111,5 +112,33 @@ public class Grid {
             elem = data.get(p.x).get(p.y)[p.z];
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {}
         return elem;
+    }
+    
+    /**
+     * Reduces the memory this Grid occupies by rebuilding the internal structure of the Grid.
+     * <p>Please note that this operation may take a long time to complete. Furthermore, future 
+     * set() operations on this Grid may be slower due to reduced reserved space.</p>
+     */
+    public synchronized void purge() {
+        for (Entry<Integer,HashMap<Integer,GameObject[]>> col : data.entrySet()) {
+            if (col.getValue() == null || col.getValue().isEmpty()) {
+                data.remove(col.getKey());
+                continue;
+            }
+            for (Entry<Integer,GameObject[]> e : col.getValue().entrySet()) {
+                if (e.getValue() == null || e.getValue().length == 0) {
+                    col.getValue().remove(e.getKey());
+                    continue;
+                }
+                for (int i=e.getValue().length-1; i>=0; i--) {
+                    if (e.getValue()[i] != null) {
+                        // i is the last occupied slot
+                        GameObject[] reduced = new GameObject[i+1];
+                        System.arraycopy(e.getValue(),0,reduced,0,i+1);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

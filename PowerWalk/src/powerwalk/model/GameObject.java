@@ -25,6 +25,14 @@ public class GameObject {
         this.y = y;
         this.rawNumber = rawNumber;
     }
+    /**
+     * Creates a new GameObject at the given position. the <code>rawNumber</code> 
+     * indicates the type of object as provided by the RSBot environment.
+     * @param x the x-coordinate of this object
+     * @param y the y-coordinate of this object
+     * @param z the z-coordinate of this object
+     * @param rawNumber the raw value from the environment specifying the type
+     */
     public GameObject(int x,int y,int z,int rawNumber) {
         this(x,y,rawNumber);
         this.z = z;
@@ -86,7 +94,6 @@ public class GameObject {
      * returns a String-representation of this GameObject
      * The returned String can be written to an XML-file
      * @return an XML-String representing this object
-     * 
      */
     @Override public String toString() {
         return "<gameobject xpos=\"" + x + "\" ypos=\"" + y + "\" zpos=\"" + z + "\"raw=\"" + rawNumber + "\" />";

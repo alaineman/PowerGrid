@@ -57,8 +57,8 @@ public class Destinations {
      * Purges the destinationList, freeing the memory used. Please be aware that 
      * the next call to getDestination will rebuild the destination List.
      * 
-     * <p>When this method returns, the Garbage Collector can clean up the memory 
-     * previously used by the destination List.</p>
+     * <p>Note that purging the destinationList will erase any custom destinations 
+     * set with the <code>setCustomDestination(name,destination)</code> method.</p>
      */
     public static void purge() {
         destinations = new HashMap<>();
@@ -76,9 +76,24 @@ public class Destinations {
         return destinations.get(dest);
     }
     
+    /**
+     * Returns a Set containing the available destinations 
+     * @return a Set containing the available destinations.
+     */
     public static Set<String> getAvailableDestinations() {
         if (destinations.isEmpty()) setupDestinationList();
         return destinations.keySet();
+    }
+    
+    /**
+     * Assigns a custom binding for a specified String.
+     * <p>consecutive calls to <code>getDestination(name)</code> will return the 
+     * position specified by <code>Destination</code>.</p>
+     * @param name the name of the Destination
+     * @param destination the location of the Destination
+     */
+    public static void setCustomDestination(String name,Point destination) {
+        destinations.put(name,destination.toTile());
     }
     
     private static HashMap<String,Tile> destinations = new HashMap<>();

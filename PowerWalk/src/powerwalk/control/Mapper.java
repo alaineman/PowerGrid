@@ -46,9 +46,9 @@ public class Mapper extends Thread {
     /**
      * Starts the Mapper with the given policy.
      * When the given policy is not valid, the MAP_ONCE policy will be used.
-     * @param policy the policy to use for the Mapper
+     * @param policy the policy to use for the Mapper (MAP_CONTINOUSLY or MAP_ONCE)
      * 
-     * @throws IllegalThreadStateException when the Mapper is already running
+     * @throws IllegalThreadStateException when the Mapper is already / still running
      */
     public static synchronized void startMapping(int policy) {
         if (theMapper != null) {
@@ -79,7 +79,11 @@ public class Mapper extends Thread {
     }
     
     /**
-     * Returns whether or not the Mapper is mapping
+     * Returns whether or not the Mapper is mapping.
+     * 
+     * <p>When the mapping policy has been set to MAP_NONE, but the Mapper hasn't 
+     * completed gracefully yet, this method returns false.</p>
+     * 
      * @return true if and only if the Mapper is currently mapping, returns false otherwise.
      */
     public static boolean isMapping() {
@@ -87,7 +91,9 @@ public class Mapper extends Thread {
     }
     
     /**
-     * run-method for the Mapper. It should not be called directly.
+     * run-method for the Mapper. 
+     * <p>It should not be called directly. Instead, the <code>startMapping(int)</code>
+     * and <code>stopMapping()</code> methods should be used.
      */
     @Override public void run() {
         setName("Mapper");

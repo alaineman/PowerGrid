@@ -1,15 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package powerwalk.model.interact;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import org.powerbot.game.api.methods.tab.Quest;
-import powerwalk.model.GameObject;
-import powerwalk.model.Item;
 import powerwalk.model.OutOfReachException;
 
 /**
@@ -19,18 +11,15 @@ import powerwalk.model.OutOfReachException;
  */
 public abstract class Transportable extends Teleportable {
     
-    /**
-     * 
-     */
     private ArrayList<Transportable> destinations;
     
     /**
-     * 
-     * @param x
-     * @param y
-     * @param z
-     * @param rawNumber
-     * @param dests 
+     * Creates a new <code>Transportable</code> at the specified position and with the specified raw value.
+     * <p> the destinations for this Transportable are defined in dests</p>
+     * @param x the x-coordinate of the <code>Teleportable</code>
+     * @param y the y-coordinate of the <code>Teleportable</code>
+     * @param z the z-coordinate of the <code>Teleportable</code>
+     * @param rawNumber the raw value for this object from the RSBot environment
      */
     public Transportable(int x,int y,int z,int rawNumber, Collection<Transportable> dests) {
         super(x, y, z, rawNumber);
@@ -39,17 +28,17 @@ public abstract class Transportable extends Teleportable {
     
     /**
      * Teleports you to the designated Point.
-     * @throws OutOfReachException when the requirements are not met.
+     * @throws OutOfReachException when the requirements are not met or this 
+     *         Transportable cannot be used to travel to Transportable dest.
      * @param dest the Point of destination.
      */
     public abstract void follow(Transportable dest) throws OutOfReachException;
     
     /**
-     * 
-     * @throws OutOfReachException 
+     * Teleports you to the first destination Point.
+     * @throws OutOfReachException when the requirements are not met.
      */
-    @Override
-    public void follow() throws OutOfReachException{
+    @Override public void follow() throws OutOfReachException {
         if(!destinations.isEmpty()){
             follow(destinations.get(0));
         }
@@ -59,7 +48,7 @@ public abstract class Transportable extends Teleportable {
      * Returns available destinations for this Transportable.
      * @return available destinations.
      */
-    public Transportable[] getDestinations(){
+    public Transportable[] getDestinations() {
         return destinations.toArray(new Transportable[0]);
     };
             

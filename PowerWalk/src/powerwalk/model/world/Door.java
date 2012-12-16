@@ -7,8 +7,8 @@ import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.control.ToolBox;
 import powerwalk.model.GameObject;
-import powerwalk.model.interact.Interactable;
 import powerwalk.model.OutOfReachException;
+import powerwalk.model.interact.Interactable;
 
 /**
  * Class representing a Door in the RSBot environment
@@ -18,6 +18,14 @@ public class Door extends GameObject implements Interactable {
     /** Raw values that represent doors in the RSBot environment */
     public static final int[] values = {15536,24387,24388};
     
+    /**
+     * Creates a new Door at the given position. the <code>rawNumber</code> 
+     * indicates the type of object as provided by the RSBot environment.
+     * @param x the x-coordinate of this object
+     * @param y the y-coordinate of this object
+     * @param z the z-coordinate of this object
+     * @param rawNumber the raw value from the environment specifying the type
+     */
     public Door(int x,int y,int z,int rawValue) {
         super(x,y,z,rawValue);
         if (ToolBox.arrayIndexOf(rawValue, values) == -1)
@@ -25,7 +33,8 @@ public class Door extends GameObject implements Interactable {
     }
     
     /**
-     * Tries to open / close the door
+     * Tries to open / close the door.
+     * @throws OutOfReachException when the door could not be interacted with
      */
     @Override public void interact() throws OutOfReachException {
         try { interact("open"); } 
@@ -35,6 +44,22 @@ public class Door extends GameObject implements Interactable {
                 Logger.getLogger("Door").log(Level.WARNING,"The door could not be interacted with",ex);
             }
         }
+    }
+    
+    /**
+     * Tries to open the door.
+     * @throws OutOfReachException when the door could not be opened
+     */
+    public void open() throws OutOfReachException {
+        interact("open");
+    }
+    
+    /**
+     * Tries to close the door.
+     * @throws OutOfReachException when the door could not be closed
+     */
+    public void close() throws OutOfReachException {
+        interact("close");
     }
     
     /**

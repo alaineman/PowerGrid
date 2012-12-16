@@ -20,8 +20,8 @@ public class Wall extends Collision {
         23837,23841,23842,23844,23849,23851,23870, // Varrock walls/fences
         23922,23923, // Varrock walls
         
-        35305,35306,35330,35331,35332,35333,35336,35340,35341
-    }; // Varrock walls
+        35305,35306,35330,35331,35332,35333,35336,35340,35341 // Varrock walls
+    };
     
     public Wall(int x,int y,int z,int rawValue) {
         super (x,y,z,rawValue);

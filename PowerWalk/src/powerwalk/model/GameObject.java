@@ -54,6 +54,8 @@ public class GameObject {
     public int getRawNumber() {
         return rawNumber;
     }
+    
+    public void examine() {}
 
     
     /**

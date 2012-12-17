@@ -1,8 +1,18 @@
 package test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import powerwalk.Bot;
+import powerwalk.control.ToolBox;
 import powerwalk.model.GameObject;
 import powerwalk.model.Grid;
 import powerwalk.model.Point;
+import powerwalk.model.XMLNode;
+import powerwalk.model.world.Wall;
 
 public class TestGrid {
     
@@ -89,5 +99,43 @@ public class TestGrid {
         g.delete(o.getPosition());
         if (g.size() == size-1) System.out.println("succes");
         else System.out.println("failure: was " + g.size());
+        
+        
+        Grid worldmap = Bot.getBot().getWorldMap();
+        ArrayList<Wall> walls = TestPathFinder.createMaze();
+        for (Wall w : walls) {
+            worldmap.set(w.getPosition(),w);
+        }
+        XMLNode rootNode = worldmap.getXMLTree();
+        try (FileWriter writer = new FileWriter(new File("worldmap.xml"))) {
+            writer.write(rootNode.toString()); // save to xml file
+        } catch (IOException iox) {}
+        
+        
+        
+        System.out.print("save/load/equals\t\t\t");
+        try {
+            FileInputStream in = new FileInputStream(new File("worldmap.xml"));
+            XMLNode recoveredTree = ToolBox.getXMLTree(in); // get from xml file
+            Grid recoveredGrid = new Grid();
+            recoveredGrid.fillFromXML(recoveredTree); // store in new Grid
+            recoveredTree = recoveredGrid.getXMLTree(); // rebuild from recovered Tree
+            if (recoveredTree.hashCode() == rootNode.hashCode()) {
+                if (recoveredTree.equals(rootNode)) {
+                    System.out.println("succes");
+                } else {
+                    System.out.println("succes; equals() failed");
+                }
+            } else {
+                if (recoveredTree.equals(rootNode)) {
+                    System.out.println("succes; hashCode failed");
+                } else {
+                    System.out.println("failure: not equals()");
+                }
+            }
+        } catch (FileNotFoundException e404) {
+            System.out.println("failure: " + e404);
+        }
+        
     }
 }

@@ -1,5 +1,6 @@
 package powerwalk.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -140,5 +141,81 @@ public class Grid {
                 }
             }
         }
+    }
+    
+    /**
+     * creates an XML tree representation of the Grid and returns it.
+     * @return an XML tree representation of the Grid
+     */
+    public XMLNode getXMLTree() {
+        HashMap<String,String> atts = new HashMap<>(2);
+        atts.put("columns", String.valueOf(data.size()));
+        ArrayList<XMLNode> columns = new ArrayList<>(data.size());
+        for (Entry<Integer,HashMap<Integer,GameObject[]>> column : data.entrySet()) {
+            // for each column in the Grid
+            HashMap<String,String> columnAtts = new HashMap<>(2);
+            columnAtts.put("index",String.valueOf(column.getKey()));
+            ArrayList<XMLNode> cells = new ArrayList<>(column.getValue().size());
+            for (Entry<Integer,GameObject[]> cell : column.getValue().entrySet()) {
+                // for each cell in that column
+                HashMap<String,String> cellAtts = new HashMap<>(2);
+                cellAtts.put("index", String.valueOf(cell.getKey()));
+                ArrayList<XMLNode> objects = new ArrayList<>(cell.getValue().length);
+                for (GameObject o : cell.getValue()) {
+                    // for each object in that cell
+                    HashMap<String,String> objectAtts = new HashMap<>(2);
+                    objectAtts.put("value",String.valueOf(o.getRawNumber()));
+                    objectAtts.put("plane", String.valueOf(o.getPosition().z));
+                    objects.add(new XMLNode("object",objectAtts,null));
+                }
+                cells.add(new XMLNode("cell",cellAtts,objects));
+            }
+            columns.add(new XMLNode("column",columnAtts,cells));
+        }
+        return new XMLNode("grid",atts,columns);
+    }
+    
+    /**
+     * parses the data from the provided XML structure if it represents a grid.
+     * <p>Only XMLNodes with the tag "grid" will be accepted.</p>
+     * @param root the root Node of the grid structure.
+     */
+    public void fillFromXML(XMLNode root) {
+        try {
+            if (root.getTag().equals("grid")) {
+                for (XMLNode column : root.children()) {
+                    fillColumn(column);
+                }
+            }
+        } catch (NumberFormatException nfe) {}
+    }
+    
+    private void fillColumn(XMLNode col) {
+        if (col.getTag().equals("column")) {
+            int index = Integer.parseInt(col.getAttributes().get("index"));
+            for (XMLNode cell : col.children()) {
+                fillCell(index,cell);
+            }
+        }
+    }
+    
+    private void fillCell(int colIndex,XMLNode cell) {
+        if (cell.getTag().equals("cell")) {
+            int cellIndex = Integer.parseInt(cell.getAttributes().get("index"));
+            for (XMLNode o : cell.children()) {
+                HashMap<String,String> atts = o.getAttributes();
+                int z = Integer.parseInt(atts.get("plane"));
+                Point loc = new Point(colIndex,cellIndex,z);
+                set(loc,new GameObject(loc.x,loc.y,loc.z,Integer.parseInt(atts.get("value"))));
+            }
+        }
+    }
+    
+    /**
+     * returns a XML-formatted representation of this Grid
+     * @return a XML-formatted representation of this Grid
+     */
+    @Override public String toString() {
+        return getXMLTree().toString();
     }
 }

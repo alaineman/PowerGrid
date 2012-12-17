@@ -3,6 +3,7 @@ package powerwalk.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * An XML node in an XML tree.
@@ -114,18 +115,36 @@ public class XMLNode {
             res += att.getKey() + "=\"" + att.getValue() + "\" ";
         }
         if (isSelfClosing()) {
-            if (tag.startsWith("?")) {
-                res += "?>";
-            } else {
                 res += "/>\n";
-            }
         } else {
             res += ">\n";
             for (XMLNode n : children) {
-                res += prefix + n.toString(prefix + "  ");
+                res += n.toString(prefix + "  ");
             }
             res += prefix + "</" + tag + ">\n";
         }
         return res;
+    }
+
+    @Override public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.tag);
+        hash = 79 * hash + Objects.hashCode(this.attributes);
+        hash = 79 * hash + Objects.hashCode(this.children);
+        return hash;
+    }
+    
+    @Override public boolean equals(Object other) {
+        if (other instanceof XMLNode) {
+            XMLNode that = (XMLNode)other;
+            if (!this.getTag().equals(that.getTag())) return false;
+            if (!this.getAttributes().equals(that.getAttributes())) return false;
+            
+            if (!this.children().containsAll(that.children())) return false;
+            if (!that.children().containsAll(this.children())) return false;
+            
+            return true;
+        }
+        return false;
     }
 }

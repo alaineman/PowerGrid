@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,7 +69,13 @@ public abstract class ToolBox {
      */
     public static HashMap<String,String> getAttributes(String xml) {
         HashMap<String,String> vals = new HashMap<>();
-        xml = xml.substring(xml.indexOf(" ",xml.indexOf("<")),xml.lastIndexOf(">"));
+        int tagEnd = xml.indexOf(" ",xml.indexOf("<"));
+        if (tagEnd == -1) {
+            xml = xml.substring(xml.indexOf("<"),xml.lastIndexOf(">"));
+        } else {
+            xml = xml.substring(tagEnd,xml.lastIndexOf(">"));
+        }
+        
         while (!xml.isEmpty()) {
             try {
                 xml = xml.trim();
@@ -115,7 +120,8 @@ public abstract class ToolBox {
     /**
      * Parses an XML Tree from the given InputStream
      * @param in the InputStream to parse an XMLTree from
-     * @return the XMLTree given by the InputStream
+     * @return the XMLTree given by the InputStream, or null when the InputStream 
+     *         could not be read.
      */
     public static XMLNode getXMLTree(InputStream in) {
         ArrayList<String> lines = new ArrayList<>();
@@ -127,7 +133,6 @@ public abstract class ToolBox {
         } catch (IOException iox) {
             return null;
         }
-        
     }
     
     /**
@@ -143,6 +148,13 @@ public abstract class ToolBox {
     private static XMLNode getXMLTree(ArrayList<String> lines, int start) {
         lineIndex = start;
         String root = lines.get(start);
+        if (root.isEmpty() ||                                 // ignore empty lines
+           (root.contains("<?xml") && root.contains("?>")))   // ignore <?xml ... ?> tag
+            return getXMLTree(lines,start+1);
+        
+        if (root.contains("<!--") && root.contains("-->")) { // ignore one-line comments)
+            return null;
+        }
         HashMap<String,String> attributes = getAttributes(root);
         String tag = getTagFromXML(root);
         ArrayList<XMLNode> children = new ArrayList<>(5);
@@ -153,8 +165,13 @@ public abstract class ToolBox {
                 if (current.contains("</" + tag + ">")) {
                     break;
                 }
-                children.add(getXMLTree(lines,lineIndex));
+                XMLNode n = getXMLTree(lines,lineIndex);
+                if (n != null) {
+                    children.add(n);
+                }
             }
+        } else {
+            children = null;
         }
         return new XMLNode(tag,attributes,children);
     }

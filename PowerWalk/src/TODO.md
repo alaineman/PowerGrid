@@ -27,9 +27,6 @@ powerwalk.model
 
 powerwalk.control
 -----------------
-- [m] Mapper.save() (->PATRICK)
-- [m] Mapper.load() (->PATRICK)
-- [m] ToolBox.getXMLTree(File) (->PATRICK)
 - [c] WidgetManager
     -[m] openQuestWidget()
     -[m] openNoticeboard()
@@ -37,6 +34,6 @@ powerwalk.control
 
 powerwalk.view
 --------------
-- Fix destination list
-- Allow "travel to" command for each destination
-- Embed more functionality from the Bot class
+- Fix destination list (->PATRICK)
+- Allow "travel to" command for each destination (->PATRICK)
+- Embed more functionality from the Bot class (->PATRICK)

@@ -152,7 +152,10 @@ public abstract class ToolBox {
            (root.contains("<?xml") && root.contains("?>")))   // ignore <?xml ... ?> tag
             return getXMLTree(lines,start+1);
         
-        if (root.contains("<!--") && root.contains("-->")) { // ignore one-line comments)
+        if (root.contains("<!--") ) { // ignore comments
+            while (!lines.get(lineIndex).contains("-->")) {
+                lineIndex++;
+            }
             return null;
         }
         HashMap<String,String> attributes = getAttributes(root);

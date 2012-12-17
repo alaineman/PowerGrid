@@ -11,5 +11,8 @@
     <special name="DepositBox">
         <location pos="" />
     </special>
-    <!-- Etcetera -->
+    <!-- Etcetera 
+         Just make this comment multi-line
+         to stress out the XML parser.
+         Just because it needs to be tested -->
 </speciallocations>

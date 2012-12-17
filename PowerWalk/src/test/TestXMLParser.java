@@ -10,7 +10,7 @@ import powerwalk.model.XMLNode;
  */
 public class TestXMLParser {
     
-    public static final String resource = "powerwalk/data/teleportItems.xml";
+    public static final String resource = "powerwalk/data/specialLocations.xml";
     
     /**
      * Tests the ToolBox.getXMLTree(InputStream) and XMLNode.toString() methods 

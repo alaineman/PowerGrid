@@ -10,7 +10,7 @@ import powerwalk.model.interact.Transportable;
 
 /**
  *
- * @author vync job
+ * @author Alaineman
  */
 public class LunarBoat extends Transportable{
     

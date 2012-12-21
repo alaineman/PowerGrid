@@ -21,7 +21,8 @@ public abstract class TeleportItem extends Item {
      * Creates a new TeleportItem using the given Item from the RSBot API.
      * The provided Item's id will be stored in a list denoting all item id 
      * values that represent the Item in all its possible states
-     * @param rsItem 
+     * @param rsItem the Item-object to base this TeleportItem on.
+     * @param teleportCommand the command used to use the teleport
      */
     public TeleportItem(org.powerbot.game.api.wrappers.node.Item rsItem, String teleportCommand){
         super(rsItem); 
@@ -62,8 +63,21 @@ public abstract class TeleportItem extends Item {
     }
     
     /**
+     * returns all Points this TeleportItem can teleport to.
+     * @return all Points this TeleportItem can teleport to
+     */
+    public Point[] availableDestinations() {
+        Point[] points = new Point[destinations.size()];
+        for (int i=0;i<destinations.size();i++) {
+            points[i] = destinations.get(i).getPosition();
+        }
+        return points;
+    }
+    
+    /**
      * The <code>Teleportable</code> that is linked to this TeleportItem.
      * <p>subclasses of this class should override this inner class to provide a
+     * detailed version of the Item's destination(s)</p>
      */
     protected static abstract class Destination extends Teleportable{
         

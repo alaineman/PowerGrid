@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package powerwalk.model.interact.handlers;
 
 import java.util.ArrayList;
@@ -9,7 +5,7 @@ import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
- *
+ * 
  * @author Alaineman
  */
 public class LunarBoat extends Transportable{

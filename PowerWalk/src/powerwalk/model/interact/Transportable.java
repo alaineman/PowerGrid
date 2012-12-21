@@ -43,17 +43,18 @@ public abstract class Transportable extends Teleportable {
     
     /**
      * Teleports you to the first destination Point.
+     * <p>When there are no destinations for this Transportable, this method does nothing.
      * @throws OutOfReachException when the requirements are not met.
      */
     @Override public void follow() throws OutOfReachException {
         if(!destinations.isEmpty()){
             follow(destinations.get(0));
-        }        
+        }
     }
     
     /**
      * Returns available destinations for this Transportable.
-     * @return available destinations.
+     * @return the available destinations.
      */
     public Transportable[] getDestinations() {
         return destinations.toArray(new Transportable[0]);

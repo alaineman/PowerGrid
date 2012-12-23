@@ -102,6 +102,7 @@ public class Bot {
                     stopNow = true;
                 }
             };
+            travelTask.setName("Travel to " + p);
             taskQueue.offer(travelTask); 
         } catch (OutOfReachException e) {
             Logger.getLogger("Bot").log(Level.WARNING, "The path could not be computed", e);
@@ -134,6 +135,7 @@ public class Bot {
      */
     public void assignTask(Task task) {
         taskQueue.offer(task);
+        System.out.println("[PowerWalk] Task \"" + task.getName() + "\" assigned with priority " + task.getPriority());
     }
     
     /**

@@ -32,7 +32,9 @@ public class Starter extends ActiveScript {
     @Override public int loop() {
         if (Bot.getBot().tasksPending() > 0) {
             currentTask = Bot.getBot().retrieveTask();
+            System.out.println("[PowerWalk] Executing Task \"" + currentTask.getName() + "\"...");
             currentTask.execute();
+            System.out.println("[PowerWalk] Task \"" + currentTask.getName() + "\" has been executed.");
             currentTask = null;
             return 20;
         } else {
@@ -50,7 +52,7 @@ public class Starter extends ActiveScript {
     
     /**
      * removes non-essential data structures and reduces the size of essential 
-     * data structures in order to free memory. 
+     * data structures in order to free memory or speed up general performance. 
      * 
      * <p>Since most non-essential data structures are used for caching, calling 
      * this method repeatedly will cause reduction of performance.</p>
@@ -65,5 +67,7 @@ public class Starter extends ActiveScript {
         
         // purge the World Map (takes potentially really, really long)
         Bot.getBot().getWorldMap().purge();
+        
+        System.out.println("[PowerWalk] The caches have been purged");
     }
 }

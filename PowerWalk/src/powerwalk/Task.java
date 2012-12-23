@@ -6,6 +6,7 @@ package powerwalk;
  */
 public abstract class Task implements Comparable<Task> {
     private int priority = 0;
+    private String name = "Generic Task";
     
     /**
      * Creates a new Task with the specified priority.
@@ -53,4 +54,22 @@ public abstract class Task implements Comparable<Task> {
      * execute method.</p>
      */
     public void cancel() {}
+    
+    /**
+     * Sets a name for this Task. The name can be used for identification and 
+     * can be found back in logs.
+     * @param name the new name for this Task
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    /**
+     * returns the assigned name for this Task.
+     * When no name has been assigned, this method returns "Generic Task".
+     * @return the name of this Task
+     */
+    public String getName() {
+        return name;
+    }
 }

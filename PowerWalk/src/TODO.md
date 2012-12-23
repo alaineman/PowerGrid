@@ -8,7 +8,6 @@ TODO-list
 general
 -------
 - Add JavaDoc comments to public methods that don't have it.
-- Make a class Tree describing what each class does.
 - Optional: write documentation for other script writers about the top-level methods of powerwalk
 
 powerwalk.model

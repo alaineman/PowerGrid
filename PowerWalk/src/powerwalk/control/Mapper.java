@@ -6,6 +6,7 @@ import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.Bot;
+import powerwalk.Starter;
 import powerwalk.model.GameObject;
 
 /**
@@ -97,7 +98,7 @@ public class Mapper extends Thread {
      */
     @Override public void run() {
         setName("Mapper");
-        
+        System.out.println("[PowerWalk] Mapper started");
         while (mappingPolicy != MAP_NONE) {
             
             SceneObject[] objects = SceneEntities.getLoaded();
@@ -105,16 +106,19 @@ public class Mapper extends Thread {
             for (SceneObject o : objects) {
                 Tile tile = o.getLocation();
                 GameObject go = new GameObject(tile.getX(),tile.getY(),tile.getPlane(),o.getType());
-                GameObject orig = Bot.getBot().getWorldMap().set(go.getPosition(),go);
-                if (orig != null) {
-                    Logger.getLogger("Mapper").log(Level.INFO, "{0} is overwritten by {1}", new Object[] {orig, go});
-                }
+                Bot.getBot().getWorldMap().set(go.getPosition(),go);
+            }
+            
+            if (!ToolBox.writeToFile(Bot.getBot().getWorldMap().getXMLTree(), Starter.worldMapFile)) {
+                System.out.println("[PowerWalk] ERROR: updating the WorldMap in " + Starter.worldMapFile + " failed");
             }
             
             if (mappingPolicy == MAP_ONCE) {
                 setPolicy(MAP_NONE);
+                System.out.println("[PowerWalk] Mapper stopped after runOnce");
                 return;
             }
         }
+        System.out.println("[PowerWalk] Mapper stopped");
     }
 }

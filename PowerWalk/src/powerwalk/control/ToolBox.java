@@ -1,6 +1,7 @@
 package powerwalk.control;
 
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.powerbot.game.api.methods.Environment;
 import powerwalk.model.XMLNode;
 
 /**
@@ -177,5 +179,19 @@ public abstract class ToolBox {
             children = null;
         }
         return new XMLNode(tag,attributes,children);
+    }
+    
+    public static boolean writeToFile(Object o, String file) {
+        String text = String.valueOf(o);
+        try {
+            String fullpath = Environment.getStorageDirectory().toString() + "\\" + file;
+            try (FileWriter w = new FileWriter(fullpath)) {
+                w.append(text);
+                w.flush();
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

@@ -31,8 +31,9 @@ public class MainFrame extends JFrame {
     
     private JTextField destinationField = new JTextField();
     private JPanel entryList = new JPanel();
+    public static MainFrame theMainFrame = null;
     
-    public static void main(String[] args) { new MainFrame(); }
+    public static void main(String[] args) { theMainFrame = new MainFrame(); }
     
     public MainFrame() {
         super(Starter.productName + " - " + Starter.version);

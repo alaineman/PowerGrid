@@ -1,8 +1,17 @@
 package powerwalk;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
+import org.powerbot.game.api.methods.Environment;
+import powerwalk.control.Mapper;
+import powerwalk.control.ToolBox;
 import powerwalk.model.Destinations;
+import powerwalk.model.XMLNode;
+import powerwalk.view.ContentFrame;
 
 /**
  * Starter and Task Manager class for the entire plug-in 
@@ -17,12 +26,38 @@ import powerwalk.model.Destinations;
          )
 public class Starter extends ActiveScript {
     
+    public static final String worldMapFile = "worldmap.xml";
+    
     /** The name of the Plug-in */
     public static final String productName = "PowerWalk";
     /** The version number */
     public static final double version = 0.1;
     
     private static Task currentTask = null;
+    
+    /**
+     * Creates a ContentFrame instance and shows it.
+     */
+    @Override public void onStart() {
+        System.out.println("[PowerWalk] Starting...");
+        System.out.println("[PowerWalk] Storage directory set as " + Environment.getStorageDirectory().toString());
+        System.out.println("[PowerWalk] loading WorldMap from File: \"" + worldMapFile + "\"...");
+        try (FileInputStream worldMapIn = new FileInputStream(Environment.getStorageDirectory().toString() + "\\" + worldMapFile)) {
+            XMLNode worldMap = ToolBox.getXMLTree(worldMapIn);
+            Bot.getBot().getWorldMap().fillFromXML(worldMap);
+            System.out.println("[PowerWalk] WorldMap loaded");
+        } catch (IOException e) {
+            if (e instanceof FileNotFoundException) {
+                System.out.println("[PowerWalk] WorldMap file does not exist; starting with empty WorldMap");
+            } else {
+                System.out.println("[PowerWalk] WorldMap failed to load");
+            }
+        }
+        Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
+        
+        ContentFrame.theFrame = new ContentFrame();
+        System.out.println("[PowerWalk] PowerWalk started, waiting for tasks...");
+    }
     
     /**
      * executes a Task from the TaskQueue.
@@ -32,14 +67,31 @@ public class Starter extends ActiveScript {
     @Override public int loop() {
         if (Bot.getBot().tasksPending() > 0) {
             currentTask = Bot.getBot().retrieveTask();
-            System.out.println("[PowerWalk] Executing Task \"" + currentTask.getName() + "\"...");
+            
+            System.out.println("[PowerWalk] Beginning Task \"" + currentTask.getName() + "\"...");
             currentTask.execute();
-            System.out.println("[PowerWalk] Task \"" + currentTask.getName() + "\" has been executed.");
+            System.out.println("[PowerWalk] Task \"" + currentTask.getName() + "\" has ended.");
+            
             currentTask = null;
             return 20;
         } else {
-            return 5;
+            return 10;
         }
+    }
+    
+    /**
+     * Ensures the Mapper is stopped and the ContentFrame is destroyed.
+     * Also cleans up as much objects related to PowerWalk as possible.
+     */
+    @Override public void onStop() {
+        System.out.println("[PowerWalk] stopping PowerWalk...");
+        Bot.getBot().becomeIdle();
+        Mapper.stopMapping();
+        ContentFrame.theFrame.dispose();
+        ContentFrame.theFrame = null;
+        purge(); // free all data structures and objects they contain
+        System.gc(); // running Garbage Collector to ensure any potentially problematic objects (Readers/Writers, Task instances, etc..) are finalized and destroyed
+        System.out.println("[PowerWalk] PowerWalk has been terminated");
     }
     
     /**
@@ -65,7 +117,7 @@ public class Starter extends ActiveScript {
         // purge the destination list used by the travelTo(String dest) command
         Destinations.purge();
         
-        // purge the World Map (takes potentially really, really long)
+        // purge the World Map (takes potentially long)
         Bot.getBot().getWorldMap().purge();
         
         System.out.println("[PowerWalk] The caches have been purged");

@@ -2,17 +2,13 @@ package powerwalk;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.interactive.Players;
 import powerwalk.control.PathFinder;
 import powerwalk.model.Destinations;
-import powerwalk.model.GameObject;
 import powerwalk.model.Grid;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
-import powerwalk.model.interact.Interactable;
 
 /**
  * Bot-class representing the Player. 
@@ -62,20 +58,26 @@ public class Bot {
      */
     public void travelTo(Point p, boolean asap) { 
         
-        try { 
+        try {
             final ArrayList<Point> path = PathFinder.calculatePath(Bot.getBot().getPosition(), p);
             int priority = (asap ? Integer.MAX_VALUE : 0);
             Task travelTask = new Task(priority) {
                 private boolean stopNow = false;
                 @Override public void execute() {
+                    System.out.println("[PowerWalk] Travel to " + path.get(path.size()-1) + " started");
                     int targetPoint = 1;
                     int threshold = (int)(3 + 3 * Math.random());
+                    
+                    // walk to first tile
+                    Walking.walk(path.get(targetPoint).toTile());
+                    
                     while (targetPoint < path.size()) {
                         Point playerPos = getPosition();
                         if (stopNow) { // we have to stop
                             // set move to current position
                             Walking.walk(playerPos.toTile());
-                            break;
+                            System.out.println("[PowerWalk] Task \"" + this.getName() + "\" has been aborted");
+                            return;
                         }
                         
                         // are we there yet?
@@ -85,27 +87,33 @@ public class Bot {
                         if (dist_to_point < threshold) {
                             // yes, we are close enough
                             targetPoint++;
-                            threshold = (int)(3 + 3 * Math.random());
-                            Walking.walk(path.get(targetPoint).toTile());
-                            GameObject g = getWorldMap().get(path.get(targetPoint));
-                            if (g instanceof Interactable) {
-                                try {
-                                    ((Interactable)g).interact(); // default action
-                                } catch (OutOfReachException ex) {
-                                    Logger.getLogger("Bot").log(Level.SEVERE, "Could not reach interactable", ex);
-                                }
+                            threshold = (int)(5 + 4 * Math.random());
+                            if (targetPoint < path.size()) {
+                                Point t = path.get(targetPoint);
+                                Walking.walk(t.toTile());
+                                /*GameObject g = getWorldMap().get(t); // XXX uncomment after implementing Interactables
+                                if (g instanceof Interactable) {
+                                    try {
+                                        ((Interactable)g).interact(); // default action
+                                    } catch (OutOfReachException ex) {
+                                        Logger.getLogger("Bot").log(Level.SEVERE, "Could not reach interactable", ex);
+                                    }
+                                }*/
+                            } else {
+                                break;
                             }
                         }
                     }
+                    System.out.println("[PowerWalk] Destination " + path.get(path.size()-1) + " reached");
                 }
                 @Override public void cancel() {
                     stopNow = true;
                 }
             };
             travelTask.setName("Travel to " + p);
-            taskQueue.offer(travelTask); 
+            assignTask(travelTask); 
         } catch (OutOfReachException e) {
-            Logger.getLogger("Bot").log(Level.WARNING, "The path could not be computed", e);
+            System.out.println("[PowerWalk] WARNING: Cannot travel to " + p + ", no path found");
         }
         
     }
@@ -167,5 +175,6 @@ public class Bot {
         taskQueue.clear();
         Task current = Starter.currentTask();
         if (current != null) current.cancel();
+        System.out.println("[PowerWalk] The Bot has become idle");
     }
 }

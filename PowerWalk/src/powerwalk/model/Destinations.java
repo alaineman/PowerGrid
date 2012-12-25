@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,26 +26,26 @@ public class Destinations {
         destinations.clear();
         InputStream in = ClassLoader.getSystemResourceAsStream("powerwalk/data/destinations.xml");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String current;
-            do {
-                current = reader.readLine();
-            } while (!ToolBox.getTagFromXML(current).equals("dest"));
+            String current = reader.readLine();
             
-            while (ToolBox.getTagFromXML(current).equals("dest")) {
-                HashMap<String,String> data = ToolBox.getAttributes(current);
-                String key = data.get("name");
-                String pos = data.get("pos");
-                try {
-                    pos = pos.substring(pos.indexOf("(")+1,pos.lastIndexOf(")"));
-                    String[] coords = pos.split(",");
-                    int x=0,y=0,z=0;
-                    if (coords.length > 0) x = Integer.parseInt(coords[0]);
-                    if (coords.length > 1) y = Integer.parseInt(coords[1]);
-                    if (coords.length > 2) z = Integer.parseInt(coords[2]);
-                    destinations.put(key,new Tile(x,y,z));
-                    
-                } catch (StringIndexOutOfBoundsException | NumberFormatException e) {
-                    Logger.getLogger("Destinations").log(Level.FINE,"Destination " + current + " could not be read",e);
+            while (reader.ready()) {
+                if (ToolBox.getTagFromXML(current).equals("dest")) {
+                    HashMap<String,String> data = ToolBox.getAttributes(current);
+                    String key = data.get("name");
+                    String pos = data.get("pos");
+                    try {
+                        pos = pos.substring(pos.indexOf("(")+1,pos.lastIndexOf(")"));
+                        String[] coords = pos.split(",");
+                        int x=0,y=0,z=0;
+                        if (coords.length > 0) x = Integer.parseInt(coords[0]);
+                        if (coords.length > 1) y = Integer.parseInt(coords[1]);
+                        if (coords.length > 2) z = Integer.parseInt(coords[2]);
+
+                        destinations.put(key,new Tile(x,y,z));
+
+                    } catch (StringIndexOutOfBoundsException | NumberFormatException e) {
+                        Logger.getLogger("Destinations").log(Level.FINE,"Destination " + current + " could not be read",e);
+                    }
                 }
                 current = reader.readLine();
             }
@@ -83,6 +84,13 @@ public class Destinations {
     public static Set<String> getAvailableDestinations() {
         if (destinations.isEmpty()) setupDestinationList();
         return destinations.keySet();
+    }
+    
+    public static Set<Entry<String,Tile>> getEntries() {
+        if (destinations.isEmpty()) {
+            setupDestinationList();
+        }
+        return destinations.entrySet();
     }
     
     /**

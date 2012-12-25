@@ -53,9 +53,14 @@ public abstract class PathFinder {
             //TODO (0) if (current == start) adjacents += all teleport points
             for (int i=0;i<adjacents.length;i++) {
                 Point p = adjacents[i];
-                if (closedSet.contains(p) || isCollision(p)) {
+                if (closedSet.contains(p)) {
                     continue;
                 }
+                if (isCollision(p)) {
+                    closedSet.add(p);
+                    continue;
+                }
+                
                 double tempPathCost = pathCost.get(current) + 1;
                 
                 boolean isPending = pending.contains(p);
@@ -67,9 +72,6 @@ public abstract class PathFinder {
                         pending.offer(p);
                     }
                 }
-                
-                p.f_score = pathCost.get(current) + 1;
-                pending.offer(p);
             }
         }
         throw new OutOfReachException(goal,"Destination could not be reached");

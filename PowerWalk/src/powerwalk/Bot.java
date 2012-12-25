@@ -66,7 +66,7 @@ public class Bot {
                 @Override public void execute() {
                     System.out.println("[PowerWalk] Travel to " + path.get(path.size()-1) + " started");
                     int targetPoint = 1;
-                    int threshold = (int)(3 + 3 * Math.random());
+                    double threshold = 2 + 3 * Math.random();
                     
                     // walk to first tile
                     Walking.walk(path.get(targetPoint).toTile());
@@ -87,7 +87,7 @@ public class Bot {
                         if (dist_to_point < threshold) {
                             // yes, we are close enough
                             targetPoint++;
-                            threshold = (int)(5 + 4 * Math.random());
+                            threshold = 2 + 3 * Math.random();
                             if (targetPoint < path.size()) {
                                 Point t = path.get(targetPoint);
                                 Walking.walk(t.toTile());

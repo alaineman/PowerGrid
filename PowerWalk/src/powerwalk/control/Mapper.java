@@ -101,14 +101,16 @@ public class Mapper extends Thread {
         System.out.println("[PowerWalk] Mapper started");
         while (mappingPolicy != MAP_NONE) {
             
-            SceneObject[] objects = SceneEntities.getLoaded();
+            SceneObject[] objects = SceneEntities.getLoaded(new int[] {SceneEntities.TYPE_BOUNDARY,SceneEntities.TYPE_INTERACTIVE});
             
             for (SceneObject o : objects) {
                 Tile tile = o.getLocation();
                 GameObject go = new GameObject(tile.getX(),tile.getY(),tile.getPlane(),o.getType());
                 Bot.getBot().getWorldMap().set(go.getPosition(),go);
             }
-            
+            if (objects.length > 0 && Math.random() < 0.04) {
+                System.out.println("[PowerWalk] <debug> found object type " + objects[0].getType());
+            }
             if (!ToolBox.writeToFile(Bot.getBot().getWorldMap().getXMLTree(), Starter.worldMapFile)) {
                 System.out.println("[PowerWalk] ERROR: updating the WorldMap in " + Starter.worldMapFile + " failed");
             }

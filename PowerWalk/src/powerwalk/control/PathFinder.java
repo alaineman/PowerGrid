@@ -107,7 +107,7 @@ public abstract class PathFinder {
         // The Greedy algorithm reducing the points the Bot will click
         ArrayList<Point> selected = new ArrayList<>();
         int distSinceLastSelected = 0;
-        int targetDistance = maxDistance - (int)(2 + 5 * Math.random());
+        int targetDistance = maxDistance - (int)(3 + 5 * Math.random());
         for (Point p : path) {
             if (distSinceLastSelected < targetDistance /* && instanceAt(p) != interactable */) {
                 distSinceLastSelected++;

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
-public class SpiritTrees extends Transportable{
+public class CharterShip extends Transportable{
     
-    public SpiritTrees(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<SpiritTrees>(5));
+    public CharterShip(Point p){
+        super(p.x, p.y, p.z, -1, new ArrayList<CharterShip>(5));
     }
 
     @Override

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
-public class Canoes extends Transportable{
+public class HotAirBalloon extends Transportable{
     
-    public Canoes(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<Canoes>(5));
+    public HotAirBalloon(Point p){
+        super(p.x, p.y, p.z, -1, new ArrayList<HotAirBalloon>(5));
     }
 
     @Override

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
-public class FairyRings extends Transportable{
+public class SpiritTree extends Transportable{
     
-    public FairyRings(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<FairyRings>(70));
+    public SpiritTree(Point p){
+        super(p.x, p.y, p.z, -1, new ArrayList<SpiritTree>(5));
     }
 
     @Override
@@ -26,5 +26,3 @@ public class FairyRings extends Transportable{
     }
 
 }
-
-	

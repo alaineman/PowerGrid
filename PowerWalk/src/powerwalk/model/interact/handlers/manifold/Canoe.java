@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
-public class MineCarts extends Transportable {
+public class Canoe extends Transportable{
     
-    public MineCarts(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<MineCarts>(5));
+    public Canoe(Point p){
+        super(p.x, p.y, p.z, -1, new ArrayList<Canoe>(5));
     }
 
     @Override
@@ -24,4 +24,5 @@ public class MineCarts extends Transportable {
     public boolean isAllowed(String method) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
 }

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
-public class GnomeGliders extends Transportable{
+public class FairyRing extends Transportable{
     
-    public GnomeGliders(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<GnomeGliders>(7));
+    public FairyRing(Point p){
+        super(p.x, p.y, p.z, -1, new ArrayList<FairyRing>(70));
     }
 
     @Override
@@ -26,3 +26,5 @@ public class GnomeGliders extends Transportable{
     }
 
 }
+
+	

@@ -1,18 +1,22 @@
 package powerwalk.model.interact.handlers.manifold;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
-public class HotAirBalloons extends Transportable{
-    
-    public HotAirBalloons(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<HotAirBalloons>(5));
+public class Minecart extends Transportable {
+        
+    public Minecart(Point p, Collection<? extends Minecart> dests){
+        super(p.x, p.y, p.z, -1, dests);        
     }
-
+    
     @Override
     protected void handle(Transportable dest) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(dest.getDestinations().length > 1){
+            //toServer();
+        } else {
+            //toClient(dest);
+        }
     }
 
     @Override
@@ -24,5 +28,5 @@ public class HotAirBalloons extends Transportable{
     public boolean isAllowed(String method) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+   
 }

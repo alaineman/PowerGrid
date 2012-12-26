@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
-public class MagicCarpets extends Transportable{
+public class GnomeGlider extends Transportable{
     
-    public MagicCarpets(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<MagicCarpets>(10));
+    public GnomeGlider(Point p){
+        super(p.x, p.y, p.z, -1, new ArrayList<GnomeGlider>(7));
     }
 
     @Override

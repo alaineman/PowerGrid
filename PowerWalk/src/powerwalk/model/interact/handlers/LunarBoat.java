@@ -9,11 +9,7 @@ import powerwalk.model.interact.Transportable;
  * @author Alaineman
  */
 public class LunarBoat extends Transportable{
-    
-    public static final Point startPoint = new Point(0, 0);
-    
-    public static final Point endPoint = new Point(0, 0);
-    
+        
     public LunarBoat(Point p){
         super(p.x, p.y, p.z, -1, new ArrayList<LunarBoat>(1));
     }

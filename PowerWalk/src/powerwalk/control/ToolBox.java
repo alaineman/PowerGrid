@@ -1,6 +1,7 @@
 package powerwalk.control;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.powerbot.game.api.methods.Environment;
+import powerwalk.Starter;
 import powerwalk.model.XMLNode;
 
 /**
@@ -47,6 +49,7 @@ public abstract class ToolBox {
      * @return the index of i in arr
      */
     public static int sortedArrayIndexOf(int i,int[] arr) {
+        if (arr.length == 0) return -1;
         int start=0, end=arr.length-1;
         int mid = (start+end) /2;
         
@@ -63,6 +66,7 @@ public abstract class ToolBox {
         if (arr[start] == i) return start;
         else return -1;
     }
+    
     
     /**
      * Returns a HashMap containing the attributes and their values from a valid XML-String
@@ -185,9 +189,14 @@ public abstract class ToolBox {
         String text = String.valueOf(o);
         try {
             String fullpath = Environment.getStorageDirectory().toString() + "\\" + file;
-            try (FileWriter w = new FileWriter(fullpath)) {
-                w.append(text);
-                w.flush();
+            
+            File target = new File(fullpath);
+            if (!target.exists()) {
+                target.createNewFile();
+                Starter.logMessage("New World Map File created at " + target.getAbsolutePath());
+            }
+            try (FileWriter w = new FileWriter(target)) {
+                w.write(text);
             }
             return true;
         } catch (IOException e) {

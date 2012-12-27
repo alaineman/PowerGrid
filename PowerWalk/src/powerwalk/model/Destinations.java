@@ -94,6 +94,23 @@ public class Destinations {
     }
     
     /**
+     * checks if a name is registered for the given point.
+     * @param p the Point to look up
+     * @return the name for the given Point, or null if none exists
+     */
+    public static String findNameForDestination(Point p) {
+        if (p == null) return null;
+        Tile dest = p.toTile();
+        Set<Entry<String,Tile>> entries = destinations.entrySet();
+        for (Entry<String,Tile> e : entries) {
+            if (dest.equals(e.getValue())) {
+                return e.getKey();
+            }
+        }
+        return null;
+    }
+    
+    /**
      * Assigns a custom binding for a specified String.
      * <p>consecutive calls to <code>getDestination(name)</code> will return the 
      * position specified by <code>Destination</code>.</p>

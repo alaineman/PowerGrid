@@ -1,13 +1,10 @@
 package powerwalk.control;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.powerbot.game.api.methods.node.SceneEntities;
-import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.Bot;
 import powerwalk.Starter;
-import powerwalk.model.GameObject;
+import powerwalk.model.Point;
 
 /**
  * This class collects data from the RSBot environment and stores it in the singleton WorldMap-object
@@ -105,11 +102,9 @@ public class Mapper extends Thread {
             SceneObject[] objects = SceneEntities.getLoaded();
             
             for (SceneObject o : objects) {
-                Tile tile = o.getLocation();
-                GameObject go = new GameObject(tile.getX(),tile.getY(),tile.getPlane(),o.getId());
-                Bot.getBot().getWorldMap().set(go.getPosition(),go);
+                Bot.getBot().getWorldMap().set(Point.fromTile(o.getLocation()),o.getId());
             }
-            if (!ToolBox.writeToFile(Bot.getBot().getWorldMap().getXMLTree(), Starter.worldMapFile)) {
+            if (!ToolBox.writeToFile(Bot.getBot().getWorldMap().toString(), Starter.worldMapFile)) {
                 Starter.logMessage("ERROR: updating the WorldMap in " + Starter.worldMapFile + " failed");
             }
             

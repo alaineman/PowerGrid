@@ -35,13 +35,12 @@ public abstract class PathFinder {
         HashMap<Point, Double> pathCost = new HashMap<>();
         HashMap<Point,Point> came_from = new HashMap<>();
         
-        pathCost.put(start, 1d);
+        pathCost.put(start,0.0);
         
-        start.f_score = heuristicCost(start, goal);
+        start.f_score = Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) );
         
         pending.offer(start);
 
-        //Start the spread
         while (!pending.isEmpty()) {
             Point current = pending.poll();
             if (current.equals(goal)) {
@@ -50,43 +49,29 @@ public abstract class PathFinder {
             }
             closedSet.add(current);
             Point[] adjacents = current.getAdjacentPoints();
-            //TODO (0) if (current == start) adjacents += all teleport points
+            
             for (int i=0;i<adjacents.length;i++) {
                 Point p = adjacents[i];
-                if (closedSet.contains(p)) {
-                    continue;
-                }
-                if (isCollision(p)) {
-                    closedSet.add(p);
-                    continue;
-                }
-                
-                double tempPathCost = pathCost.get(current) + 1;
-                
-                boolean isPending = pending.contains(p);
-                if (!isPending || tempPathCost <= pathCost.get(p) || pathCost.get(p) == 0) {
-                    came_from.put(p, current);
-                    pathCost.put(p, tempPathCost);
-                    p.f_score = tempPathCost + heuristicCost(p,goal);
-                    if (!isPending) {
-                        pending.offer(p);
+                if (!closedSet.contains(p)) { 
+                    if (Bot.getBot().getWorldMap().get(p) instanceof Collision) {
+                        closedSet.add(p);
+                    } else {
+                        double tempPathCost = pathCost.get(current) + 1;
+
+                        boolean isPending = pending.contains(p);
+                        if (!isPending || tempPathCost <= pathCost.get(p) || pathCost.get(p) == 0) {
+                            came_from.put(p, current);
+                            pathCost.put(p, tempPathCost);
+                            p.f_score = tempPathCost + Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) );
+                            if (!isPending) {
+                                pending.offer(p);
+                            }
+                        }
                     }
                 }
             }
         }
         throw new OutOfReachException(goal,"Destination could not be reached");
-    }
-    
-    private static double heuristicCost(Point start, Point goal) {
-        // calculates the length between start and goal
-        int dx = start.x - goal.x;
-        int dy = start.y - goal.y;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-    
-    private static boolean isCollision(Point target) {
-        // checks whether target contains a Collision-object
-        return (Bot.getBot().getWorldMap().get(target) instanceof Collision);
     }
     
     private static ArrayList<Point> reconstruct(HashMap<Point,Point> came_from, Point current) {
@@ -105,7 +90,7 @@ public abstract class PathFinder {
     
     private static ArrayList<Point> reducePoints(ArrayList<Point> path, int maxDistance) {
         // The Greedy algorithm reducing the points the Bot will click
-        ArrayList<Point> selected = new ArrayList<>();
+        ArrayList<Point> selected = new ArrayList<>(path.size() / (maxDistance-3));
         int distSinceLastSelected = 0;
         int targetDistance = maxDistance - (int)(3 + 5 * Math.random());
         for (Point p : path) {
@@ -118,6 +103,12 @@ public abstract class PathFinder {
                 distSinceLastSelected = 0;
             }
         }
+        Point lastPoint = path.get(path.size()-1);
+        if (!selected.get(selected.size()-1).equals(lastPoint)) {
+            // if the final Point is not there, add it to the selected Points
+            selected.add(lastPoint);
+        }
+        selected.trimToSize();
         return selected;
     }
 }

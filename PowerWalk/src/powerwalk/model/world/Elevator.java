@@ -13,6 +13,8 @@ import powerwalk.model.interact.Interactable;
  */
 public abstract class Elevator extends GameObject implements Interactable {
     
+    public static final int[] values = new int[] {};
+    
     private int[] otherPlanes;
     
     public Elevator(int x,int y,int z,int rawValue,int[] otherPlanes) {

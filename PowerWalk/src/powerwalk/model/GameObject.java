@@ -7,11 +7,11 @@ package powerwalk.model;
  * 
  */
 public class GameObject {
-    private int x;
-    private int y;
-    private int z;
+    private int x = 0;
+    private int y = 0;
+    private int z = 0;
     
-    private int rawNumber;
+    private int rawNumber = -1;
     
     /**
      * Creates a new GameObject at the given position. the <code>rawNumber</code> 
@@ -57,6 +57,17 @@ public class GameObject {
     
     public void examine() {}
 
+    public void setPosition(Point p) {
+        if (p != null) {
+            x = p.x;
+            y = p.y;
+            z = p.z;
+        }
+    }
+    
+    public void setRawValue(int value) {
+        rawNumber = value;
+    }
     
     /**
      * Returns the hash code of this GameObject

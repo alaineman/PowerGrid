@@ -1,8 +1,12 @@
 package powerwalk.model;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import powerwalk.Starter;
+import powerwalk.model.world.*;
 
 /**
  * Three-dimensional data structure for GameObjects.
@@ -91,6 +95,32 @@ public class Grid {
         return original;
     }
     
+    public Class<? extends GameObject>[] objectclasses = new Class[] {
+        Wall.class,     Door.class, Person.class,
+        Elevator.class, Entity.class};
+    
+    public synchronized GameObject set(Point p, int value) {
+        // shady "reflect magic" corner
+        for (Class<? extends GameObject> c : objectclasses) {
+            try { 
+                Object v = c.getDeclaredField("values").get(null);
+                if (v instanceof int[]) {
+                    int[] values = (int[]) v;
+                    if (Arrays.binarySearch(values, value) >= 0) {
+                        Object o = c.getConstructor(new Class[] {int.class,int.class,int.class,int.class})
+                                      .newInstance(new Object[] {  p.x,      p.y,      p.z,     value   });
+                        if (o instanceof GameObject) {
+                            GameObject g = (GameObject)o;
+                            return set(p,g);
+                        }
+                    }
+                }
+            } catch (NoSuchFieldException   | SecurityException     | IllegalArgumentException 
+                   | IllegalAccessException | NoSuchMethodException | InstantiationException 
+                   | InvocationTargetException e) {}
+        }
+        return set(p,new GameObject(p.x,p.y,p.z,value));
+    }
     /**
      * removes the element stored at Point p from the Grid and returns this element.
      * returns null if no such element was found
@@ -166,6 +196,7 @@ public class Grid {
                     HashMap<String,String> objectAtts = new HashMap<>(2);
                     objectAtts.put("value",String.valueOf(o.getRawNumber()));
                     objectAtts.put("plane", String.valueOf(o.getPosition().z));
+                    objectAtts.put("class", o.getClass().getName());
                     objects.add(new XMLNode("object",objectAtts,null));
                 }
                 cells.add(new XMLNode("cell",cellAtts,objects));
@@ -205,8 +236,25 @@ public class Grid {
             for (XMLNode o : cell.children()) {
                 HashMap<String,String> atts = o.getAttributes();
                 int z = Integer.parseInt(atts.get("plane"));
-                Point loc = new Point(colIndex,cellIndex,z);
-                set(loc,new GameObject(loc.x,loc.y,loc.z,Integer.parseInt(atts.get("value"))));
+                Point p = new Point(colIndex,cellIndex,z); 
+                int value = Integer.parseInt(atts.get("value"));
+                if (atts.containsKey("class")) {
+                    try {
+                        // attempt creation of right type Object
+                        Object object = Class.forName(atts.get("class"))
+                                    .getConstructor(new Class[] {int.class,int.class,int.class,int.class})
+                                      .newInstance(new Object[] {  p.x,      p.y,      p.z,      value});
+                        
+                        GameObject g = (GameObject)object;
+                        set(p,g);
+                    } catch (ClassNotFoundException    | InstantiationException | IllegalAccessException 
+                           | InvocationTargetException | NoSuchMethodException  e) {
+                        Starter.logMessage("Construction for \"" + o + "\" failed: " + e);
+                        set(p,value);
+                    }
+                } else {
+                    set(p,value);
+                }
             }
         }
     }

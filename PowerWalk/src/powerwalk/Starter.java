@@ -22,10 +22,11 @@ import powerwalk.view.ContentFrame;
  * @author Alaineman
  */
 @Manifest(
-        authors     = "alaineman", 
-        name        = Starter.productName, 
-        description = "Runs all day!", 
-        version     = Starter.version 
+        authors        = "alaineman", 
+        name           = Starter.productName, 
+        description    = "Runs all day!", 
+        version        = Starter.version,
+        singleinstance = true
          )
 public class Starter extends ActiveScript {
     
@@ -85,7 +86,6 @@ public class Starter extends ActiveScript {
                 logMessage("Beginning StepTask \"" + task.getName() + "\"...");
                 task.start();
                 while (task.hasMoreSteps()) {
-                    logMessage("StepTask \"" + task.getName() + "\" has " + task.stepsLeft() + " steps remaining.");
                     task.execute();
                 }
                 task.finish();

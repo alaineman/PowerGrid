@@ -64,7 +64,7 @@ public class Bot {
                 @Override public void start() {
                     if (path.size() > 0) {
                         Point t = path.get(target);
-                        Starter.logMessage("[Task] issueing walk to " + t + " from player position " + Bot.getBot().getPosition());
+                        Starter.logMessage("[Task] travel to " + path.get(path.size()-1) + " has started, there are " + path.size() + " points on this path.");
                         Walking.walk(t.toTile());
                     }
                 }
@@ -79,19 +79,15 @@ public class Bot {
                     // Are we are close enough?
                     if (distToTarget < (3 + 3 * Math.random())) {
                         // Are there more points?
-                        Starter.logMessage("[Task] <debug> points left in path: " + (path.size() - target));
                         if (target + 1 < path.size()) {
                             ++target;
                             // Then we walk to the next tile.
                             Point t = path.get(target);
-                            Starter.logMessage("[Task] walk to " + t + " from player position " + playerPos);
                             Walking.walk(t.toTile());
                         } else {
                             // There are no more points, so we are done.
                             cancel();
                         }
-                    } else {
-                        Starter.logMessage("[Task] <debug> walking to next point: " + path.get(target) + ", still " + (int)distToTarget + " tiles to go.");
                     }
                     // wait a while before checking again
                     try { Thread.sleep((long)(134 + 86 * Math.random())); }
@@ -101,7 +97,9 @@ public class Bot {
                     Starter.logMessage("[Task] Destination " + path.get(path.size()-1) + " reached");
                 }
             };
-            travelTask.setName("Travel to " + p);
+            String name = Destinations.findNameForDestination(p);
+            if (name == null) name = p.toString();
+            travelTask.setName("Travel to " + name);
             assignTask(travelTask); 
         } catch (OutOfReachException e) {
             Starter.logMessage("WARNING: Cannot travel to " + p + ", no path found");
@@ -158,9 +156,7 @@ public class Bot {
      * <p>When this method returns, the current task doesn't need to have be 
      * stopped directly.</p>
      * <p>Note that Tasks that do not override the cancel() method cannot be 
-     * canceled. Most Tasks created by PowerWalk are cancelable</p>
-     * 
-     * 
+     * canceled. StepTasks and most Tasks created by PowerWalk are cancelable</p>
      */
     public void becomeIdle() {
         taskQueue.clear();

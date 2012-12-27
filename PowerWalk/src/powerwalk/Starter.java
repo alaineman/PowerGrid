@@ -85,6 +85,7 @@ public class Starter extends ActiveScript {
                 logMessage("Beginning StepTask \"" + task.getName() + "\"...");
                 task.start();
                 while (task.hasMoreSteps()) {
+                    logMessage("StepTask \"" + task.getName() + "\" has " + task.stepsLeft() + " steps remaining.");
                     task.execute();
                 }
                 task.finish();
@@ -145,7 +146,11 @@ public class Starter extends ActiveScript {
         logMessage("The caches have been purged");
     }
     
+    
     public static void logMessage(String message) {
         theLogger.info(message);
+    }
+    public static void logMessage(Object message) {
+        theLogger.info(String.valueOf(message));
     }
 }

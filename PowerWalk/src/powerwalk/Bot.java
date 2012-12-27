@@ -44,70 +44,61 @@ public class Bot {
      * registers a Task that moves to the destination specified in dest.
      * 
      * @param dest The target destination
-     * @param asap whether to insert this task before other tasks in the queue
+     * @param priority The priority of this Task
      */
-    public void travelTo(String dest,boolean asap) {
+    public void travelTo(String dest,int priority) {
         Point p = Point.fromTile(Destinations.getDestination(dest));
-        travelTo(p,asap);
+        travelTo(p,priority);
     }
     
     /**
      * Registers a Task that moves to the specified Point in the World
      * @param p The Point to move to
-     * @param asap whether to insert this task before other tasks in the queue
+     * @param asap The priority of this Task
      */
-    public void travelTo(Point p, boolean asap) { 
-        
+    public void travelTo(Point p, int priority) { 
         try {
-            final ArrayList<Point> path = PathFinder.calculatePath(Bot.getBot().getPosition(), p);
-            int priority = (asap ? Integer.MAX_VALUE : 0);
-            Task travelTask = new Task(priority) {
-                private boolean stopNow = false;
-                @Override public void execute() {
-                    Starter.logMessage("Travel to " + path.get(path.size()-1) + " started");
-                    int targetPoint = 1;
-                    double threshold = 2 + 3 * Math.random();
-                    
-                    // walk to first tile
-                    Walking.walk(path.get(targetPoint).toTile());
-                    
-                    while (targetPoint < path.size()) {
-                        Point playerPos = getPosition();
-                        if (stopNow) { // we have to stop
-                            // set move to current position
-                            Walking.walk(playerPos.toTile());
-                            Starter.logMessage("Task \"" + this.getName() + "\" has been aborted");
-                            return;
-                        }
-                        
-                        // are we there yet?
-                        int dx = playerPos.x - path.get(targetPoint).x;
-                        int dy = playerPos.y - path.get(targetPoint).y;
-                        double dist_to_point = Math.sqrt( dx*dx + dy*dy );
-                        if (dist_to_point < threshold) {
-                            // yes, we are close enough
-                            targetPoint++;
-                            threshold = 2 + 3 * Math.random();
-                            if (targetPoint < path.size()) {
-                                Point t = path.get(targetPoint);
-                                Walking.walk(t.toTile());
-                                /*GameObject g = getWorldMap().get(t); // XXX uncomment after implementing Interactables
-                                if (g instanceof Interactable) {
-                                    try {
-                                        ((Interactable)g).interact(); // default action
-                                    } catch (OutOfReachException ex) {
-                                        Logger.getLogger("Bot").log(Level.SEVERE, "Could not reach interactable", ex);
-                                    }
-                                }*/
-                            } else {
-                                break;
-                            }
-                        }
+            final ArrayList<Point> path = PathFinder.calculatePath(getPosition(), p);
+            StepTask travelTask = new StepTask(priority) {
+                private int target = 0;
+                @Override public void start() {
+                    if (path.size() > 0) {
+                        Point t = path.get(target);
+                        Starter.logMessage("[Task] issueing walk to " + t + " from player position " + Bot.getBot().getPosition());
+                        Walking.walk(t.toTile());
                     }
-                    Starter.logMessage("Destination " + path.get(path.size()-1) + " reached");
                 }
-                @Override public void cancel() {
-                    stopNow = true;
+                @Override public void step() {
+                    setStepsLeft(path.size() - target);
+                    Point playerPos = getPosition();
+                    // check the distance to our next point.
+                    double distToTarget = Math.sqrt( 
+                            Math.pow(playerPos.x-path.get(target).x,2) + 
+                            Math.pow(playerPos.y-path.get(target).y,2) );
+                    
+                    // Are we are close enough?
+                    if (distToTarget < (3 + 3 * Math.random())) {
+                        // Are there more points?
+                        Starter.logMessage("[Task] <debug> points left in path: " + (path.size() - target));
+                        if (target + 1 < path.size()) {
+                            ++target;
+                            // Then we walk to the next tile.
+                            Point t = path.get(target);
+                            Starter.logMessage("[Task] walk to " + t + " from player position " + playerPos);
+                            Walking.walk(t.toTile());
+                        } else {
+                            // There are no more points, so we are done.
+                            cancel();
+                        }
+                    } else {
+                        Starter.logMessage("[Task] <debug> walking to next point: " + path.get(target) + ", still " + (int)distToTarget + " tiles to go.");
+                    }
+                    // wait a while before checking again
+                    try { Thread.sleep((long)(134 + 86 * Math.random())); }
+                    catch (InterruptedException e) {}
+                }
+                @Override public void finish() {
+                    Starter.logMessage("[Task] Destination " + path.get(path.size()-1) + " reached");
                 }
             };
             travelTask.setName("Travel to " + p);
@@ -130,7 +121,7 @@ public class Bot {
      * registers a Task that moves to the nearest destination that matches the description in dest.
      * @param dest The target destination
      */
-    void gotoNearest(String dest) {
+    public void gotoNearest(String dest) {
         throw new UnsupportedOperationException("not yet supported");
     } //TODO (--) implement gotoNearest stub method
     
@@ -143,7 +134,7 @@ public class Bot {
      */
     public void assignTask(Task task) {
         taskQueue.offer(task);
-        Starter.logMessage("Task \"" + task.getName() + "\" assigned with priority " + task.getPriority());
+        Starter.logMessage(task.getClass().getSimpleName() + " \"" + task.getName() + "\" assigned with priority " + task.getPriority());
     }
     
     /**

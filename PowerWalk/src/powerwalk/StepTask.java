@@ -52,8 +52,6 @@ public abstract class StepTask extends Task {
         if (numSteps != 0) {
             if (numSteps > 0) numSteps--;
             step();
-        } else {
-            
         }
     }
     
@@ -113,11 +111,13 @@ public abstract class StepTask extends Task {
     public void finish() {}
     
     /**
-     * Label the StepTask as done. 
+     * Cancel this StepTask.
      * <p>After calling this method, no more steps will be executed. This method
      * is equivalent to calling <code>setStepsLeft(0)</code>.</p>
      */
-    protected void done() {
+    @Override public void cancel() {
         numSteps = 0;
     }
+    
+    
 }

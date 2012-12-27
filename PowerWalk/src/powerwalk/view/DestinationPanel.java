@@ -49,7 +49,7 @@ public class DestinationPanel extends JPanel {
             setBackground(Color.WHITE);
             go.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
-                    Bot.getBot().travelTo(destination, true);
+                    Bot.getBot().travelTo(destination, 0);
                 }
             });
         }

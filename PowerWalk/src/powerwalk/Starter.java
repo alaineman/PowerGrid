@@ -3,8 +3,6 @@ package powerwalk;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
@@ -82,11 +80,20 @@ public class Starter extends ActiveScript {
     @Override public int loop() {
         if (Bot.getBot().tasksPending() > 0) {
             currentTask = Bot.getBot().retrieveTask();
-            
-            logMessage("Beginning Task \"" + currentTask.getName() + "\"...");
-            currentTask.execute();
-            logMessage("Task \"" + currentTask.getName() + "\" has ended.");
-            
+            if (currentTask instanceof StepTask) {
+                StepTask task = (StepTask)currentTask;
+                logMessage("Beginning StepTask \"" + task.getName() + "\"...");
+                task.start();
+                while (task.hasMoreSteps()) {
+                    task.execute();
+                }
+                task.finish();
+                logMessage("StepTask \"" + task.getName() + "\" has ended");
+            } else {
+                logMessage("Beginning Task \"" + currentTask.getName() + "\"...");
+                currentTask.execute();
+                logMessage("Task \"" + currentTask.getName() + "\" has ended.");
+            }
             currentTask = null;
             return 20;
         } else {

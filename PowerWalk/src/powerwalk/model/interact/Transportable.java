@@ -44,7 +44,7 @@ public abstract class Transportable extends Teleportable {
     
     protected abstract void handle(Transportable dest);
 
-    protected abstract void waitForCompletion(Transportable dest);
+    protected void waitForCompletion(Transportable dest) {}
 
     public boolean addDestination(Transportable dest) {
         if (dest == null || destinations.contains(dest)) {

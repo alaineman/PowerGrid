@@ -13,7 +13,7 @@ import powerwalk.model.Point;
  * This Utility class deals with finding a path between two Points in the RSBot environment.
  *
  * @author Alaineman
- * @author P.Kramer
+ * @author Chronio
  */
 public abstract class PathFinder {
     

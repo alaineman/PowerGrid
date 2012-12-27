@@ -12,7 +12,7 @@ import powerwalk.model.world.Wall;
 
 /**
  * Canvas that the WorldMap is printed on to show the mapped areas in the Grid
- * @author P.Kramer
+ * @author Chronio
  */
 public class MapViewer extends Canvas {
     

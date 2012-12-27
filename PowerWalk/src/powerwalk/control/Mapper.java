@@ -11,7 +11,7 @@ import powerwalk.model.GameObject;
 
 /**
  * This class collects data from the RSBot environment and stores it in the singleton WorldMap-object
- * @author P.Kramer
+ * @author Chronio
  */
 public class Mapper extends Thread {
     
@@ -56,7 +56,7 @@ public class Mapper extends Thread {
             if (theMapper.isAlive()) throw new IllegalThreadStateException("Thread is still running");
         }
         if (policy < 0 || policy > 1) {
-            Logger.getLogger("Mapper").log(Level.WARNING, "Invalid policy: {0}", policy);
+            Starter.logMessage("Illegal State set for Mapper: " + policy + ", state set to MAP_ONCE");
             policy = MAP_ONCE;
         }
         theMapper = new Mapper();
@@ -97,30 +97,28 @@ public class Mapper extends Thread {
      * and <code>stopMapping()</code> methods should be used.
      */
     @Override public void run() {
+        
         setName("Mapper");
-        System.out.println("[PowerWalk] Mapper started");
+        Starter.logMessage("Mapper started");
         while (mappingPolicy != MAP_NONE) {
             
-            SceneObject[] objects = SceneEntities.getLoaded(new int[] {SceneEntities.TYPE_BOUNDARY,SceneEntities.TYPE_INTERACTIVE});
+            SceneObject[] objects = SceneEntities.getLoaded();
             
             for (SceneObject o : objects) {
                 Tile tile = o.getLocation();
-                GameObject go = new GameObject(tile.getX(),tile.getY(),tile.getPlane(),o.getType());
+                GameObject go = new GameObject(tile.getX(),tile.getY(),tile.getPlane(),o.getId());
                 Bot.getBot().getWorldMap().set(go.getPosition(),go);
             }
-            if (objects.length > 0 && Math.random() < 0.04) {
-                System.out.println("[PowerWalk] <debug> found object type " + objects[0].getType());
-            }
             if (!ToolBox.writeToFile(Bot.getBot().getWorldMap().getXMLTree(), Starter.worldMapFile)) {
-                System.out.println("[PowerWalk] ERROR: updating the WorldMap in " + Starter.worldMapFile + " failed");
+                Starter.logMessage("ERROR: updating the WorldMap in " + Starter.worldMapFile + " failed");
             }
             
             if (mappingPolicy == MAP_ONCE) {
                 setPolicy(MAP_NONE);
-                System.out.println("[PowerWalk] Mapper stopped after runOnce");
+                Starter.logMessage("Mapper stopped after runOnce");
                 return;
             }
         }
-        System.out.println("[PowerWalk] Mapper stopped");
+        Starter.logMessage("Mapper stopped");
     }
 }

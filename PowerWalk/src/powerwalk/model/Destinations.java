@@ -14,7 +14,7 @@ import powerwalk.control.ToolBox;
 
 /**
  * Utility class that maps destination Strings to their respective Tiles in the World.
- * @author P.Kramer
+ * @author Chronio
  */
 public class Destinations {
     

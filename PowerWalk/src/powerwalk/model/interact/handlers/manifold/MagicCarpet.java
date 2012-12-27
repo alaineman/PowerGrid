@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
+/**
+ * 
+ * @author Alaineman
+ */
 public class MagicCarpet extends Transportable{
     
     public MagicCarpet(Point p){

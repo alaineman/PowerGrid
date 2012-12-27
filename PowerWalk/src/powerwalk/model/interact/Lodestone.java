@@ -16,7 +16,7 @@ import powerwalk.model.Point;
  * Represents a Lodestone in the RSBot environment.
  *
  * @author Alaineman
- * @author P.Kramer
+ * @author Chronio
  */
 public class Lodestone extends Teleportable {
 

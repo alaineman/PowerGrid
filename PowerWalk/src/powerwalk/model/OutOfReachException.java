@@ -3,7 +3,7 @@ package powerwalk.model;
 /**
  * An exception that is thrown when an action involves 
  * moving towards an unreachable destination.
- * @author P.Kramer
+ * @author Chronio
  */
 public class OutOfReachException extends Exception {
     

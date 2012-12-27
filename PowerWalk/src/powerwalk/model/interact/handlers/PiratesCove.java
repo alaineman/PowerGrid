@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
-
+/**
+ * 
+ * @author Alaineman
+ */
 public class PiratesCove extends Transportable {
     
     public static final Point startPoint = new Point(0, 0);

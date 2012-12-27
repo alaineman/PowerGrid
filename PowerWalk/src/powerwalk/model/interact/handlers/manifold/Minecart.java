@@ -4,6 +4,10 @@ import java.util.Collection;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
+/**
+ * 
+ * @author Alaineman
+ */
 public class Minecart extends Transportable {
         
     public Minecart(Point p, Collection<? extends Minecart> dests){

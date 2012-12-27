@@ -7,7 +7,7 @@ import java.util.Objects;
 
 /**
  * An XML node in an XML tree.
- * @author P.Kramer
+ * @author Chronio
  */
 public class XMLNode {
     private String tag;

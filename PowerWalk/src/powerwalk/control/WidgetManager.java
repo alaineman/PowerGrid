@@ -8,7 +8,7 @@ import powerwalk.model.interact.Lodestone;
  * the RSBot environment provides.
  *
  * @author Alaineman
- * @author P.Kramer
+ * @author Chronio
  */
 public abstract class WidgetManager {
 

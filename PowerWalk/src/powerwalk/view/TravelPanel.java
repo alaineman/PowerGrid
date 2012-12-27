@@ -17,7 +17,7 @@ import powerwalk.model.Destinations;
 import powerwalk.model.Point;
 
 /**
- * @author P.Kramer
+ * @author Chronio
  */
 public class TravelPanel extends JPanel {
     

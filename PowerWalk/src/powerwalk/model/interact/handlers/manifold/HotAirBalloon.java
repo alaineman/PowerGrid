@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
+/**
+ * 
+ * @author Alaineman
+ */
 public class HotAirBalloon extends Transportable{
     
     public HotAirBalloon(Point p){

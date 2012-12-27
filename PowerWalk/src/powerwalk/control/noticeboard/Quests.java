@@ -2,7 +2,7 @@ package powerwalk.control.noticeboard;
 
 /**
  *
- * @author vync job
+ * @author Alaineman
  */
 public class Quests {
     

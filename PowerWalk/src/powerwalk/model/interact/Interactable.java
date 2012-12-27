@@ -4,7 +4,7 @@ import powerwalk.model.OutOfReachException;
 
 /**
  * Interface specifying Objects in the RSBot environment that can be interacted with.
- * @author P.Kramer
+ * @author Chronio
  */
 public interface Interactable {
     /**

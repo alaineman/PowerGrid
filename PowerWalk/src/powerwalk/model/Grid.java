@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 /**
  * Three-dimensional data structure for GameObjects.
- * @author P.Kramer
+ * @author Chronio
  */
 public class Grid {
     

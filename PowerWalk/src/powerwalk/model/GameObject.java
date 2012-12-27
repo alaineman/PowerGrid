@@ -3,7 +3,7 @@ package powerwalk.model;
 /**
  * This class represents an object from the RSbot environment.
  * 
- * @author P.Kramer
+ * @author Chronio
  * 
  */
 public class GameObject {

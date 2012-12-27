@@ -5,7 +5,7 @@ import org.powerbot.game.api.wrappers.widget.WidgetChild;
 
 /**
  *
- * @author vync job
+ * @author Alaineman
  */
 public abstract class Noticeboard {
 

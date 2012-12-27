@@ -2,7 +2,7 @@ package powerwalk;
 
 /**
  * Task Class that is used to queue tasks for the Bot to execute
- * @author P.Kramer
+ * @author Chronio
  */
 public abstract class Task implements Comparable<Task> {
     private int priority = 0;

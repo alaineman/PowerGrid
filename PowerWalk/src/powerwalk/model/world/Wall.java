@@ -5,7 +5,7 @@ import powerwalk.model.Collision;
 
 /**
  * Class representing all sorts of walls in the RSBot environment
- * @author P.Kramer
+ * @author Chronio
  */
 public class Wall extends Collision {
     

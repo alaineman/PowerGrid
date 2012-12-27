@@ -8,7 +8,7 @@ import powerwalk.model.OutOfReachException;
 
 /**
  * Represents a GameObject that can be teleported to.
- * @author P.Kramer
+ * @author Chronio
  * @author Alaineman
  */
 public abstract class Teleportable extends GameObject implements ComplexInteractable {

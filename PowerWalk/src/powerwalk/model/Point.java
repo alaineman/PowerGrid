@@ -4,7 +4,7 @@ import org.powerbot.game.api.wrappers.Tile;
 
 /**
  * Three dimensional Point.
- * @author P.Kramer
+ * @author Chronio
  */
 public class Point implements Comparable<Point> {
     /** The X-coordinate of this Point */

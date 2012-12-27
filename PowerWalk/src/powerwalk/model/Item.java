@@ -2,7 +2,7 @@ package powerwalk.model;
 
 /**
  * Class that represents an Item in the RSBot environment
- * @author P.Kramer
+ * @author Chronio
  */
 public class Item {
     

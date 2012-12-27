@@ -4,7 +4,7 @@ import powerwalk.model.OutOfReachException;
 
 /**
  * This class represents a mobile, non-aggressive object in the RSBot environment that can be interacted with.
- * @author P.Kramer
+ * @author Chronio
  */
 public class Character extends Entity {
 

@@ -13,7 +13,7 @@ import powerwalk.Bot;
 import powerwalk.model.Point;
 
 /**
- * @author P.Kramer
+ * @author Chronio
  */
 public class DestinationPanel extends JPanel {
     

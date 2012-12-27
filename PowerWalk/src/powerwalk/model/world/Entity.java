@@ -5,7 +5,7 @@ import powerwalk.model.interact.Interactable;
 
 /**
  * Class representing mobile objects from the RSBot environment
- * @author P.Kramer
+ * @author Chronio
  */
 public abstract class Entity extends GameObject implements Interactable {
     

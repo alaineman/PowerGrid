@@ -12,7 +12,7 @@ import powerwalk.model.interact.Interactable;
 
 /**
  * Class representing a Door in the RSBot environment
- * @author P.Kramer
+ * @author Chronio
  */
 public class Door extends GameObject implements Interactable {
     /** Raw values that represent doors in the RSBot environment */

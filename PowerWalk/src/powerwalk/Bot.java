@@ -14,8 +14,8 @@ import powerwalk.model.Point;
  * Bot-class representing the Player. 
  * The Bot can execute high-level tasks such as "travel to [destination]", 
  * "go to nearest [place of interest]", and others.
- * @author Vincent W
- * @author P.Kramer
+ * @author Alaineman
+ * @author Chronio
  */
 public class Bot {
     private static Bot theBot = new Bot();
@@ -64,7 +64,7 @@ public class Bot {
             Task travelTask = new Task(priority) {
                 private boolean stopNow = false;
                 @Override public void execute() {
-                    System.out.println("[PowerWalk] Travel to " + path.get(path.size()-1) + " started");
+                    Starter.logMessage("Travel to " + path.get(path.size()-1) + " started");
                     int targetPoint = 1;
                     double threshold = 2 + 3 * Math.random();
                     
@@ -76,7 +76,7 @@ public class Bot {
                         if (stopNow) { // we have to stop
                             // set move to current position
                             Walking.walk(playerPos.toTile());
-                            System.out.println("[PowerWalk] Task \"" + this.getName() + "\" has been aborted");
+                            Starter.logMessage("Task \"" + this.getName() + "\" has been aborted");
                             return;
                         }
                         
@@ -104,7 +104,7 @@ public class Bot {
                             }
                         }
                     }
-                    System.out.println("[PowerWalk] Destination " + path.get(path.size()-1) + " reached");
+                    Starter.logMessage("Destination " + path.get(path.size()-1) + " reached");
                 }
                 @Override public void cancel() {
                     stopNow = true;
@@ -113,7 +113,7 @@ public class Bot {
             travelTask.setName("Travel to " + p);
             assignTask(travelTask); 
         } catch (OutOfReachException e) {
-            System.out.println("[PowerWalk] WARNING: Cannot travel to " + p + ", no path found");
+            Starter.logMessage("WARNING: Cannot travel to " + p + ", no path found");
         }
         
     }
@@ -143,7 +143,7 @@ public class Bot {
      */
     public void assignTask(Task task) {
         taskQueue.offer(task);
-        System.out.println("[PowerWalk] Task \"" + task.getName() + "\" assigned with priority " + task.getPriority());
+        Starter.logMessage("Task \"" + task.getName() + "\" assigned with priority " + task.getPriority());
     }
     
     /**
@@ -175,6 +175,6 @@ public class Bot {
         taskQueue.clear();
         Task current = Starter.currentTask();
         if (current != null) current.cancel();
-        System.out.println("[PowerWalk] The Bot has become idle");
+        Starter.logMessage("The Bot has become idle");
     }
 }

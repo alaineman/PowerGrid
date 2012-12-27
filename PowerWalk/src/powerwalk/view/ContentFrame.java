@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import powerwalk.Starter;
 
 /**
- * @author P.Kramer
+ * @author Chronio
  */
 public class ContentFrame extends JFrame {
     

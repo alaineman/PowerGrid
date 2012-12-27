@@ -6,7 +6,7 @@ import powerwalk.model.interact.Transportable;
 
 /**
  *
- * @author vync job
+ * @author Alaineman
  */
 public class WaterbirthIsle extends Transportable{
 

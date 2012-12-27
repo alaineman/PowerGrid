@@ -1,9 +1,14 @@
 package powerwalk;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Environment;
@@ -15,7 +20,7 @@ import powerwalk.view.ContentFrame;
 
 /**
  * Starter and Task Manager class for the entire plug-in 
- * @author P.Kramer
+ * @author Chronio
  * @author Alaineman
  */
 @Manifest(
@@ -26,6 +31,8 @@ import powerwalk.view.ContentFrame;
          )
 public class Starter extends ActiveScript {
     
+    private static final Logger theLogger = Logger.getLogger(Starter.class.getName());
+    
     public static final String worldMapFile = "worldmap.xml";
     
     /** The name of the Plug-in */
@@ -34,29 +41,37 @@ public class Starter extends ActiveScript {
     public static final double version = 0.1;
     
     private static Task currentTask = null;
-    
+        
     /**
      * Creates a ContentFrame instance and shows it.
      */
     @Override public void onStart() {
-        System.out.println("[PowerWalk] Starting...");
-        System.out.println("[PowerWalk] Storage directory set as " + Environment.getStorageDirectory().toString());
-        System.out.println("[PowerWalk] loading WorldMap from File: \"" + worldMapFile + "\"...");
+        theLogger.setUseParentHandlers(false);
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new Formatter() {
+            @Override public String format(final LogRecord record) {
+                return "[PowerWalk] " + record.getMessage() + "\n";
+            }
+        });
+        theLogger.addHandler(handler);
+        logMessage("Starting...");
+        logMessage("Storage directory set as " + Environment.getStorageDirectory().toString());
+        logMessage("loading WorldMap from File: \"" + worldMapFile + "\"...");
         try (FileInputStream worldMapIn = new FileInputStream(Environment.getStorageDirectory().toString() + "\\" + worldMapFile)) {
             XMLNode worldMap = ToolBox.getXMLTree(worldMapIn);
             Bot.getBot().getWorldMap().fillFromXML(worldMap);
-            System.out.println("[PowerWalk] WorldMap loaded");
+            logMessage("WorldMap loaded");
         } catch (IOException e) {
             if (e instanceof FileNotFoundException) {
-                System.out.println("[PowerWalk] WorldMap file does not exist; starting with empty WorldMap");
+                logMessage("WorldMap file does not exist; starting with empty WorldMap");
             } else {
-                System.out.println("[PowerWalk] WorldMap failed to load");
+                logMessage("WorldMap failed to load");
             }
         }
         Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
         
         ContentFrame.theFrame = new ContentFrame();
-        System.out.println("[PowerWalk] PowerWalk started, waiting for tasks...");
+        logMessage("PowerWalk started, waiting for tasks...");
     }
     
     /**
@@ -68,9 +83,9 @@ public class Starter extends ActiveScript {
         if (Bot.getBot().tasksPending() > 0) {
             currentTask = Bot.getBot().retrieveTask();
             
-            System.out.println("[PowerWalk] Beginning Task \"" + currentTask.getName() + "\"...");
+            logMessage("Beginning Task \"" + currentTask.getName() + "\"...");
             currentTask.execute();
-            System.out.println("[PowerWalk] Task \"" + currentTask.getName() + "\" has ended.");
+            logMessage("Task \"" + currentTask.getName() + "\" has ended.");
             
             currentTask = null;
             return 20;
@@ -84,14 +99,14 @@ public class Starter extends ActiveScript {
      * Also cleans up as much objects related to PowerWalk as possible.
      */
     @Override public void onStop() {
-        System.out.println("[PowerWalk] stopping PowerWalk...");
+        logMessage("stopping PowerWalk...");
         Bot.getBot().becomeIdle();
         Mapper.stopMapping();
         ContentFrame.theFrame.dispose();
         ContentFrame.theFrame = null;
         purge(); // free all data structures and objects they contain
         System.gc(); // running Garbage Collector to ensure any potentially problematic objects (Readers/Writers, Task instances, etc..) are finalized and destroyed
-        System.out.println("[PowerWalk] PowerWalk has been terminated");
+        logMessage("PowerWalk has been terminated");
     }
     
     /**
@@ -120,6 +135,10 @@ public class Starter extends ActiveScript {
         // purge the World Map (takes potentially long)
         Bot.getBot().getWorldMap().purge();
         
-        System.out.println("[PowerWalk] The caches have been purged");
+        logMessage("The caches have been purged");
+    }
+    
+    public static void logMessage(String message) {
+        theLogger.info(message);
     }
 }

@@ -14,7 +14,7 @@ import powerwalk.model.XMLNode;
 
 /**
  * Utility class providing shortcuts to standard commonly used tasks
- * @author P.Kramer
+ * @author Chronio
  */
 public abstract class ToolBox {
     

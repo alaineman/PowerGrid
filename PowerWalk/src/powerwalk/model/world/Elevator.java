@@ -8,7 +8,7 @@ import powerwalk.model.interact.Interactable;
 
 /**
  * Represents a GameObject that can be used to move from one plane to another.
- * @author P.Kramer
+ * @author Chronio
  * @author Alaineman
  */
 public abstract class Elevator extends GameObject implements Interactable {

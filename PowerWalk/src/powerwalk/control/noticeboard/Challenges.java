@@ -2,8 +2,8 @@ package powerwalk.control.noticeboard;
 
 /**
  *
- * @author vync job
+ * @author Alaineman
  */
-public class Achiements {
+public class Challenges {
     
 }

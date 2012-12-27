@@ -8,7 +8,7 @@ TODO-list
 general
 -------
 - Add JavaDoc comments to public methods that don't have it.
-- Optional: write documentation for other script writers about the top-level methods of powerwalk
+- write documentation for other script writers about the top-level methods of powerwalk
 
 powerwalk.model
 ---------------
@@ -33,6 +33,4 @@ powerwalk.control
 
 powerwalk.view
 --------------
-- Fix destination list (->PATRICK)
-- Allow "travel to" command for each destination (->PATRICK)
 - Embed more functionality from the Bot class (->PATRICK)

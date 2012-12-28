@@ -31,6 +31,11 @@ powerwalk.control
     -[m] openNoticeboard()
     -[m] openXXX() .... etc
 
+powerwalk.data
+--------------
+- Determine locations of banks, shops, and depositboxes and store them in 
+  specialLocations.xml. Then it can be implemented and tested.
+
 powerwalk.view
 --------------
 - Embed more functionality from the Bot class (->PATRICK)

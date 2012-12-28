@@ -19,8 +19,7 @@ public class Grid {
     private int size = 0;
     
     /**
-     * Creates a new Grid with the given maximum dimensions.
-     * <p> More memory is allocated as more elements are added</p>
+     * Creates a new Grid.
      */
     public Grid() {
         data = new HashMap<>();
@@ -95,10 +94,25 @@ public class Grid {
         return original;
     }
     
+    /**
+     * A list of classes that are recognized by the Grid as potential types for 
+     * raw values. Classes can be added, but they will only be used if they define
+     * the following field:
+     * <p><code>public static final int[] values</code></p>
+     * <p>The values in this <code>int[]</code> must be sorted ascending.</p>
+     */
     public Class<? extends GameObject>[] objectclasses = new Class[] {
         Wall.class,     Door.class, Person.class,
         Elevator.class, Entity.class};
     
+    /**
+     * Sets a GameObject of the correct type to the specified Point.
+     * <p>This method makes use of the <code>objectclasses</code> field to find 
+     * the appropriate class for the given value.</p>
+     * @param p the Point the GameObject has to be stored on
+     * @param value the raw value for the object
+     * @return the GameObject previously at Point p.
+     */
     public synchronized GameObject set(Point p, int value) {
         // shady "reflect magic" corner
         for (Class<? extends GameObject> c : objectclasses) {
@@ -121,6 +135,7 @@ public class Grid {
         }
         return set(p,new GameObject(p.x,p.y,p.z,value));
     }
+    
     /**
      * removes the element stored at Point p from the Grid and returns this element.
      * returns null if no such element was found

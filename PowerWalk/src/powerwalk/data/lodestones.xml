@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <lodestones>
     <lodestone pos="(x,y,z)" name="varrock" widget="51" />
     <lodestone pos="(3233,3222,0)" name="lumbridge" widget="47" />

@@ -154,16 +154,17 @@ public abstract class ToolBox {
     private static XMLNode getXMLTree(ArrayList<String> lines, int start) {
         lineIndex = start;
         String root = lines.get(start);
-        if (root.isEmpty() ||                                 // ignore empty lines
-           (root.contains("<?xml") && root.contains("?>")))   // ignore <?xml ... ?> tag
-            return getXMLTree(lines,start+1);
-        
         if (root.contains("<!--") ) { // ignore comments
             while (!lines.get(lineIndex).contains("-->")) {
                 lineIndex++;
             }
             return null;
         }
+        if (root.isEmpty() ||                                 // ignore empty lines
+           (root.contains("<?") && root.contains("?>")) ||    // ignore <?xml ... ?> tag
+           (root.contains("<!")))                             // ignore <! ... > tags (DTD and comments
+            return getXMLTree(lines,start+1);
+        
         HashMap<String,String> attributes = getAttributes(root);
         String tag = getTagFromXML(root);
         ArrayList<XMLNode> children = new ArrayList<>(5);

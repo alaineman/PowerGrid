@@ -1,18 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE speciallocations [
+<!ELEMENT speciallocations (special*)>
+<!ELEMENT special (location*)>
+<!ATTLIST special interact (npc|area|object) #REQUIRED name CDATA #REQUIRED >
+<!ELEMENT location EMPTY>
+<!ATTLIST location target CDATA #REQUIRED pos CDATA #REQUIRED traits CDATA #IMPLIED > ]>
 <speciallocations>
-    <special name="Bank">
-        <location pos="" />
-        <location pos="" />
+    <special name="Altar" interact="object">
+        <location pos="(3253,3486)" target="Altar" />
+        <location pos="(0,0)" target="Chaos Altar" />
     </special>
-    <special name="Shop">
-        <location pos="" />
-        <location pos="" />
+    <special name="Anvil" interact="area">
+        <location pos="(3188,3425)" target="Anvil" />
+        <location pos="(3228,3435)" target="Anvil" />
+        <location pos="(3247,3404)" target="Anvil" />
     </special>
-    <special name="DepositBox">
-        <location pos="" />
+    <special name="Apothecary" interact="npc">
+        <location pos="(3195,3404)" target="Apothecary" />
     </special>
-    <!-- Etcetera 
-         Just make this comment multi-line
-         to stress out the XML parser.
-         Just because it needs to be tested -->
+    <special name="ArcheryShop" interact="npc">
+        <location pos="(3232,3423)" target="Lowe" />
+    </special>
+    <special name="AxeShop" interact="npc">
+    </special>
+    <special name="Bank" interact="area">
+        <location pos="(3253,3420)" target="_287" />
+        <location pos="(3185,3439)" target="_287" />
+    </special>
+    <special name="ChainmailShop" interact="npc">
+    </special>
+    <special name="ClothesShop" interact="npc">
+        <location pos="(3205,3417)" target="Thessalia" />
+    </special>
+    <special name="CombatTraining" interact="area">
+        <location pos="(3254,3435)" target="_23921" />
+    </special>
+    <special name="CookeryShop" interact="npc">
+    </special>
+    <special name="CookingRange" interact="object">
+        <location pos="(3236,3382)" target="Range" />
+        <location pos="(3220,3388)" target="Range" />
+        <location pos="(3237,3409)" target="Range" />
+        <location pos="(3237,3403)" target="Range" />
+        <location pos="(3223,3497)" target="Oven" />
+        <location pos="(3157,3410)" target="Range" />
+        <location pos="(3160,3427)" target="Range" />
+    </special>
+    <special name="CraftingShop" interact="npc">
+    </special>
+    <special name="FishingShop" interact="npc">
+    </special>
+    <special name="FishingSpot" interact="object">
+    </special>
+    <special name="FoodShop" interact="npc">
+    </special>
+    <special name="FurTrader" interact="npc">
+        <location pos="(3217,3434)" target="Baraek" />
+    </special>
+    <special name="Furnace" interact="object">
+    </special>
+    <special name="GemShop" interact="npc">
+    </special>
+    <special name="GeneralStore" interact="npc">
+        <location pos="(3217,3415)" target="Shopkeeper|Shop assistant" />
+    </special>
+    <special name="Hairdresser" interact="npc">
+    </special>
+    <special name="HelmetShop" interact="npc">
+    </special>
+    <special name="JewelleryShop" interact="npc">
+    </special>
+    <special name="KebabSeller" interact="npc">
+    </special>
+    <special name="MaceShop" interact="npc">
+    </special>
+    <special name="MagicShop" interact="npc">
+        <location pos="(3252,3401)" target="Aubury" />
+    </special>
+    <special name="MakeoverMage" interact="npc">
+    </special>
+    <special name="MiningShop" interact="npc">
+    </special>
+    <special name="MiningSite" interact="area">
+        <location pos="(3284,3367)" target="Tin ore rocks|Copper ore rocks|Iron ore rocks" />
+        <location pos="(3181,3371)" target="Clay rocks|Silver ore rocks|Tin ore rocks|Iron ore rocks" />
+    </special>
+    <special name="PlatebodyShop" interact="npc">
+        <location pos="(3228,3438)" target="Horvik" />
+    </special>
+    <special name="PlatelegsShop" interact="npc">
+    </special>
+    <special name="PlateskirtShop" interact="npc">
+    </special>
+    <special name="PotteryWheel" interact="object">
+        <location pos="(3262,3396)" target="Pottery Oven" />
+    </special>
+    <special name="Pub" interact="npc">
+        <location pos="(3224,3397)" target="Bartender" />
+    </special>
+    <special name="RunecraftingAltar" interact="object">
+        <location pos="(3127,3405)" target="Mysterious ruins" traits="air" />
+    </special>
+    <special name="ScimitarShop" interact="npc">
+    </special>
+    <special name="ShieldShop" interact="npc">
+    </special>
+    <special name="SilkTrader" interact="npc">
+    </special>
+    <special name="SpinningWheel" interact="object">
+    </special>
+    <special name="StaffShop" interact="npc">
+        <location pos="(3203,3434)" target="Zaff" />
+    </special>
+    <special name="SwordShop" interact="npc">
+        <location pos="(3206,3399)" target="Shopkeeper|Shop assistant" />
+    </special>
+    <special name="Tannery" interact="npc">
+        <location pos="(3187,3406)" target="Tanner" />
+    </special>
+    <special name="WaterSource" interact="object">
+        <location pos="(3210,3427)" target="Fountain" />
+        <location pos="(3238,3434)" target="Fountain" />
+        <location pos="(3207,3463)" target="Fountain" />
+        <location pos="(3217,3463)" target="Fountain" />
+        <location pos="(3224,3495)" target="Sink" />
+        <location pos="(3191,3469)" target="Fountain" />
+    </special>
+    <special name="Watermill" interact="object">
+    </special>
+    <special name="Windmill" interact="object">
+    </special>
 </speciallocations>

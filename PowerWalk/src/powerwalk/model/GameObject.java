@@ -109,6 +109,6 @@ public class GameObject {
      * @return an XML-String representing this object
      */
     @Override public String toString() {
-        return "<gameobject xpos=\"" + x + "\" ypos=\"" + y + "\" zpos=\"" + z + "\"raw=\"" + rawNumber + "\" />";
+        return "<" + getClass().getSimpleName().toLowerCase() + " pos=\"" + getPosition() + "\" raw=\"" + rawNumber + "\" />";
     }
 }

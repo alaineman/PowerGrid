@@ -1,7 +1,6 @@
 package powerwalk.model.world;
 
 import java.util.Arrays;
-import powerwalk.control.ToolBox;
 import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.interact.Interactable;
@@ -12,11 +11,21 @@ import powerwalk.model.interact.Interactable;
  * @author Alaineman
  */
 public abstract class Elevator extends GameObject implements Interactable {
+    /** Specifies movement upward */
+    public static final int UP = 1;
+    /** Specifies movement downward */
+    public static final int DOWN = 2;
     
-    public static final int[] values = new int[] {};
+    private int[] otherPlanes = new int[0];
     
-    private int[] otherPlanes;
-    
+    /**
+     * Creates a new Elevator object
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param z the z-coordinate
+     * @param rawValue 
+     * @param otherPlanes 
+     */
     public Elevator(int x,int y,int z,int rawValue,int[] otherPlanes) {
         super(x,y,z,rawValue);
         if (otherPlanes == null) throw new IllegalArgumentException("Null-array for other planes");
@@ -24,14 +33,23 @@ public abstract class Elevator extends GameObject implements Interactable {
         Arrays.sort(this.otherPlanes);
     }
     
-    public abstract void ascend() throws OutOfReachException;
-    public abstract void descend() throws OutOfReachException;
+    public abstract void move(int direction) throws OutOfReachException;
     
-    public boolean connectsTo(int plane) {
-        return -1 != ToolBox.sortedArrayIndexOf(plane, otherPlanes);
+    public synchronized boolean connectsTo(int plane) {
+        return -1 != Arrays.binarySearch(otherPlanes,plane);
     }
     
-    public int[] getOtherPlanes() {
+    public synchronized void addPlane(int plane) {
+        if (!connectsTo(plane)) {
+            int[] extended = new int[otherPlanes.length+1];
+            System.arraycopy(otherPlanes, 0, extended, 0, otherPlanes.length);
+            extended[otherPlanes.length] = plane;
+            Arrays.sort(extended);
+            otherPlanes = extended;
+        }
+    }
+    
+    public synchronized int[] getOtherPlanes() {
         return otherPlanes.clone();
     }
 }

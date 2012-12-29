@@ -105,13 +105,12 @@ public class Grid {
      * <p>The values in this <code>int[]</code> must be sorted ascending.</p>
      */
     public Class<? extends GameObject>[] objectclasses = new Class[] {
-        Wall.class,           Enemy.class,       Person.class,
-        Door.class,           Elevator.class,    Lodestone.class,
-        Minecart.class,       MagicCarpet.class, SpiritTree.class, 
-        HotAirBalloon.class,
-        GnomeGlider.class,    FairyRing.class,   CharterShip.class,
-        Canoe.class,          LunarBoat.class,   PiratesCove.class,
-        WaterbirthIsle.class};
+        Wall.class,          Enemy.class,          Person.class,
+        Door.class,          Lodestone.class,      Canoe.class,
+        Minecart.class,      MagicCarpet.class,    SpiritTree.class,
+        HotAirBalloon.class, GnomeGlider.class,    FairyRing.class,
+        CharterShip.class,   WaterbirthIsle.class, LunarBoat.class,
+        PiratesCove.class};
     
     /**
      * Sets a GameObject of the correct type to the specified Point.

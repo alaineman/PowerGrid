@@ -1,10 +1,12 @@
 package powerwalk.model.world;
 
+import org.powerbot.game.api.methods.interactive.NPCs;
+import org.powerbot.game.api.wrappers.interactive.NPC;
 import powerwalk.model.OutOfReachException;
 
 /**
  * This class represents aggressive or otherwise non-friendly Entities, whose main 
- * purpose is to be defeated
+ * purpose is to attack or be attacked.
  * @author Chronio
  */
 public class Enemy extends Entity {
@@ -15,23 +17,21 @@ public class Enemy extends Entity {
         super(x,y,z,rawValue);
     }
     
+
     /**
-     * Executes the default interact method on this Enemy.
-     * <p>For most Enemies, interaction with an enemy of lower level this means attack the Enemy,
-     * while for stronger Enemies, this may not be true.</p>
-     * <p>When trying to specifically attack the Enemy, use the attack() method.</p>
+     * tries to attack the Enemy by using the interaction method labeled "attack".
+     * @throws UnsupportedOperationException when the action failed, or when no attack method was found
      * @throws OutOfReachException when the target is not nearby
      */
-    @Override public void interact() throws OutOfReachException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void attack() throws OutOfReachException {
+        NPC enemy = NPCs.getNearest(getRawNumber());
+        if (enemy == null) 
+            throw new OutOfReachException(getPosition(),"The target is not close enough");
+        for (String action : enemy.getActions()) {
+            if (action.equalsIgnoreCase("attack"))
+                if (!enemy.interact(action))
+                    throw new UnsupportedOperationException("The action failed");
+        }
+        throw new UnsupportedOperationException("This Enemy has no attack method");
     }
-
-    public void attack() {
-        
-    }
-    
-    @Override public void interact(String method) throws OutOfReachException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
 }

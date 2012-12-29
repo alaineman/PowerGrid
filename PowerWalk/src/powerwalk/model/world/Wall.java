@@ -25,8 +25,4 @@ public class Wall extends Collision {
     public Wall(int x,int y,int z,int rawValue) {
         super (x,y,z,rawValue);
     }
-    
-    @Override public String toString() {
-        return "<wall pos=\"" + getPosition() + "\" raw=\"" + getRawNumber() + "\" />";
-    }
 }

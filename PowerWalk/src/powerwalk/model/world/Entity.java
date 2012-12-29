@@ -8,12 +8,7 @@ import powerwalk.model.interact.Interactable;
  * @author Chronio
  */
 public abstract class Entity extends GameObject implements Interactable {
-    
-    /**
-     * The raw values that belong to Entities.
-     */
-    public static final int[] values = {};
-    
+        
     /**
      * Creates a new Entity at the given position. the <code>rawNumber</code> 
      * indicates the type of object as provided by the RSBot environment.

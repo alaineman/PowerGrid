@@ -82,7 +82,7 @@ public class Lodestone extends Teleportable {
      * returns the number of the Widget corresponding to this Lodestone
      * @return the number of the Widget corresponding to this Lodestone
      */
-    public int getWidgetNumber() {
+    @Override public int getWidgetNumber() {
         return widgetNumber;
     } 
 

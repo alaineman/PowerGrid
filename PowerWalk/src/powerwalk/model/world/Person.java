@@ -11,9 +11,9 @@ import powerwalk.model.OutOfReachException;
 public class Person extends Entity {
 
     /**
-     *
+     * Values that specifically define Persons or NPCs in the RSBot environment.
      */
-    public static final int[] pValues = new int[] {};
+    public static final int[] values = new int[] {};
     
     /**
      * Creates a new Person at the given position. the <code>rawValue</code> 

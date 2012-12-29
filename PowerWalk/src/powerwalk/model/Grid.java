@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import powerwalk.Starter;
+import powerwalk.model.interact.Lodestone;
+import powerwalk.model.interact.handlers.*;
+import powerwalk.model.interact.handlers.manifold.*;
 import powerwalk.model.world.*;
 
 /**
@@ -102,8 +105,13 @@ public class Grid {
      * <p>The values in this <code>int[]</code> must be sorted ascending.</p>
      */
     public Class<? extends GameObject>[] objectclasses = new Class[] {
-        Wall.class,     Door.class, Person.class,
-        Elevator.class, Entity.class};
+        Wall.class,           Enemy.class,       Person.class,
+        Door.class,           Elevator.class,    Lodestone.class,
+        Minecart.class,       MagicCarpet.class, SpiritTree.class, 
+        HotAirBalloon.class,
+        GnomeGlider.class,    FairyRing.class,   CharterShip.class,
+        Canoe.class,          LunarBoat.class,   PiratesCove.class,
+        WaterbirthIsle.class};
     
     /**
      * Sets a GameObject of the correct type to the specified Point.

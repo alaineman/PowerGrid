@@ -1,5 +1,7 @@
 package powerwalk.model.world;
 
+import org.powerbot.game.api.methods.interactive.NPCs;
+import org.powerbot.game.api.wrappers.interactive.NPC;
 import powerwalk.model.OutOfReachException;
 
 /**
@@ -29,18 +31,56 @@ public class Person extends Entity {
      * Interacts with this Person using the default method.
      * <p>For most Characters, the default interaction method is "talk to" or "speak to".</p>
      * @throws OutOfReachException when the interaction could not be completed
+     * @throws UnsupportedOperationException when this person has no interactions
      */
     @Override public void interact() throws OutOfReachException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        NPC theNpc = NPCs.getNearest(getRawNumber());
+        if (theNpc == null) {
+            throw new OutOfReachException(getPosition(),"No Person like this nearby");
+        }
+        String[] actions = theNpc.getActions();
+        if (actions.length > 0) {
+            theNpc.interact(actions[0]);
+        } else {
+            throw new UnsupportedOperationException("This Person has no interactions");
+        }
+    }
+    
+    /**
+     * This method tries the first method of interaction that this Person can 
+     * perform that contains either "talk" or "speak".
+     * @throws OutOfReachException when the Person is not nearby.
+     * @throws UnsupportedOperationException when no suitable method was found.
+     */
+    public void talkTo() throws OutOfReachException {
+        NPC theNpc = NPCs.getNearest(getRawNumber());
+        if (theNpc == null) {
+            throw new OutOfReachException(getPosition(),"No Person like this nearby");
+        }
+        String[] actions = theNpc.getActions();
+        for (String action : actions) {
+            if (action.contains("talk") || action.contains("speak")) {
+                theNpc.interact(action);
+                return;
+            }
+        }
+        throw new UnsupportedOperationException("No talk or speak method for this Person");
     }
 
     /**
      * Interacts with this Person using the given method
      * @param method the method of interaction
      * @throws OutOfReachException when the interaction could not be completed
+     * @throws UnsupportedOperationException when the provided method cannot be used for this Person
      */
     @Override public void interact(String method) throws OutOfReachException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        NPC theNpc = NPCs.getNearest(getRawNumber());
+        if (theNpc == null) {
+            throw new OutOfReachException(getPosition(),"No Person like this nearby");
+        }
+        if (!theNpc.interact(method)) {
+            throw new UnsupportedOperationException("The interact could not be performed.");
+        }
     }
     
 }

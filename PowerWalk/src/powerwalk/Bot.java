@@ -64,7 +64,7 @@ public class Bot {
                 @Override public void start() {
                     if (path.size() > 0) {
                         Point t = path.get(target);
-                        Starter.logMessage("[Task] travel to " + path.get(path.size()-1) + " has started, there are " + path.size() + " points on this path.");
+                        Starter.logMessage("travel to " + path.get(path.size()-1) + " has started, there are " + path.size() + " points on this path.","Task");
                         Walking.walk(t.toTile());
                     }
                 }
@@ -94,7 +94,7 @@ public class Bot {
                     catch (InterruptedException e) {}
                 }
                 @Override public void finish() {
-                    Starter.logMessage("[Task] Destination " + path.get(path.size()-1) + " reached");
+                    Starter.logMessage("Destination " + path.get(path.size()-1) + " reached","Task");
                 }
             };
             String name = Destinations.findNameForDestination(p);
@@ -102,7 +102,7 @@ public class Bot {
             travelTask.setName("Travel to " + name);
             assignTask(travelTask); 
         } catch (OutOfReachException e) {
-            Starter.logMessage("WARNING: Cannot travel to " + p + ", no path found");
+            Starter.logMessage("Cannot travel to " + p + ", no path found","Bot");
         }
         
     }

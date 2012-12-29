@@ -1,6 +1,5 @@
 package powerwalk.model.world;
 
-import powerwalk.control.ToolBox;
 import powerwalk.model.Collision;
 
 /**
@@ -25,8 +24,9 @@ public class Wall extends Collision {
     
     public Wall(int x,int y,int z,int rawValue) {
         super (x,y,z,rawValue);
-        if (ToolBox.sortedArrayIndexOf(rawValue, values) == -1) {
-            throw new IllegalArgumentException("value " + rawValue + " does not represent a wall");
-        }
+    }
+    
+    @Override public String toString() {
+        return "<wall pos=\"" + getPosition() + "\" raw=\"" + getRawNumber() + "\" />";
     }
 }

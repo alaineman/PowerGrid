@@ -1,10 +1,15 @@
 package powerwalk.control;
 
+import org.powerbot.game.api.methods.Game;
+import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.Bot;
 import powerwalk.Starter;
+import powerwalk.model.Collision;
+import powerwalk.model.Grid;
 import powerwalk.model.Point;
+import powerwalk.model.world.Wall;
 
 /**
  * This class collects data from the RSBot environment and stores it in the singleton WorldMap-object
@@ -53,7 +58,7 @@ public class Mapper extends Thread {
             if (theMapper.isAlive()) throw new IllegalThreadStateException("Thread is still running");
         }
         if (policy < 0 || policy > 1) {
-            Starter.logMessage("Illegal State set for Mapper: " + policy + ", state set to MAP_ONCE");
+            Starter.logMessage("Illegal State set for Mapper: " + policy + ", state set to MAP_ONCE","Mapper");
             policy = MAP_ONCE;
         }
         theMapper = new Mapper();
@@ -96,24 +101,50 @@ public class Mapper extends Thread {
     @Override public void run() {
         
         setName("Mapper");
-        Starter.logMessage("Mapper started");
+        Starter.logMessage("started mapping","Mapper");
         while (mappingPolicy != MAP_NONE) {
             
+            Grid map = Bot.getBot().getWorldMap();
             SceneObject[] objects = SceneEntities.getLoaded();
             
+            // Store all SceneObjects in the World Map
             for (SceneObject o : objects) {
-                Bot.getBot().getWorldMap().set(Point.fromTile(o.getLocation()),o.getId());
+                Point dest = Point.fromTile(o.getLocation());
+                //if (map.get(dest) == null || map.get(dest).getRawNumber() == -1) {
+                    map.set(dest,o.getId());
+                //}
             }
-            if (!ToolBox.writeToFile(Bot.getBot().getWorldMap().toString(), Starter.worldMapFile)) {
-                Starter.logMessage("ERROR: updating the WorldMap in " + Starter.worldMapFile + " failed");
-            }
+            /*// Override the (incomplete) detection of collisions with the 
+            // collisions according to the environment when the world map doesn't
+            // already have a collision set at that point.
+            int blocked = 0x20000;//org.powerbot.game.api.wrappers.Tile.Flag.BLOCKED; // indicates that a tile is not walkable
+            int plane = Bot.getBot().getPosition().z;
+            int[][] collisions = Walking.getCollisionFlags(plane);
+            Point offset = Point.fromTile(Game.getMapBase());
+            for (int y=0;y<collisions.length;y++) {
+                for (int x=0;x<collisions[y].length;x++) {
+                    int cell = collisions[x][y];
+                    
+                    if ((cell & blocked) != 0 && cell != -1) { // if bitmask results in non-zero, it matches the pattern for a blocked tile
+                        Point dest = new Point(x+offset.x,y+offset.y,plane);
+                        if (!(map.get(dest) instanceof Collision)) {
+                            //Starter.logMessage(dest + " set to Collision using cellValue " + cell,"Mapper <debug>");
+                            map.set(dest,new Wall(dest.x,dest.y,dest.z,-1));
+                        }
+                    }
+                }
+            }*/
             
+            if (!ToolBox.writeToFile(map.toString(), Starter.worldMapFile)) {
+                Starter.logMessage("updating the WorldMap in " + Starter.worldMapFile + " failed","Mapper");
+            }
+            Starter.logMessage("Map updated","Mapper");
             if (mappingPolicy == MAP_ONCE) {
                 setPolicy(MAP_NONE);
-                Starter.logMessage("Mapper stopped after runOnce");
+                Starter.logMessage("stopped after runOnce","Mapper");
                 return;
             }
         }
-        Starter.logMessage("Mapper stopped");
+        Starter.logMessage("stopped mapping","Mapper");
     }
 }

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import org.powerbot.core.script.ActiveScript;
@@ -17,30 +18,31 @@ import powerwalk.model.XMLNode;
 import powerwalk.view.ContentFrame;
 
 /**
- * Starter and Task Manager class for the entire plug-in 
+ * Starter and Task Manager class for the entire plug-in
+ *
  * @author Chronio
  * @author Alaineman
  */
 @Manifest(
-        authors        = "alaineman", 
-        name           = Starter.productName, 
-        description    = "Runs all day!", 
+        authors        = "alaineman",
+        name           = Starter.productName,
+        description    = "Runs all day!",
         version        = Starter.version,
-        singleinstance = true
-         )
+        singleinstance = true)
 public class Starter extends ActiveScript {
-    
+
     private static final Logger theLogger = Logger.getLogger(Starter.class.getName());
-    
     public static final String worldMapFile = "worldmap.xml";
-    
-    /** The name of the Plug-in */
+    /**
+     * The name of the Plug-in
+     */
     public static final String productName = "PowerWalk";
-    /** The version number */
+    /**
+     * The version number
+     */
     public static final double version = 0.1;
-    
     private static Task currentTask = null;
-        
+
     /**
      * Creates a ContentFrame instance and shows it.
      */
@@ -49,51 +51,62 @@ public class Starter extends ActiveScript {
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new Formatter() {
             @Override public String format(final LogRecord record) {
-                return "[PowerWalk] " + record.getMessage() + "\n";
+                StringBuilder sb = new StringBuilder();
+                sb.append("[PowerWalk] ");
+                Object[] params = record.getParameters();
+                if (params != null && params.length > 0) {
+                    if (record.getParameters()[0] != null)
+                        sb.append("[").append(record.getParameters()[0]).append("] ");
+                    else
+                        sb.append("[none] ");
+                } else {
+                    sb.append("[Main] ");
+                }
+                sb.append(record.getMessage());
+                sb.append("\n");
+                return sb.toString();
             }
         });
         theLogger.addHandler(handler);
         logMessage("Starting...");
-        logMessage("Storage directory set as " + Environment.getStorageDirectory().toString());
         logMessage("loading WorldMap from File: \"" + worldMapFile + "\"...");
         try (FileInputStream worldMapIn = new FileInputStream(Environment.getStorageDirectory().toString() + "\\" + worldMapFile)) {
             XMLNode worldMap = ToolBox.getXMLTree(worldMapIn);
             Bot.getBot().getWorldMap().fillFromXML(worldMap);
             logMessage("WorldMap loaded");
+        } catch (FileNotFoundException e404) {
+            logMessage("WorldMap file does not exist; starting with empty WorldMap");
         } catch (IOException e) {
-            if (e instanceof FileNotFoundException) {
-                logMessage("WorldMap file does not exist; starting with empty WorldMap");
-            } else {
-                logMessage("WorldMap failed to load");
-            }
+            logMessage("WorldMap failed to load");
         }
         Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
-        
+
         ContentFrame.theFrame = new ContentFrame();
         logMessage("PowerWalk started, waiting for tasks...");
     }
-    
+
     /**
      * executes a Task from the TaskQueue.
-     * @return an integer specifying the amount of milliseconds the caller 
-     *         should wait before calling this method again.
+     *
+     * @return an integer specifying the amount of milliseconds the caller
+     * should wait before calling this method again.
      */
     @Override public int loop() {
         if (Bot.getBot().tasksPending() > 0) {
             currentTask = Bot.getBot().retrieveTask();
             if (currentTask instanceof StepTask) {
-                StepTask task = (StepTask)currentTask;
-                logMessage("Beginning StepTask \"" + task.getName() + "\"...");
+                StepTask task = (StepTask) currentTask;
+                logMessage("Beginning StepTask \"" + task.getName() + "\"...","TaskManager");
                 task.start();
                 while (task.hasMoreSteps()) {
                     task.execute();
                 }
                 task.finish();
-                logMessage("StepTask \"" + task.getName() + "\" has ended");
+                logMessage("StepTask \"" + task.getName() + "\" has ended","TaskManager");
             } else {
-                logMessage("Beginning Task \"" + currentTask.getName() + "\"...");
+                logMessage("Beginning Task \"" + currentTask.getName() + "\"...","TaskManager");
                 currentTask.execute();
-                logMessage("Task \"" + currentTask.getName() + "\" has ended.");
+                logMessage("Task \"" + currentTask.getName() + "\" has ended.","TaskManager");
             }
             currentTask = null;
             return 20;
@@ -101,10 +114,10 @@ public class Starter extends ActiveScript {
             return 10;
         }
     }
-    
+
     /**
-     * Ensures the Mapper is stopped and the ContentFrame is destroyed.
-     * Also cleans up as much objects related to PowerWalk as possible.
+     * Ensures the Mapper is stopped and the ContentFrame is destroyed. Also
+     * cleans up as much objects related to PowerWalk as possible.
      */
     @Override public void onStop() {
         logMessage("stopping PowerWalk...");
@@ -116,41 +129,62 @@ public class Starter extends ActiveScript {
         System.gc(); // running Garbage Collector to ensure any potentially problematic objects (Readers/Writers, Task instances, etc..) are finalized and destroyed
         logMessage("PowerWalk has been terminated");
     }
-    
+
     /**
      * returns the currently running task.
+     *
      * @return the currently running task, or null is no task is running
      */
     public static Task currentTask() {
         return currentTask;
     }
-    
+
     /**
-     * removes non-essential data structures and reduces the size of essential 
-     * data structures in order to free memory or speed up general performance. 
-     * 
-     * <p>Since most non-essential data structures are used for caching, calling 
+     * removes non-essential data structures and reduces the size of essential
+     * data structures in order to free memory or speed up general performance.
+     *
+     * <p>Since most non-essential data structures are used for caching, calling
      * this method repeatedly will cause reduction of performance.</p>
-     * 
-     * <p>Furthermore, after calling this method, some smaller data structures 
-     * will be automatically rebuilt when performing actions on the Bot, and 
+     *
+     * <p>Furthermore, after calling this method, some smaller data structures
+     * will be automatically rebuilt when performing actions on the Bot, and
      * these action may be slower due to missing / reduced caches.</p>
      */
     public synchronized static void purge() {
         // purge the destination list used by the travelTo(String dest) command
         Destinations.purge();
-        
+
         // purge the World Map (takes potentially long)
         Bot.getBot().getWorldMap().purge();
-        
+
         logMessage("The caches have been purged");
     }
-    
-    
+
+    /**
+     * Logs a message to the console. The message will be prefixed by "[PowerWalk] "
+     * <p>The logged message will have a logging level identical to <code>Level.INFO</code></p>
+     * @param message the message to log
+     */
     public static void logMessage(String message) {
         theLogger.info(message);
     }
-    public static void logMessage(Object message) {
-        theLogger.info(String.valueOf(message));
+
+    /**
+     * Logs the String value of the given object to the console.
+     * <p>This method is equivalent to calling <code>Starter.logMessage(String.valueOf(object))</code>
+     * @param object the object to log.
+     */
+    public static void logMessage(Object object) {
+        theLogger.info(String.valueOf(object));
+    }
+    
+    /**
+     * Logs the given message to the console. The message will be prefixed by "[PowerWalk] ".
+     * <p>Group specifies the name that must be displayed along with the message</p>
+     * @param message the message to log
+     * @param group the group to display for this message
+     */
+    public static void logMessage(String message,String group) {
+        theLogger.log(Level.INFO,message,group);
     }
 }

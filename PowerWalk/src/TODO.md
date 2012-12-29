@@ -24,6 +24,9 @@ powerwalk.model
     - [c] Boat
     - [c] ... (other Teleportables)
 
+- Refactor Point.f_score to a HashMap in powerwalk.control.PathFinder, since 
+  it's really only used there.
+
 powerwalk.control
 -----------------
 - [c] WidgetManager

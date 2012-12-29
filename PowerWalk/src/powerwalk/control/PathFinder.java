@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import powerwalk.Bot;
+import powerwalk.Starter;
 import powerwalk.model.Collision;
+import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 
@@ -35,12 +37,11 @@ public abstract class PathFinder {
         HashMap<Point, Double> pathCost = new HashMap<>();
         HashMap<Point,Point> came_from = new HashMap<>();
         
-        pathCost.put(start,0.0);
+        pathCost.put(start,1.0);
         
         start.f_score = Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) );
         
         pending.offer(start);
-
         while (!pending.isEmpty()) {
             Point current = pending.poll();
             if (current.equals(goal)) {
@@ -49,9 +50,10 @@ public abstract class PathFinder {
             }
             closedSet.add(current);
             Point[] adjacents = current.getAdjacentPoints();
-            
             for (int i=0;i<adjacents.length;i++) {
+                
                 Point p = adjacents[i];
+                GameObject go = Bot.getBot().getWorldMap().get(p);
                 if (!closedSet.contains(p)) { 
                     if (Bot.getBot().getWorldMap().get(p) instanceof Collision) {
                         closedSet.add(p);
@@ -71,7 +73,7 @@ public abstract class PathFinder {
                 }
             }
         }
-        throw new OutOfReachException(goal,"Destination could not be reached");
+        throw new OutOfReachException(goal,"Destination could not be reached, is the area explored?");
     }
     
     private static ArrayList<Point> reconstruct(HashMap<Point,Point> came_from, Point current) {
@@ -104,7 +106,7 @@ public abstract class PathFinder {
             }
         }
         Point lastPoint = path.get(path.size()-1);
-        if (!selected.get(selected.size()-1).equals(lastPoint)) {
+        if (selected.isEmpty() || !selected.get(selected.size()-1).equals(lastPoint)) {
             // if the final Point is not there, add it to the selected Points
             selected.add(lastPoint);
         }

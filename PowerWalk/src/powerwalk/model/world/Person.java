@@ -8,7 +8,10 @@ import powerwalk.model.OutOfReachException;
  */
 public class Person extends Entity {
 
-    public static final int[] values = new int[] {};
+    /**
+     *
+     */
+    public static final int[] pValues = new int[] {};
     
     /**
      * Creates a new Person at the given position. the <code>rawValue</code> 

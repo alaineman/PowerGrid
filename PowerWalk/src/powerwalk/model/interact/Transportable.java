@@ -42,7 +42,7 @@ public abstract class Transportable extends Teleportable {
         waitForCompletion(dest);
     }
     
-    protected abstract void handle(Transportable dest);
+    protected abstract void handle(Transportable dest) throws OutOfReachException;
 
     protected void waitForCompletion(Transportable dest) {}
 

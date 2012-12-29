@@ -13,6 +13,12 @@ import powerwalk.model.OutOfReachException;
  */
 public abstract class Teleportable extends GameObject implements ComplexInteractable {
     
+    public int widgetNum = -1;
+    
+    public Teleportable(int x,int y,int z,int rawNumber){
+        super(x, y, z, rawNumber);
+    }
+    
     /**
      * Creates a new <code>Teleportable</code> at the specified position and with the specified raw value
      * @param x the x-coordinate of the <code>Teleportable</code>
@@ -20,10 +26,15 @@ public abstract class Teleportable extends GameObject implements ComplexInteract
      * @param z the z-coordinate of the <code>Teleportable</code>
      * @param rawNumber the raw value for this object from the RSBot environment
      */
-    public Teleportable(int x,int y,int z,int rawNumber){
+    public Teleportable(int x,int y,int z,int rawNumber, int widgetNumber){
         super(x, y, z, rawNumber);
-        
+        widgetNum = widgetNumber;
     }
+    
+    public int getWidgetNumber(){
+        return widgetNum;
+    }
+    
     
     /**
      * Cost to perform this transport.

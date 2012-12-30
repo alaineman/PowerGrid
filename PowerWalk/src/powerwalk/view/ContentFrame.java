@@ -13,6 +13,10 @@ import javax.swing.JPanel;
 import powerwalk.Starter;
 
 /**
+ * This JFrame provides a user-friendly way of accessing the functionality of 
+ * the PowerWalk plug-in.
+ * It contains buttons for issuing travel commands, and to view information about 
+ * the current state of the Bot.
  * @author Chronio
  */
 public class ContentFrame extends JFrame {
@@ -25,6 +29,10 @@ public class ContentFrame extends JFrame {
         theFrame = new ContentFrame();
     }
     
+    /**
+     * Contains the currently visible ContentFrame.
+     * If no ContentFrame is visible, this field is null
+     */
     public static ContentFrame theFrame = null;
     
     private JButton travel = new JButton("Travel to...");
@@ -32,6 +40,9 @@ public class ContentFrame extends JFrame {
     
     private JPanel content = new JPanel();
     
+    /*
+     * Creates a new ContentFrame and shows it.
+     */
     public ContentFrame() {
         super("PowerWalk - version " + Starter.version);
         createAndShowGUI();
@@ -53,6 +64,7 @@ public class ContentFrame extends JFrame {
                       + "Do you really want to close the window?", "Are you sure?", 
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)) {
                     dispose();
+                    theFrame = null;
                 }
             }
         });
@@ -73,6 +85,10 @@ public class ContentFrame extends JFrame {
         setVisible(true);
     }
     
+    /**
+     * Sets the visible panel on the ContentFrame
+     * @param panel 
+     */
     public void setPanel(JPanel panel) {
         if (panel != null) {
             //view.setEnabled(true); // XXX uncomment after view action has been implemented

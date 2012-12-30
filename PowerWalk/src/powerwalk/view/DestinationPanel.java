@@ -13,6 +13,8 @@ import powerwalk.Bot;
 import powerwalk.model.Point;
 
 /**
+ * This Panel shows an available destination, and a button that orders the Bot 
+ * to travel to this destination when clicked.
  * @author Chronio
  */
 public class DestinationPanel extends JPanel {
@@ -23,7 +25,11 @@ public class DestinationPanel extends JPanel {
     private JLabel name = new JLabel(destinationName);
     private JButton go = new JButton("go here");
     
-    
+    /**
+     * Create a new DestinationPanel with the specified name and destination.
+     * @param name
+     * @param dest 
+     */
     public DestinationPanel(String name, Point dest) {
         if (name != null) {
             destinationName = name;
@@ -58,10 +64,18 @@ public class DestinationPanel extends JPanel {
         add(name,"Center");
     }
     
+    /**
+     * Returns the Destination linked to this DestinationPanel.
+     * @return the Destination linked to this DestinationPanel
+     */
     public Point getDestination() {
         return new Point(destination);
     }
     
+    /**
+     * Returns the name associated with the linked Destination.
+     * @return the name associated with the linked Destination
+     */
     public String getDestinationName() {
         return destinationName;
     }

@@ -18,7 +18,7 @@ public abstract class Entity extends GameObject implements Interactable {
      * @param x the x-coordinate of this object
      * @param y the y-coordinate of this object
      * @param z the z-coordinate of this object
-     * @param rawNumber the raw value from the environment specifying the type
+     * @param rawValue the raw value from the environment specifying the type
      */
     protected Entity(int x,int y,int z,int rawValue) {
         super(x,y,z,rawValue);

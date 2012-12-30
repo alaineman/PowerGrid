@@ -17,6 +17,8 @@ import powerwalk.model.Destinations;
 import powerwalk.model.Point;
 
 /**
+ * This Panel shows the available destinations and allows the user to search 
+ * for specific entries using a text field.
  * @author Chronio
  */
 public class TravelPanel extends JPanel {
@@ -26,6 +28,9 @@ public class TravelPanel extends JPanel {
     private JPanel entries = new JPanel();
     private JScrollPane scrollpane = new JScrollPane(entries);
     
+    /**
+     * Creates a new TravelPanel instance and sets up the destination list.
+     */
     public TravelPanel() {
         createAndShowGUI();
     }
@@ -59,6 +64,10 @@ public class TravelPanel extends JPanel {
         setData("");
     }
     
+    /**
+     * Filters the available Destinations to show only those that match the given query
+     * @param query the query to use as a filter
+     */
     public void setData(String query) {
         entries.removeAll();
         query = query.toLowerCase();

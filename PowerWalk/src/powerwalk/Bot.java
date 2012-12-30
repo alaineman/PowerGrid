@@ -54,7 +54,7 @@ public class Bot {
     /**
      * Registers a Task that moves to the specified Point in the World
      * @param p The Point to move to
-     * @param asap The priority of this Task
+     * @param priority The priority of this Task
      */
     public void travelTo(Point p, int priority) { 
         try {

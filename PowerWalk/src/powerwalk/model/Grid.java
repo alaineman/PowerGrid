@@ -99,12 +99,12 @@ public class Grid {
     
     /**
      * A list of classes that are recognized by the Grid as potential types for 
-     * raw values. Classes can be added, but they will only be used if they define
-     * the following field:
+     * raw values. This field can be modified, but classes in this array will only be 
+     * used if they define the following field:
      * <p><code>public static final int[] values</code></p>
      * <p>The values in this <code>int[]</code> must be sorted ascending.</p>
      */
-    public Class<? extends GameObject>[] objectclasses = new Class[] {
+    public static Class<? extends GameObject>[] objectclasses = new Class[] {
         Wall.class,          Enemy.class,          Person.class,
         Door.class,          Lodestone.class,      Canoe.class,
         Minecart.class,      MagicCarpet.class,    SpiritTree.class,

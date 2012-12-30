@@ -1,7 +1,6 @@
 package powerwalk.model.interact.handlers.manifold;
 
 import java.util.Collection;
-import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.model.OutOfReachException;

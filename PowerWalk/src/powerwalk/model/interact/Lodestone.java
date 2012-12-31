@@ -6,7 +6,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.powerbot.core.script.job.Task;
+import org.powerbot.game.api.methods.Widgets;
+import org.powerbot.game.api.methods.interactive.Players;
+import org.powerbot.game.api.wrappers.interactive.Player;
+import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.Bot;
+import powerwalk.Starter;
 import powerwalk.control.ToolBox;
 import powerwalk.control.WidgetManager;
 import powerwalk.model.OutOfReachException;
@@ -99,8 +105,28 @@ public class Lodestone extends Teleportable {
      * @throws OutOfReachException 
      */
     @Override public void follow() throws OutOfReachException {
+        // we locate the correct widgetChild in the lodestone widget
         WidgetManager.openLodestoneWidget();
-        //TODO finish Lodestone.follow();
+        WidgetChild w = Widgets.getChild(widgetNumber);
+        if (w == null) throw new OutOfReachException("The required widget was not found");
+        if (!w.click(true)) {
+            // we failed, but let's try again
+            Task.sleep(134,257);
+            if (!w.click(true)) {
+                // we still failed. Now, something must be wrong. Report and cancel the follow() operation
+                Starter.logMessage("Teleport to " + name + " failed: cannot click widget","Interact");
+                throw new OutOfReachException(getPosition(),"Failed to click widget");
+            }
+        }
+        // appeareantly, we succeeded in clicking the widget, now we wait for the animations.
+        Player local = Players.getLocal();
+        while (local.getAnimation() == 16385 || local.getAnimation() == 16393) {
+            Task.sleep(128,217);
+        }
+        // Now we arrived, assert that the player is idle before returning
+        while (local.getAnimation() != -1) {
+            Task.sleep(135,385);
+        }
     }
 
     /**

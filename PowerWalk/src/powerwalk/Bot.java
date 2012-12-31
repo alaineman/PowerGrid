@@ -76,6 +76,11 @@ public class Bot {
                             Math.pow(playerPos.x-path.get(target).x,2) + 
                             Math.pow(playerPos.y-path.get(target).y,2) );
                     
+                    // check if we are running. If not, enable when we have some stamina left
+                    if (!Walking.isRunEnabled() && Walking.getEnergy() >= 20) {
+                        Walking.setRun(true);
+                    }
+                    
                     // Are we are close enough?
                     if (distToTarget < (3 + 3 * Math.random())) {
                         // Are there more points?
@@ -89,6 +94,7 @@ public class Bot {
                             cancel();
                         }
                     }
+                    
                     // wait a while before checking again
                     try { Thread.sleep((long)(134 + 86 * Math.random())); }
                     catch (InterruptedException e) {}
@@ -105,6 +111,20 @@ public class Bot {
             Starter.logMessage("Cannot travel to " + p + ", no path found","Bot");
         }
         
+    }
+    
+    public void rest(final boolean abortOnTask) {
+        Task restTask = new Task(0) {
+            boolean stop = false;
+            @Override public void execute() {
+                
+            }
+            @Override public void cancel() {
+                stop = true;
+            }
+        };
+        restTask.setName("Rest");
+        assignTask(restTask);
     }
     
     /**

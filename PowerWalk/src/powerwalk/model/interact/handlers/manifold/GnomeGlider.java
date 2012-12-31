@@ -15,10 +15,6 @@ import powerwalk.model.interact.Transportable;
  */
 public class GnomeGlider extends Transportable {
 
-    /**
-     * These are the gnome glider Person Id's.
-     * @see Person
-     */
     public final static int[] values = {};
 
     public GnomeGlider(Point p) {

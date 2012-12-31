@@ -29,6 +29,9 @@
     </special>
     <special name="ChainmailShop" interact="npc">
     </special>
+    <special name="CharterShip" interact="npc">
+        <location pos="(3039,3193)" target="_4656|_4653|_4650" />
+    </special>
     <special name="ClothesShop" interact="npc">
         <location pos="(3205,3417)" target="Thessalia" />
     </special>
@@ -130,4 +133,5 @@
     </special>
     <special name="Windmill" interact="object">
     </special>
+
 </speciallocations>

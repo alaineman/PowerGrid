@@ -10,6 +10,8 @@ import powerwalk.model.interact.Transportable;
  */
 public class HotAirBalloon extends Transportable{
     
+    public final static int[] values = {};
+    
     public HotAirBalloon(Point p){
         super(p.x, p.y, p.z, -1, new ArrayList<HotAirBalloon>(5));
     }

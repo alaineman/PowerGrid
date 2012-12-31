@@ -18,7 +18,8 @@ import powerwalk.model.interact.Transportable;
 public class Minecart extends Transportable {
 
     /**
-     * These are the hatch and minecart object values.
+     * These are the hatch and minecart GameObject values.
+     * @see GameObject
      */
     public final static int[] values = {28094, 7030, 7029, 7028};
 

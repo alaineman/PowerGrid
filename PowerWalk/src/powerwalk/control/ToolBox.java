@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -106,6 +107,34 @@ public abstract class ToolBox {
         }
     }
     
+    /**
+     * Searches the given XMLNode for direct children that have the given attribute set to the given value.
+     * @param root the root XMLNode
+     * @param attribute the attribute to look for
+     * @param value the value this attribute must have in order to be accepted
+     * @return an array of XMLNodes matching the filter
+     */
+    public static XMLNode[] filterNodes(XMLNode root,String attribute,String value) {
+        if (attribute == null || root == null || value == null) {
+            return null;
+        }
+        ArrayList<XMLNode> nodes = root.children();
+        ArrayList<XMLNode> matches = new ArrayList<>(nodes.size());
+        for (XMLNode n : nodes) {
+            String val = n.get(attribute);
+            if (val != null && value.equals(val))
+                matches.add(n);
+        }
+        return matches.toArray(new XMLNode[0]);
+    }
+    
+    public static XMLNode[] filterNodesRecursive(XMLNode root, String attribute,String value) {
+        ArrayList<XMLNode> matches = new ArrayList<>(Arrays.asList(filterNodes(root, attribute, value)));
+        for (XMLNode n : root.children()) {
+            matches.addAll(Arrays.asList(filterNodesRecursive(n, attribute, value)));
+        }
+        return matches.toArray(new XMLNode[0]);
+    }
     /**
      * Creates an XML Tree from the given list of lines, where every String element represents one XML Tag
      * @param lines a List of XML Strings

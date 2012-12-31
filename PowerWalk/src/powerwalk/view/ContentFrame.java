@@ -75,7 +75,11 @@ public class ContentFrame extends JFrame {
             }
         });
         
-        view.setEnabled(false); // TODO implement or change action for view button
+        view.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                MapViewer.showMapViewer();
+            }
+        });
         
         add(buttons,"North");
         add(content,"Center");

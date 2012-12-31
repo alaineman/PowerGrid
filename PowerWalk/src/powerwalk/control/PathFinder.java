@@ -1,9 +1,6 @@
 package powerwalk.control;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.PriorityQueue;
+import java.util.*;
 import powerwalk.Bot;
 import powerwalk.Starter;
 import powerwalk.model.Collision;
@@ -19,6 +16,8 @@ import powerwalk.model.Point;
  */
 public abstract class PathFinder {
     
+    private static HashMap<Point,Point> previous = null;
+    
     /** The maximum distance between two Points in the result Path. */
     public static final int maxDist = 15;
     
@@ -33,13 +32,23 @@ public abstract class PathFinder {
 
         //Initialize the A* algorith.
         HashSet<Point> closedSet = new HashSet<>();
-        PriorityQueue<Point> pending = new PriorityQueue<>();
+        //HashMap<Point,Double> f_score = new HashMap<>();
+        PriorityQueue<Point> pending = new PriorityQueue<> ();/*(10,
+            new Comparator<Point> () {
+                @Override public int compare(Point o1, Point o2) {
+                    return 0;
+                }
+            }
+            );*/
         HashMap<Point, Double> pathCost = new HashMap<>();
         HashMap<Point,Point> came_from = new HashMap<>();
+        
+        //previous = new HashMap<>();
         
         pathCost.put(start,1.0);
         
         start.f_score = Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) );
+        //f_score.put(start, Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) ));
         
         pending.offer(start);
         while (!pending.isEmpty()) {

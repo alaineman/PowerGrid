@@ -24,9 +24,8 @@ public class MapViewer extends Canvas {
      */
     public static void showMapViewer() {
         JFrame f = new JFrame("Map View");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        MapViewer viewer = new MapViewer();
-        JScrollPane sp = new JScrollPane(viewer);
+        theMapViewer = new MapViewer();
+        JScrollPane sp = new JScrollPane(theMapViewer);
         f.setLayout(new BorderLayout());
         f.add(sp);
         f.setSize(640,480);
@@ -38,10 +37,10 @@ public class MapViewer extends Canvas {
     
     private Grid theMap = null;
     
-    
+    public static MapViewer theMapViewer = null;
     
     private int scale = 3;                                  // the scale factor
-    private Rectangle r = new Rectangle(3100,3200,400,300); // The Area to view (x,y,width,height)
+    private Rectangle r = new Rectangle(3000,3200,480,320); // The Area to view (x,y,width,height)
     
     /**
      * Creates a new Canvas that the World Map will be drawn on
@@ -56,26 +55,33 @@ public class MapViewer extends Canvas {
      * paints the content of this MapViewer.
      * <p>The following color mapping is used:</p>
      * <pre>
-     *    Unexplored:       WHITE
-     *    Manually set:     PINK
-     *    Collisions:       BLACK
-     *    Interactions:     YELLOW
-     *    Generic objects:  LIGHT_GRAY
+     *    Unexplored or empty: WHITE
+     *    Manually set:        PINK
+     *    Generic Walls:       DARK_GRAY
+     *    Water tiles:         BLUE
+     *    Generic Blocked:     ORANGE
+     *    Collisions:          BLACK
+     *    Interactions:        YELLOW
+     *    Generic objects:     LIGHT_GRAY
      * </pre>
      * @param g the Graphics-object used to draw on this Canvas
      */
     @Override public void paint(Graphics g) {
         if (g == null) return;
-        int nulls = 0;
         for (int x=r.x;x<r.x+r.width;x++) {
             for (int y=r.y;y<r.y+r.height;y++) {
                 GameObject go = theMap.get(new Point(x,y));
                 
-                if (go == null) {                       // unexplored (WHITE)
+                if (go == null)                         // unexplored (WHITE)
                     g.setColor(Color.WHITE);
-                    nulls++;
-                } else if (go.getRawNumber() == -1)     // corrupt or manually overwritten tiles (PINK)
+                else if (go.getRawNumber() == -1)       // manually overwritten tiles (PINK)
                     g.setColor(Color.PINK);
+                else if (go.getRawNumber() == -2)       // walls (DARK_GRAY)
+                    g.setColor(Color.DARK_GRAY);
+                else if (go.getRawNumber() == -3)       // water tiles (BLUE)
+                    g.setColor(Color.ORANGE);
+                else if (go.getRawNumber() == -4)       // "blocked" tiles (ORANGE)
+                    g.setColor(Color.BLUE);
                 else if (go instanceof Collision)       // Collision tiles (BLACK)
                     g.setColor(Color.BLACK);
                 else if (go instanceof Interactable)    // Interaction Tiles (YELLOW)
@@ -87,7 +93,14 @@ public class MapViewer extends Canvas {
                 g.fillRect(scale*(x-r.x),scale*(r.height-(y-r.y)),scale,scale);
             }
         }
-        System.out.println("painted canvas with " + (r.width*r.height - nulls) + " tiles");
+        try {
+            Point p = Bot.getBot().getPosition();
+            if (p.x > r.x && p.x < r.x+r.width &&
+                p.y > r.x && p.y < r.y+r.height) {
+                g.setColor(Color.red);
+                g.fillRect(scale*(p.x-r.x),scale*(r.height-(p.y-r.y)),scale,scale);
+            }
+        } catch (NullPointerException p) {}
     }
     
     /**

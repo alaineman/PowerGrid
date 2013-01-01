@@ -12,7 +12,7 @@ package powerwalk;
  * </p>
  * 
  * <p>The Task is initialized by calling the start method. 
- * Then the execute method is called continously. 
+ * Then the step method is called continously. 
  * Executing a StepTask reduces the step counter of the Task. 
  * When there are no more steps to execute, the finish method is called. 
  * After the finish method has been called, the entire task has been executed.
@@ -47,12 +47,13 @@ public abstract class StepTask extends Task {
      * The main method of the Task. 
      * <p>This method should not be overridden. Instead, the step method 
      * should be overridden</p>
+     * @throws IllegalStateException when this Task has already finished running
      */
     @Override public void execute() {
         if (numSteps != 0) {
             if (numSteps > 0) numSteps--;
             step();
-        }
+        } else throw new IllegalStateException("StepTask has already finished");
     }
     
     /**
@@ -81,7 +82,8 @@ public abstract class StepTask extends Task {
     }
     
     /**
-     * sets the number of steps left for this Task.
+     * sets the number of steps left for this Task. If 
+     * <code>stepsLeft &lt; 0</code>, this Task is set to loop indefinitely.
      * @param stepsLeft the new number of steps left
      */
     protected void setStepsLeft(int stepsLeft) {
@@ -96,7 +98,8 @@ public abstract class StepTask extends Task {
     }
     
     /**
-     * This method is called before the first step of this StepTask.
+     * This method is called before the first step of this StepTask. Subclasses 
+     * can override this method to 
      */
     public void start() {}
     

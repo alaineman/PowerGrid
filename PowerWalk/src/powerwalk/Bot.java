@@ -1,14 +1,13 @@
 package powerwalk;
 
-import java.util.ArrayList;
 import java.util.PriorityQueue;
 import org.powerbot.game.api.methods.Walking;
+import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.interactive.Players;
-import powerwalk.control.PathFinder;
 import powerwalk.model.Destinations;
 import powerwalk.model.Grid;
-import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
+import powerwalk.tasks.TravelTask;
 
 /**
  * Bot-class representing the Player. 
@@ -18,6 +17,13 @@ import powerwalk.model.Point;
  * @author Chronio
  */
 public class Bot {
+    
+    // The Bot's States
+    public static final int STATE_UNKNOWN = 0;
+    public static final int STATE_IDLE = 1;
+    public static final int STATE_RESTING = 2;
+    public static final int STATE_WALKING = 3;
+    
     private static Bot theBot = new Bot();
     
     /**
@@ -30,6 +36,7 @@ public class Bot {
     
     private Grid theWorldMap = new Grid();
     private PriorityQueue<Task> taskQueue = new PriorityQueue<>();
+    private Task idleTask = null;
     
     private Bot() {}
     
@@ -57,67 +64,31 @@ public class Bot {
      * @param priority The priority of this Task
      */
     public void travelTo(Point p, int priority) { 
-        try {
-            final ArrayList<Point> path = PathFinder.calculatePath(getPosition(), p);
-            StepTask travelTask = new StepTask(priority) {
-                private int target = 0;
-                @Override public void start() {
-                    if (path.size() > 0) {
-                        Point t = path.get(target);
-                        Starter.logMessage("travel to " + path.get(path.size()-1) + " has started, there are " + path.size() + " points on this path.","Task");
-                        Walking.walk(t.toTile());
-                    }
-                }
-                @Override public void step() {
-                    setStepsLeft(path.size() - target);
-                    Point playerPos = getPosition();
-                    // check the distance to our next point.
-                    double distToTarget = Math.sqrt( 
-                            Math.pow(playerPos.x-path.get(target).x,2) + 
-                            Math.pow(playerPos.y-path.get(target).y,2) );
-                    
-                    // check if we are running. If not, enable when we have some stamina left
-                    if (!Walking.isRunEnabled() && Walking.getEnergy() >= 20) {
-                        Walking.setRun(true);
-                    }
-                    
-                    // Are we are close enough?
-                    if (distToTarget < (3 + 3 * Math.random())) {
-                        // Are there more points?
-                        if (target + 1 < path.size()) {
-                            ++target;
-                            // Then we walk to the next tile.
-                            Point t = path.get(target);
-                            Walking.walk(t.toTile());
-                        } else {
-                            // There are no more points, so we are done.
-                            cancel();
-                        }
-                    }
-                    
-                    // wait a while before checking again
-                    try { Thread.sleep((long)(134 + 86 * Math.random())); }
-                    catch (InterruptedException e) {}
-                }
-                @Override public void finish() {
-                    Starter.logMessage("Destination " + path.get(path.size()-1) + " reached","Task");
-                }
-            };
-            String name = Destinations.findNameForDestination(p);
-            if (name == null) name = p.toString();
-            travelTask.setName("Travel to " + name);
-            assignTask(travelTask); 
-        } catch (OutOfReachException e) {
-            Starter.logMessage("Cannot travel to " + p + ", no path found","Bot");
-        }
-        
+        TravelTask task = new TravelTask(p,priority);
+        assignTask(task);
     }
     
     public void rest(final boolean abortOnTask) {
-        Task restTask = new Task(0) {
+        int priority = 0;
+        if (abortOnTask) priority = Integer.MIN_VALUE;
+        Task restTask = new Task(priority) {
             boolean stop = false;
             @Override public void execute() {
-                
+                for (int d = 0; d < 5; d++) {
+                    Widgets.get(750, 5).interact("Rest");
+
+                    int anim = Players.getLocal().getAnimation();
+                    if (anim == 12108 || anim == 2033 || anim == 2716 || anim == 11786 || anim == 5713) {
+                        while (!stop) {
+                            // cancel when there are tasks waiting, or when done resting
+                            if ((abortOnTask && Bot.getBot().tasksPending() > 0)
+                                || Walking.getEnergy() >= 100) {
+                                cancel();
+                            }
+                        }
+                        break;
+                    }
+                }
             }
             @Override public void cancel() {
                 stop = true;
@@ -125,6 +96,14 @@ public class Bot {
         };
         restTask.setName("Rest");
         assignTask(restTask);
+    }
+    
+    public int getState() {
+        if (tasksPending() == 0) return STATE_IDLE;
+        if (Players.getLocal().isMoving()) return STATE_WALKING;
+        int anim = Players.getLocal().getAnimation();
+        if (anim == 12108 || anim == 2033 || anim == 2716 || anim == 11786 || anim == 5713) return STATE_RESTING;
+        return STATE_UNKNOWN;
     }
     
     /**
@@ -161,6 +140,34 @@ public class Bot {
      */
     Task retrieveTask() {
         return taskQueue.poll();
+    }
+    
+    /**
+     * Sets a Task that is executed repeatedly as long as there are no other Tasks.
+     * <p />
+     * The Task will not automatically canceled when a new Task is added to the TaskQueue, 
+     * so this Task should check if there are any tasks and cancel itself, or run 
+     * for only a short time, allowing the Task to end gracefully and start the 
+     * Task in the TaskQueue.
+     * @param task the Task to run when there are no other Tasks.
+     */
+    public void setIdleTask(Task task) {
+        idleTask = task;
+    }
+    
+    /**
+     * Clears any set idle Task, causing the Bot to stay idle when it has no running Tasks.
+     */
+    public void clearIdleTask() {
+        idleTask = null;
+    }
+    
+    /**
+     * Returns the Task that is used 
+     * @return 
+     */
+    public Task getIdleTask() {
+        return idleTask;
     }
     
     /**

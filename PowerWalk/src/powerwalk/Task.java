@@ -1,7 +1,18 @@
 package powerwalk;
 
 /**
- * Task Class that is used to queue tasks for the Bot to execute
+ * Task Class that is used to queue tasks for the Bot to execute.
+ * <p />
+ * Every Task has a priority and a name. The priority is used by the Bot class to 
+ * sort the Tasks by priority, and execute the Task with the highest priority 
+ * first. The default priority is 0. After the Task is created, the priority 
+ * cannot be changed anymore.
+ * <p />
+ * The name is used in log messages and can also be used for identification. If 
+ * an invalid name is set (either <code>null</code> or an empty String), the old 
+ * name is kept. When no valid name has been set, the name of the Task is 
+ * "Generic Task".
+ * 
  * @author Chronio
  */
 public abstract class Task implements Comparable<Task> {
@@ -9,12 +20,38 @@ public abstract class Task implements Comparable<Task> {
     private String name = "Generic Task";
     
     /**
-     * Creates a new Task with the specified priority.
+     * Creates a new Task with the specified name and priority
+     * @param priority the priority of the Task
+     * @param name the name of the Task
+     */
+    public Task(int priority, String name) {
+        this.priority = priority;
+        if (name != null && !name.isEmpty())
+            this.name = name;
+    }
+    
+    /**
+     * Creates a new Task with the specified name. The priority of this Task is 
+     * set to 0.
+     * @param name the name of the Task
+     */
+    public Task(String name) {
+        this(0,name);
+    }
+    
+    /**
+     * Creates a new Task with the specified priority. The name of this Task will
+     * be "Generic Task".
      * @param priority The priority of the Task
      */
     public Task(int priority) {
         this.priority = priority;
     }
+    
+    /**
+     * Creates a new Task with priority set to 0 and "Generic Task" as its name.
+     */
+    public Task() {}
     
     /**
      * The method that is run by the Bot when this task is scheduled.
@@ -57,11 +94,13 @@ public abstract class Task implements Comparable<Task> {
     
     /**
      * Sets a name for this Task. The name can be used for identification and 
-     * can be found back in logs.
+     * can be found back in logs. If the given name is either null or the empty 
+     * String, this method does nothing.
      * @param name the new name for this Task
      */
     public void setName(String name) {
-        this.name = name;
+        if (name != null && !name.isEmpty())
+            this.name = name;
     }
     
     /**
@@ -71,5 +110,27 @@ public abstract class Task implements Comparable<Task> {
      */
     public String getName() {
         return name;
+    }
+    
+    /**
+     * Resets this Task, allowing it to be run again.
+     * <p />
+     * By default, this method throws an UnsupportedOperationException. Classes 
+     * that do not override this method are considered to be able to run only once.
+     * <p />
+     * If a subclass of Task overrides this method, and does not throw an 
+     * UnsupportedOperationException, the Bot assumes the Task is reset and 
+     * ready to be run again when this method returns.
+     * @throws UnsupportedOperationException when this Task is not resettable
+     */
+    public void reset() {
+        throw new UnsupportedOperationException("Reset is not supported for this Task");
+    }
+    
+    @Override public boolean equals(Object other) {
+        if (other instanceof Task) {
+            return (this.getName().equals(((Task)other).getName()));
+        }
+        return false;
     }
 }

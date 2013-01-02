@@ -3,18 +3,19 @@ package powerwalk;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.util.logging.*;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Environment;
+import org.powerbot.game.api.methods.Widgets;
+import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.control.Mapper;
 import powerwalk.control.ToolBox;
+import powerwalk.control.noticeboard.Quests;
 import powerwalk.model.Destinations;
 import powerwalk.model.XMLNode;
+import powerwalk.tasks.StepTask;
+import powerwalk.tasks.Task;
 import powerwalk.view.ContentFrame;
 
 /**
@@ -62,25 +63,37 @@ public class Starter extends ActiveScript {
                 } else {
                     sb.append("[Main] ");
                 }
-                sb.append(record.getMessage());
-                sb.append("\n");
+                int n = sb.length();
+                String indent = "                "; // counted; this is the minimum prefix size
+                while (indent.length() < n) {
+                    indent += " ";
+                }
+                String[] lines = record.getMessage().split("\n");
+                for (int i=0;i<lines.length;i++) {
+                    String l = lines[i];
+                    if (i > 0) sb.append(indent);
+                    sb.append(l);
+                    sb.append("\n");
+                }
                 return sb.toString();
             }
         });
         theLogger.addHandler(handler);
-        logMessage("Starting...");
-        logMessage("loading WorldMap from File: \"" + worldMapFile + "\"...");
+        logMessage("Loading required resources...");
         try (FileInputStream worldMapIn = new FileInputStream(Environment.getStorageDirectory().toString() + "\\" + worldMapFile)) {
             XMLNode worldMap = ToolBox.getXMLTree(worldMapIn);
             Bot.getBot().getWorldMap().fillFromXML(worldMap);
             logMessage("WorldMap loaded");
-        } catch (FileNotFoundException e404) {
+        } catch (FileNotFoundException e) {
             logMessage("WorldMap file does not exist; starting with empty WorldMap");
         } catch (IOException e) {
             logMessage("WorldMap failed to load");
         }
         Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
-
+        
+        // Load Quest data directly from Noticeboard, since Quest class doesn't seem to work properly
+        Quests.updateQuestData();
+        
         ContentFrame.theFrame = new ContentFrame();
         logMessage("PowerWalk started, waiting for tasks...");
     }

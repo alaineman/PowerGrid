@@ -5,7 +5,6 @@ import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Walking;
 import powerwalk.Bot;
 import powerwalk.Starter;
-import powerwalk.StepTask;
 import powerwalk.control.PathFinder;
 import powerwalk.model.Destinations;
 import powerwalk.model.OutOfReachException;

@@ -1,4 +1,4 @@
-package powerwalk;
+package powerwalk.tasks;
 
 /**
  * Represents a Task that can be split in a number of similar tasks.

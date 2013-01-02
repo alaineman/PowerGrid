@@ -1,18 +1,20 @@
 package powerwalk;
 
 import java.util.PriorityQueue;
-import org.powerbot.game.api.methods.Walking;
-import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.interactive.Players;
 import powerwalk.model.Destinations;
 import powerwalk.model.Grid;
 import powerwalk.model.Point;
+import powerwalk.tasks.RestTask;
+import powerwalk.tasks.Task;
 import powerwalk.tasks.TravelTask;
 
 /**
- * Bot-class representing the Player. 
- * The Bot can execute high-level tasks such as "travel to [destination]", 
- * "go to nearest [place of interest]", and others.
+ * Bot-class representing the Player.
+ * The Bot can execute high-level tasks such as "travel to [destination]",
+ * "go to nearest [place of interest]", and others. It makes use of the Task 
+ * subclasses in the <code>powerwalk.tasks</code> package to achieve these tasks.
+ * <p/>
  * @author Alaineman
  * @author Chronio
  */
@@ -36,7 +38,7 @@ public class Bot {
     
     private Grid theWorldMap = new Grid();
     private PriorityQueue<Task> taskQueue = new PriorityQueue<>();
-    private Task idleTask = null;
+    private Task idleTask = new RestTask(Integer.MIN_VALUE,true);
     
     private Bot() {}
     
@@ -49,8 +51,8 @@ public class Bot {
     
     /**
      * registers a Task that moves to the destination specified in dest.
-     * 
-     * @param dest The target destination
+     * <p/>
+     * @param dest     The target destination
      * @param priority The priority of this Task
      */
     public void travelTo(String dest,int priority) {
@@ -60,7 +62,8 @@ public class Bot {
     
     /**
      * Registers a Task that moves to the specified Point in the World
-     * @param p The Point to move to
+     * <p/>
+     * @param p        The Point to move to
      * @param priority The priority of this Task
      */
     public void travelTo(Point p, int priority) { 
@@ -68,34 +71,9 @@ public class Bot {
         assignTask(task);
     }
     
-    public void rest(final boolean abortOnTask) {
-        int priority = 0;
-        if (abortOnTask) priority = Integer.MIN_VALUE;
-        Task restTask = new Task(priority) {
-            boolean stop = false;
-            @Override public void execute() {
-                for (int d = 0; d < 5; d++) {
-                    Widgets.get(750, 5).interact("Rest");
-
-                    int anim = Players.getLocal().getAnimation();
-                    if (anim == 12108 || anim == 2033 || anim == 2716 || anim == 11786 || anim == 5713) {
-                        while (!stop) {
-                            // cancel when there are tasks waiting, or when done resting
-                            if ((abortOnTask && Bot.getBot().tasksPending() > 0)
-                                || Walking.getEnergy() >= 100) {
-                                cancel();
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-            @Override public void cancel() {
-                stop = true;
-            }
-        };
-        restTask.setName("Rest");
-        assignTask(restTask);
+    public void rest(int priority, boolean abortOnTask) {
+        RestTask task = new RestTask(priority,abortOnTask);
+        assignTask(task);
     }
     
     public int getState() {

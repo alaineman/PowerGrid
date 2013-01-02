@@ -1,4 +1,4 @@
-package powerwalk;
+package powerwalk.tasks;
 
 /**
  * Task Class that is used to queue tasks for the Bot to execute.

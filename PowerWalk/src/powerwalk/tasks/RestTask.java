@@ -2,11 +2,8 @@ package powerwalk.tasks;
 
 import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.Widgets;
-import org.powerbot.game.api.methods.interactive.Players;
 import powerwalk.Bot;
 import powerwalk.Starter;
-import powerwalk.StepTask;
-import powerwalk.Task;
 
 /**
  * Creates a Task that rests the local Player. A boolean can be set to abort 
@@ -18,12 +15,36 @@ public class RestTask extends StepTask {
     private boolean abortOnTask = false;
     private int targetEnergy = 100;
     
+    /**
+     * Creates a new RestTask with the given priority.
+     * <p />
+     * <code>abortOnTask</code> indicates whether this Task should be aborted
+     * when another Task is added to the TaskQueue.
+     * <p/>
+     * @param priority    the priority of this Task
+     * @param abortOnTask when true, aborts this Task when other Tasks are pending
+     */
     public RestTask(int priority, boolean abortOnTask) {
         super(priority);
         super.setName("Rest at current location");
         this.abortOnTask = abortOnTask;
     }
     
+    /**
+     * Creates a new RestTask with the given priority.
+     * <p />
+     * <code>abortOnTask</code> indicates whether this Task should be aborted
+     * when another Task is added to the TaskQueue.
+     * <p />
+     * <code>requiredEnergy</code> indicates the energy the local Player must
+     * have before this Task ends. When <code>abortOnTask</code> is set, this
+     * amount of energy may not have been achieved when this Task ends.
+     * <p/>
+     * @param priority       the priority of this Task
+     * @param abortOnTask    when true, aborts this Task when other Tasks are pending
+     * @param requiredEnergy the amount of energy the Player must have before
+     *                       this Task ends.
+     */
     public RestTask(int priority, boolean abortOnTask, int requiredEnergy) {
         super(priority);
         super.setName("Rest at current location");
@@ -31,6 +52,12 @@ public class RestTask extends StepTask {
         this.abortOnTask = abortOnTask;
     }
 
+    /**
+     * Attempts to issue the rest command to the RSBot environment.
+     * <p/>
+     * This Task will be canceled here when the required energy is already
+     * achieved.
+     */
     @Override public void start() {
         for (int attempt=0;attempt<5;attempt++) {
             if (Bot.getBot().getState() == Bot.STATE_RESTING) break;
@@ -38,19 +65,30 @@ public class RestTask extends StepTask {
         }
         if (Bot.getBot().getState() != Bot.STATE_RESTING) {
             cancel();
-            Starter.logMessage("Resting Failed");
+            Starter.logMessage("Resting Failed","RestTask");
+        }
+        if (Walking.getEnergy() >= targetEnergy) {
+            cancel();
+            Starter.logMessage("Energy is already suffiecient, task has been canceled","RestTask");
         }
     }
     
+    /**
+     * Checks if the Player is resting. If not, it restarts this Task.
+     * If the Player is resting and the targetEnergy has been achieved, this
+     * Task ends.
+     */
     @Override public void step() {
         if (abortOnTask && Bot.getBot().tasksPending() > 0) {
             cancel();
         } else {
             if (Walking.getEnergy() >= targetEnergy) {
                 cancel();
+                Starter.logMessage("Target Energy (" + targetEnergy + ") achieved, RestTask completed","RestTask");
             }
-            int anim = Players.getLocal().getAnimation();
             if (Bot.getBot().getState() != Bot.STATE_RESTING) {
+                // re-run the start method to start resting
+                Starter.logMessage("Currently not resting, restarting RestTask");
                 start();
             }
         }

@@ -1,6 +1,11 @@
 package powerwalk.model.interact.handlers.manifold;
 
 import java.util.ArrayList;
+import org.powerbot.core.script.job.Task;
+import org.powerbot.game.api.methods.Widgets;
+import org.powerbot.game.api.methods.interactive.NPCs;
+import org.powerbot.game.api.util.Timer;
+import org.powerbot.game.api.wrappers.interactive.NPC;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
@@ -16,9 +21,16 @@ public class MagicCarpet extends Transportable{
 
     @Override
     protected void handle(Transportable dest) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        NPC merchant = NPCs.getNearest(34343434);//something
+        merchant.interact("Travel");
+        Timer chat = new Timer(5000);
+        while(chat.isRunning() && !Widgets.get(1188).validate()){
+            Task.sleep(50, 100);
+        }
+        //TODO: select option
+        
     }
-
+    
     @Override
     protected void waitForCompletion(Transportable dest) {
         throw new UnsupportedOperationException("Not supported yet.");

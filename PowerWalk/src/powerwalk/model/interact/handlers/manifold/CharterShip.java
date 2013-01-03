@@ -23,7 +23,11 @@ public class CharterShip extends Transportable {
 
     @Override
     protected void handle(Transportable dest) {
-        NPC captain = NPCs.getNearest(values);
+        int[] npcids = dest.getNPCIDs();
+        if (npcids == null) {
+            return;
+        }
+        NPC captain = NPCs.getNearest(npcids);
         captain.interact("Charter");
         Timer wait = new Timer(6000);
         while (wait.isRunning()
@@ -33,15 +37,15 @@ public class CharterShip extends Transportable {
         Widgets.get(95, dest.getWidgetNumber()).click(true);
         wait.reset();
         while (wait.isRunning() && !Widgets.canContinue()) {
-            Task.sleep(50 , 100);
+            Task.sleep(50, 100);
         }
         wait.reset();
         Widgets.clickContinue();
-        while(wait.isRunning() && !Widgets.get(1188).validate()){
-        Task.sleep(50 , 100);
+        while (wait.isRunning() && !Widgets.get(1188).validate()) {
+            Task.sleep(50, 100);
         }
         Widgets.get(1188, 3).click(true);
-        
+
         waitForCompletion(dest);
     }
 

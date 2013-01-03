@@ -1,8 +1,15 @@
 package powerwalk.model.interact;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import powerwalk.control.ToolBox;
 import powerwalk.model.OutOfReachException;
+import powerwalk.model.Point;
+import powerwalk.model.XMLNode;
 
 /**
  * Represents a GameObject that allows a transport to another Transportable.
@@ -41,35 +48,90 @@ public abstract class Transportable extends Teleportable {
         handle(dest);
         waitForCompletion(dest);
     }
-    
+
     protected abstract void handle(Transportable dest) throws OutOfReachException;
 
-    protected void waitForCompletion(Transportable dest) {}
+    protected void waitForCompletion(Transportable dest) {
+    }
 
     public boolean addDestination(Transportable dest) {
         if (dest == null || destinations.contains(dest)) {
             return false;
         }
-        return destinations.add(dest);    
+        return destinations.add(dest);
     }
-/**
- * Teleports you to the first destination Point. <p>When there are no
- * destinations for this Transportable, this method does nothing.
- *
- * @throws OutOfReachException when the requirements are not met.
- */
-@Override public void follow() throws OutOfReachException {
-        if(!destinations.isEmpty()){
+
+    /**
+     * Teleports you to the first destination Point. <p>When there are no
+     * destinations for this Transportable, this method does nothing.
+     *
+     * @throws OutOfReachException when the requirements are not met.
+     */
+    @Override
+    public void follow() throws OutOfReachException {
+        if (!destinations.isEmpty()) {
             follow(destinations.get(0));
         }
     }
-    
+
     /**
      * Returns available destinations for this Transportable.
+     *
      * @return the available destinations.
      */
     public Transportable[] getDestinations() {
         return destinations.toArray(new Transportable[0]);
     }
-            
+
+    public String[] getTraits() {
+        try {
+            XMLNode file = ToolBox.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
+            XMLNode[] node = ToolBox.filterNodes(file, "name", "MagicCarpet"); // of andere naam
+            if (node.length > 0) {
+                XMLNode transportType = node[0];
+                ArrayList<XMLNode> foundDestinations = transportType.children();
+                for (XMLNode vertex : foundDestinations) {
+                    if (Point.fromString(vertex.get("pos")).equals(getPosition())) {
+                        if (vertex.get("traits") != null) {
+                            return vertex.get("traits").split("|");
+                        }
+                    }
+                }
+                return null;
+            } else {
+                throw new NoSuchElementException("No such Transporttype found");
+            }
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
+    public int[] getNPCIDs() {
+        try {
+            XMLNode file = ToolBox.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
+            XMLNode[] node = ToolBox.filterNodes(file, "name", "MagicCarpet"); // of andere naam
+            if (node.length > 0) {
+                XMLNode transportType = node[0];
+                ArrayList<XMLNode> foundDestinations = transportType.children();
+                for (XMLNode vertex : foundDestinations) {
+                    if (Point.fromString(vertex.get("pos")).equals(getPosition())) {
+                        if (vertex.get("target") != null) {
+                            String[] npcidString = vertex.get("target").split("|");
+                            int[] npcIds = new int[npcidString.length];
+                            for (int i = 0; i < npcidString.length; i++) {
+                                npcIds[i] = Integer.parseInt(npcidString[i].substring(1));
+                            }
+                            return npcIds;
+                        }
+                    }
+                }
+                return null;
+            } else {
+                throw new NoSuchElementException("No such Transporttype found");
+            }
+        } catch (IOException ex) {
+            return null;
+        }
+    }
 }
+

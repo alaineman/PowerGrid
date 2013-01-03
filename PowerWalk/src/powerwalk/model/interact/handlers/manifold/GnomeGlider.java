@@ -23,14 +23,18 @@ public class GnomeGlider extends Transportable {
 
     @Override
     protected void handle(Transportable dest) {
-        NPC gnome = NPCs.getNearest(values);
+        int[] npcids = dest.getNPCIDs();
+        if (npcids == null) {
+            return;
+        }
+        NPC gnome = NPCs.getNearest(npcids);
         gnome.interact("Glider");
         Timer wait = new Timer(5000);
         while (wait.isRunning() && !Widgets.get(138).validate()) {
             Task.sleep(50, 100);
         }
-        if(dest.getDestinations().length > 1){
-        Widgets.get(138, dest.getWidgetNumber()).click(true);
+        if (dest.getDestinations().length > 1) {
+            Widgets.get(138, dest.getWidgetNumber()).click(true);
         }
         waitForCompletion(dest);
     }

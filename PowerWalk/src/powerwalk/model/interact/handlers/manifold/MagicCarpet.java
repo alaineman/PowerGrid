@@ -10,27 +10,31 @@ import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
- * 
+ *
  * @author Alaineman
  */
-public class MagicCarpet extends Transportable{
-    
-    public MagicCarpet(Point p){
+public class MagicCarpet extends Transportable {
+
+    public MagicCarpet(Point p) {
         super(p.x, p.y, p.z, -1, new ArrayList<MagicCarpet>(10));
     }
 
     @Override
     protected void handle(Transportable dest) {
-        NPC merchant = NPCs.getNearest(34343434);//something
+        int[] npcids = dest.getNPCIDs();
+        if (npcids == null) {
+            return;
+        }
+        NPC merchant = NPCs.getNearest(npcids);//something
         merchant.interact("Travel");
         Timer chat = new Timer(5000);
-        while(chat.isRunning() && !Widgets.get(1188).validate()){
+        while (chat.isRunning() && !Widgets.get(1188).validate()) {
             Task.sleep(50, 100);
         }
         //TODO: select option
-        
+
     }
-    
+
     @Override
     protected void waitForCompletion(Transportable dest) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -40,5 +44,4 @@ public class MagicCarpet extends Transportable{
     public boolean isAllowed(String method) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }

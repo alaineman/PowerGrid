@@ -1,8 +1,8 @@
 package powerwalk.control;
 
+import org.powerbot.game.api.methods.Tabs;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
-import powerwalk.Starter;
 import powerwalk.model.interact.Lodestone;
 
 /**
@@ -23,20 +23,20 @@ public abstract class WidgetManager {
      * Ensures that the SpellBook panel is visible
      */
     public static void openSpellBook() {
-        if (!Widgets.get(275, 18).visible()) {
-            Widgets.get(548, 123).click(true);
+        if (!Tabs.ABILITY_BOOK.isOpen()){
+            Tabs.ABILITY_BOOK.open();
             try { Thread.sleep(500); } catch (Exception e) {}
-        }
+        }        
     }
 
     /**
      * Ensures the Noticeboard Tab is visible.
      */
     public static void openNoticeboardTab() {
-        if (Widgets.get(548, 136).getTextureId() != 1840) { // texture of selected box
-            Widgets.get(548, 108).click(true);
+        if (!Tabs.NOTICEBOARD.isOpen()){
+            Tabs.NOTICEBOARD.open(); 
             try { Thread.sleep(150); } catch (Exception e) {}
-        }
+        }      
     }
     
     /**

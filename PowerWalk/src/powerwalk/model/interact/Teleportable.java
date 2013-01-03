@@ -73,8 +73,8 @@ public abstract class Teleportable extends GameObject implements ComplexInteract
      * Returns an array containing the Quests needed for this Teleportable.
      * @return the required Quests.
      */
-    public /*TODO: Quest[]*/ int[] getRequiredQuests() {
-        return new int[0]; //TODO Quest[0];
+    public String[] getRequiredQuests() {
+        return new String[0]; //TODO Quest[0];
     }
     
 }

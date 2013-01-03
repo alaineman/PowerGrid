@@ -16,7 +16,6 @@ public class PiratesCove extends Transportable {
 
     @Override
     protected void handle(Transportable dest) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

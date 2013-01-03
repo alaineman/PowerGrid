@@ -1,7 +1,6 @@
 package powerwalk.model.interact;
 
 import java.util.HashMap;
-import org.powerbot.game.api.methods.tab.Quest;
 import powerwalk.model.GameObject;
 import powerwalk.model.Item;
 import powerwalk.model.OutOfReachException;
@@ -74,8 +73,8 @@ public abstract class Teleportable extends GameObject implements ComplexInteract
      * Returns an array containing the Quests needed for this Teleportable.
      * @return the required Quests.
      */
-    public Quest[] getRequiredQuests() {
-        return new Quest[0];
+    public /*TODO: Quest[]*/ int[] getRequiredQuests() {
+        return new int[0]; //TODO Quest[0];
     }
     
 }

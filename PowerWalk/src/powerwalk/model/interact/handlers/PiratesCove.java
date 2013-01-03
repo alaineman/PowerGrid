@@ -8,11 +8,7 @@ import powerwalk.model.interact.Transportable;
  * 
  * @author Alaineman
  */
-public class PiratesCove extends Transportable {
-    
-    public static final Point startPoint = new Point(0, 0);
-    
-    public static final Point endPoint = new Point(0, 0);
+public class PiratesCove extends Transportable {    
     
      public PiratesCove(Point p){
         super(p.x, p.y, p.z, -1, new ArrayList<PiratesCove>(1));

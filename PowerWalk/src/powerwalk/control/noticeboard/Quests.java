@@ -3,9 +3,7 @@ package powerwalk.control.noticeboard;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import javax.net.ssl.SSLContext;
 import org.powerbot.game.api.methods.Widgets;
-import org.powerbot.game.api.methods.tab.Quest;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.Starter;
 import powerwalk.control.WidgetManager;
@@ -136,8 +134,9 @@ public abstract class Quests {
         for (WidgetChild child : children) {
             String text = child.getText();
             if (child.visible() && text != null && !text.isEmpty()) {
-                if (text.equals("Free") || text.equals("Members") || text.equals("Seasonal quest"))
+                if (text.equals("Free") || text.equals("Members") || text.equals("Seasonal quest")) {
                     continue;
+                }
                 int s = NOT_STARTED;
                 int color = child.getTextColor(); // decide whether a Quest is done by looking at color in noticeboard
                 if (color == 65280) {

@@ -47,7 +47,6 @@ public class Minecart extends Transportable {
                 throw new OutOfReachException(dest.getPosition(), "Has no widget value.");
             }
         }
-        waitForCompletion(dest);
     }
 
     @Override

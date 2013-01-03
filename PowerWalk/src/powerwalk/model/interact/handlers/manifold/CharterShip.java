@@ -45,10 +45,8 @@ public class CharterShip extends Transportable {
             Task.sleep(50, 100);
         }
         Widgets.get(1188, 3).click(true);
-
-        waitForCompletion(dest);
     }
-
+    
     @Override
     protected void waitForCompletion(Transportable dest) {
         Task.sleep(800, 1200);

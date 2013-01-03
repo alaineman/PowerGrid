@@ -49,7 +49,6 @@ public class HotAirBalloon extends Transportable {
             Task.sleep(50, 100);
         }
         Widgets.get(destSelectWidget, dest.getWidgetNumber()).click(true);
-        waitForCompletion(dest);
     }
 
     @Override

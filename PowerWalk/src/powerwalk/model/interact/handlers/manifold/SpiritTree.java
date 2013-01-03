@@ -5,6 +5,7 @@ import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
+import powerwalk.control.noticeboard.Quests;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
@@ -35,11 +36,17 @@ public class SpiritTree extends Transportable {
             throw new OutOfReachException(dest.getPosition(), "No basket nearby.");
         }
         spirit.interact("Teleport");
-        //if(questdone){
-            
-        //} else {
-            
-        //}        
+        if (Quests.isCompleted("The Path of Glouphrie")){
+            WidgetChild[] grandChilds = optionMenu.getChildren();
+            for(WidgetChild i : grandChilds){
+                if(i.getText().contains(dest.getTraits())){
+                    i.click(true);
+                    return;
+                }
+            }
+        } else {
+            //TODO
+        }
     }
 
     @Override

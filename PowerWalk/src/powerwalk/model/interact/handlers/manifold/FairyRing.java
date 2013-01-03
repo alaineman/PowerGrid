@@ -84,7 +84,6 @@ public class FairyRing extends Transportable {
 
             Widgets.get(734, 21).interact("Teleport");
         }
-        waitForCompletion(dest);
     }
 
     @Override

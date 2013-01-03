@@ -50,12 +50,14 @@
         <location pos="(3160,3427)" target="Range" />
     </special>
     <special name="CraftingShop" interact="npc">
+        <location pos="(3311,2779)" target="_5267" />
     </special>
     <special name="FishingShop" interact="npc">
     </special>
     <special name="FishingSpot" interact="object">
     </special>
     <special name="FoodShop" interact="npc">
+        <location pos="(3305, 2770)" target="_5263" />
     </special>
     <special name="FurTrader" interact="npc">
         <location pos="(3217,3434)" target="Baraek" />
@@ -76,6 +78,17 @@
     <special name="KebabSeller" interact="npc">
     </special>
     <special name="MaceShop" interact="npc">
+    </special>
+    <special name="MagicCarpet" interact="npc">
+        <location pos="(3309,3109)" target="_2291" traits="Shantay Pass"/>
+        <location pos="(3351,3001)" target="_2294" traits="to Pollnivneach"/>
+        <location pos="" target="" traits="Uzer"/>
+        <location pos="" target="" traits="Bedabin Camp"/>
+        <location pos="" target="" traits="monkey colony"/>
+        <location pos="(3350,2942)" target="_2293" traits="south Pollnivneach"/>
+        <location pos="" target="" traits="Nardah"/>
+        <location pos="(3245,2812)" target="_2299" traits="Menaphos"/>
+        <location pos="(3286,2813)" target="_2297" traits="Sophanem"/>
     </special>
     <special name="MagicShop" interact="npc">
         <location pos="(3252,3401)" target="Aubury" />
@@ -105,12 +118,15 @@
         <location pos="(3127,3405)" target="Mysterious ruins" traits="air" />
     </special>
     <special name="ScimitarShop" interact="npc">
+        <location pos="(3296,2804)" target="_5265" />
     </special>
     <special name="ShieldShop" interact="npc">
     </special>
     <special name="SilkTrader" interact="npc">
     </special>
     <special name="SpinningWheel" interact="object">
+        <location pos="(3316,2790)" target="Spinning Wheel" />
+        
     </special>
     <special name="StaffShop" interact="npc">
         <location pos="(3203,3434)" target="Zaff" />
@@ -128,6 +144,8 @@
         <location pos="(3217,3463)" target="Fountain" />
         <location pos="(3224,3495)" target="Sink" />
         <location pos="(3191,3469)" target="Fountain" />
+        <location pos="(3318,2784)" target="Sink" />
+        
     </special>
     <special name="Watermill" interact="object">
     </special>

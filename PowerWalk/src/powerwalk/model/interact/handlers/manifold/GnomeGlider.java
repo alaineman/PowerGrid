@@ -36,9 +36,8 @@ public class GnomeGlider extends Transportable {
         if (dest.getDestinations().length > 1) {
             Widgets.get(138, dest.getWidgetNumber()).click(true);
         }
-        waitForCompletion(dest);
     }
-
+    
     @Override
     protected void waitForCompletion(Transportable dest) {
         Timer wait = new Timer(5000);

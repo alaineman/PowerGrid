@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import powerwalk.control.ToolBox;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
@@ -83,7 +81,7 @@ public abstract class Transportable extends Teleportable {
         return destinations.toArray(new Transportable[0]);
     }
 
-    public String[] getTraits() {
+    public String getTraits() {
         try {
             XMLNode file = ToolBox.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
             XMLNode[] node = ToolBox.filterNodes(file, "name", "MagicCarpet"); // of andere naam
@@ -92,9 +90,7 @@ public abstract class Transportable extends Teleportable {
                 ArrayList<XMLNode> foundDestinations = transportType.children();
                 for (XMLNode vertex : foundDestinations) {
                     if (Point.fromString(vertex.get("pos")).equals(getPosition())) {
-                        if (vertex.get("traits") != null) {
-                            return vertex.get("traits").split("|");
-                        }
+                       return vertex.get("traits");
                     }
                 }
                 return null;

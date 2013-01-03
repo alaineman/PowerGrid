@@ -17,6 +17,7 @@ general
 powerwalk.model
 ---------------
 - Collect raw values for GameObject subclasses (->VINCENT)
+
 - Make subclasses of GameObject that represent objects in the RSBot environment (low priority).
     - [c] Gate extends GameObject implements Interactable
     - [c] Ladder extends Elevator
@@ -25,8 +26,14 @@ powerwalk.model
     - [c] Rope extends Elevator
 
 - Interactions and Teleports (->VINCENT)
+    - Singleton handlers (priority) + Agility shortcuts
     - implement the Interactables' interact() and follow() methods.
     - test each interaction, so that it always works.
+    - transportable factory (-> PATRICK)
+
+- Item manager
+
+- 
 
 - Refactor Point.f_score to a HashMap in powerwalk.control.PathFinder, since 
   it's really only used there.
@@ -34,16 +41,11 @@ powerwalk.model
 - Move int[] values field values to own XML file and make values field non-final to 
   make it extendible.
 
-powerwalk.control
------------------
-- [c] WidgetManager
-    -[m] openQuestWidget()
-    -[m] openNoticeboard()
-    -[m] openXXX() .... etc
-
 powerwalk.data
 --------------
+- Data toevoegen (-> PATRICK & VINCENT)
 
-powerwalk.view
+powerwalk.task
 --------------
-- Embed more functionality from the Bot class (->PATRICK)
+- Meer tasks?
+

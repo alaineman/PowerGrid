@@ -33,7 +33,7 @@ import javax.swing.*;
  */
 public class ScriptInjector {
 
-    private static final String RSBOT_DICTIONARY = "..\\lib\\RSBot-4045.jar"; // = "C:\\Users\\Public\\Documents\\RSBot\\RSBot.jar"; - EXAMPLE (This is not a requirement if rsbot is in project folder)
+    private static final String RSBOT_DICTIONARY = "..\\lib\\RSBot-4046.jar"; // = "C:\\Users\\Public\\Documents\\RSBot\\RSBot.jar"; - EXAMPLE (This is not a requirement if rsbot is in project folder)
     private static final boolean DEV_MODE = true; //true runs RSBot.jar with the -dev flag, false doesn't
 
     private static final Logger logger = Logger.getLogger(ScriptInjector.class.getName());

@@ -19,28 +19,24 @@ import powerwalk.tasks.Task;
 import powerwalk.view.ContentFrame;
 
 /**
- * Starter and Task Manager class for the entire plug-in
+ * Starter and Task Manager class for the entire plug-in.
  *
  * @author Chronio
  * @author Alaineman
  */
 @Manifest(
-        authors        = "alaineman",
+        authors        = { "Alaineman" , "Chronio" },
         name           = Starter.productName,
         description    = "Runs all day!",
         version        = Starter.version,
         singleinstance = true)
 public class Starter extends ActiveScript {
 
-    private static final Logger theLogger = Logger.getLogger(Starter.class.getName());
+    public static final Logger theLogger = Logger.getLogger(Starter.class.getName());
     public static final String worldMapFile = "worldmap.xml";
-    /**
-     * The name of the Plug-in
-     */
+    /** The name of the Plug-in */
     public static final String productName = "PowerWalk";
-    /**
-     * The version number
-     */
+    /** The version number */
     public static final double version = 0.1;
     private static Task currentTask = null;
 
@@ -94,10 +90,41 @@ public class Starter extends ActiveScript {
         // Load Quest data directly from Noticeboard, since Quest class doesn't seem to work properly
         Quests.updateQuestData();
         
+        // try to run a implementing script, if it exists
+        (new Thread() {
+            @Override public void run() {
+                try { init(); }
+                catch (RuntimeException e) {
+                    Starter.logMessage("No script loaded on top of PowerWalk, running stand-alone");
+                }
+            }
+        }).start();
         ContentFrame.theFrame = new ContentFrame();
         logMessage("PowerWalk started, waiting for tasks...");
     }
 
+    /**
+     * This method is intended for scripters who want to build their script on
+     * the PowerWalk API, and should be overridden to start their own script.
+     * <p/>
+     * This method is called on a separate Thread, so
+     * any methods calls made from this method will be asynchronous with PowerWalk
+     * or RSBot.
+     * <p/>
+     * It is not advised to build scripts on RSBot's script loader when intending
+     * to use PowerWalk. Instead, scripts that use PowerWalk should override
+     * this method to start their script.
+     * <p/>
+     * Furthermore, scripts that are run from this method should implement a
+     * looping mechanism themselves, since the script will end once this method
+     * returns.
+     * <p/>
+     * @throws RuntimeException when calling this method without having overridden it.
+     */
+    public void init() {
+        throw new RuntimeException("no implementing subclass");
+    }
+    
     /**
      * executes a Task from the TaskQueue.
      *

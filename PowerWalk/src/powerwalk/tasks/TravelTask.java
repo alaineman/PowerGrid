@@ -123,7 +123,8 @@ public class TravelTask extends StepTask {
      * called, the start() method must be called first to recalculate the path.
      * Note that the PowerWalk Task Manager does this automatically, so when 
      * re-assigning this Task to the TaskQueue using the assignTask method from 
-     * the PowerWalk Bot class, manually calling the start() method is not required.
+     * the PowerWalk Bot class or assigning it to a TaskRunner, manually calling 
+     * the start() method is not required.
      */
     @Override public void reset() {
         target = 0;

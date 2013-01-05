@@ -106,9 +106,8 @@ public class MapViewer extends Canvas {
     /**
      * Shows the World Map in a separate frame without loading the entire plug-in.
      * This can be done without RSBot.
-     * @param args the command-line arguments, ignored by this method.
      */
-    public static void main(String[] args) {
+    public static void showMapViewerStandAlone() {
         String path = System.getProperty("user.home") + "\\Appdata\\Local\\Temp\\PowerWalk\\";
         File file = new File(path + Starter.worldMapFile);
         try (FileInputStream worldMapIn = new FileInputStream(file)) {

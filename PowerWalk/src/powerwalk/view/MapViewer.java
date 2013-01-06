@@ -27,7 +27,7 @@ public class MapViewer extends Canvas {
         theMapViewer = new MapViewer();
         JScrollPane sp = new JScrollPane(theMapViewer);
         f.setLayout(new BorderLayout());
-        f.add(sp);
+        f.add(sp,"Center");
         f.setSize(640,480);
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -74,20 +74,16 @@ public class MapViewer extends Canvas {
                 
                 if (go == null)                         // unexplored (WHITE)
                     g.setColor(Color.WHITE);
-                else if (go.getRawNumber() == -1)       // manually overwritten tiles (PINK)
-                    g.setColor(Color.PINK);
-                else if (go.getRawNumber() == -2)       // walls (DARK_GRAY)
+                else if (go.getRawNumber() == 0)       // "paved" tiles (LIGHT_GRAY)
+                    g.setColor(Color.LIGHT_GRAY);
+                else if (go.getRawNumber() < 0)       // overwritten Collisions / Walls (DARK_GRAY)
                     g.setColor(Color.DARK_GRAY);
-                else if (go.getRawNumber() == -3)       // water tiles (BLUE)
-                    g.setColor(Color.ORANGE);
-                else if (go.getRawNumber() == -4)       // "blocked" tiles (ORANGE)
-                    g.setColor(Color.BLUE);
-                else if (go instanceof Collision)       // Collision tiles (BLACK)
+                else if (go instanceof Collision)       // PowerWalk Collision tiles (BLACK)
                     g.setColor(Color.BLACK);
-                else if (go instanceof Interactable)    // Interaction Tiles (YELLOW)
+                else if (go instanceof Interactable)    // PowerWalk Interaction Tiles (YELLOW)
                     g.setColor(Color.YELLOW);
                 else
-                    g.setColor(Color.LIGHT_GRAY);       // Uncategorized Tiles (LIGHT_GRAY)
+                    g.setColor(Color.WHITE);       // Uncategorized Tiles (WHITE)
                 
                 
                 g.fillRect(scale*(x-r.x),scale*(r.height-(y-r.y)),scale,scale);
@@ -106,8 +102,9 @@ public class MapViewer extends Canvas {
     /**
      * Shows the World Map in a separate frame without loading the entire plug-in.
      * This can be done without RSBot.
+     * @param exitOnClose when true, terminates the application when the window is closed
      */
-    public static void showMapViewerStandAlone() {
+    public static void showMapViewerStandAlone(boolean exitOnClose) {
         String path = System.getProperty("user.home") + "\\Appdata\\Local\\Temp\\PowerWalk\\";
         File file = new File(path + Starter.worldMapFile);
         try (FileInputStream worldMapIn = new FileInputStream(file)) {
@@ -118,5 +115,9 @@ public class MapViewer extends Canvas {
             System.out.println("The World Map failed to load from file: " + file.getAbsolutePath());
         }
         showMapViewer();
+    }
+    
+    public static void main(String[] args) {
+        showMapViewerStandAlone(true);
     }
 }

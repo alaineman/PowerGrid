@@ -1,17 +1,17 @@
 package powerwalk.control;
 
-import javax.swing.plaf.basic.BasicTreeUI;
-import org.powerbot.core.script.job.Task;
+import org.powerbot.game.api.methods.Game;
 import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.RegionOffset;
+import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
+import org.powerbot.x;
 import powerwalk.Bot;
 import powerwalk.Starter;
 import powerwalk.model.Grid;
 import powerwalk.model.Point;
-import powerwalk.model.world.Wall;
 import powerwalk.view.MapViewer;
 
 /**
@@ -115,8 +115,7 @@ public class Mapper extends Thread {
     public static boolean isMapping() {
         return (mappingPolicy != MAP_NONE);
     }
-    public static final int WATER = 0x200000;
-    public static final int BLOCKED = 0x1280100;
+    public static final int BLOCKED = 0x260100;
     public static final int WALL = (0x200 | 0x400 | 0x800 | 0x1000 | 0x2000 | 0x4000 | 0x8000 | 0x10000);
 
     /**
@@ -137,13 +136,13 @@ public class Mapper extends Thread {
             if (eco_mode) {
                 // optimize CPU-load and reduce CPU-intensity before mapping.
                 // check if four corners of mappable area are set, then exit if true
-                int range = 50;
-                Point loc = Bot.getBot().getPosition();
+                int range = 100;
+                Point loc = Point.fromTile(Game.getMapBase());
                 boolean mapped = true; // check for mapped area
                 mapped &= (map.get(loc.add(new Point( range,  range))) != null);
-                mapped &= (map.get(loc.add(new Point(-range,  range))) != null);
-                mapped &= (map.get(loc.add(new Point( range, -range))) != null);
-                mapped &= (map.get(loc.add(new Point(-range, -range))) != null);
+                mapped &= (map.get(loc.add(new Point(1,  range))) != null);
+                mapped &= (map.get(loc.add(new Point( range, 1))) != null);
+                mapped &= (map.get(loc.add(new Point(1,1))) != null);
 
                 skip |= mapped; // skip if area is mapped
             }
@@ -152,42 +151,35 @@ public class Mapper extends Thread {
                 try { Thread.sleep(3500); } catch (Exception e) {}
             } else {
                 try {
-
-                    SceneObject[] objects = SceneEntities.getLoaded();
                     // Store all SceneObjects in the World Map
-                    for (SceneObject o : objects) {
-                        Point dest = Point.fromTile(o.getLocation());
-                        map.set(dest, o.getId());
-                    }
-                    if (!ToolBox.writeToFile(map.toString(), Starter.worldMapFile)) {
-                        Starter.logMessage("updating the WorldMap in " + Starter.worldMapFile + " failed", "Mapper");
-                    }
-                    Point pos = Bot.getBot().getPosition();
-                    int[][] colls = Walking.getCollisionFlags(pos.z);
-
-                    RegionOffset r = Players.getLocal().getRegionOffset();
-                    Point playerPos = Bot.getBot().getPosition();
-                    Point rOffset = new Point(r.getX(), r.getY(), r.getPlane());
-                    Point offset = playerPos.subtract(rOffset);
-                    Point cOffset = Point.fromTile(Walking.getCollisionOffset(pos.z));
-                    Point off = offset.add(cOffset);
-                    for (int y = -cOffset.y; y < colls.length; y++) {
-                        for (int x = -cOffset.x; x < colls[0].length; x++) {
-                            int cell = colls[x][y];
-                            if (cell == -1)
-                                continue;
-                            Point loc = new Point(off.x + x, off.x + y, pos.z);
-                            if ((cell & WALL) != 0) //Walls
-                                map.set(loc, -2);
-                            else if ((cell & WATER) != 0) { // water
-                                map.set(loc, new Wall(loc.x, loc.y, loc.z, -3));
-                            } else if ((cell & BLOCKED) != 0) { // some other block type (not sure how)
-                                map.set(loc, -4);
-
+                    for (SceneObject o : SceneEntities.getLoaded())
+                        map.set(Point.fromTile(o.getLocation()), o.getId());
+                    
+                    // Mark reachable tiles as walkable (takes long time at first
+                    // but ignores non-null tiles, so gets faster with more iterations)
+                    Tile base = Game.getMapBase();
+                    int plane = Game.getPlane();
+                    for (int x=base.getX(); x < base.getX() + 104; x++) {
+                        for (int y=base.getY(); y < base.getY() + 104; y++) {
+                            Point p = new Point(x,y,plane);
+                            if (map.get(p) != null && map.get(p).getRawNumber() > 0) continue;
+                            if (!p.toTile().canReach())
+                                // set as collision (unwalkable tile)
+                                map.set(p, -2);
+                            else {
+                                // set as paved (permanently walkable tile)
+                                map.set(p, 0);
                             }
                         }
                     }
-                } catch (Throwable t) {}
+                    
+                    if (!ToolBox.writeToFile(map.toString(), Starter.worldMapFile)) {
+                        Starter.logMessage("updating the WorldMap in " + Starter.worldMapFile + " failed", "Mapper");
+                    }
+                } catch (Throwable t) { 
+                    // catch anything that passes by: The mapper must not crash or hang!
+                    Starter.logMessage("An error has occurred: " + t.getClass().getSimpleName(),"Mapper");
+                } 
             }
             // update the mapviewer
             if (MapViewer.theMapViewer != null) {

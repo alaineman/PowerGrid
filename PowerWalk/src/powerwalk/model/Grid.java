@@ -122,6 +122,13 @@ public class Grid {
      */
     public synchronized GameObject set(Point p, int value) {
         // shady "reflect magic" corner
+        if (value == 0) {
+            return set(p,new GameObject(p.x,p.y,p.z,0));
+        }
+        if (value < 0) {
+            return set(p,new Wall(p.x,p.y,p.z,value));
+        }
+        
         for (Class<? extends GameObject> c : objectclasses) {
             try { 
                 Object v = c.getDeclaredField("values").get(null);

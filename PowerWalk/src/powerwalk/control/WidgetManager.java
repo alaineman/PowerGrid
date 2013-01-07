@@ -111,4 +111,7 @@ public abstract class WidgetManager {
         closeBtn.click(true);
         try { Thread.sleep(1200); } catch(Exception e) {}
     }
+    
+    
+    
 }

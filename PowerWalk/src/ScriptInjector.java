@@ -21,15 +21,6 @@ import javax.swing.*;
 
 /**
  * @author Float [powerbot.org]
- *
- * * This source code giving you errors? It's because you are not running Java 7. *
- * * RSBot will only load scripts compiled with Java 7 so this may be your issue  *
- * * Updates:
- * * * * Code Optimization
- * * * * Refresh button works
- * * * * Removed the text telling you there's no scripts
- * * * * Better performance, now listens for script selector
- * * * * Title now shows status, so you know it's working (if it isn't then reopen the window)
  */
 public class ScriptInjector {
 
@@ -38,17 +29,17 @@ public class ScriptInjector {
 
     private static final Logger logger = Logger.getLogger(ScriptInjector.class.getName());
 
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
         File rsbot = null;
         if(RSBOT_DICTIONARY != null)
             rsbot = new File(RSBOT_DICTIONARY);
         else {
-            final List<File> possible = getContent(new File("./"));
+            List<File> possible = getContent(new File("./"));
             if(possible != null && possible.size() > 0) {
-                for(final File file : possible)
+                for(File file : possible)
                     if(file != null && file.exists() && file.isFile() && file
                             .getName().toLowerCase().contains("rsbot")) {
-                        final String name = file.getName().toLowerCase();
+                        String name = file.getName().toLowerCase();
                         if(name.contains("rsbot") && name.endsWith(".jar")) {
                             rsbot = file;
                             break;
@@ -58,14 +49,14 @@ public class ScriptInjector {
         }
         logger.setUseParentHandlers(false);
 
-        final ConsoleHandler handler = new ConsoleHandler();
+        ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new Formatter() {
-            private final DateFormat df = new SimpleDateFormat("hh:mm:ss");
+            private DateFormat df = new SimpleDateFormat("hh:mm:ss");
 
             @Override
-            public String format(final LogRecord record) {
-                final StringBuilder builder = new StringBuilder();
-                final String[] source = record.getSourceClassName().split("\\$");
+            public String format(LogRecord record) {
+                StringBuilder builder = new StringBuilder();
+                String[] source = record.getSourceClassName().split("\\$");
                 builder.append("[").append(df.format(new Date(record.getMillis()))).append("]");
                 builder.append("[").append(source[source.length - 1]).append(".");
                 builder.append(record.getSourceMethodName()).append("] ");
@@ -79,8 +70,8 @@ public class ScriptInjector {
             URLClassLoader loader = null;
             try {
                 loader = URLClassLoader.newInstance(new URL[]{rsbot.toURI().toURL()});
-            } catch(final MalformedURLException e) {
-                e.printStackTrace();
+            } catch(MalformedURLException e) {
+                logger.warning(e.getClass().getName() + ": " + e.getMessage());
             }
             if(loader == null) {
                 logger.severe("Unable to load RSBot, stopping.");
@@ -89,37 +80,37 @@ public class ScriptInjector {
                     logger.info("Loaded all of the necessary RSBot classes.");
                     logger.info("Loading RSBot, Developer Mode: " + DEV_MODE);
                     try {
-                        final Class<?> mainClazz = loader.loadClass("powerwalk.Starter");
+                        Class<?> mainClazz = loader.loadClass("powerwalk.Starter");
                         if(mainClazz != null) {
-                            final Method mainMethod = mainClazz.getDeclaredMethod("main", String[].class);
+                            Method mainMethod = mainClazz.getDeclaredMethod("main", String[].class);
                             if(mainMethod != null) {
                                 mainMethod.setAccessible(true);
                                 mainMethod.invoke(null, (Object) new String[]{DEV_MODE ? "-dev" : ""});
                             }
                         }
-                    } catch(final ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace(System.err);
                         logger.severe("Unable to start RSBot, stopping.");
                         return;
                     }
                     try {
-                        final Method getCanvas = Reflect.getMethod(Canvas, Canvas);
-                        final Object canvas = getCanvas.invoke(null);
+                        Method getCanvas = Reflect.getMethod(Canvas, Canvas);
+                        Object canvas = getCanvas.invoke(null);
                         if(canvas != null) {
-                            final Field getToolbar = Reflect.getField(canvas.getClass(), Toolbar);
-                            final Object toolbar = getToolbar.get(canvas);
-                            for(final Field field : toolbar.getClass().getDeclaredFields()) {
+                            Field getToolbar = Reflect.getField(canvas.getClass(), Toolbar);
+                            Object toolbar = getToolbar.get(canvas);
+                            for(Field field : toolbar.getClass().getDeclaredFields()) {
                                 if(field.getType() != null && JLabel.class.isAssignableFrom(field.getType())
                                         && MouseListener.class.isAssignableFrom(field.getType())) {
                                     field.setAccessible(true);
-                                    final JLabel label = (JLabel) field.get(toolbar);
+                                    JLabel label = (JLabel) field.get(toolbar);
                                     if(label != null && label.getToolTipText() != null && label
                                             .getToolTipText().toLowerCase().contains("script")) {
-                                        for(final MouseListener ml : label.getMouseListeners())
+                                        for(MouseListener ml : label.getMouseListeners())
                                             label.removeMouseListener(ml);
                                         label.addMouseListener(new MouseAdapter() {
                                             @Override
-                                            public void mousePressed(final MouseEvent e) {
+                                            public void mousePressed(MouseEvent e) {
                                                 new ScriptListener(e.getWhen(), "ScriptListener", null).start();
                                             }
                                         });
@@ -131,7 +122,7 @@ public class ScriptInjector {
                                 }
                             }
                         }
-                    } catch(final IllegalAccessException | InvocationTargetException e) {
+                    } catch(IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace(System.err);
                     }
                 } else logger.severe("Unable to load all of RSBots needed class files, stopping.");
@@ -142,11 +133,11 @@ public class ScriptInjector {
     }
 
     private static List<File> getContent(final File dict) {
-        final List<File> list = new ArrayList<>();
+        List<File> list = new ArrayList<>();
         if(dict != null && dict.exists()) {
-            final File[] files = dict.listFiles();
+            File[] files = dict.listFiles();
             if(files != null && files.length > 0)
-                for(final File file : files) {
+                for(File file : files) {
                     if(file.isDirectory())
                         list.addAll(getContent(file));
                     else {
@@ -160,14 +151,14 @@ public class ScriptInjector {
     @SuppressWarnings("unchecked")
     private static boolean getRSBotClasses(final File rsbot, final URLClassLoader loader) {
         try {
-            final JarInputStream jar = new JarInputStream(new FileInputStream(rsbot));
+            JarInputStream jar = new JarInputStream(new FileInputStream(rsbot));
             while(true) {
                 try {
-                    final JarEntry entry = jar.getNextJarEntry();
+                    JarEntry entry = jar.getNextJarEntry();
                     if(entry == null)
                         break;
                     else if(entry.getName().endsWith(".class")) {
-                        final Class<?> clazz = loader.loadClass(entry.getName().replaceAll("/", "\\.").replaceAll("\\.class", ""));
+                        Class<?> clazz = loader.loadClass(entry.getName().replaceAll("/", "\\.").replaceAll("\\.class", ""));
                         if(clazz != null) {
                             if(clazz.getName().endsWith(".Bot"))
                                 logger.info("[Class] Bot[" + (Bot = clazz).getName() + "] class loaded.");

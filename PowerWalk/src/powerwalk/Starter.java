@@ -1,9 +1,16 @@
 package powerwalk;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.*;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Environment;
@@ -17,6 +24,7 @@ import powerwalk.model.XMLNode;
 import powerwalk.tasks.StepTask;
 import powerwalk.tasks.Task;
 import powerwalk.view.ContentFrame;
+import powerwalk.view.MapViewer;
 
 /**
  * Starter and Task Manager class for the entire plug-in.
@@ -31,7 +39,9 @@ import powerwalk.view.ContentFrame;
         version        = Starter.version,
         singleinstance = true)
 public class Starter extends ActiveScript {
-
+    
+    private static boolean isStarted = false;
+    
     public static final Logger theLogger = Logger.getLogger(Starter.class.getName());
     public static final String worldMapFile = "worldmap.xml";
     /** The name of the Plug-in */
@@ -39,6 +49,9 @@ public class Starter extends ActiveScript {
     /** The version number */
     public static final double version = 0.1;
     private static Task currentTask = null;
+    
+    /* Placeholder for controlpanel handle */
+    private static ControlPanel theControlPanel = null;
 
     /**
      * Creates a ContentFrame instance and shows it.
@@ -101,6 +114,8 @@ public class Starter extends ActiveScript {
         }).start();
         ContentFrame.theFrame = new ContentFrame();
         logMessage("PowerWalk started, waiting for tasks...");
+        isStarted = true;
+        if (theControlPanel != null) theControlPanel.notifyStateChange(isStarted);
     }
 
     /**
@@ -168,6 +183,8 @@ public class Starter extends ActiveScript {
         purge(); // free all data structures and objects they contain
         System.gc(); // running Garbage Collector to ensure any potentially problematic objects (Readers/Writers, Task instances, etc..) are finalized and destroyed
         logMessage("PowerWalk has been terminated");
+        isStarted = false;
+        if (theControlPanel != null) theControlPanel.notifyStateChange(isStarted);
     }
 
     /**
@@ -229,6 +246,99 @@ public class Starter extends ActiveScript {
     }
     
     public static void main(String[] args) {
+        // start RSBot
+        org.powerbot.Boot.main(args);
         
+        // set our awesome custom controls to the JFrame
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                Window[] windows = Window.getWindows();
+                for (Window w : windows) {
+                    if (w instanceof JFrame) {
+                        JFrame theFrame = (JFrame)w;
+                        // Canvas used to draw the RSBot environment on is inside a JRootPane in the "Center" 
+                        // area of a BorderLayout applied to the JFrame.
+                        // because of this, it is possible to add controls to the north, 
+                        // west, east and south of the JRootPane by assigning JPanels 
+                        // to those areas of the BorderLayout.
+                        theControlPanel = new ControlPanel();
+                        
+                        Dimension frameSize = theFrame.getSize();
+                        frameSize.height += 34; // resize the frame to make room for the controlpanel
+                        theFrame.setSize(frameSize);
+                        theFrame.setMinimumSize(frameSize);
+                        theFrame.add(theControlPanel,"South");
+                        // we replace RSBot's logo with our own and adapt the title a little
+                        URL url = ClassLoader.getSystemResource("icon_small.png");
+                        theFrame.setTitle(theFrame.getTitle() + " (running through PowerWalk)");
+                        try { theFrame.setIconImage(ImageIO.read(url)); } 
+                        catch (IOException iox) {}
+                    }
+                }
+            }
+        });
+    }
+    
+    public static class ControlPanel extends JPanel {
+        public static final Dimension buttonSize = new Dimension(250,32);
+        
+        private JLabel messageBox = new JLabel("  PowerWalk is not started");
+        private JButton showMap = new JButton("Show PowerWalk map");
+        private JButton toggleMapping = new JButton("Disable Mapping");
+        public ControlPanel() {
+            super(new BorderLayout(3,3));
+            createAndShowGUI();
+        }
+        private void createAndShowGUI() {
+            setBackground(Color.BLACK);
+            setBorder(new LineBorder(Color.WHITE,3));
+            messageBox.setFont(new Font(messageBox.getFont().getName(),Font.BOLD,14));
+            messageBox.setForeground(Color.WHITE);
+            
+            messageBox.setPreferredSize(new Dimension(300,30));
+            showMap.setPreferredSize(buttonSize);
+            toggleMapping.setPreferredSize(buttonSize);
+            
+            toggleMapping.setEnabled(false);
+            
+            JPanel buttons = new JPanel();
+            buttons.setOpaque(false);
+            buttons.add(showMap);
+            buttons.add(toggleMapping);
+            add(buttons,"East");
+            add(messageBox,"Center");
+            
+            showMap.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent ae) {
+                    if (isStarted) { // if it's started we can use the existing world map
+                        MapViewer.showMapViewer();
+                    } else { // else we have to load the world map first
+                        MapViewer.showMapViewerStandAlone(false);
+                    }
+                }
+            });
+            toggleMapping.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    if (Mapper.isMapping()) {
+                        Mapper.stopMapping();
+                        toggleMapping.setText("Enable Mapping");
+                    } else {
+                        Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
+                        toggleMapping.setText("Disable Mapping");
+                    }
+                }
+            });
+        }
+        
+        public void setMessage(String msg) {
+            if (msg != null) 
+                messageBox.setText("  " + msg);
+        }
+        
+        public void notifyStateChange(boolean state) {
+            toggleMapping.setEnabled(state);
+            if (state) setMessage("PowerWalk started");
+            else setMessage("PowerWalk stopped");
+        }
     }
 }

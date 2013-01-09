@@ -227,4 +227,8 @@ public class Starter extends ActiveScript {
     public static void logMessage(String message,String group) {
         theLogger.log(Level.INFO,message,group);
     }
+    
+    public static void main(String[] args) {
+        
+    }
 }

@@ -33,7 +33,7 @@ import javax.swing.*;
  */
 public class ScriptInjector {
 
-    private static final String RSBOT_DICTIONARY = "..\\lib\\RSBot-4046.jar"; // = "C:\\Users\\Public\\Documents\\RSBot\\RSBot.jar"; - EXAMPLE (This is not a requirement if rsbot is in project folder)
+    private static final String RSBOT_DICTIONARY = "..\\lib\\RSBot.jar"; // = "C:\\Users\\Public\\Documents\\RSBot\\RSBot.jar"; - EXAMPLE (This is not a requirement if rsbot is in project folder)
     private static final boolean DEV_MODE = true; //true runs RSBot.jar with the -dev flag, false doesn't
 
     private static final Logger logger = Logger.getLogger(ScriptInjector.class.getName());
@@ -89,7 +89,7 @@ public class ScriptInjector {
                     logger.info("Loaded all of the necessary RSBot classes.");
                     logger.info("Loading RSBot, Developer Mode: " + DEV_MODE);
                     try {
-                        final Class<?> mainClazz = loader.loadClass("org.powerbot.Boot");
+                        final Class<?> mainClazz = loader.loadClass("powerwalk.Starter");
                         if(mainClazz != null) {
                             final Method mainMethod = mainClazz.getDeclaredMethod("main", String[].class);
                             if(mainMethod != null) {

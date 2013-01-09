@@ -56,14 +56,12 @@ public class MapViewer extends Canvas {
      * <p>The following color mapping is used:</p>
      * <pre>
      *    Unexplored or empty: WHITE
-     *    Manually set:        PINK
-     *    Generic Walls:       DARK_GRAY
-     *    Water tiles:         BLUE
-     *    Generic Blocked:     ORANGE
-     *    Collisions:          BLACK
+     *    !canReach() matches: DARK_GRAY
+     *    detected Walls:      BLACK
      *    Interactions:        YELLOW
-     *    Generic objects:     LIGHT_GRAY
+     *    "Paved" tiles:       LIGHT_GRAY
      * </pre>
+     * Note: Paved tiles are unknown tiles, but which have been marked as walkable
      * @param g the Graphics-object used to draw on this Canvas
      */
     @Override public void paint(Graphics g) {

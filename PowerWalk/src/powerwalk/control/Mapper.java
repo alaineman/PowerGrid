@@ -172,6 +172,13 @@ public class Mapper extends Thread {
                             }
                         }
                     }
+                    Point playerPos = Bot.getBot().getPosition();
+                    int[][] flags = Walking.getCollisionFlags(playerPos.z);
+                    for (int x=0;x<flags.length;x++) {
+                        for (int y=0;y<flags[0].length;y++) {
+                            Point p = Point.fromTile(base).add(new Point(x,y));
+                        }
+                    }
                     
                     if (!ToolBox.writeToFile(map.toString(), Starter.worldMapFile)) {
                         Starter.logMessage("updating the WorldMap in " + Starter.worldMapFile + " failed", "Mapper");

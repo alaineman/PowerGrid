@@ -178,8 +178,10 @@ public class Starter extends ActiveScript {
         logMessage("stopping PowerWalk...");
         Bot.getBot().becomeIdle();
         Mapper.stopMapping();
-        ContentFrame.theFrame.dispose();
-        ContentFrame.theFrame = null;
+        if (ContentFrame.theFrame != null) {
+            ContentFrame.theFrame.dispose();
+            ContentFrame.theFrame = null;
+        }
         purge(); // free all data structures and objects they contain
         System.gc(); // running Garbage Collector to ensure any potentially problematic objects (Readers/Writers, Task instances, etc..) are finalized and destroyed
         logMessage("PowerWalk has been terminated");
@@ -279,6 +281,9 @@ public class Starter extends ActiveScript {
         });
     }
     
+    /**
+     * The control panel that appears below the RSBot window when launching through this class
+     */
     public static class ControlPanel extends JPanel {
         public static final Dimension buttonSize = new Dimension(250,32);
         

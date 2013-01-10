@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.interactive.NPCs;
+import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.interactive.NPC;
+import org.powerbot.game.api.wrappers.widget.Widget;
+import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
@@ -14,6 +17,8 @@ import powerwalk.model.interact.Transportable;
  * @author Alaineman
  */
 public class MagicCarpet extends Transportable {
+
+    private static Widget optionMenu = Widgets.get(1188);
 
     public MagicCarpet(Point p) {
         super(p.x, p.y, p.z, -1, new ArrayList<MagicCarpet>(10));
@@ -31,13 +36,29 @@ public class MagicCarpet extends Transportable {
         while (chat.isRunning() && !Widgets.get(1188).validate()) {
             Task.sleep(50, 100);
         }
-        //TODO: select option
-
+        WidgetChild[] childs = optionMenu.getChildren();
+        for (WidgetChild i : childs) {
+            if (i.getText().contains(dest.getTraits())) {
+                i.click(true);
+                return;
+            }
+        }
+        while(Widgets.canContinue() && Players.getLocal().getAnimation() != 654 ){
+            Widgets.clickContinue();
+            Task.sleep(400,700);
+        }
+        
     }
 
     @Override
     protected void waitForCompletion(Transportable dest) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Timer ride = new Timer(120000);
+        while (ride.isRunning() && Players.getLocal().getAnimation() != 330) {
+            Task.sleep(200, 500);
+        }
+        while (ride.isRunning() && Players.getLocal().getAnimation() == 330) {
+            Task.sleep(200, 500);
+        }
     }
 
     @Override

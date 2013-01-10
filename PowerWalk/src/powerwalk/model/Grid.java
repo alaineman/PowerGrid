@@ -109,7 +109,7 @@ public class Grid {
         Door.class,          Lodestone.class,      Canoe.class,
         Minecart.class,      MagicCarpet.class,    SpiritTree.class,
         HotAirBalloon.class, GnomeGlider.class,    FairyRing.class,
-        CharterShip.class,   WaterbirthIsle.class, LunarBoat.class,
+        CharterShip.class,   WaterbirthIsle.class, LunarIsleShip.class,
         PiratesCove.class};
     
     /**

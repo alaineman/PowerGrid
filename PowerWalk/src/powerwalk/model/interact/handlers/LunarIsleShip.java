@@ -8,10 +8,17 @@ import powerwalk.model.interact.Transportable;
  * 
  * @author Alaineman
  */
-public class LunarBoat extends Transportable{
+public class LunarIsleShip extends Transportable{
+    
+    // 414 captain
+    // 431 widget ship map
+    // 2223 3792
+    // 2138 3900
+    // y diff 50
+    // 18019
         
-    public LunarBoat(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<LunarBoat>(1));
+    public LunarIsleShip(Point p){
+        super(p.x, p.y, p.z, -1, new ArrayList<LunarIsleShip>(1));
     }
 
     @Override

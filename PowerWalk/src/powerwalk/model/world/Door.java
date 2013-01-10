@@ -25,6 +25,9 @@ public class Door extends GameObject implements Interactable {
          *   Pairs that behave different are marked with [X]
          */
         15535,15536, // Varrock "private" buildings, normal homes and such. Also: Cooks' guild
+        16777,16776, // Lunar house front door
+        16779,16778, // Lunar house front door
+        
         24375,24376, // Varrock public buildings (stores and other places of interest)
         24377,24378, 
         24379,24381, // Varrock inner doors
@@ -35,7 +38,7 @@ public class Door extends GameObject implements Interactable {
         /*?*/ 24567, // Varrock Museum back door (cannot be opened, I guess)
     };
     /** Raw values that represent open doors in the RSBot environment */
-    public static final int[] openDoors = {15535,24375,24377,24379,24383,24387};
+    public static final int[] openDoors = {15535,16777,24375,24377,24379,24383,24387};
     
     /**
      * Creates a new Door at the given position. the <code>rawNumber</code> 

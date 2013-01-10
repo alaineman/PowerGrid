@@ -84,9 +84,9 @@
         <location pos="(3351,3001)" target="_2294" traits="to Pollnivneach"/>
         <location pos="" target="" traits="Uzer"/>
         <location pos="" target="" traits="Bedabin Camp"/>
-        <location pos="" target="" traits="monkey colony"/>
+        <location pos="(3228,2988)" target="_13237" traits="monkey colony"/>
         <location pos="(3350,2942)" target="_2293" traits="south Pollnivneach"/>
-        <location pos="" target="" traits="Nardah"/>
+        <location pos="(3400,2917)" target="_3020" traits="Nardah"/>
         <location pos="(3245,2812)" target="_2299" traits="Menaphos"/>
         <location pos="(3286,2813)" target="_2297" traits="Sophanem"/>
     </special>

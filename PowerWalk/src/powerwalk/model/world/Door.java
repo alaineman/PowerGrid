@@ -3,7 +3,7 @@ package powerwalk.model.world;
 import java.util.Arrays;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
-import powerwalk.control.ToolBox;
+import powerwalk.control.XMLToolBox;
 import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.interact.Interactable;
@@ -50,7 +50,7 @@ public class Door extends GameObject implements Interactable {
      */
     public Door(int x,int y,int z,int rawValue) {
         super(x,y,z,rawValue);
-        if (ToolBox.arrayIndexOf(rawValue, values) == -1)
+        if (Arrays.binarySearch(values,rawValue) == -1)
             throw new IllegalArgumentException("value " + rawValue + " does not represent a Door");
     }
     

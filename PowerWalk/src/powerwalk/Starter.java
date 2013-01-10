@@ -3,6 +3,7 @@ package powerwalk;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,11 +15,8 @@ import javax.swing.border.LineBorder;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Environment;
-import org.powerbot.game.api.methods.Widgets;
-import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.control.Mapper;
-import powerwalk.control.ToolBox;
-import powerwalk.control.noticeboard.Quests;
+import powerwalk.control.XMLToolBox;
 import powerwalk.model.Destinations;
 import powerwalk.model.XMLNode;
 import powerwalk.tasks.StepTask;
@@ -43,6 +41,7 @@ public class Starter extends ActiveScript {
     private static boolean isStarted = false;
     
     public static final Logger theLogger = Logger.getLogger(Starter.class.getName());
+    private static boolean loggerOk = false; // set to true when logger initialized
     public static final String worldMapFile = "worldmap.xml";
     /** The name of the Plug-in */
     public static final String productName = "PowerWalk";
@@ -52,56 +51,32 @@ public class Starter extends ActiveScript {
     
     /* Placeholder for controlpanel handle */
     private static ControlPanel theControlPanel = null;
-
+    
     /**
      * Creates a ContentFrame instance and shows it.
      */
     @Override public void onStart() {
-        theLogger.setUseParentHandlers(false);
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new Formatter() {
-            @Override public String format(final LogRecord record) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("[PowerWalk] ");
-                Object[] params = record.getParameters();
-                if (params != null && params.length > 0) {
-                    if (record.getParameters()[0] != null)
-                        sb.append("[").append(record.getParameters()[0]).append("] ");
-                    else
-                        sb.append("[none] ");
-                } else {
-                    sb.append("[Main] ");
-                }
-                int n = sb.length();
-                String indent = "                "; // counted; this is the minimum prefix size
-                while (indent.length() < n) {
-                    indent += " ";
-                }
-                String[] lines = record.getMessage().split("\n");
-                for (int i=0;i<lines.length;i++) {
-                    String l = lines[i];
-                    if (i > 0) sb.append(indent);
-                    sb.append(l);
-                    sb.append("\n");
-                }
-                return sb.toString();
-            }
-        });
-        theLogger.addHandler(handler);
+        setLoggerFormatAndHandlers();
+        
         logMessage("Loading required resources...");
+        
         try (FileInputStream worldMapIn = new FileInputStream(Environment.getStorageDirectory().toString() + "\\" + worldMapFile)) {
-            XMLNode worldMap = ToolBox.getXMLTree(worldMapIn);
+            XMLNode worldMap = XMLToolBox.getXMLTree(worldMapIn);
             Bot.getBot().getWorldMap().fillFromXML(worldMap);
             logMessage("WorldMap loaded");
         } catch (FileNotFoundException e) {
-            logMessage("WorldMap file does not exist; starting with empty WorldMap");
+            logMessage("WorldMap file does not exist; starting with empty WorldMap",e);
+            try { new File(Environment.getStorageDirectory().toString() + "\\" + worldMapFile).createNewFile(); }
+            catch (IOException iox) {
+                logMessage("The worldMap file could not be created. Map data will not be saved",iox);
+            }
         } catch (IOException e) {
-            logMessage("WorldMap failed to load");
+            logMessage("WorldMap failed to load",e);
         }
         Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
         
         // Load Quest data directly from Noticeboard, since Quest class doesn't seem to work properly
-        Quests.updateQuestData();
+        //Quests.updateQuestData(); // try not to, it's really annoying
         
         // try to run a implementing script, if it exists
         (new Thread() {
@@ -185,6 +160,7 @@ public class Starter extends ActiveScript {
         purge(); // free all data structures and objects they contain
         System.gc(); // running Garbage Collector to ensure any potentially problematic objects (Readers/Writers, Task instances, etc..) are finalized and destroyed
         logMessage("PowerWalk has been terminated");
+        
         isStarted = false;
         if (theControlPanel != null) theControlPanel.notifyStateChange(isStarted);
     }
@@ -227,15 +203,6 @@ public class Starter extends ActiveScript {
     public static void logMessage(String message) {
         theLogger.info(message);
     }
-
-    /**
-     * Logs the String value of the given object to the console.
-     * <p>This method is equivalent to calling <code>Starter.logMessage(String.valueOf(object))</code>
-     * @param object the object to log.
-     */
-    public static void logMessage(Object object) {
-        theLogger.info(String.valueOf(object));
-    }
     
     /**
      * Logs the given message to the console. The message will be prefixed by "[PowerWalk] ".
@@ -247,10 +214,28 @@ public class Starter extends ActiveScript {
         theLogger.log(Level.INFO,message,group);
     }
     
+    /**
+     * Logs the given message to the console. The message will be prefixed by "[PowerWalk] ".
+     * <p>Group specifies the name that must be displayed along with the message</p>
+     * <p>t specifies the Throwable that caused the message, if any</p>
+     * @param message the message to log
+     * @param group the group to display for this message
+     * @param t the Throwable that caused the message
+     */
+    public static void logMessage(String message,String group, Throwable t) {
+        theLogger.log(Level.INFO,message,new Object[] {group,t});
+    }
+    
+    public static void logMessage(String message,Throwable t) {
+        theLogger.log(Level.INFO,message,new Object[]{null,t});
+    }
+    
     public static void main(String[] args) {
+        setLoggerFormatAndHandlers();
         // start RSBot
+        Starter.logMessage("Loading RSBot");
         org.powerbot.Boot.main(args);
-        
+        Starter.logMessage("RSBot loaded, modifying RSBot JFrame");
         // set our awesome custom controls to the JFrame
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
@@ -266,15 +251,20 @@ public class Starter extends ActiveScript {
                         theControlPanel = new ControlPanel();
                         
                         Dimension frameSize = theFrame.getSize();
-                        frameSize.height += 34; // resize the frame to make room for the controlpanel
+                        frameSize.height += 48; // resize the frame to make room for the controlpanel
                         theFrame.setSize(frameSize);
                         theFrame.setMinimumSize(frameSize);
                         theFrame.add(theControlPanel,"South");
                         // we replace RSBot's logo with our own and adapt the title a little
                         URL url = ClassLoader.getSystemResource("icon_small.png");
                         theFrame.setTitle(theFrame.getTitle() + " (running through PowerWalk)");
-                        try { theFrame.setIconImage(ImageIO.read(url)); } 
-                        catch (IOException iox) {}
+                        try { theFrame.setIconImage(ImageIO.read(url)); 
+                        Starter.logMessage("The PowerWalk Control panel has been successfully added to the RSBot JFrame");
+                        } 
+                        catch (IOException | IllegalArgumentException e) {
+                            Starter.logMessage("Error while setting JFrame icon",e);
+                        }
+                        
                     }
                 }
             }
@@ -345,5 +335,28 @@ public class Starter extends ActiveScript {
             if (state) setMessage("PowerWalk started");
             else setMessage("PowerWalk stopped");
         }
+    }
+    
+    private static void setLoggerFormatAndHandlers() {
+        if (loggerOk) return;
+        theLogger.setUseParentHandlers(false);
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new Formatter() {
+            @Override public String format(final LogRecord record) {
+                Object[] params = record.getParameters();
+                StringBuilder sb = new StringBuilder("[PowerWalk");
+                if (params != null && params.length > 0 && params[0] != null) {
+                    sb.append(" > ").append(record.getParameters()[0]);
+                }
+                sb.append("] ").append(record.getMessage()).append("\r\n");
+                if (params != null && params.length > 1 && params[1] instanceof Throwable) {
+                    Throwable t = (Throwable)params[1];
+                    sb.append("      caused by ").append(t.getClass().getSimpleName());
+                    sb.append(": ").append(t.getMessage()).append("\r\n");
+                }
+                return sb.toString();
+            }
+        });
+        theLogger.addHandler(handler);
     }
 }

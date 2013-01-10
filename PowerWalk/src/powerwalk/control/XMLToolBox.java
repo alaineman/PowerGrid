@@ -11,24 +11,11 @@ import powerwalk.Starter;
 import powerwalk.model.XMLNode;
 
 /**
- * Utility class providing shortcuts to standard commonly used tasks
+ * Utility class providing methods for handling XML files
  * @author Chronio
  */
-public abstract class ToolBox {
+public abstract class XMLToolBox {
     
-    /**
-     * returns the first index i was found in arr, or -1 if arr does not contain i
-     * @param i the element to look for
-     * @param arr the array to search in
-     * @return the index of i in arr
-     */
-    public static int arrayIndexOf(int i, int[] arr) {
-        for (int k=0;k<arr.length;k++) {
-            if (arr[k] == i) return k;
-        }
-        return -1;
-    }
-  
     /**
      * Returns a HashMap containing the attributes and their values from a valid XML-String
      * @param xml The XML-String to parse
@@ -58,11 +45,7 @@ public abstract class ToolBox {
                 vals.put(att, val);
                 xml = xml.substring(closeVal+1);
             } catch (StringIndexOutOfBoundsException e) {
-                Logger.getLogger("control").log(Level.FINE,"While decoding XML-data, the following could not be parsed:\n"
-                                                            + "\"{0}\"\n"
-                                                            + "The following data could be parsed:\n"
-                                                            + "{1}",new Object[] {xml,vals});
-                break;
+                Starter.logMessage("Not the entire XML String could be parsed","ToolBox",e);
             }
         }
         return vals;
@@ -98,6 +81,7 @@ public abstract class ToolBox {
             }
             return getXMLTree(lines,0);
         } catch (IOException iox) {
+            Starter.logMessage("Could not read the InputStream","ToolBox",iox);
             return null;
         }
     }
@@ -141,7 +125,9 @@ public abstract class ToolBox {
     
     private static int lineIndex = 0;
     private static XMLNode getXMLTree(ArrayList<String> lines, int start) {
-        lineIndex = start;
+        try {
+            lineIndex = start;
+        
         String root = lines.get(start);
         if (root.contains("<!--") ) { // ignore comments
             while (!lines.get(lineIndex).contains("-->")) {
@@ -173,6 +159,10 @@ public abstract class ToolBox {
             children = null;
         }
         return new XMLNode(tag,attributes,children);
+        } catch (Exception e) {
+            Starter.logMessage("Error while parsing XML tree","ToolBox",e);
+            return null;
+        }
     }
     
     public static boolean writeToFile(Object o, String file) {
@@ -183,13 +173,14 @@ public abstract class ToolBox {
             File target = new File(fullpath);
             if (!target.exists()) {
                 target.createNewFile();
-                Starter.logMessage("New World Map File created at " + target.getAbsolutePath());
+                Starter.logMessage("New File created at " + target.getAbsolutePath(),"ToolBox");
             }
             try (FileWriter w = new FileWriter(target)) {
                 w.write(text);
             }
             return true;
         } catch (IOException e) {
+            Starter.logMessage("Error writing to file", "ToolBox", e);
             return false;
         }
     }

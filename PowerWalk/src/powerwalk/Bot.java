@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import org.powerbot.game.api.methods.interactive.Players;
-import powerwalk.control.ToolBox;
+import powerwalk.control.XMLToolBox;
 import powerwalk.model.Destinations;
 import powerwalk.model.Grid;
 import powerwalk.model.Point;
@@ -46,6 +46,13 @@ public class Bot {
      */
     public static Bot getBot() {
         return theBot;
+    }
+    
+    /**
+     * Destroys the Bot object, freeing all memory used (including the World Map)
+     */
+    protected static void destroy() {
+        
     }
     
     private Grid theWorldMap = new Grid();
@@ -133,8 +140,8 @@ public class Bot {
      * @throws IllegalArgumentException when the provided destination type is invalid
      */
     public void gotoNearest(String dest, int priority) {
-        XMLNode tree = ToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powerwalk/data/specialLocations.xml"));
-        XMLNode[] nodes = ToolBox.filterNodes(tree, "name", dest);
+        XMLNode tree = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powerwalk/data/specialLocations.xml"));
+        XMLNode[] nodes = XMLToolBox.filterNodes(tree, "name", dest);
         if (nodes.length > 0) {
             ArrayList<XMLNode> entries = nodes[0].children();
             Point pos = getPosition();

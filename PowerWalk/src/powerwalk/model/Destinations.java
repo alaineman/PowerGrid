@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.powerbot.game.api.wrappers.Tile;
-import powerwalk.control.ToolBox;
+import powerwalk.control.XMLToolBox;
 
 /**
  * Utility class that maps destination Strings to their respective Tiles in the World.
@@ -29,8 +29,8 @@ public class Destinations {
             String current = reader.readLine();
             
             while (reader.ready()) {
-                if (ToolBox.getTagFromXML(current).equals("dest")) {
-                    HashMap<String,String> data = ToolBox.getAttributes(current);
+                if (XMLToolBox.getTagFromXML(current).equals("dest")) {
+                    HashMap<String,String> data = XMLToolBox.getAttributes(current);
                     String key = data.get("name");
                     String pos = data.get("pos");
                     try {

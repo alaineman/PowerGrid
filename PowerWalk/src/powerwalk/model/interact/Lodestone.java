@@ -13,7 +13,7 @@ import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.Bot;
 import powerwalk.Starter;
-import powerwalk.control.ToolBox;
+import powerwalk.control.XMLToolBox;
 import powerwalk.control.WidgetManager;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
@@ -53,7 +53,7 @@ public class Lodestone extends Teleportable {
             while (!current.contains("widget=\"" + dest + "\"")) {
                 current = myReader.readLine();
             }
-            HashMap<String, String> tags = ToolBox.getAttributes(current);
+            HashMap<String, String> tags = XMLToolBox.getAttributes(current);
             Point p = Point.fromString(tags.get("pos"));
             Lodestone l = new Lodestone(p.x, p.y, p.z, -1, dest, tags.get("name"));
             lodestones.add(l);

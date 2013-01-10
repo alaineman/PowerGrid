@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.NoSuchElementException;
-import powerwalk.control.ToolBox;
+import powerwalk.control.XMLToolBox;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.XMLNode;
@@ -83,8 +83,8 @@ public abstract class Transportable extends Teleportable {
 
     public String getTraits() {
         try {
-            XMLNode file = ToolBox.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
-            XMLNode[] node = ToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
+            XMLNode file = XMLToolBox.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
+            XMLNode[] node = XMLToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
                 XMLNode transportType = node[0];
                 ArrayList<XMLNode> foundDestinations = transportType.children();
@@ -104,8 +104,8 @@ public abstract class Transportable extends Teleportable {
 
     public int[] getNPCIDs() {
         try {
-            XMLNode file = ToolBox.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
-            XMLNode[] node = ToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
+            XMLNode file = XMLToolBox.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
+            XMLNode[] node = XMLToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
                 XMLNode transportType = node[0];
                 ArrayList<XMLNode> foundDestinations = transportType.children();

@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import powerwalk.Bot;
-import powerwalk.control.ToolBox;
+import powerwalk.control.XMLToolBox;
 import powerwalk.model.GameObject;
 import powerwalk.model.Grid;
 import powerwalk.model.Point;
@@ -116,7 +116,7 @@ public class TestGrid {
         System.out.print("save/load/equals\t\t\t");
         try {
             FileInputStream in = new FileInputStream(new File("worldmap.xml"));
-            XMLNode recoveredTree = ToolBox.getXMLTree(in); // get from xml file
+            XMLNode recoveredTree = XMLToolBox.getXMLTree(in); // get from xml file
             Grid recoveredGrid = new Grid();
             recoveredGrid.fillFromXML(recoveredTree); // store in new Grid
             recoveredTree = recoveredGrid.getXMLTree(); // rebuild from recovered Tree

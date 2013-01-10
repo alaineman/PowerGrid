@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powerwalk.Bot;
 import powerwalk.Starter;
-import powerwalk.control.ToolBox;
+import powerwalk.control.XMLToolBox;
 import powerwalk.model.Point;
 import powerwalk.model.*;
 import powerwalk.model.interact.Interactable;
@@ -106,7 +106,7 @@ public class MapViewer extends Canvas {
         String path = System.getProperty("user.home") + "\\Appdata\\Local\\Temp\\PowerWalk\\";
         File file = new File(path + Starter.worldMapFile);
         try (FileInputStream worldMapIn = new FileInputStream(file)) {
-            XMLNode worldMap = ToolBox.getXMLTree(worldMapIn);
+            XMLNode worldMap = XMLToolBox.getXMLTree(worldMapIn);
             Bot.getBot().getWorldMap().fillFromXML(worldMap);
             System.out.println("The World Map was loaded");
         } catch (IOException e) {

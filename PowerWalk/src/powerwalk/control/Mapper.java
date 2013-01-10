@@ -7,8 +7,10 @@ import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.Bot;
 import powerwalk.Starter;
+import powerwalk.model.GameObject;
 import powerwalk.model.Grid;
 import powerwalk.model.Point;
+import powerwalk.model.world.Wall;
 import powerwalk.view.MapViewer;
 
 /**
@@ -113,6 +115,7 @@ public class Mapper extends Thread {
         return (mappingPolicy != MAP_NONE);
     }
     public static final int BLOCKED = 0x260100;
+    public static final int WATER = 0x200000;
     public static final int WALL = (0x200 | 0x400 | 0x800 | 0x1000 | 0x2000 | 0x4000 | 0x8000 | 0x10000);
 
     /**
@@ -122,8 +125,7 @@ public class Mapper extends Thread {
      * and
      * <code>stopMapping()</code> methods should be used.
      */
-    @Override
-    @SuppressWarnings("SleepWhileInLoop")
+    @Override @SuppressWarnings("SleepWhileInLoop") 
     public void run() {
 
         setName("Mapper");
@@ -153,36 +155,39 @@ public class Mapper extends Thread {
                     for (SceneObject o : SceneEntities.getLoaded())
                         map.set(Point.fromTile(o.getLocation()), o.getId());
                     
-                    // Mark reachable tiles as walkable (takes long time at first
-                    // but ignores non-null tiles, so gets faster with more iterations)
+                    // Check collision Flags for possible Collisions
                     Tile base = Game.getMapBase();
                     int plane = Game.getPlane();
-                    for (int x=base.getX(); x < base.getX() + 104; x++) {
-                        for (int y=base.getY(); y < base.getY() + 104; y++) {
-                            Point p = new Point(x,y,plane);
-                            if (map.get(p) != null && map.get(p).getRawNumber() > 0) continue;
-                            if (!p.toTile().canReach())
-                                // set as collision (unwalkable tile)
-                                map.set(p, -2);
-                            else {
-                                // set as paved (permanently walkable tile)
-                                map.set(p, 0);
+                    int[][] flags = Walking.getCollisionFlags(plane);
+                    Point offset = Point.fromTile(base).add(new Point(-1,-1,1));
+                    for (int x=0;x<flags.length;x++) {
+                        for (int y=0;y<flags[0].length;y++) {
+                            Point p = offset.add(new Point(x,y));
+                            switch (flags[x][y]) {
+                                case -1: // ignore edge -1 values
+                                    break;
+                                case 0: // set "paved" tile (walkable tile)
+                                    map.set(p, 0);
+                                    break;
+                                case WATER: // set water as -1 in the Grid
+                                    map.set(p, -1);
+                                    break;
+                                default: // if it is blocked and there is a SceneEntity, it is a Wall
+                                    if ((flags[x][y] & BLOCKED) != 0) {
+                                        GameObject g = map.get(p);
+                                        if (g != null) {
+                                            map.set(p, new Wall(p.x,p.y,p.z,g.getRawNumber()));
+                                        }
+                                    }
                             }
                         }
                     }
-                    Point playerPos = Bot.getBot().getPosition();
-                    int[][] flags = Walking.getCollisionFlags(playerPos.z);
-                    for (int x=0;x<flags.length;x++) {
-                        for (int y=0;y<flags[0].length;y++) {
-                            Point p = Point.fromTile(base).add(new Point(x,y));
-                        }
-                    }
-                    if (!ToolBox.writeToFile(map.toString(), Starter.worldMapFile)) {
+                    if (!XMLToolBox.writeToFile(map.toString(), Starter.worldMapFile)) {
                         Starter.logMessage("updating the WorldMap in " + Starter.worldMapFile + " failed", "Mapper");
                     }
                 } catch (Throwable t) { 
                     // catch anything that passes by: The mapper must not crash or hang!
-                    Starter.logMessage("An error has occurred: " + t.getClass().getSimpleName(),"Mapper");
+                    Starter.logMessage("Something went wrong while Mapping; Mapping round aborted","Mapper",t);
                 } 
             }
             // update the mapviewer

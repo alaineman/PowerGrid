@@ -10,6 +10,9 @@ public class Wall extends Collision {
     
     public static final int[] values = {
         -2, // Wall objects according to Walking.getCollsionFlags(), unknown wall type
+        
+        870,872,937,957,982,983,984, // Draynor village house walls
+        
         1000,1378,1379, // generic blocks / walls
         
         

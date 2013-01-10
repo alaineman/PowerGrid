@@ -84,7 +84,7 @@ public abstract class Transportable extends Teleportable {
     public String getTraits() {
         try {
             XMLNode file = ToolBox.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
-            XMLNode[] node = ToolBox.filterNodes(file, "name", "MagicCarpet"); // of andere naam
+            XMLNode[] node = ToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
                 XMLNode transportType = node[0];
                 ArrayList<XMLNode> foundDestinations = transportType.children();
@@ -105,7 +105,7 @@ public abstract class Transportable extends Teleportable {
     public int[] getNPCIDs() {
         try {
             XMLNode file = ToolBox.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
-            XMLNode[] node = ToolBox.filterNodes(file, "name", "MagicCarpet"); // of andere naam
+            XMLNode[] node = ToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
                 XMLNode transportType = node[0];
                 ArrayList<XMLNode> foundDestinations = transportType.children();

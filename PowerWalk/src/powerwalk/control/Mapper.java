@@ -2,12 +2,9 @@ package powerwalk.control;
 
 import org.powerbot.game.api.methods.Game;
 import org.powerbot.game.api.methods.Walking;
-import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.methods.node.SceneEntities;
-import org.powerbot.game.api.wrappers.RegionOffset;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
-import org.powerbot.x;
 import powerwalk.Bot;
 import powerwalk.Starter;
 import powerwalk.model.Grid;
@@ -126,6 +123,7 @@ public class Mapper extends Thread {
      * <code>stopMapping()</code> methods should be used.
      */
     @Override
+    @SuppressWarnings("SleepWhileInLoop")
     public void run() {
 
         setName("Mapper");
@@ -179,7 +177,6 @@ public class Mapper extends Thread {
                             Point p = Point.fromTile(base).add(new Point(x,y));
                         }
                     }
-                    
                     if (!ToolBox.writeToFile(map.toString(), Starter.worldMapFile)) {
                         Starter.logMessage("updating the WorldMap in " + Starter.worldMapFile + " failed", "Mapper");
                     }

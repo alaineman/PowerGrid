@@ -78,7 +78,7 @@ public class RestTask extends StepTask {
      * If the Player is resting and the targetEnergy has been achieved, this
      * Task ends.
      */
-    @Override public void step() {
+    @Override public synchronized void step() {
         if (abortOnTask && Bot.getBot().tasksPending() > 0) {
             cancel();
         } else {

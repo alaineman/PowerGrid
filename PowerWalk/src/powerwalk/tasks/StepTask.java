@@ -49,7 +49,7 @@ public abstract class StepTask extends Task {
      * should be overridden</p>
      * @throws IllegalStateException when this Task has already finished running
      */
-    @Override public void execute() {
+    @Override public synchronized void execute() {
         if (numSteps != 0) {
             if (numSteps > 0) numSteps--;
             step();
@@ -101,7 +101,7 @@ public abstract class StepTask extends Task {
      * This method is called before the first step of this StepTask. Subclasses 
      * can override this method to 
      */
-    public void start() {}
+    public synchronized void start() {}
     
     /**
      * This method contains the code that will be executed each step until this StepTask is done.
@@ -111,7 +111,7 @@ public abstract class StepTask extends Task {
     /**
      * This method is called after the last step of this Task has been executed.
      */
-    public void finish() {}
+    public synchronized void finish() {}
     
     /**
      * Cancel this StepTask.

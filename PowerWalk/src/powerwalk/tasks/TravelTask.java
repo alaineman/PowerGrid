@@ -50,7 +50,7 @@ public class TravelTask extends StepTask {
      * The Task is immediately canceled when <code>getDestination() == null</code>, 
      * or when the PathFinder class has found no path to the given destination.
      */
-    @Override public void start() {
+    @Override public synchronized void start() {
         if (destination == null)
             cancel();
         else {
@@ -111,7 +111,7 @@ public class TravelTask extends StepTask {
     /**
      * Reports to the console that the destination has been reached.
      */
-    @Override public void finish() {
+    @Override public synchronized void finish() {
         Starter.logMessage("Destination " + path.get(path.size() - 1) + " reached", "Task");
     }
     
@@ -126,7 +126,7 @@ public class TravelTask extends StepTask {
      * the PowerWalk Bot class or assigning it to a TaskRunner, manually calling 
      * the start() method is not required.
      */
-    @Override public void reset() {
+    @Override public synchronized void reset() {
         target = 0;
     }
     

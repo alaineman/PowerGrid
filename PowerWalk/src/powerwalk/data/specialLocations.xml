@@ -73,9 +73,17 @@
     </special>
     <special name="HelmetShop" interact="npc">
     </special>
+    <special name="JatizsoBoat" interact="npc">
+        <location pos="(2644,3709)" target="_5481" />
+        <location pos="(2421,3781)" target="_5482" />        
+    </special>
     <special name="JewelleryShop" interact="npc">
     </special>
     <special name="KebabSeller" interact="npc">
+    </special>
+    <special name="LunarIsleShip" interact="npc">
+        <location pos="(2223,3792)" target="_414" />
+        <location pos="(2138,3900)" target="_414" />        
     </special>
     <special name="MaceShop" interact="npc">
     </special>
@@ -100,6 +108,22 @@
     <special name="MiningSite" interact="area">
         <location pos="(3284,3367)" target="Tin ore rocks|Copper ore rocks|Iron ore rocks" />
         <location pos="(3181,3371)" target="Clay rocks|Silver ore rocks|Tin ore rocks|Iron ore rocks" />
+    </special>
+    <special name="MiscellaniaShip" interact="npc">
+        <location pos="(2629,3694)" target="_1304" />
+        <location pos="(2581,3874)" target="_1385" />        
+    </special>
+    <special name="MusaPointShip" interact="npc">
+        <location pos="(3027,3218)" target="_376|_377|_378" />
+        <location pos="(2954,3147)" target="_380" />        
+    </special>
+    <special name="NeitiznotBoat" interact="npc">
+        <location pos="2644,3710" target="_5508"/>
+        <location pos="2311,3781" target="_5507"/>
+    </special>
+    <special name="PiratesCove" interact="npc">
+        <location pos="(2214,3794)" target="_4537" />
+        <location pos="(2621,3688)" target="_413" />        
     </special>
     <special name="PlatebodyShop" interact="npc">
         <location pos="(3228,3438)" target="Horvik" />
@@ -136,6 +160,12 @@
     </special>
     <special name="Tannery" interact="npc">
         <location pos="(3187,3406)" target="Tanner" />
+    </special>
+      // id _2435 , pos (2621,3683) "Travel-Waterbirth"
+    // id _2435 , pos (2544,3761) "Travel-Rellekka"
+    <special name="WaterbirthIsle" interact="npc">
+        <location pos="(2621,3683)" target="_2435" />
+        <location pos="(2544,3761)" target="_2435" />        
     </special>
     <special name="WaterSource" interact="object">
         <location pos="(3210,3427)" target="Fountain" />

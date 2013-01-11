@@ -5,6 +5,10 @@
 package powerwalk.model.interact.handlers;
 
 import java.util.ArrayList;
+import org.powerbot.game.api.methods.Widgets;
+import org.powerbot.game.api.methods.interactive.NPCs;
+import org.powerbot.game.api.util.Timer;
+import org.powerbot.game.api.wrappers.interactive.NPC;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
@@ -24,12 +28,34 @@ public class NeitiznotBoat extends Transportable {
     
     @Override
     protected void handle(Transportable dest) throws OutOfReachException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int[] npcids = dest.getNPCIDs();
+        if (npcids == null) {
+            return;
+        }
+        NPC merchant = NPCs.getNearest(npcids);
+        if (merchant != null) {
+            for (String i : merchant.getActions()) {
+                if (i.contains("Travel-Neitiznot")) {
+                    merchant.interact("Travel-Neitiznot");
+                } else {
+                    merchant.interact("Travel-Rellekka");
+                }
+            }
+        } else {
+            throw new OutOfReachException(dest.getPosition(), "No NPC nearby.");
+        }    
     }
     
     @Override
     protected void waitForCompletion(Transportable dest) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Timer map = new Timer(6000);
+        while (map.isRunning() && !Widgets.get(224).validate()) {
+            powerwalk.tasks.Task.sleep(200, 300);
+        }
+        map.reset();
+        while (map.isRunning() && Widgets.get(224).validate()) {
+            powerwalk.tasks.Task.sleep(500, 1000);
+        }
     }
 
     @Override

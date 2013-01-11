@@ -1,3 +1,7 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package powerwalk.model.interact.handlers;
 
 import java.util.ArrayList;
@@ -12,39 +16,38 @@ import powerwalk.model.interact.Transportable;
 
 /**
  *
- * @author Alaineman
+ * @author Vincent W
  */
-public class LunarIsleShip extends Transportable {
+public class MusaPointShip extends Transportable {
+    //380, 378, 377, 376
 
-    public static Point shift;
-    
-    public LunarIsleShip(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<LunarIsleShip>(1));
+    public MusaPointShip(Point p) {
+        super(p.x, p.y, p.z, -1, new ArrayList<MusaPointShip>(1));
     }
 
     @Override
-    public void handle(Transportable dest) throws OutOfReachException {
+    protected void handle(Transportable dest) throws OutOfReachException {
         int[] npcids = dest.getNPCIDs();
         if (npcids == null) {
             return;
         }
         NPC merchant = NPCs.getNearest(npcids);
         if (merchant != null) {
-            merchant.interact("Travel");
+            merchant.interact("Pay-Fare");
         } else {
             throw new OutOfReachException(dest.getPosition(), "No NPC nearby.");
         }
     }
 
     @Override
-    public void waitForCompletion(Transportable dest) {
+    protected void waitForCompletion(Transportable dest) {
         Timer map = new Timer(5000);
-        while(map.isRunning() && !Widgets.get(431).validate()){
+        while (map.isRunning() && !Widgets.get(299).validate()) {
             Task.sleep(100, 200);
         }
         map.reset();
-        while(map.isRunning() && Widgets.get(431).validate()){
-            Task.sleep(300,500);
+        while (map.isRunning() && Widgets.get(299).validate()) {
+            Task.sleep(200, 500);
         }
     }
 

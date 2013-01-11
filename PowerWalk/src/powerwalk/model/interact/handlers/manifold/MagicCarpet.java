@@ -9,6 +9,7 @@ import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.interactive.NPC;
 import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
+import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
@@ -25,13 +26,17 @@ public class MagicCarpet extends Transportable {
     }
 
     @Override
-    protected void handle(Transportable dest) {
+    protected void handle(Transportable dest) throws OutOfReachException {
         int[] npcids = dest.getNPCIDs();
         if (npcids == null) {
             return;
         }
-        NPC merchant = NPCs.getNearest(npcids);//something
+        NPC merchant = NPCs.getNearest(npcids);
+        if(merchant != null){
         merchant.interact("Travel");
+        } else {
+            throw new OutOfReachException(dest.getPosition(), "No NPC nearby.");
+        }
         Timer chat = new Timer(5000);
         while (chat.isRunning() && !Widgets.get(1188).validate()) {
             Task.sleep(50, 100);

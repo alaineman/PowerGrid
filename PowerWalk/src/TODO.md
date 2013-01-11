@@ -30,7 +30,7 @@ powerwalk.model
     - [c] Tree extends AbstractResource
     - [c] Ore extends AbstractResource
     - [c] FishingSpot extends AbstractResource
-    - [c] Farmpatches extends AbstractResource
+    - [c] MAYBE? : Farmpatches extends AbstractResource ????
 
 - Interactions and Teleports (->VINCENT)
     - test each interaction, so that it always works.

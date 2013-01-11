@@ -25,6 +25,13 @@ powerwalk.model
     - [c] Hatch extends Elevator
     - [c] Rope extends Elevator
 
+- powerwalk.model.world.resources
+    - [c] AbstractResource
+    - [c] Tree extends AbstractResource
+    - [c] Ore extends AbstractResource
+    - [c] FishingSpot extends AbstractResource
+    - [c] Farmpatches extends AbstractResource
+
 - Interactions and Teleports (->VINCENT)
     - test each interaction, so that it always works.
     - transportable factory (-> PATRICK)

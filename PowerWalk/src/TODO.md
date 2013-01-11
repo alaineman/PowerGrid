@@ -16,24 +16,20 @@ general
 
 powerwalk.model
 ---------------
-- Collect raw values for GameObject subclasses (->VINCENT)
 
 - Make subclasses of GameObject that represent objects in the RSBot environment (low priority).
-    - [c] Gate extends GameObject implements Interactable
+    - [c] Gateway extends GameObject implements Interactable
+    - [c] Gate extends Gateway
     - [c] Ladder extends Elevator
     - [c] Stairs extends Elevator
     - [c] Hatch extends Elevator
     - [c] Rope extends Elevator
 
 - Interactions and Teleports (->VINCENT)
-    - Singleton handlers (priority) + Agility shortcuts
-    - implement the Interactables' interact() and follow() methods.
     - test each interaction, so that it always works.
     - transportable factory (-> PATRICK)
 
 - Item manager
-
-- 
 
 - Refactor Point.f_score to a HashMap in powerwalk.control.PathFinder, since 
   it's really only used there.

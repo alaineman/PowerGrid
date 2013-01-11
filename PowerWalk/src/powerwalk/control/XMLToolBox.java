@@ -34,6 +34,7 @@ public abstract class XMLToolBox {
             try {
                 xml = xml.trim();
                 int is = xml.indexOf("=",0);
+                if (is == -1) break;
                 int openVal = xml.indexOf("'",is);
                 int closeVal  = xml.indexOf("'",openVal+1);
                 if (openVal == -1 || closeVal == -1) {
@@ -132,6 +133,7 @@ public abstract class XMLToolBox {
         if (root.contains("<!--") ) { // ignore comments
             while (!lines.get(lineIndex).contains("-->")) {
                 lineIndex++;
+                if (lineIndex >= lines.size()) break;
             }
             return null;
         }

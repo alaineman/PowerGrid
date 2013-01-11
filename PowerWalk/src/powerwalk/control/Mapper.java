@@ -115,9 +115,14 @@ public class Mapper extends Thread {
         return (mappingPolicy != MAP_NONE);
     }
     public static final int BLOCKED = 0x260100;
+    public static final int RANGEDBLOCKED = 0x40000000;
     public static final int WATER = 0x200000;
-    public static final int WALL = (0x200 | 0x400 | 0x800 | 0x1000 | 0x2000 | 0x4000 | 0x8000 | 0x10000);
-
+    public static final int WALL = (0x200  | 0x400  | 0x800  | 0x1000 | 0x2000 | 
+                                    0x4000 | 0x8000 | 0x10000);
+    public static final int RANGEDWALL = (0x400000  | 0x800000  | 0x1000000 | 
+                                         0x2000000  | 0x4000000 | 0x8000000 |
+                                         0x10000000 | 0x20000000);
+    
     /**
      * run-method for the Mapper.
      * <p>It should not be called directly. Instead, the
@@ -159,7 +164,7 @@ public class Mapper extends Thread {
                     Tile base = Game.getMapBase();
                     int plane = Game.getPlane();
                     int[][] flags = Walking.getCollisionFlags(plane);
-                    Point offset = Point.fromTile(base).add(new Point(-1,-1,1));
+                    Point offset = Point.fromTile(base).add(new Point(-1,-1));
                     for (int x=0;x<flags.length;x++) {
                         for (int y=0;y<flags[0].length;y++) {
                             Point p = offset.add(new Point(x,y));
@@ -174,12 +179,19 @@ public class Mapper extends Thread {
                                     break;
                                 default: // if it is blocked and there is a SceneEntity, it is a Wall
                                          // else it is just something else (duh)
-                                    if ((flags[x][y] & BLOCKED) != 0) {
+                                    if ((flags[x][y] & BLOCKED) != 0 || (flags[x][y] & WALL) != 0) {
                                         GameObject g = map.get(p);
                                         if (g != null) {
                                             map.set(p, new Wall(p.x,p.y,p.z,g.getRawNumber()));
                                         } else {
                                             map.set(p, -2);
+                                        }
+                                    } else if ((flags[x][y] & RANGEDWALL) != 0 || (flags[x][y] & RANGEDWALL) != 0) {
+                                        GameObject g = map.get(p);
+                                        if (g != null) {
+                                            map.set(p, new Wall(p.x,p.y,p.z,g.getRawNumber()));
+                                        } else {
+                                            map.set(p,-3);
                                         }
                                     }
                             }

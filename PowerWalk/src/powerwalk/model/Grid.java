@@ -7,9 +7,14 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import powerwalk.Starter;
 import powerwalk.model.interact.Lodestone;
-import powerwalk.model.interact.handlers.*;
+import powerwalk.model.interact.handlers.LunarIsleShip;
+import powerwalk.model.interact.handlers.PiratesCove;
+import powerwalk.model.interact.handlers.WaterbirthIsle;
 import powerwalk.model.interact.handlers.manifold.*;
-import powerwalk.model.world.*;
+import powerwalk.model.world.Door;
+import powerwalk.model.world.Enemy;
+import powerwalk.model.world.Person;
+import powerwalk.model.world.Wall;
 
 /**
  * Three-dimensional data structure for GameObjects.
@@ -104,7 +109,7 @@ public class Grid {
      * <p><code>public static final int[] values</code></p>
      * <p>The values in this <code>int[]</code> must be sorted ascending.</p>
      */
-    public static Class<? extends GameObject>[] objectclasses = new Class[] {
+    public static Class<?>[] objectclasses = new Class<?>[] {
         Wall.class,          Enemy.class,          Person.class,
         Door.class,          Lodestone.class,      Canoe.class,
         Minecart.class,      MagicCarpet.class,    SpiritTree.class,
@@ -129,23 +134,25 @@ public class Grid {
             return set(p,new Wall(p.x,p.y,p.z,value));
         }
         
-        for (Class<? extends GameObject> c : objectclasses) {
-            try { 
-                Object v = c.getDeclaredField("values").get(null);
-                if (v instanceof int[]) {
-                    int[] values = (int[]) v;
-                    if (Arrays.binarySearch(values, value) >= 0) {
-                        Object o = c.getConstructor(new Class[] {int.class,int.class,int.class,int.class})
-                                      .newInstance(new Object[] {  p.x,      p.y,      p.z,     value   });
-                        if (o instanceof GameObject) {
-                            GameObject g = (GameObject)o;
-                            return set(p,g);
+        for (Class<?> c : objectclasses) {
+            if (GameObject.class.isAssignableFrom(c)) {
+                try { 
+                    Object v = c.getDeclaredField("values").get(null);
+                    if (v instanceof int[]) {
+                        int[] values = (int[]) v;
+                        if (Arrays.binarySearch(values, value) >= 0) {
+                            Object o = c.getConstructor(new Class<?>[] {int.class,int.class,int.class,int.class})
+                                          .newInstance(new Object[] {  p.x,      p.y,      p.z,     value   });
+                            if (o instanceof GameObject) {
+                                GameObject g = (GameObject)o;
+                                return set(p,g);
+                            }
                         }
                     }
-                }
-            } catch (NoSuchFieldException   | SecurityException     | IllegalArgumentException 
-                   | IllegalAccessException | NoSuchMethodException | InstantiationException 
-                   | InvocationTargetException e) {}
+                } catch (NoSuchFieldException   | SecurityException     | IllegalArgumentException 
+                       | IllegalAccessException | NoSuchMethodException | InstantiationException 
+                       | InvocationTargetException e) {}
+            }
         }
         return set(p,new GameObject(p.x,p.y,p.z,value));
     }
@@ -222,11 +229,13 @@ public class Grid {
                 ArrayList<XMLNode> objects = new ArrayList<>(cell.getValue().length);
                 for (GameObject o : cell.getValue()) {
                     // for each object in that cell
-                    HashMap<String,String> objectAtts = new HashMap<>(2);
-                    objectAtts.put("value",String.valueOf(o.getRawNumber()));
-                    objectAtts.put("plane", String.valueOf(o.getPosition().z));
-                    objectAtts.put("class", o.getClass().getName());
-                    objects.add(new XMLNode("object",objectAtts,null));
+                    if (o != null) {
+                        HashMap<String,String> objectAtts = new HashMap<>(2);
+                        objectAtts.put("value",String.valueOf(o.getRawNumber()));
+                        objectAtts.put("plane", String.valueOf(o.getPosition().z));
+                        objectAtts.put("class", o.getClass().getName());
+                        objects.add(new XMLNode("object",objectAtts,null));
+                    }
                 }
                 cells.add(new XMLNode("cell",cellAtts,objects));
             }
@@ -240,7 +249,8 @@ public class Grid {
      * <p>Only XMLNodes with the tag "grid" will be accepted.</p>
      * @param root the root Node of the grid structure.
      */
-    public void fillFromXML(XMLNode root) {
+    public synchronized void fillFromXML(XMLNode root) {
+        if (root == null) return;
         try {
             if (root.getTag().equals("grid")) {
                 for (XMLNode column : root.children()) {
@@ -271,7 +281,7 @@ public class Grid {
                     try {
                         // attempt creation of right type Object
                         Object object = Class.forName(atts.get("class"))
-                                    .getConstructor(new Class[] {int.class,int.class,int.class,int.class})
+                                    .getConstructor(new Class<?>[] {int.class,int.class,int.class,int.class})
                                       .newInstance(new Object[] {  p.x,      p.y,      p.z,      value});
                         
                         GameObject g = (GameObject)object;

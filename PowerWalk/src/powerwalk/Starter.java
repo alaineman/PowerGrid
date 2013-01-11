@@ -67,7 +67,7 @@ public class Starter extends ActiveScript {
             Bot.getBot().getWorldMap().fillFromXML(worldMap);
             logMessage("WorldMap loaded");
         } catch (FileNotFoundException e) {
-            logMessage("WorldMap file does not exist; starting with empty WorldMap",e);
+            logMessage("WorldMap file does not exist; starting with empty WorldMap");
             try { new File(Environment.getStorageDirectory().toString() + "\\" + worldMapFile).createNewFile(); }
             catch (IOException iox) {
                 logMessage("The worldMap file could not be created. Map data will not be saved",iox);
@@ -382,5 +382,6 @@ public class Starter extends ActiveScript {
             }
         });
         theLogger.addHandler(handler);
+        loggerOk = true;
     }
 }

@@ -18,4 +18,8 @@ public class Collision extends GameObject {
         super(x,y,z,raw);
     }
     
+    public Collision(Point p, int rawValue) {
+        super(p, rawValue);
+    }
+    
 }

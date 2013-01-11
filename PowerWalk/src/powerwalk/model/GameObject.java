@@ -38,6 +38,9 @@ public class GameObject {
         this.z = z;
     }
     
+    public GameObject(Point p, int rawNumber) {
+        this(p.x,p.y,p.z,rawNumber);
+    }
     /**
      * returns the position of this GameObject. 
      * The location corresponds to the Tile object it's found on

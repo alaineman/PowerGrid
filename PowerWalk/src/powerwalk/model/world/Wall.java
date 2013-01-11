@@ -1,6 +1,7 @@
 package powerwalk.model.world;
 
 import powerwalk.model.Collision;
+import powerwalk.model.Point;
 
 /**
  * Class representing all sorts of walls in the RSBot environment
@@ -38,7 +39,46 @@ public class Wall extends Collision {
         35305,35306,35330,35331,35332,35333,35336,35340,35341 // Varrock walls
     };
     
-    public Wall(int x,int y,int z,int rawValue) {
-        super (x,y,z,rawValue);
+    /** Wall on North side */
+    public static final int NORTH = 0x1;
+    /** Wall on East side */
+    public static final int EAST  = 0x2;
+    /** Wall on South side */
+    public static final int SOUTH = 0x4;
+    /** Wall on West side */
+    public static final int WEST  = 0x8;
+    
+    /** Wall on all sides, This tile cannot be entered at all*/
+    public static final int BLOCK = NORTH | EAST | SOUTH | WEST;
+    
+    private int type = 0;
+    
+    /**
+     * Creates a new Wall object at the specified location and with the specified raw value and type
+     * <p/>
+     * @param p the position of the Wall
+     * @param rawValue the Raw Value of the wall
+     * @param type the wall type, specified as a bitwise OR between the Wall.NORTH, Wall.SOUTH, Wall.WEST, and WALL.EAST values
+     */
+    public Wall(Point p,int rawValue, int type) {
+        super (p,rawValue);
+        this.type = type;
     }
+    
+    public boolean containsType(int type) {
+        return (this.type & type) != 0;
+    }
+    
+    public boolean isType(int type) {
+        return this.type == type;
+    }
+    
+    public boolean isFree(int type) {
+        return (this.type & type) == 0;
+    }
+    
+    public int getType() {
+        return type;
+    }
+    
 }

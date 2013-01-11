@@ -131,7 +131,7 @@ public class Grid {
             return set(p,new GameObject(p.x,p.y,p.z,0));
         }
         if (value < 0) {
-            return set(p,new Wall(p.x,p.y,p.z,value));
+            return set(p,new Wall(p,value,-value));
         }
         
         for (Class<?> c : objectclasses) {

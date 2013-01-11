@@ -182,16 +182,16 @@ public class Mapper extends Thread {
                                     if ((flags[x][y] & BLOCKED) != 0 || (flags[x][y] & WALL) != 0) {
                                         GameObject g = map.get(p);
                                         if (g != null) {
-                                            map.set(p, new Wall(p.x,p.y,p.z,g.getRawNumber()));
+                                            map.set(p, new Wall(p,g.getRawNumber(),convertToSides(flags[x][y])));
                                         } else {
                                             map.set(p, -2);
                                         }
-                                    } else if ((flags[x][y] & RANGEDWALL) != 0 || (flags[x][y] & RANGEDWALL) != 0) {
+                                    } else if ((flags[x][y] & WALL) != 0 || (flags[x][y] & RANGEDWALL) != 0) {
                                         GameObject g = map.get(p);
                                         if (g != null) {
-                                            map.set(p, new Wall(p.x,p.y,p.z,g.getRawNumber()));
+                                            map.set(p, new Wall(p,g.getRawNumber(),convertToSides(flags[x][y])));
                                         } else {
-                                            map.set(p,-3);
+                                            map.set(p,new Wall(p, -flags[x][y], flags[x][y]));
                                         }
                                     }
                             }
@@ -218,5 +218,18 @@ public class Mapper extends Thread {
 
         }
         Starter.logMessage("stopped mapping", "Mapper");
+    }
+    
+    public int convertToSides(int flag) {
+        int res = 0;
+        if ((flag & (0x2 | BLOCKED)) != 0)
+            res &= Wall.NORTH;
+        if ((flag & (0x8 | BLOCKED)) != 0)
+            res &= Wall.EAST;
+        if ((flag & (0x20 | BLOCKED)) != 0)
+            res &= Wall.SOUTH;
+        if ((flag & (0x80 | BLOCKED)) != 0)
+            res &= Wall.WEST;
+        return res;
     }
 }

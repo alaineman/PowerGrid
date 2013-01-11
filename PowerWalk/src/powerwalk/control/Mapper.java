@@ -173,10 +173,13 @@ public class Mapper extends Thread {
                                     map.set(p, -1);
                                     break;
                                 default: // if it is blocked and there is a SceneEntity, it is a Wall
+                                         // else it is just something else (duh)
                                     if ((flags[x][y] & BLOCKED) != 0) {
                                         GameObject g = map.get(p);
                                         if (g != null) {
                                             map.set(p, new Wall(p.x,p.y,p.z,g.getRawNumber()));
+                                        } else {
+                                            map.set(p, -2);
                                         }
                                     }
                             }

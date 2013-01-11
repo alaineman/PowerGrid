@@ -71,21 +71,26 @@ public class ScriptInjector {
             try {
                 loader = URLClassLoader.newInstance(new URL[]{rsbot.toURI().toURL()});
             } catch(MalformedURLException e) {
-                logger.warning(e.getClass().getName() + ": " + e.getMessage());
+                logger.log(Level.WARNING, "{0}: {1}", new Object[]{e.getClass().getName(), e.getMessage()});
             }
             if(loader == null) {
                 logger.severe("Unable to load RSBot, stopping.");
             } else {
                 if(getRSBotClasses(rsbot, loader)) {
                     logger.info("Loaded all of the necessary RSBot classes.");
-                    logger.info("Loading RSBot, Developer Mode: " + DEV_MODE);
+                    logger.log(Level.INFO, "Loading RSBot, Developer Mode: {0}", DEV_MODE);
                     try {
                         Class<?> mainClazz = loader.loadClass("powerwalk.Starter");
                         if(mainClazz != null) {
                             Method mainMethod = mainClazz.getDeclaredMethod("main", String[].class);
                             if(mainMethod != null) {
                                 mainMethod.setAccessible(true);
-                                mainMethod.invoke(null, (Object) new String[]{DEV_MODE ? "-dev" : ""});
+                                if (DEV_MODE) {
+                                    ArrayList<String> l = new ArrayList<>(Arrays.asList(args));
+                                    l.add("-dev");
+                                    args = l.toArray(new String[0]);
+                                }
+                                mainMethod.invoke(null,(Object)args);
                             }
                         }
                     } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

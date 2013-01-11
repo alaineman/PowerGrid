@@ -49,6 +49,8 @@ public class Starter extends ActiveScript {
     public static final double version = 0.1;
     private static Task currentTask = null;
     
+    private static boolean DEBUG_MODE = false;
+    
     /* Placeholder for controlpanel handle */
     private static ControlPanel theControlPanel = null;
     
@@ -232,6 +234,14 @@ public class Starter extends ActiveScript {
     
     public static void main(String[] args) {
         setLoggerFormatAndHandlers();
+        
+        // "-debug" flag is set; set DEBUG_MODE and cut off the "-debug" flag before passing it on.
+        if (args != null && args.length > 0 && "-debug".equals(args[0])) {
+            String[] newArgs = new String[args.length-1];
+            System.arraycopy(args,1,newArgs,0,newArgs.length);
+            DEBUG_MODE = true;
+            args = newArgs;
+        }
         // start RSBot
         Starter.logMessage("Loading RSBot");
         org.powerbot.Boot.main(args);
@@ -353,6 +363,20 @@ public class Starter extends ActiveScript {
                     Throwable t = (Throwable)params[1];
                     sb.append("      caused by ").append(t.getClass().getSimpleName());
                     sb.append(": ").append(t.getMessage()).append("\r\n");
+                    if (DEBUG_MODE) {
+                        // print stack trace
+                        StackTraceElement[] traces = t.getStackTrace();
+                        for (StackTraceElement e : traces) {
+                            sb.append("        at ").append(e.getClassName()).append(".");
+                            sb.append(e.getMethodName()).append(": ");
+                            int ln = e.getLineNumber();
+                            if (ln > 0) 
+                                sb.append(e.getLineNumber());
+                            else // line numbers less than 0 are invalid
+                                sb.append("(unknown line number)");
+                            sb.append("\r\n");
+                        }
+                    }
                 }
                 return sb.toString();
             }

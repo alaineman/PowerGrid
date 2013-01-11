@@ -39,8 +39,8 @@ public class MapViewer extends Canvas {
     
     public static MapViewer theMapViewer = null;
     
-    private int scale = 3;                                  // the scale factor
-    private Rectangle r = new Rectangle(3000,3200,480,320); // The Area to view (x,y,width,height)
+    private int scale = 2;                                  // the scale factor
+    private Rectangle r = new Rectangle(2800,3200,640,480); // The Area to view (x,y,width,height)
     
     /**
      * Creates a new Canvas that the World Map will be drawn on
@@ -74,7 +74,9 @@ public class MapViewer extends Canvas {
                     g.setColor(Color.WHITE);
                 else if (go.getRawNumber() == 0)       // "paved" tiles (LIGHT_GRAY)
                     g.setColor(Color.LIGHT_GRAY);
-                else if (go.getRawNumber() < 0)       // overwritten Collisions / Walls (DARK_GRAY)
+                else if (go.getRawNumber() == -1)       // Water (BLUE)
+                    g.setColor(Color.BLUE);
+                else if (go.getRawNumber() == -2)       // collisions on empty tiles(DARK_GRAY)
                     g.setColor(Color.DARK_GRAY);
                 else if (go instanceof Collision)       // PowerWalk Collision tiles (BLACK)
                     g.setColor(Color.BLACK);

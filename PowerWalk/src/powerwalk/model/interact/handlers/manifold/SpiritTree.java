@@ -33,7 +33,7 @@ public class SpiritTree extends Transportable {
     protected void handle(Transportable dest) throws OutOfReachException {
         SceneObject spirit = SceneEntities.getNearest(values);
         if (spirit == null || !spirit.isOnScreen()) {
-            throw new OutOfReachException(dest.getPosition(), "No basket nearby.");
+            throw new OutOfReachException(dest.getPosition(), "No spirit tree nearby.");
         }
         spirit.interact("Teleport");
         if (Quests.isCompleted("The Path of Glouphrie")){

@@ -3,7 +3,6 @@ package powerwalk.model.world;
 import java.util.Arrays;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
-import powerwalk.control.XMLToolBox;
 import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.interact.Interactable;

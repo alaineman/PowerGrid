@@ -118,8 +118,8 @@
         <location pos="(2954,3147)" target="_380" />        
     </special>
     <special name="NeitiznotBoat" interact="npc">
-        <location pos="2644,3710" target="_5508"/>
-        <location pos="2311,3781" target="_5507"/>
+        <location pos="(2644,3710)" target="_5508"/>
+        <location pos="(2311,3781)" target="_5507"/>
     </special>
     <special name="PiratesCove" interact="npc">
         <location pos="(2214,3794)" target="_4537" />
@@ -150,7 +150,6 @@
     </special>
     <special name="SpinningWheel" interact="object">
         <location pos="(3316,2790)" target="Spinning Wheel" />
-        
     </special>
     <special name="StaffShop" interact="npc">
         <location pos="(3203,3434)" target="Zaff" />
@@ -161,8 +160,6 @@
     <special name="Tannery" interact="npc">
         <location pos="(3187,3406)" target="Tanner" />
     </special>
-      // id _2435 , pos (2621,3683) "Travel-Waterbirth"
-    // id _2435 , pos (2544,3761) "Travel-Rellekka"
     <special name="WaterbirthIsle" interact="npc">
         <location pos="(2621,3683)" target="_2435" />
         <location pos="(2544,3761)" target="_2435" />        
@@ -175,11 +172,9 @@
         <location pos="(3224,3495)" target="Sink" />
         <location pos="(3191,3469)" target="Fountain" />
         <location pos="(3318,2784)" target="Sink" />
-        
     </special>
     <special name="Watermill" interact="object">
     </special>
     <special name="Windmill" interact="object">
     </special>
-
 </speciallocations>

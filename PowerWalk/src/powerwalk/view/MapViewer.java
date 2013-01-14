@@ -13,6 +13,7 @@ import powerwalk.control.XMLToolBox;
 import powerwalk.model.Point;
 import powerwalk.model.*;
 import powerwalk.model.interact.Interactable;
+import powerwalk.model.world.Wall;
 
 /**
  * Canvas that the WorldMap is printed on to show the mapped areas in the Grid
@@ -41,8 +42,8 @@ public class MapViewer extends Canvas {
     
     public static MapViewer theMapViewer = null;
     
-    // the drawing colors; they can be changed, so personal color schemes is a 
-    // possible feature
+    // the drawing colors; personal color schemes is a 
+    // possible (optional) future feature
     public static Color background = Color.LIGHT_GRAY;
     public static Color walls = Color.DARK_GRAY;
     public static Color water = new Color(22,53,160);
@@ -51,9 +52,10 @@ public class MapViewer extends Canvas {
     public static Color interactions = Color.RED;
     public static Color player = Color.GREEN;
     
-    private static int scale = 2;                                  // the scale factor
+    private static int scale = 3;                                  // the scale factor
     private static Rectangle r = new Rectangle(2850,3050,640,480); // The Area to view (x,y,width,height)
     private boolean buffersReady = false;
+    private boolean holding = false;
     /**
      * Creates a new Canvas that the World Map will be drawn on
      */
@@ -63,18 +65,25 @@ public class MapViewer extends Canvas {
         setSize(r.width*scale, r.height*scale);
     }
     
+    
     public void setupBufferStrategyAndRepaint() {
         if (!buffersReady) {
             createBufferStrategy(2);
             setIgnoreRepaint(true);
             (new Thread("MapRenderer") {
+                @SuppressWarnings("SleepWhileInLoop")
                 @Override public void run() {
                     BufferStrategy bs = getBufferStrategy();
                     while (!false) {
-                        Graphics g = bs.getDrawGraphics();
-                        paint(g);
-                        g.dispose();
-                        bs.show();
+                        if (holding) {
+                            try { Thread.sleep(50); } 
+                            catch (InterruptedException e) {}
+                        } else {
+                            Graphics g = bs.getDrawGraphics();
+                            paint(g);
+                            g.dispose();
+                            bs.show();
+                        }
                     }
                 }
             }).start();
@@ -90,6 +99,7 @@ public class MapViewer extends Canvas {
         for (int x=r.x;x<r.x+r.width;x++) {
             for (int y=r.y;y<r.y+r.height;y++) {
                 GameObject go = theMap.get(new Point(x,y));
+                Rectangle area = new Rectangle(scale*(x-r.x),scale*(r.height-(y-r.y)),scale,scale); // the rectangle we draw in
                 
                 if (go == null)
                     g.setColor(empty);
@@ -97,10 +107,8 @@ public class MapViewer extends Canvas {
                     g.setColor(interactions);
                 else if (go.getRawNumber() == 0)
                     g.setColor(background);
-                else if (go.getRawNumber() == -1 || go.getRawNumber() == 85)
+                else if (go.getRawNumber() == -5 || go.getRawNumber() == 85)
                     g.setColor(water);
-                //else if (go.getRawNumber() == -2)
-                //    g.setColor(walls);
                 else if (go.getRawNumber() == -3)
                     g.setColor(fences);
                 else if (go instanceof Collision)
@@ -108,7 +116,26 @@ public class MapViewer extends Canvas {
                 else
                     g.setColor(empty);
                 
-                g.fillRect(scale*(x-r.x),scale*(r.height-(y-r.y)),scale,scale);
+                if (go instanceof Wall && scale != 1 && g.getColor().equals(walls)) {
+                    Wall w = (Wall)go;
+                    if (w.isType(Wall.BLOCK))
+                        g.fillRect(area.x, area.y, scale, scale);
+                    else {
+                        g.setColor(empty);
+                        g.fillRect(area.x, area.y, scale, scale);
+                        g.setColor(walls);
+                        if (w.containsType(Wall.NORTH))
+                            g.drawLine(area.x, area.y, area.x+scale-1, area.y);
+                        if (w.containsType(Wall.EAST))
+                            g.drawLine(area.x+scale-1, area.y, area.x+scale-1, area.y+scale-1);
+                        if (w.containsType(Wall.SOUTH))
+                            g.drawLine(area.x, area.y+scale-1, area.x+scale-1, area.y+scale-1);
+                        if (w.containsType(Wall.WEST))
+                            g.drawLine(area.x, area.y, area.x, area.y+scale-1);
+                    }
+                } else {
+                    g.fillRect(area.x,area.y,scale,scale);
+                }
             }
         }
         // try to draw the player, if any exists
@@ -120,6 +147,10 @@ public class MapViewer extends Canvas {
                 g.fillRect(scale*(p.x-r.x),scale*(r.height-(p.y-r.y)),scale,scale);
             }
         } catch (NullPointerException p) {}
+    }
+    
+    public void hold(boolean hold) {
+        holding = hold;
     }
     
     /**

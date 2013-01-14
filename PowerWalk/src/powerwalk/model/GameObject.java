@@ -106,12 +106,4 @@ public class GameObject {
         return false;
     }
     
-    /**
-     * returns a String-representation of this GameObject
-     * The returned String can be written to an XML-file
-     * @return an XML-String representing this object
-     */
-    @Override public String toString() {
-        return "<" + getClass().getSimpleName().toLowerCase() + " pos=\"" + getPosition() + "\" raw=\"" + rawNumber + "\" />";
-    }
 }

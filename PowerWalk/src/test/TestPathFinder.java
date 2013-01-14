@@ -71,7 +71,7 @@ public class TestPathFinder {
                 String line = r.readLine();
                 for (int y=0;y<16;y++) {
                     if (line.charAt(y) == '1') {
-                        m.add(new Wall(x,y,0,12994));
+                        m.add(new Wall(new Point(x,y),12994,Wall.BLOCK));
                     }
                 }
             }

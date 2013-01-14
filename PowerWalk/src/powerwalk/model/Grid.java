@@ -126,14 +126,14 @@ public class Grid {
      * @return the GameObject previously at Point p.
      */
     public synchronized GameObject set(Point p, int value) {
-        // shady "reflect magic" corner
+        
         if (value == 0) {
             return set(p,new GameObject(p.x,p.y,p.z,0));
         }
         if (value < 0) {
-            return set(p,new Wall(p,value,-value));
+            return set(p,new Wall(p,-value, Wall.BLOCK));
         }
-        
+        // shady "reflect magic" corner
         for (Class<?> c : objectclasses) {
             if (GameObject.class.isAssignableFrom(c)) {
                 try { 
@@ -144,8 +144,9 @@ public class Grid {
                             Object o = c.getConstructor(new Class<?>[] {int.class,int.class,int.class,int.class})
                                           .newInstance(new Object[] {  p.x,      p.y,      p.z,     value   });
                             if (o instanceof GameObject) {
-                                GameObject g = (GameObject)o;
-                                return set(p,g);
+                                return set(p,(GameObject)o);
+                            } else {
+                                return delete(p);
                             }
                         }
                     }
@@ -234,6 +235,10 @@ public class Grid {
                         objectAtts.put("value",String.valueOf(o.getRawNumber()));
                         objectAtts.put("plane", String.valueOf(o.getPosition().z));
                         objectAtts.put("class", o.getClass().getName());
+                        // messy/lousy wall type fix
+                        if (o instanceof Wall) {
+                            objectAtts.put("type", String.valueOf(((Wall)o).getType()));
+                        }
                         objects.add(new XMLNode("object",objectAtts,null));
                     }
                 }
@@ -285,6 +290,11 @@ public class Grid {
                                       .newInstance(new Object[] {  p.x,      p.y,      p.z,      value});
                         
                         GameObject g = (GameObject)object;
+                        // messy / lousy Wall type fix
+                        if (g instanceof Wall) {
+                            try { ((Wall)g).setType(Integer.valueOf(atts.get("type"))); }
+                            catch (NullPointerException | IllegalArgumentException e) {}
+                        }
                         set(p,g);
                     } catch (ClassNotFoundException    | InstantiationException | IllegalAccessException 
                            | InvocationTargetException | NoSuchMethodException  e) {
@@ -297,6 +307,20 @@ public class Grid {
             }
         }
     }
+    
+    public void addAll(HashMap<Point,?> objects) {
+        boolean invalid = false;
+        for (Entry<Point,?> e : objects.entrySet()) {
+            Object val = e.getValue();
+            if (val instanceof Integer)
+                set(e.getKey(),(Integer)val);
+            else if (val instanceof GameObject)
+                set(e.getKey(), (GameObject)val);
+            else 
+                invalid = true;
+        }
+        if (invalid) Starter.logMessage("Invalid data supplied for Grid","Grid");
+    } 
     
     /**
      * returns a XML-formatted representation of this Grid

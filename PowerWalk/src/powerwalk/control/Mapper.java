@@ -1,15 +1,17 @@
 package powerwalk.control;
 
+import java.util.HashMap;
 import org.powerbot.game.api.methods.Game;
 import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.node.SceneEntities;
-import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.Bot;
 import powerwalk.Starter;
+import powerwalk.model.Collision;
 import powerwalk.model.GameObject;
 import powerwalk.model.Grid;
 import powerwalk.model.Point;
+import powerwalk.model.interact.Interactable;
 import powerwalk.model.world.Wall;
 import powerwalk.view.MapViewer;
 
@@ -34,7 +36,7 @@ public class Mapper extends Thread {
      * to be thrown when trying to start mapping again.
      */
     public static final int MAP_NONE = 2;
-    private static int mappingPolicy = MAP_NONE;
+    private static volatile int mappingPolicy = MAP_NONE;
     private static Mapper theMapper = null;
     private static boolean eco_mode = false;
 
@@ -114,14 +116,15 @@ public class Mapper extends Thread {
     public static boolean isMapping() {
         return (mappingPolicy != MAP_NONE);
     }
+    
+    /** Collision Mask for Blocked tiles */
     public static final int BLOCKED = 0x260100;
-    public static final int RANGEDBLOCKED = 0x40000000;
+    /** Collision Mask for Water tiles, as well as mountain ranges and some other obstacles */
     public static final int WATER = 0x200000;
-    public static final int WALL = (0x200  | 0x400  | 0x800  | 0x1000 | 0x2000 | 
-                                    0x4000 | 0x8000 | 0x10000);
-    public static final int RANGEDWALL = (0x400000  | 0x800000  | 0x1000000 | 
-                                         0x2000000  | 0x4000000 | 0x8000000 |
-                                         0x10000000 | 0x20000000);
+    /** Collision Mask for Walls */
+    public static final int WALL = (0x400  | 0x1000 | 0x4000 | 0x10000);
+    /** Collision Mask for low walls and fences */
+    public static final int RANGEDWALL = (0x800000  | 0x2000000  | 0x8000000 | 0x20000000);
     
     /**
      * run-method for the Mapper.
@@ -142,60 +145,89 @@ public class Mapper extends Thread {
                 // optimize CPU-load and reduce CPU-intensity before mapping.
                 // check if four corners of mappable area are set, then exit if true
                 int range = 100;
-                Point loc = Point.fromTile(Game.getMapBase());
+                Point base = Point.fromTile(Game.getMapBase());
                 boolean mapped = true; // check for mapped area
-                mapped &= (map.get(loc.add(new Point( range,  range))) != null);
-                mapped &= (map.get(loc.add(new Point(1,  range))) != null);
-                mapped &= (map.get(loc.add(new Point( range, 1))) != null);
-                mapped &= (map.get(loc.add(new Point(1,1))) != null);
-
+                mapped &= (map.get(base.add(new Point( range,  range))) != null);
+                mapped &= (map.get(base.add(new Point(1,  range))) != null);
+                mapped &= (map.get(base.add(new Point( range, 1))) != null);
+                mapped &= (map.get(base.add(new Point(1,1))) != null);
+                
                 skip |= mapped; // skip if area is mapped
             }
             if (skip) {
-                // wait for a bit.
                 try { Thread.sleep(3500); } catch (Exception e) {}
             } else {
                 try {
-                    // Store all SceneObjects in the World Map
-                    for (SceneObject o : SceneEntities.getLoaded())
-                        map.set(Point.fromTile(o.getLocation()), o.getId());
+                    // get data and create data structures
+                    SceneObject[] loaded;
+                    int[][] flags;
+                    Point offset;
+                    try {
+                        loaded = SceneEntities.getLoaded();
+                        flags = Walking.getCollisionFlags(Game.getPlane());
+                        offset = Point.fromTile(Game.getMapBase()).add(new Point(-1,-1));
+                    } catch (NullPointerException e) {
+                        Starter.logMessage("Detected Environment unloading","Mapper");
+                        stopMapping();
+                        break;
+                    }
                     
-                    // Check collision Flags for possible Collisions
-                    Tile base = Game.getMapBase();
-                    int plane = Game.getPlane();
-                    int[][] flags = Walking.getCollisionFlags(plane);
-                    Point offset = Point.fromTile(base).add(new Point(-1,-1));
+                    HashMap<Point, GameObject> gos = new HashMap<>((int)(flags.length*flags[0].length*1.5+3));
+                    HashMap<Point, Integer> ses = new HashMap<>((int)(loaded.length*1.5+3));
+                    
+                    // parse all data and store in data structures
+                    for (SceneObject o : loaded)
+                        ses.put(Point.fromTile(o.getLocation()), o.getId());
+                    
                     for (int x=0;x<flags.length;x++) {
                         for (int y=0;y<flags[0].length;y++) {
                             Point p = offset.add(new Point(x,y));
+                            GameObject g = map.get(p);
+                            if (g instanceof Interactable)
+                                continue; // don't change interactables
+                            int num = -1;
+                            if (ses.get(p) != null)
+                                num = ses.get(p);
+                            else if (g != null)
+                                num = g.getRawNumber();
+                            
                             switch (flags[x][y]) {
-                                case -1: // ignore edge -1 values
+                                case -1: // ignore -1 values
                                     break;
-                                case 0: // set "paved" tile (walkable tile)
-                                    map.set(p, 0);
+                                case 0: // set walkable tile
+                                    if (g == null) gos.put(p, new GameObject(p,0));
+                                    else if (g instanceof Collision)
+                                        gos.put(p, new GameObject(p, g.getRawNumber()));
                                     break;
-                                case WATER: // set water as -1 in the Grid
-                                    map.set(p, -1);
+                                case WATER: // set water as -5 in the Grid
+                                    gos.put(p, new Wall(p, -5, Wall.BLOCK));
                                     break;
-                                default: // if it is blocked and there is a SceneEntity, it is a Wall
-                                         // else it is just something else (duh)
-                                    if ((flags[x][y] & BLOCKED) != 0 || (flags[x][y] & WALL) != 0) {
-                                        GameObject g = map.get(p);
-                                        if (g != null) {
-                                            map.set(p, new Wall(p,g.getRawNumber(),convertToSides(flags[x][y])));
-                                        } else {
-                                            map.set(p, -2);
-                                        }
-                                    } else if ((flags[x][y] & WALL) != 0 || (flags[x][y] & RANGEDWALL) != 0) {
-                                        GameObject g = map.get(p);
-                                        if (g != null) {
-                                            map.set(p, new Wall(p,g.getRawNumber(),convertToSides(flags[x][y])));
-                                        } else {
-                                            map.set(p,new Wall(p, -flags[x][y], flags[x][y]));
-                                        }
-                                    }
+                                default:
+                                    int sides = convertToSides(flags[x][y]);
+                                    if (num == 85) 
+                                        gos.put(p, new Wall(p, -5, Wall.BLOCK));
+                                    else if (sides != 0)
+                                        gos.put(p, new Wall(p,num,sides));
+                                    else if (g instanceof Collision)
+                                        gos.put(p, new GameObject(p,g.getRawNumber()));
                             }
                         }
+                    }
+                    // all data parsed; put all found GameObjects in the Grid
+                    for (Point p : gos.keySet())
+                        ses.remove(p); // << first removing redundant entries saves time, 
+                                       //    since Grid.set is appr. 2 times as slow as 
+                                       //    HashMap.remove (still really fast though 
+                                       //    (somewhere in O(1) - O(n)))
+                    if (MapViewer.theMapViewer != null) {
+                        // If the MapViewer is open, hold drawing while the map is being updated to prevent flicker
+                        MapViewer.theMapViewer.hold(true);
+                        map.addAll(ses);
+                        map.addAll(gos);
+                        MapViewer.theMapViewer.hold(false);
+                    } else {
+                        map.addAll(ses);
+                        map.addAll(gos);
                     }
                     if (!XMLToolBox.writeToFile(map.toString(), Starter.worldMapFile)) {
                         Starter.logMessage("updating the WorldMap in " + Starter.worldMapFile + " failed", "Mapper");
@@ -204,10 +236,6 @@ public class Mapper extends Thread {
                     // catch anything that passes by: The mapper must not crash or hang!
                     Starter.logMessage("Something went wrong while Mapping; Mapping round aborted","Mapper",t);
                 } 
-            }
-            // update the mapviewer
-            if (MapViewer.theMapViewer != null) {
-                MapViewer.theMapViewer.repaint();
             }
 
             if (mappingPolicy == MAP_ONCE) {
@@ -220,16 +248,20 @@ public class Mapper extends Thread {
         Starter.logMessage("stopped mapping", "Mapper");
     }
     
-    public int convertToSides(int flag) {
+    private int convertToSides(int flag) {
+        if ((flag | 0x20100) == flag) // Object_Block | Object_Tile flag => Collision (normal walls and such)
+            return Wall.BLOCK;
+        if ((flag | 0x40000100) == flag) // Object_Allow_Range | Object_Tile => Collision (fences and such)
+            return Wall.BLOCK;
         int res = 0;
-        if ((flag & (0x2 | BLOCKED)) != 0)
-            res &= Wall.NORTH;
-        if ((flag & (0x8 | BLOCKED)) != 0)
-            res &= Wall.EAST;
-        if ((flag & (0x20 | BLOCKED)) != 0)
-            res &= Wall.SOUTH;
-        if ((flag & (0x80 | BLOCKED)) != 0)
-            res &= Wall.WEST;
+        if ((flag & (0x800402)) != 0)
+            res |= Wall.NORTH;
+        if ((flag & (0x2001008)) != 0)
+            res |= Wall.EAST;
+        if ((flag & (0x8004020)) != 0)
+            res |= Wall.SOUTH;
+        if ((flag & (0x20010080)) != 0)
+            res |= Wall.WEST;
         return res;
     }
 }

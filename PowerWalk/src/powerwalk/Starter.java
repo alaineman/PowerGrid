@@ -235,8 +235,9 @@ public class Starter extends ActiveScript {
     public static void main(String[] args) {
         setLoggerFormatAndHandlers();
         
-        // "-debug" flag is set; set DEBUG_MODE and cut off the "-debug" flag before passing it on.
-        if (args != null && args.length > 0 && "-debug".equals(args[0])) {
+        // "-pwdebug" flag is set; set DEBUG_MODE and cut off the "-pwdebug" flag before passing it on.
+        if (args != null && args.length > 0 && "-pwdebug".equalsIgnoreCase(args[0])) {
+            // PowerWalk is run in Debug mode
             String[] newArgs = new String[args.length-1];
             System.arraycopy(args,1,newArgs,0,newArgs.length);
             DEBUG_MODE = true;

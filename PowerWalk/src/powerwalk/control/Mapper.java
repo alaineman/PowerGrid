@@ -197,7 +197,7 @@ public class Mapper extends Thread {
                                 case 0: // set walkable tile
                                     if (g == null) gos.put(p, new GameObject(p,0));
                                     else if (g instanceof Collision)
-                                        gos.put(p, new GameObject(p, g.getRawNumber()));
+                                        gos.put(p, new GameObject(p, Math.abs(g.getRawNumber())));
                                     break;
                                 case WATER: // set water as -5 in the Grid
                                     gos.put(p, new Wall(p, -5, Wall.BLOCK));

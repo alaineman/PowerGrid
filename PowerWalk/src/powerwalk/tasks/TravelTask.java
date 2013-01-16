@@ -28,6 +28,7 @@ public class TravelTask extends StepTask {
      */
     public TravelTask(Point destination, int priority) {
         super(priority);
+        System.out.print("This is our goal:" + destination);
         this.destination = destination;
         
         String name = Destinations.findNameForDestination(destination);

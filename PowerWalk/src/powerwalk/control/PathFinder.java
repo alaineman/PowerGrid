@@ -2,11 +2,12 @@ package powerwalk.control;
 
 import java.util.*;
 import powerwalk.Bot;
-import powerwalk.Starter;
 import powerwalk.model.Collision;
 import powerwalk.model.GameObject;
+import powerwalk.model.Grid;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
+import powerwalk.model.world.Wall;
 
 /**
  * This Utility class deals with finding a path between two Points in the RSBot environment.
@@ -21,6 +22,8 @@ public abstract class PathFinder {
     /** The maximum distance between two Points in the result Path. */
     public static final int maxDist = 15;
     
+    public static Grid map;
+    
     /**
      * Calculates a path between start and goal using the A* algorithm.
      * @param start The start Point
@@ -29,7 +32,7 @@ public abstract class PathFinder {
      * @throws OutOfReachException When no path between start and goal exists
      */
     public static ArrayList<Point> calculatePath(Point start, Point goal) throws OutOfReachException {
-
+        map = Bot.getBot().getWorldMap();
         //Initialize the A* algorith.
         HashSet<Point> closedSet = new HashSet<>();
         //HashMap<Point,Double> f_score = new HashMap<>();
@@ -46,27 +49,30 @@ public abstract class PathFinder {
         //previous = new HashMap<>();
         
         pathCost.put(start,1.0);
-        
         start.f_score = Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) );
         //f_score.put(start, Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) ));
         
         pending.offer(start);
-        while (!pending.isEmpty()) {
+        int count = 0;
+        while (!pending.isEmpty() && count<500) {
+            System.out.println();
+            System.out.println(pending.size());
             Point current = pending.poll();
             if (current.equals(goal)) {
                 ArrayList<Point> fullPath = reconstruct(came_from,goal);
+                System.out.println("third section completed.");
                 return reducePoints(fullPath,maxDist);
             }
             closedSet.add(current);
             Point[] adjacents = current.getAdjacentPoints();
             for (int i=0;i<adjacents.length;i++) {
-                
-                Point p = adjacents[i];
+                Point p = adjacents[i];                
                 GameObject go = Bot.getBot().getWorldMap().get(p);
                 if (!closedSet.contains(p)) { 
-                    if (Bot.getBot().getWorldMap().get(p) instanceof Collision) {
+                    if (go instanceof Collision) {
                         closedSet.add(p);
                     } else {
+                        
                         double tempPathCost = pathCost.get(current) + 1;
 
                         boolean isPending = pending.contains(p);
@@ -75,20 +81,51 @@ public abstract class PathFinder {
                             pathCost.put(p, tempPathCost);
                             p.f_score = tempPathCost + Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) );
                             if (!isPending) {
+                                System.out.print(p + " ");
                                 pending.offer(p);
                             }
                         }
                     }
                 }
             }
+            count++;
         }
         throw new OutOfReachException(goal,"Destination could not be reached, is the area explored?");
+        
+    }
+    
+    private static Point[] getAdjacent(Point p) {
+        GameObject g = map.get(p);
+        ArrayList<Point> ps = new ArrayList<>(4);
+        int count = 0;
+        if (!containsCollision(g,Wall.NORTH)) {
+            ps.add(p.add(new Point(0, 1)));
+            count++;
+        }
+        if (!containsCollision(g, Wall.SOUTH)) {
+            ps.add(p.add(new Point(0,-1)));
+            count++;
+        }
+        if (!containsCollision(g, Wall.EAST)) {
+            ps.add(p.add(new Point(1,0)));
+            count++;
+        }
+        if (!containsCollision(g, Wall.WEST)) {
+            ps.add(p.add(new Point(-1,0)));
+            count++;
+        }
+        //System.out.print(count);
+        return ps.toArray(new Point[0]);
+    }
+    
+    private static boolean containsCollision(GameObject from, int dir) {
+        return (from instanceof Wall && ((Wall)from).containsType(dir));
     }
     
     private static ArrayList<Point> reconstruct(HashMap<Point,Point> came_from, Point current) {
         // reconstruct the path from the came_from HashMap
-        Point previous = came_from.get(current);
-        if (previous == null) {
+        Point prev = came_from.get(current);
+        if (prev == null) {
             ArrayList<Point> thePath = new ArrayList<>();
             thePath.add(current);
             return thePath;

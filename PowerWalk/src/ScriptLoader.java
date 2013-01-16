@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import org.powerbot.Boot;
 import org.powerbot.core.bot.Bot;
 import org.powerbot.core.bot.handlers.ScriptHandler;
 import org.powerbot.core.script.ActiveScript;
@@ -34,20 +33,10 @@ public class ScriptLoader {
             throw new IllegalArgumentException("Invalid Class Name", e);
         }
     }
-    
-    public ActiveScript getInstance() {
-        try {
-            // try to create a new instance to return
-            return scriptClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException ex) {
-            // upon failure, throw an Exception
-            throw new UnsupportedOperationException("The class cannot be instantiated", ex);
-        }
-    }
-    
-    public Manifest getManifest() {
+        
+    public String getName() {
         // return the Manifest associated with this class
-        return scriptClass.getAnnotation(Manifest.class);
+        return scriptClass.getAnnotation(Manifest.class).name();
     }
     
     public void run() {
@@ -70,7 +59,7 @@ public class ScriptLoader {
                 
                 ActiveScript s = scriptClass.newInstance();
                 Constructor<?> cons = scriptDef.getDeclaredConstructor(Manifest.class);
-                Object scriptDefinition = cons.newInstance(getManifest());
+                Object scriptDefinition = cons.newInstance(scriptClass.getAnnotation(Manifest.class));
                 startMethod.invoke(handler, s, scriptDefinition);
                 System.out.println("[PowerWalk > ScriptLoader] Script launched");
             } catch (NoSuchMethodException     | IllegalAccessException | IllegalArgumentException | 
@@ -81,7 +70,7 @@ public class ScriptLoader {
         }
     }
     
-    private Method fetchMethod(Class<?> clazz, Class<?> returnType, Class<?>... params) throws NoSuchMethodException {
+    private static Method fetchMethod(Class<?> clazz, Class<?> returnType, Class<?>... params) throws NoSuchMethodException {
         for (Method m : clazz.getDeclaredMethods()) {
             if (m.getReturnType().equals(returnType) &&
                 Arrays.equals(params, m.getParameterTypes()))
@@ -108,26 +97,19 @@ public class ScriptLoader {
         return null;
     }
     
-    public static void createPlayButton(String scriptClassName) {
-        final ScriptLoader sl = new ScriptLoader(scriptClassName);
-        String name = sl.getManifest().name();
-        JFrame jf = new JFrame(name + " loader");
-        jf.setLayout(new BorderLayout());
-        jf.setResizable(false);
-        JButton play = new JButton("Run Script");
-        play.setPreferredSize(new Dimension(200,32));
+    public JButton createPlayButton() {
+        JButton play = new JButton("Run " + getName());
         play.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                sl.run();
+                run();
             }
         });
-        jf.add(play,"Center");
-        jf.pack();
-        jf.setVisible(true);
+        return play;
     }
     
     public static void main(String[] args) {
         Starter.main(new String[]{"-dev"});
-        createPlayButton("powerwalk.Starter");
+        ScriptLoader l = new ScriptLoader("powerwalk.Starter");
+        
     }
 }

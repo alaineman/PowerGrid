@@ -204,6 +204,7 @@ public class Starter extends ActiveScript {
      * @param message the message to log
      */
     public static void logMessage(String message) {
+        if (!loggerOk) setLoggerFormatAndHandlers();
         theLogger.info(message);
     }
     
@@ -214,6 +215,7 @@ public class Starter extends ActiveScript {
      * @param group the group to display for this message
      */
     public static void logMessage(String message,String group) {
+        if (!loggerOk) setLoggerFormatAndHandlers();
         theLogger.log(Level.INFO,message,group);
     }
     
@@ -226,10 +228,12 @@ public class Starter extends ActiveScript {
      * @param t the Throwable that caused the message
      */
     public static void logMessage(String message,String group, Throwable t) {
+        if (!loggerOk) setLoggerFormatAndHandlers();
         theLogger.log(Level.INFO,message,new Object[] {group,t});
     }
     
     public static void logMessage(String message,Throwable t) {
+        if (!loggerOk) setLoggerFormatAndHandlers();
         theLogger.log(Level.INFO,message,new Object[]{null,t});
     }
     

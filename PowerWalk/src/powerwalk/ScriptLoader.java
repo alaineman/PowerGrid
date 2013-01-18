@@ -72,12 +72,12 @@ public class ScriptLoader {
                 Constructor<?> cons = scriptDef.getDeclaredConstructor(Manifest.class);
                 Object scriptDefinition = cons.newInstance(scriptClass.getAnnotation(Manifest.class));
                 startMethod.invoke(handler, s, scriptDefinition);
-                System.err.println("[PowerWalk > ScriptLoader] Script launched");
+                Starter.logMessage(getName() + " launched","ScriptLoader");
                 state = running;
             } catch (NoSuchMethodException     | IllegalAccessException | IllegalArgumentException | 
                      InvocationTargetException | NoClassDefFoundError   | InstantiationException   |
                      SecurityException e) {
-                System.err.println("[PowerWalk] An error occurred while trying to load script:\n  " + e.getClass().getSimpleName() + ": " + e.getLocalizedMessage());
+                Starter.logMessage("An error occurred while trying to load script.","ScriptLoader",e);
             }
         }
     }
@@ -104,7 +104,7 @@ public class ScriptLoader {
             
             return cls;
         } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException ex) {
-            System.out.println("Something went wrong: \n" + ex);
+            Starter.logMessage("Exception while reading RSBot classes","ScriptLoader",ex);
         }
         return null;
     }

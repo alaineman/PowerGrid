@@ -48,13 +48,6 @@ public class Bot {
         return theBot;
     }
     
-    /**
-     * Destroys the Bot object, freeing all memory used (including the World Map)
-     */
-    protected static void destroy() {
-        
-    }
-    
     private Grid theWorldMap = new Grid();
     private PriorityQueue<Task> taskQueue = new PriorityQueue<>();
     private Task idleTask = new RestTask(Integer.MIN_VALUE,true);
@@ -267,6 +260,6 @@ public class Bot {
         taskQueue.clear();
         Task current = Starter.currentTask();
         if (current != null) current.cancel();
-        Starter.logMessage("The Bot has become idle");
+        Starter.logMessage("The Bot has become idle","TaskManager");
     }
 }

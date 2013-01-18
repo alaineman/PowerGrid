@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.logging.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -49,7 +50,7 @@ public class Starter extends ActiveScript {
     public static final double version = 0.1;
     private static Task currentTask = null;
     
-    private static boolean DEBUG_MODE = false;
+    private static boolean DEV_MODE = false;
     
     /* Placeholder for controlpanel handle */
     private static ControlPanel theControlPanel = null;
@@ -235,25 +236,32 @@ public class Starter extends ActiveScript {
     public static void main(String[] args) {
         setLoggerFormatAndHandlers();
         
-        // "-pwdebug" flag is set; set DEBUG_MODE and cut off the "-pwdebug" flag before passing it on.
-        if (args != null && args.length > 0 && "-pwdebug".equalsIgnoreCase(args[0])) {
-            // PowerWalk is run in Debug mode
-            String[] newArgs = new String[args.length-1];
-            System.arraycopy(args,1,newArgs,0,newArgs.length);
-            DEBUG_MODE = true;
-            args = newArgs;
+        
+        ArrayList<String> params = new ArrayList<>(args.length);
+        for (String param : args) {
+            switch (param) {
+                case "-pwdebug":
+                    DEV_MODE = true;
+                    logMessage("Powerwalk started in developer mode");
+                    break;
+                default:
+                    params.add(param);
+            }
         }
+        
         // start RSBot
         Starter.logMessage("Loading RSBot");
-        org.powerbot.Boot.main(args);
+        org.powerbot.Boot.main(params.toArray(new String[0]));
         Starter.logMessage("RSBot loaded, modifying RSBot JFrame");
+        
         // set our awesome custom controls to the JFrame
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
-                Window[] windows = Window.getWindows();
-                for (Window w : windows) {
+                for (Window w : Window.getWindows()) {
                     if (w instanceof JFrame) {
                         JFrame theFrame = (JFrame)w;
+                        if (!theFrame.getTitle().startsWith("RSBot"))
+                            continue;
                         // Canvas used to draw the RSBot environment on is inside a JRootPane in the "Center" 
                         // area of a BorderLayout applied to the JFrame.
                         // because of this, it is possible to add controls to the north, 
@@ -262,9 +270,10 @@ public class Starter extends ActiveScript {
                         theControlPanel = new ControlPanel();
                         
                         Dimension frameSize = theFrame.getSize();
-                        frameSize.height += 48; // resize the frame to make room for the controlpanel
+                        frameSize.height += theControlPanel.getPreferredSize().height; // resize the frame to make room for the controlpanel
                         theFrame.setSize(frameSize);
                         theFrame.setMinimumSize(frameSize);
+                        
                         theFrame.add(theControlPanel,"South");
                         // we replace RSBot's logo with our own and adapt the title a little
                         URL url = ClassLoader.getSystemResource("icon_small.png");
@@ -275,7 +284,7 @@ public class Starter extends ActiveScript {
                         catch (IOException | IllegalArgumentException e) {
                             Starter.logMessage("Error while setting JFrame icon",e);
                         }
-                        
+                        break;
                     }
                 }
             }
@@ -286,24 +295,28 @@ public class Starter extends ActiveScript {
      * The control panel that appears below the RSBot window when launching through this class
      */
     public static class ControlPanel extends JPanel {
-        public static final Dimension buttonSize = new Dimension(250,32);
+        public static final Dimension buttonSize = new Dimension(180,32);
         
         private JLabel messageBox = new JLabel("  PowerWalk is not started");
         private JButton showMap = new JButton("Show PowerWalk map");
         private JButton toggleMapping = new JButton("Disable Mapping");
         public ControlPanel() {
-            super(new BorderLayout(3,3));
+            super(new BorderLayout(5,3));
             createAndShowGUI();
         }
         private void createAndShowGUI() {
             setBackground(Color.BLACK);
-            setBorder(new LineBorder(Color.WHITE,3));
+            setBorder(new LineBorder(Color.WHITE,2));
+            setPreferredSize(new Dimension(300,72));
             messageBox.setFont(new Font(messageBox.getFont().getName(),Font.BOLD,14));
             messageBox.setForeground(Color.WHITE);
+            messageBox.setHorizontalAlignment(JLabel.CENTER);
             
             messageBox.setPreferredSize(new Dimension(300,30));
             showMap.setPreferredSize(buttonSize);
             toggleMapping.setPreferredSize(buttonSize);
+            JButton starter = ScriptLoader.pwLoader.createPlayButton();
+            starter.setPreferredSize(buttonSize);
             
             toggleMapping.setEnabled(false);
             
@@ -311,7 +324,9 @@ public class Starter extends ActiveScript {
             buttons.setOpaque(false);
             buttons.add(showMap);
             buttons.add(toggleMapping);
-            add(buttons,"East");
+            buttons.add(starter);
+            
+            add(buttons,"North");
             add(messageBox,"Center");
             
             showMap.addActionListener(new ActionListener() {
@@ -338,7 +353,7 @@ public class Starter extends ActiveScript {
         
         public void setMessage(String msg) {
             if (msg != null) 
-                messageBox.setText("  " + msg);
+                messageBox.setText("  Status:  " + msg);
         }
         
         public void notifyStateChange(boolean state) {
@@ -364,7 +379,7 @@ public class Starter extends ActiveScript {
                     Throwable t = (Throwable)params[1];
                     sb.append("      caused by ").append(t.getClass().getSimpleName());
                     sb.append(": ").append(t.getMessage()).append("\r\n");
-                    if (DEBUG_MODE) {
+                    if (DEV_MODE) {
                         // print stack trace
                         StackTraceElement[] traces = t.getStackTrace();
                         for (StackTraceElement e : traces) {

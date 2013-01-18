@@ -1,22 +1,17 @@
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+package powerwalk;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import org.powerbot.core.bot.Bot;
 import org.powerbot.core.bot.handlers.ScriptHandler;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.core.script.Script;
 import org.powerbot.game.api.Manifest;
-import powerwalk.Starter;
 
 /**
  * Loads a script and executes it on the RSBot client. Since a required class is 
@@ -24,6 +19,8 @@ import powerwalk.Starter;
  * @author Chronio
  */
 public class ScriptLoader {
+    
+    public static ScriptLoader pwLoader = new ScriptLoader("powerwalk.Starter");
     
     private Class<? extends ActiveScript> scriptClass = null;
     
@@ -94,18 +91,18 @@ public class ScriptLoader {
         throw new NoSuchMethodException();
     }
     
-    private static ArrayList<Class<?>> getClasses(ClassLoader cl) {
+    private static Collection<Class<?>> getClasses(ClassLoader cl) {
         try {
             Field f = ClassLoader.class.getDeclaredField("classes");
             f.setAccessible(true);
             
             @SuppressWarnings("unchecked")
-            ArrayList<Class<?>> list = new ArrayList<>((Collection<? extends Class<?>>)f.get(cl));
+            Collection<Class<?>> cls = (Collection<Class<?>>)f.get(cl);
             
             // restore original "private" status of ClassLoader's classes field
             f.setAccessible(false);
             
-            return list;
+            return cls;
         } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException ex) {
             System.out.println("Something went wrong: \n" + ex);
         }
@@ -125,23 +122,5 @@ public class ScriptLoader {
             }
         });
         return play;
-    }
-    
-    public static void main(String[] args) {
-        Starter.main(new String[]{"-dev"});
-        ScriptLoader l = new ScriptLoader("powerwalk.Starter");
-        JButton b = l.createPlayButton();
-        b.setPreferredSize(new Dimension(200, 32));
-        JFrame lFrame = new JFrame("PW launcher");
-        try {
-            lFrame.setIconImage(ImageIO.read(ClassLoader.getSystemResource("icon_small.png")));
-        } catch (IOException e) {
-            System.err.println("[PowerWalk] failed to load imageicon due to " + e.getClass().getSimpleName());
-        }
-        lFrame.setResizable(false);
-        lFrame.setLayout(new BorderLayout(10, 5));
-        lFrame.add(b,"Center");
-        lFrame.pack();
-        lFrame.setVisible(true);
     }
 }

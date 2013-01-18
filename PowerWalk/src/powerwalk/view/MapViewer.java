@@ -1,19 +1,23 @@
 package powerwalk.view;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powerwalk.Bot;
 import powerwalk.Starter;
 import powerwalk.control.XMLToolBox;
-import powerwalk.model.Point;
 import powerwalk.model.*;
+import powerwalk.model.Point;
 import powerwalk.model.interact.Interactable;
 import powerwalk.model.world.Wall;
+import powerwalk.tasks.TravelTask;
 
 /**
  * Canvas that the WorldMap is printed on to show the mapped areas in the Grid
@@ -36,6 +40,21 @@ public class MapViewer extends Canvas {
         
         f.setVisible(true);
         theMapViewer.setupBufferStrategyAndRepaint();
+        theMapViewer.addMouseListener(new MouseAdapter() {
+            @Override public void mouseReleased(MouseEvent me) {
+                if (me.getButton() == MouseEvent.BUTTON1) {
+                    // walk to point that was clicked on map
+                    java.awt.Point p = me.getPoint();
+                    p.x /= scale;
+                    p.y /= scale;
+                    p.x += r.x;
+                    p.y += r.y;
+                    Point dest = new Point(p.x,p.y);
+                    Bot.getBot().becomeIdle();
+                    Bot.getBot().assignTask(new TravelTask(dest,0));
+                }
+            }
+        });
     }
     
     private static Grid theMap = null;
@@ -52,10 +71,52 @@ public class MapViewer extends Canvas {
     public static Color interactions = Color.RED;
     public static Color player = Color.GREEN;
     
+    private static HashMap<String,Color> defaults = new HashMap<>(12);
+    static { 
+        defaults.put("background",  Color.LIGHT_GRAY);
+        defaults.put("wall",        Color.DARK_GRAY);
+        defaults.put("water",       new Color(22,53,160));
+        defaults.put("empty",       Color.WHITE);
+        defaults.put("fence",       new Color(147,111,36));
+        defaults.put("interaction", Color.RED);
+        defaults.put("player",      Color.GREEN);
+    };
+    
+    private static HashMap<String,Color> custom = new HashMap<>(12);
+    
+    public static void setCustomColor(String element, Color color) {
+        if (color == null || element == null) 
+            throw new IllegalArgumentException("Neither the element nor the color is allowed to be null");
+        if (!defaults.containsKey(element))
+            throw new IllegalArgumentException("Not a valid argument");
+        
+        custom.put(element, color);
+    }
+    
+    public static void restoreDefault(String element) {
+        custom.remove(element);
+    }
+    
+    public static boolean hasCustomColor(String element) {
+        return custom.containsKey(element);
+    }
+    
+    public static Color getUsedColor(String element) {
+        if (element == null)
+            throw new IllegalArgumentException("The element is not allowed to be null");
+        if (!defaults.containsKey(element))
+            throw new IllegalArgumentException("Not a valid argument");
+        Color c = custom.get(element);
+        if (c == null)
+            c = defaults.get(element);
+        return c;
+    }
+    
     private static int scale = 3;                                  // the scale factor
     private static Rectangle r = new Rectangle(2850,3050,640,480); // The Area to view (x,y,width,height)
     private boolean buffersReady = false;
     private boolean holding = false;
+    
     /**
      * Creates a new Canvas that the World Map will be drawn on
      */
@@ -65,7 +126,6 @@ public class MapViewer extends Canvas {
         setSize(r.width*scale, r.height*scale);
     }
     
-    
     public void setupBufferStrategyAndRepaint() {
         if (!buffersReady) {
             createBufferStrategy(2);
@@ -74,7 +134,7 @@ public class MapViewer extends Canvas {
                 @SuppressWarnings("SleepWhileInLoop")
                 @Override public void run() {
                     BufferStrategy bs = getBufferStrategy();
-                    while (!false) {
+                    while (true) {
                         if (holding) {
                             try { Thread.sleep(50); } 
                             catch (InterruptedException e) {}
@@ -95,6 +155,10 @@ public class MapViewer extends Canvas {
      * @param g the Graphics-object used to draw on this Canvas
      */
     @Override public void paint(Graphics g) {
+        HashMap<String,Color> current = new HashMap<>(12);
+        for (String s : defaults.keySet()) {
+            current.put(s, getUsedColor(s));
+        }
         if (g == null) return;
         for (int x=r.x;x<r.x+r.width;x++) {
             for (int y=r.y;y<r.y+r.height;y++) {
@@ -102,19 +166,17 @@ public class MapViewer extends Canvas {
                 Rectangle area = new Rectangle(scale*(x-r.x),scale*(r.height-(y-r.y)),scale,scale); // the rectangle we draw in
                 
                 if (go == null)
-                    g.setColor(empty);
+                    g.setColor(current.get("empty"));
                 else if (go instanceof Interactable)
-                    g.setColor(interactions);
-                else if (go.getRawNumber() == 0)
-                    g.setColor(background);
+                    g.setColor(current.get("interaction"));
                 else if (go.getRawNumber() == -5 || go.getRawNumber() == 85)
-                    g.setColor(water);
+                    g.setColor(current.get("water"));
                 else if (go.getRawNumber() == -3)
-                    g.setColor(fences);
+                    g.setColor(current.get("fence"));
                 else if (go instanceof Collision)
-                    g.setColor(walls);
+                    g.setColor(current.get("wall"));
                 else
-                    g.setColor(empty);
+                    g.setColor(current.get("background"));
                 
                 if (go instanceof Wall && scale != 1 && g.getColor().equals(walls)) {
                     Wall w = (Wall)go;

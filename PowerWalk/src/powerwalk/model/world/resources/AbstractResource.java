@@ -24,7 +24,9 @@ public abstract class AbstractResource extends GameObject {
         System.arraycopy(it, 0, items, 0, it.length);
     }
     
-    public abstract boolean checkAvailability();
+    public abstract void gather();
+    
+    public abstract boolean isAvailable();
     
     public Item[] getItems(){
         Item[] its = new Item[items.length];

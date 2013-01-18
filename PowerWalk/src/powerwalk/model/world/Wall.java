@@ -64,7 +64,7 @@ public class Wall extends Collision {
     }
     
     public Wall(int x, int y, int z, int rawValue) {
-        this(new Point(x,y,x),rawValue,BLOCK);
+        this(new Point(x,y,z),rawValue,BLOCK);
     }
     
     public boolean containsType(int type) {

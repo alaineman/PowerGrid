@@ -54,44 +54,29 @@ public abstract class PathFinder {
         //f_score.put(start, Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) ));
 
         pending.offer(start);
-        int count = 0;
-        while (!pending.isEmpty() && count < 500) {
-            System.out.println();
-            System.out.println(pending.size());
+        while (!pending.isEmpty()) {
             Point current = pending.poll();
             if (current.equals(goal)) {
                 ArrayList<Point> fullPath = reconstruct(came_from, goal);
-                System.out.println("third section completed.");
                 return reducePoints(fullPath, maxDist);
             }
             closedSet.add(current);
-            Point[] adjacents = current.getAdjacentPoints();
-            for (int i = 0; i < adjacents.length; i++) {
-                Point p = adjacents[i];
+            ArrayList<Point> adjacents = availableEdges(current);
+            for (Point p : adjacents) {
                 GameObject go = Bot.getBot().getWorldMap().get(p);
-                if (!closedSet.contains(p)) {
-                    if (go instanceof Wall && ((Wall) go).containsType(getDirection(p, current))) {
-                        // nee dit klopt ook niet want je moet hem niet gelijk toevoegen aan de closed set... maar je mag het in elk geval nog niet offeren.
-                        // Pas als hij geheel is afgesloten van de fill waar de character in staat mag hij in de closed set
-                        closedSet.add(p);
-                    } else {
-
+                if (!closedSet.contains(p)) {                                           
                         double tempPathCost = pathCost.get(current) + 1;
-
                         boolean isPending = pending.contains(p);
                         if (!isPending || tempPathCost <= pathCost.get(p) || pathCost.get(p) == 0) {
                             came_from.put(p, current);
                             pathCost.put(p, tempPathCost);
                             p.f_score = tempPathCost + Math.sqrt(Math.pow(start.x - goal.x, 2) + Math.pow(start.y - goal.y, 2));
                             if (!isPending) {
-                                System.out.print(p + " ");
                                 pending.offer(p);
                             }
                         }
                     }
-                }
-            }
-            count++;
+               }
         }
         throw new OutOfReachException(goal, "Destination could not be reached, is the area explored?");
     }
@@ -115,8 +100,21 @@ public abstract class PathFinder {
         return 0;
     }
 
-    private static boolean containsCollision(GameObject from, int dir) {
-        return (from instanceof Wall && ((Wall) from).containsType(dir));
+    private static ArrayList<Point> availableEdges(Point base) {
+        ArrayList<Point> points = new ArrayList<>(4);
+        Point[] edges = getAdjacentPoints(base);
+        for(Point p : edges){
+            GameObject go = Bot.getBot().getWorldMap().get(p);
+            if(!(go instanceof Wall)) points.add(p);
+            else if(!((Wall) go).containsType(getDirection(p, base))) points.add(p);
+        }
+        return points;
+    }
+    
+    public static Point[] getAdjacentPoints(Point p){
+        //Points are top, right, bottom, left        
+        Point[] res = {new Point(p.x, p.y-1, p.z), new Point(p.x+1, p.y, p.z), new Point(p.x, p.y+1, p.z), new Point(p.x-1, p.y, p.z)};        
+        return res;
     }
 
     private static ArrayList<Point> reconstruct(HashMap<Point, Point> came_from, Point current) {

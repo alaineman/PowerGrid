@@ -280,7 +280,7 @@ public class Starter extends ActiveScript {
                         
                         theFrame.add(theControlPanel,"South");
                         // we replace RSBot's logo with our own and adapt the title a little
-                        URL url = ClassLoader.getSystemResource("icon_small.png");
+                        URL url = ClassLoader.getSystemResource("powerwalk/images/icon_small.png");
                         theFrame.setTitle(theFrame.getTitle() + " (running through PowerWalk)");
                         try { theFrame.setIconImage(ImageIO.read(url)); 
                         Starter.logMessage("The PowerWalk Control panel has been successfully added to the RSBot JFrame");

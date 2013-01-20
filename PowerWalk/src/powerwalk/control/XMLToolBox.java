@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.powerbot.game.api.methods.Environment;
 import powerwalk.Starter;
 import powerwalk.model.XMLNode;

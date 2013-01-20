@@ -56,7 +56,7 @@ public class TravelTask extends StepTask {
             cancel();
         else {
             try {
-                path = PathFinder.calculatePath(Bot.getBot().getPosition(), destination);
+                path = PathFinder.findPath(Bot.getBot().getPosition(), destination);
                 if (path.size() > 0) {
                     Point t = path.get(target);
                     Starter.logMessage("travel to " + path.get(path.size() - 1) + " has started, there are " + path.size() + " points on this path.", "Task");

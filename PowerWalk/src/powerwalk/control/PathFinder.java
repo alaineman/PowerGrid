@@ -3,27 +3,87 @@ package powerwalk.control;
 import java.util.*;
 import powerwalk.Bot;
 import powerwalk.model.GameObject;
-import powerwalk.model.Grid;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
+import powerwalk.model.interact.Lodestone;
 import powerwalk.model.world.Wall;
 
 /**
- * This Utility class deals with finding a path between two Points in the RSBot
+ * This class deals with finding a path between two Points in the RSBot
  * environment.
- *
+ * <p/>
+ * It uses the A* algorithm on the map data collected by the mapper.
+ * 
  * @author Alaineman
  * @author Chronio
  */
-public abstract class PathFinder {
-
-    private static HashMap<Point, Point> previous = null;
+public class PathFinder {
+    
+    /**
+     * Finds a path between the given start and end using the A* algorithm.
+     * <p/>
+     * An ArrayList of the Points is returned that indicates a shortest path 
+     * between the start and endpoints.
+     * @param start the startPoint
+     * @param end the endPoint
+     * @return a shortest path between the given start and endpoints.
+     * @throws OutOfReachException when no path exists between start and end
+     * @throws IllegalArgumentException when the start or endpoint is null
+     */
+    public static ArrayList<Point> findPath(Point start, Point end) throws OutOfReachException {
+        return new PathFinder(start,end).calculatePath();
+    }
+    
+    /**
+     * Calculates and returns a shortest path from the player's current position to the given endpoint.
+     * <p/>
+     * This method is effectively the same as calling 
+     * <code>PathFinder.findPath(Bot.getBot().getPosition(),end)</code>.
+     * @param end the Point to travel to
+     * @return a shortest path between the player's current position and the given endpoint.
+     * @throws OutOfReachException when no path exists between the player's current position and the given endpoint.
+     * @throws IllegalArgumentException when the endpoint is null.
+     */
+    public static ArrayList<Point> findPathTo(Point end) throws OutOfReachException {
+        return new PathFinder(Bot.getBot().getPosition(), end).calculatePath();
+    }
+    
     /**
      * The maximum distance between two Points in the result Path.
      */
     public static final int maxDist = 15;
-    public static Grid map;
+    
+    private Point start,goal;
+    private HashMap<Point, Point> cameFrom;
+    private HashMap<Point, Double> pathCost;
+    private HashMap<Point, Double> fScore;
+    private HashSet<Point> closedSet;
+    private PriorityQueue<Point> pending;
 
+    private PathFinder(Point start,Point goal) {
+        if (start == null) throw new IllegalArgumentException("Startpoint is null");
+        if (goal  == null) throw new IllegalArgumentException("Endpoint is null");
+        this.start = start;
+        this.goal = goal;
+        
+        Point delta = start.subtract(goal);
+        int dist = delta.x + delta.y + delta.z;
+        int tiles = delta.x * delta.y;
+        cameFrom = new HashMap<>(tiles);
+        pathCost = new HashMap<>(tiles);
+        fScore   = new HashMap<>(tiles);
+        closedSet = new HashSet<>(tiles);
+        pending = new PriorityQueue(dist, new Comparator<Point>() {
+            @Override public int compare(Point p1, Point p2) {
+                return (int)(fScore.get(p1) - fScore.get(p2));
+            }
+        });
+        
+        pathCost.put(start, 1d);
+        fScore.put(start,start.distance(goal)); 
+        pending.offer(start);
+    }
+    
     /**
      * Calculates a path between start and goal using the A* algorithm.
      *
@@ -32,45 +92,34 @@ public abstract class PathFinder {
      * @return A Path from start to goal
      * @throws OutOfReachException When no path between start and goal exists
      */
-    public static ArrayList<Point> calculatePath(Point start, Point goal) throws OutOfReachException {
-        map = Bot.getBot().getWorldMap();
-        //Initialize the A* algorith.
-        HashSet<Point> closedSet = new HashSet<>();
-        //HashMap<Point,Double> f_score = new HashMap<>();
-        PriorityQueue<Point> pending = new PriorityQueue<>();/*(10,
-         new Comparator<Point> () {
-         @Override public int compare(Point o1, Point o2) {
-         return 0;
-         }
-         }
-         );*/
-        HashMap<Point, Double> pathCost = new HashMap<>();
-        HashMap<Point, Point> came_from = new HashMap<>();
-
-        //previous = new HashMap<>();
-
-        pathCost.put(start, 1.0);
-        start.f_score = Math.sqrt(Math.pow(start.x - goal.x, 2) + Math.pow(start.y - goal.y, 2));
-        //f_score.put(start, Math.sqrt( Math.pow(start.x-goal.x,2) + Math.pow(start.y-goal.y,2) ));
-
-        pending.offer(start);
+    private ArrayList<Point> calculatePath() throws OutOfReachException {
+        // add all available Lodestones.
+        for (Lodestone l : Lodestone.getAvailableLodestones()) {
+            Point p = l.getPosition();
+            if (p.distance(start) > maxDist) {
+                // we use 2*maxDist to indicate that we don't want to use teleports 
+                // for small distances (<2*maxDist).
+                fScore.put(p, (double)2*maxDist); 
+                pending.add(p);
+            }
+        }
+        
         while (!pending.isEmpty()) {
             Point current = pending.poll();
             if (current.equals(goal)) {
-                ArrayList<Point> fullPath = reconstruct(came_from, goal);
-                return reducePoints(fullPath, maxDist);
+                ArrayList<Point> fullPath = reconstruct(goal);
+                return reducePoints(fullPath);
             }
             closedSet.add(current);
             ArrayList<Point> adjacents = availableEdges(current);
             for (Point p : adjacents) {
-                GameObject go = Bot.getBot().getWorldMap().get(p);
                 if (!closedSet.contains(p)) {                                           
                         double tempPathCost = pathCost.get(current) + 1;
                         boolean isPending = pending.contains(p);
                         if (!isPending || tempPathCost <= pathCost.get(p) || pathCost.get(p) == 0) {
-                            came_from.put(p, current);
+                            cameFrom.put(p, current);
                             pathCost.put(p, tempPathCost);
-                            p.f_score = tempPathCost + Math.sqrt(Math.pow(start.x - goal.x, 2) + Math.pow(start.y - goal.y, 2));
+                            fScore.put(p,tempPathCost + Math.sqrt(Math.pow(start.x - goal.x, 2) + Math.pow(start.y - goal.y, 2)));
                             if (!isPending) {
                                 pending.offer(p);
                             }
@@ -80,29 +129,28 @@ public abstract class PathFinder {
         }
         throw new OutOfReachException(goal, "Destination could not be reached, is the area explored?");
     }
-
+    
+    // helper method for determining the direction. 
     private static int getDirection(Point base, Point adj) {
-        if (base.distance(adj) == 1) {
-            Point delta = adj.subtract(base);
-            if (delta.x > 0) {
-                return Wall.EAST;
-            }
-            if (delta.x < 0) {
-                return Wall.WEST;
-            }
-            if (delta.y > 0) {
-                return Wall.NORTH;
-            }
-            if (delta.y < 0) {
-                return Wall.SOUTH;
-            }
-        }
-        return 0;
+        double theta = adj.subtract(base).theta();
+        if (Math.abs(theta) <=   Math.PI/4) return Wall.EAST;
+        if (Math.abs(theta) >= 3*Math.PI/4) return Wall.WEST;
+        if (theta > 0) return Wall.NORTH;
+        if (theta < 0) return Wall.SOUTH;
+        
+        return Wall.BLOCK;
     }
 
+    // helper method that returns all tiles that are directly next to base, 
+    // and can be reached from base.
     private static ArrayList<Point> availableEdges(Point base) {
         ArrayList<Point> points = new ArrayList<>(4);
-        Point[] edges = getAdjacentPoints(base);
+        Point[] edges = { // the possible adjacent edges
+            new Point(base.x, base.y-1, base.z), 
+            new Point(base.x+1, base.y, base.z), 
+            new Point(base.x, base.y+1, base.z), 
+            new Point(base.x-1, base.y, base.z)
+        };
         for(Point p : edges){
             GameObject go = Bot.getBot().getWorldMap().get(p);
             if(!(go instanceof Wall)) points.add(p);
@@ -110,38 +158,36 @@ public abstract class PathFinder {
         }
         return points;
     }
-    
-    public static Point[] getAdjacentPoints(Point p){
-        //Points are top, right, bottom, left        
-        Point[] res = {new Point(p.x, p.y-1, p.z), new Point(p.x+1, p.y, p.z), new Point(p.x, p.y+1, p.z), new Point(p.x-1, p.y, p.z)};        
-        return res;
-    }
 
-    private static ArrayList<Point> reconstruct(HashMap<Point, Point> came_from, Point current) {
+    // helper method that reconstructs the path that was found using the cameFrom map
+    private ArrayList<Point> reconstruct(Point current) {
         // reconstruct the path from the came_from HashMap
-        Point prev = came_from.get(current);
+        Point prev = cameFrom.get(current);
         if (prev == null) {
+            // we reached the start of the path
             ArrayList<Point> thePath = new ArrayList<>();
             thePath.add(current);
             return thePath;
         } else {
-            ArrayList<Point> thePath = reconstruct(came_from, came_from.get(current));
+            ArrayList<Point> thePath = reconstruct(cameFrom.get(current));
             thePath.add(current);
             return thePath;
         }
     }
-
-    private static ArrayList<Point> reducePoints(ArrayList<Point> path, int maxDistance) {
-        // The Greedy algorithm reducing the points the Bot will click
-        ArrayList<Point> selected = new ArrayList<>(path.size() / (maxDistance - 3));
+    
+    // helper method that reduces the amount of Points in the result path to
+    // prevent unnecessary clicking.
+    private static ArrayList<Point> reducePoints(ArrayList<Point> path) {
+        // Greedy algorithm reducing the points the Bot will click
+        ArrayList<Point> selected = new ArrayList<>((int)Math.ceil(path.size() / (maxDist - 3)));
         int distSinceLastSelected = 0;
-        int targetDistance = maxDistance - (int) (3 + 5 * Math.random());
+        int targetDistance = maxDist - (int) (3 + 5 * Math.random());
         for (Point p : path) {
-            if (distSinceLastSelected < targetDistance /* && instanceAt(p) != interactable */) {
+            if (distSinceLastSelected < targetDistance) {
                 distSinceLastSelected++;
             } else {
                 // set a new targetDistance
-                targetDistance = maxDistance - (int) (2 + 5 * Math.random());
+                targetDistance = maxDist - (int) (2 + 5 * Math.random());
                 selected.add(p);
                 distSinceLastSelected = 0;
             }
@@ -151,7 +197,6 @@ public abstract class PathFinder {
             // if the final Point is not there, add it to the selected Points
             selected.add(lastPoint);
         }
-        selected.trimToSize();
         return selected;
     }
 }

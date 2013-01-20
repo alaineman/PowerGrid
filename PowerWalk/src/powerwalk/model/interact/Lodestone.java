@@ -1,11 +1,9 @@
 package powerwalk.model.interact;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.interactive.Players;
@@ -15,8 +13,10 @@ import powerwalk.Bot;
 import powerwalk.Starter;
 import powerwalk.control.WidgetManager;
 import powerwalk.control.XMLToolBox;
+import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
+import powerwalk.model.XMLNode;
 
 /**
  * Represents a Lodestone in the RSBot environment.
@@ -30,34 +30,31 @@ public class Lodestone extends Teleportable {
     private String name = "";
     
     //<editor-fold defaultstate="collapsed" desc="static part">
-    private static ArrayList<Lodestone> lodestones = new ArrayList<>(WidgetManager.lodestoneValues.length);
+    private static HashSet<Lodestone> lodestones = new HashSet<>(WidgetManager.lodestoneValues.length);
+    private static XMLNode lodestoneTree = null;
     
     /**
      * Adds a Lodestone to the list of available Lodestones,
      * using its widget id on the Lodestone map.
+     * <p/>
+     * When the Lodestone was already added, this method does nothing.
      * @param dest the widget id of the Lodestone to be added.
+     * @throws IllegalArgumentException when the given widget id does not resemble a Lodestone widget
      */
     public static void addLodestone(int dest) {
-        for(Lodestone lode : lodestones){
-            if(lode.getWidgetNumber() == dest){
-                return;
-            }
+        
+        if (lodestoneTree == null) {
+            InputStream in = ClassLoader.getSystemResourceAsStream("powerwalk/data/lodestones.xml");
+            lodestoneTree = XMLToolBox.getXMLTree(in);
         }
-        InputStream in = ClassLoader.getSystemResourceAsStream("powerwalk/data/lodestones.xml");
-        try (BufferedReader myReader = new BufferedReader(new InputStreamReader(in))) {
-            String current = myReader.readLine();
-            while (!current.contains("<lodestone ")) {
-                current = myReader.readLine();
-            }
-            while (!current.contains("widget=\"" + dest + "\"")) {
-                current = myReader.readLine();
-            }
-            HashMap<String, String> tags = XMLToolBox.getAttributes(current);
-            Point p = Point.fromString(tags.get("pos"));
-            Lodestone l = new Lodestone(p.x, p.y, p.z, -1, dest, tags.get("name"));
-            lodestones.add(l);
-            Bot.getBot().getWorldMap().set(p, l);
-        } catch (IOException ex) {}
+        XMLNode[] matches = XMLToolBox.filterNodes(lodestoneTree, "widget", String.valueOf(dest));
+        if (matches.length > 0) {
+            Point p = Point.fromString(matches[0].get("pos"));
+            GameObject go = Bot.getBot().getWorldMap().get(p);
+            lodestones.add(new Lodestone(p.x,p.y,p.z,(go == null ? 0 : go.getRawNumber()),dest,matches[0].get("name")));
+        } else {
+            throw new IllegalArgumentException("Invalid widget number for lodestone");
+        }
     }
     
     /**
@@ -73,6 +70,13 @@ public class Lodestone extends Teleportable {
             }
         }
         return null;
+    }
+    /**
+     * returns a List containing all available Lodestones.
+     * @return a List containing all available Lodestones.
+     */
+    public static ArrayList<Lodestone> getAvailableLodestones() {
+        return new ArrayList<>(lodestones);
     }
     //</editor-fold>
     
@@ -135,5 +139,17 @@ public class Lodestone extends Teleportable {
      */
     @Override public boolean isAllowed(String method) {
         return lodestones.contains(this);
+    }
+    
+    @Override public int hashCode() {
+        return 7 + 3* widgetNumber + 5*Objects.hashCode(name) + 2*super.hashCode();
+    }
+    
+    @Override public boolean equals(Object other) {
+        if (other instanceof Lodestone) {
+            Lodestone that = (Lodestone)other;
+            return this.getWidgetNumber() == that.getWidgetNumber() && this.getName().equals(that.getName());
+        }
+        return false;
     }
 }

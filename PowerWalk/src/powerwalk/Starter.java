@@ -24,6 +24,7 @@ import powerwalk.tasks.StepTask;
 import powerwalk.tasks.Task;
 import powerwalk.view.ContentFrame;
 import powerwalk.view.MapViewer;
+import powerwalk.view.TravelPanel;
 
 /**
  * Starter and Task Manager class for the entire plug-in.
@@ -206,7 +207,7 @@ public class Starter extends ActiveScript {
      * @param message the message to log
      */
     public static void logMessage(String message) {
-        if (!loggerOk) setLoggerFormatAndHandlers();
+        setLoggerFormatAndHandlers();
         theLogger.info(message);
     }
     
@@ -217,7 +218,7 @@ public class Starter extends ActiveScript {
      * @param group the group to display for this message
      */
     public static void logMessage(String message,String group) {
-        if (!loggerOk) setLoggerFormatAndHandlers();
+        setLoggerFormatAndHandlers();
         theLogger.log(Level.INFO,message,group);
     }
     
@@ -230,12 +231,12 @@ public class Starter extends ActiveScript {
      * @param t the Throwable that caused the message
      */
     public static void logMessage(String message,String group, Throwable t) {
-        if (!loggerOk) setLoggerFormatAndHandlers();
+        setLoggerFormatAndHandlers();
         theLogger.log(Level.INFO,message,new Object[] {group,t});
     }
     
     public static void logMessage(String message,Throwable t) {
-        if (!loggerOk) setLoggerFormatAndHandlers();
+        setLoggerFormatAndHandlers();
         theLogger.log(Level.INFO,message,new Object[]{null,t});
     }
     
@@ -276,7 +277,9 @@ public class Starter extends ActiveScript {
                         theControlPanel = new ControlPanel();
                         
                         Dimension frameSize = theFrame.getSize();
+                        if (frameSize == null) frameSize = new Dimension(650,480);
                         frameSize.height += theControlPanel.getPreferredSize().height; // resize the frame to make room for the controlpanel
+                        
                         theFrame.setSize(frameSize);
                         theFrame.setMinimumSize(frameSize);
                         

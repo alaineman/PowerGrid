@@ -5,6 +5,7 @@ import powerwalk.Bot;
 import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
+import powerwalk.model.interact.Lodestone;
 import powerwalk.model.world.Wall;
 
 /**
@@ -79,7 +80,7 @@ public class PathFinder {
         });
         
         pathCost.put(start, 1d);
-        fScore.put(start,Math.sqrt(Math.pow(start.x - goal.x, 2) + Math.pow(start.y - goal.y, 2))); 
+        fScore.put(start,start.distance(goal)); 
         pending.offer(start);
     }
     
@@ -92,6 +93,17 @@ public class PathFinder {
      * @throws OutOfReachException When no path between start and goal exists
      */
     private ArrayList<Point> calculatePath() throws OutOfReachException {
+        // add all available Lodestones.
+        for (Lodestone l : Lodestone.getAvailableLodestones()) {
+            Point p = l.getPosition();
+            if (p.distance(start) > maxDist) {
+                // we use 2*maxDist to indicate that we don't want to use teleports 
+                // for small distances (<2*maxDist).
+                fScore.put(p, (double)2*maxDist); 
+                pending.add(p);
+            }
+        }
+        
         while (!pending.isEmpty()) {
             Point current = pending.poll();
             if (current.equals(goal)) {
@@ -117,16 +129,16 @@ public class PathFinder {
         }
         throw new OutOfReachException(goal, "Destination could not be reached, is the area explored?");
     }
-
+    
+    // helper method for determining the direction. 
     private static int getDirection(Point base, Point adj) {
-        if (base.distance(adj) == 1) {
-            Point delta = adj.subtract(base);
-            if (delta.x > 0) return Wall.EAST;
-            if (delta.x < 0) return Wall.WEST;
-            if (delta.y > 0) return Wall.NORTH;
-            if (delta.y < 0) return Wall.SOUTH;
-        }
-        return 0;
+        double theta = adj.subtract(base).theta();
+        if (Math.abs(theta) <=   Math.PI/4) return Wall.EAST;
+        if (Math.abs(theta) >= 3*Math.PI/4) return Wall.WEST;
+        if (theta > 0) return Wall.NORTH;
+        if (theta < 0) return Wall.SOUTH;
+        
+        return Wall.BLOCK;
     }
 
     // helper method that returns all tiles that are directly next to base, 
@@ -151,7 +163,7 @@ public class PathFinder {
     private ArrayList<Point> reconstruct(Point current) {
         // reconstruct the path from the came_from HashMap
         Point prev = cameFrom.get(current);
-        if (prev == null || prev.equals(start)) {
+        if (prev == null) {
             // we reached the start of the path
             ArrayList<Point> thePath = new ArrayList<>();
             thePath.add(current);

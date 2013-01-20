@@ -90,6 +90,14 @@ public class Point {
         return Math.atan2(y, x);
     }
     
+    public void normalize() {
+        
+    }
+    
+    public Point multiply(double s) {
+        return new Point((int)(s*x), (int)(s*y), (int)(s*z));
+    }
+    
     /**
      * Returns a Point that represents the position of this Point relative to offset
      * @param offset the offset to subtract from this Point

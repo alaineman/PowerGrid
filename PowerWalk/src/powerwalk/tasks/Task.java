@@ -1,5 +1,7 @@
 package powerwalk.tasks;
 
+import java.util.Objects;
+
 /**
  * Task Class that is used to queue tasks for the Bot to execute.
  * <p />
@@ -127,11 +129,35 @@ public abstract class Task implements Comparable<Task> {
         throw new UnsupportedOperationException("Reset is not supported for this Task");
     }
     
+    /**
+     * Returns whether this Task is equal to a given Object.
+     * <p/>
+     * This method returns true if all the following conditions are met.
+     * <ul>
+     *   <li>The given Object is a Task instance</li>
+     *   <li>The given Task-object has the same name as this Task-object</li>
+     *   <li>The given Task-object has the same priority as this Task-object</li>
+     * </ul>
+     * If any of the above conditions are false, this method returns false.
+     * @param other the Object to compare to this Task
+     * @return true if this Task is equal to the given Object, false otherwise.
+     */
     @Override public boolean equals(Object other) {
         if (other instanceof Task) {
-            return (this.getName().equals(((Task)other).getName()));
+            return (this.getName().equals(((Task)other).getName()) && this.getPriority() == ((Task)other).getPriority());
         }
         return false;
+    }
+    
+    /**
+     * returns the hashCode for this Object.
+     * @return the hashCode for this Object.
+     */
+    @Override public int hashCode() {
+        int hash =  7;
+        hash = 2*hash + 3 * name.hashCode();
+        hash = 2*hash + 5 * priority;
+        return hash;
     }
     
     /**
@@ -153,7 +179,7 @@ public abstract class Task implements Comparable<Task> {
     }
     
     /**
-     * This method waits a time milliseconds,
+     * This method waits <code>time</code> milliseconds,
      * and then returns.
      * <p/>
      * This method is effectively the same as calling 

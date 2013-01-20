@@ -18,18 +18,8 @@ powerwalk.model
 ---------------
 
 - Make subclasses of GameObject that represent objects in the RSBot environment (low priority).
-    - [c] Gateway extends GameObject implements Interactable
-    - [c] Gate extends Gateway
-    - [c] Ladder extends Elevator
-    - [c] Stairs extends Elevator
-    - [c] Hatch extends Elevator
-    - [c] Rope extends Elevator
 
 - powerwalk.model.world.resources
-    - [c] AbstractResource
-    - [c] Tree extends AbstractResource
-    - [c] Ore extends AbstractResource
-    - [c] FishingSpot extends AbstractResource
     - [c] MAYBE? : Farmpatches extends AbstractResource ????
 
 - Interactions and Teleports (->VINCENT)

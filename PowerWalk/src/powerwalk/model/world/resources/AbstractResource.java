@@ -34,4 +34,5 @@ public abstract class AbstractResource extends GameObject {
         return its;
     }
     
+    public abstract boolean meetsRequirements();
 }

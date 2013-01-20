@@ -1,4 +1,4 @@
-package powerwalk.model.world;
+package powerwalk.model.world.elevator;
 
 import java.util.Arrays;
 import powerwalk.model.GameObject;

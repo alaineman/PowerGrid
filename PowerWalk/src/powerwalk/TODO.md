@@ -26,7 +26,6 @@ powerwalk.model
     - [c] Rope extends Elevator
 
 - powerwalk.model.world.resources
-    - [c] AbstractResource
     - [c] Tree extends AbstractResource
     - [c] Ore extends AbstractResource
     - [c] FishingSpot extends AbstractResource
@@ -40,6 +39,8 @@ powerwalk.model
 
 - Refactor Point.f_score to a HashMap in powerwalk.control.PathFinder, since 
   it's really only used there.
+
+- Make the pathfinder compatible for teleportables, lodestones and transportables.
 
 - Move int[] values field values to own XML file and make values field non-final to 
   make it extendible.

@@ -4,10 +4,12 @@
  */
 package powerwalk.model.world.gateway;
 
+import powerwalk.model.interact.Interactable;
+
 /**
  *
  * @author Vincent W
  */
-public abstract class Gateway {
+public abstract class Gateway implements Interactable {
     
 }

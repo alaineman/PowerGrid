@@ -39,6 +39,8 @@ import powerwalk.view.MapViewer;
         singleinstance = true)
 public class Starter extends ActiveScript {
     
+    public static Starter starter = null;
+    
     private static boolean isStarted = false;
     
     public static final Logger theLogger = Logger.getLogger(Starter.class.getName());
@@ -60,7 +62,7 @@ public class Starter extends ActiveScript {
      */
     @Override public void onStart() {
         setLoggerFormatAndHandlers();
-        
+        starter = this;
         logMessage("Loading required resources...");
         
         try (FileInputStream worldMapIn = new FileInputStream(Environment.getStorageDirectory().toString() + "\\" + worldMapFile)) {

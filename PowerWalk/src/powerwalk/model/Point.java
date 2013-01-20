@@ -6,17 +6,14 @@ import org.powerbot.game.api.wrappers.Tile;
  * Three dimensional Point.
  * @author Chronio
  */
-public class Point implements Comparable<Point> {
+public class Point {
     /** The X-coordinate of this Point */
     public int x;
     /** The Y-coordinate of this Point */
     public int y;
     /** The Z-coordinate of this Point */
     public int z;
-    /** The f-score of the Point, used in the Pathfinding */
-    public double f_score = 0;
-    /** The previous Point, used in the Pathfinding */
-    public Point previous;
+    
     /**
      * Creates a new Point with the given coordinates. 
      * The z-coordinate is taken as 0.
@@ -63,10 +60,34 @@ public class Point implements Comparable<Point> {
      * @return the distance between this Point and the Point that
      */
     public double distance(Point that) {
-        int dx = x - that.x;
-        int dy = y - that.y;
-        int dz = z - that.z;
-        return Math.sqrt(dx*dx + dy*dy + dz*dz);
+        return subtract(that).length();
+    }
+    
+    /**
+     * Calculates and returns the distance between (0,0,0) and this Point.
+     * @return the length of the vector denoted by this Point.
+     */
+    public double length() {
+        return Math.sqrt(x*x + y*y + z*z);
+    }
+    
+    /**
+     * Calculates and returns the distance between (0,0) and this Point, ignoring the plane.
+     * @return the length of the vector denoted by this Point, where this Point's z coordinate is taken as 0.
+     */
+    public double lengthOnPlane() {
+        return Math.sqrt(x*x + y*y);
+    }
+    
+    /**
+     * returns the angle of the vector denoted by this Point.
+     * <p/>
+     * The returned angle is the angle between the vector and the x-axis. 
+     * Positive angles rotate counterclockwise.
+     * @return the angle of the vector denoted by this Point.
+     */
+    public double theta() {
+        return Math.atan2(y, x);
     }
     
     /**
@@ -154,14 +175,15 @@ public class Point implements Comparable<Point> {
     }
     
     /**
-     * returns the difference in f_score between this Point and the given Point.
-     * <p>This method will soon become obsolete.</p>
-     * @param p the Point to compare to
-     * @return the difference in f_score
+     * Creates a new Point from the given Polar coordinates.
+     * @param theta the angle
+     * @param r the length
+     * @return a Point representing the position denoted by the given polar coordinates.
      */
-    // TODO remove this and move to PathFinder to reduce "method pollution"
-    @Override public int compareTo(Point p) {
-        return (int)(f_score- p.f_score);
+    public static Point fromPolar(double theta, double r) {
+        int x = (int)(r * Math.cos(theta));
+        int y = (int)(r * Math.sin(theta));
+        return new Point(x,y);
     }
    
 }

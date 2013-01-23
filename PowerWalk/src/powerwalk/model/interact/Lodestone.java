@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Widgets;
+import org.powerbot.game.api.methods.input.Mouse;
 import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
@@ -52,8 +53,6 @@ public class Lodestone extends Teleportable {
             Point p = Point.fromString(matches[0].get("pos"));
             GameObject go = Bot.getBot().getWorldMap().get(p);
             lodestones.add(new Lodestone(p.x,p.y,p.z,(go == null ? 0 : go.getRawNumber()),dest,matches[0].get("name")));
-        } else {
-            throw new IllegalArgumentException("Invalid widget number for lodestone");
         }
     }
     
@@ -71,6 +70,15 @@ public class Lodestone extends Teleportable {
         }
         return null;
     }
+    
+    public static Lodestone getLodestone(Point p) {
+        for (Lodestone l : lodestones) {
+            if (l.getPosition().equals(p))
+                return l;
+        }
+        return null;
+    }
+    
     /**
      * returns a List containing all available Lodestones.
      * @return a List containing all available Lodestones.
@@ -111,12 +119,14 @@ public class Lodestone extends Teleportable {
         WidgetManager.openLodestoneWidget();
         WidgetChild w = Widgets.getChild(widgetNumber);
         if (w == null) throw new OutOfReachException("The required widget was not found");
-        if (!w.click(true)) {
+        
+        Mouse.click(w.getCentralPoint(),true);
+        if (!Mouse.click(w.getCentralPoint(),true)) {
             // we failed, but let's try again
             Task.sleep(134,257);
-            if (!w.click(true)) {
+            if (!Mouse.click(w.getCentralPoint(),true)) {
                 // we still failed. Now, something must be wrong. Report and cancel the follow() operation
-                Starter.logMessage("Teleport to " + name + " failed: cannot click widget","Interact");
+                Starter.logMessage("Teleport to " + name + " failed: cannot click widget","Lodestone");
                 throw new OutOfReachException(getPosition(),"Failed to click widget");
             }
         }

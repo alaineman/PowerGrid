@@ -1,11 +1,12 @@
 package powerwalk;
 
+import com.sun.org.apache.bcel.internal.generic.FDIV;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import org.powerbot.game.api.methods.interactive.Players;
 import powerwalk.control.XMLToolBox;
-import powerwalk.model.Destinations;
+import powerwalk.model.Destination;
 import powerwalk.model.Grid;
 import powerwalk.model.Point;
 import powerwalk.model.XMLNode;
@@ -65,12 +66,26 @@ public class Bot {
     /**
      * registers a Task that moves to the destination specified in dest.
      * <p/>
-     * @param dest     The target destination
+     * @param name     The target destination (providing correct casing is faster, but not required)
      * @param priority The priority of this Task
      */
-    public void travelTo(String dest,int priority) {
-        Point p = Point.fromTile(Destinations.getDestination(dest));
-        travelTo(p,priority);
+    public void travelTo(String name,int priority) {
+        if (name == null || name.isEmpty()) // null values or empty Strings are invalid
+            throw new IllegalArgumentException("Invalid Name");
+        Destination dest = Destination.getDestination(name); // attempt to fetch Destination
+        if (dest == null) { // there is no destination with that exact name, searching for case-insensitive match
+            for (Destination d : Destination.getDestinations()) {
+                if (name.equalsIgnoreCase(d.getName())) {
+                    dest = d;
+                    break;
+                }
+            }
+        }
+        if (dest == null) // the destination could not be matched
+            throw new IllegalArgumentException("No such Destination:" + name);
+        
+        // travel to the matched destination
+        assignTask(new TravelTask(dest,priority));
     }
     
     /**

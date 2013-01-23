@@ -18,13 +18,12 @@ import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Environment;
 import powerwalk.control.Mapper;
 import powerwalk.control.XMLToolBox;
-import powerwalk.model.Destinations;
 import powerwalk.model.XMLNode;
+import powerwalk.model.interact.Lodestone;
 import powerwalk.tasks.StepTask;
 import powerwalk.tasks.Task;
 import powerwalk.view.ContentFrame;
 import powerwalk.view.MapViewer;
-import powerwalk.view.TravelPanel;
 
 /**
  * Starter and Task Manager class for the entire plug-in.
@@ -50,7 +49,7 @@ public class Starter extends ActiveScript {
     /** The name of the Plug-in */
     public static final String productName = "PowerWalk";
     /** The version number */
-    public static final double version = 0.1;
+    public static final double version = 1.1;
     private static Task currentTask = null;
     
     private static boolean DEV_MODE = false;
@@ -82,43 +81,25 @@ public class Starter extends ActiveScript {
         Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
         
         // Load Quest data directly from Noticeboard, since Quest class doesn't seem to work properly
-        //Quests.updateQuestData(); // try not to, it's really annoying
+        //Quests.updateQuestData(); // revision: try not to, it's really annoying
         
-        // try to run a implementing script, if it exists
-        (new Thread() {
-            @Override public void run() {
-                try { init(); }
-                catch (RuntimeException e) {
-                    Starter.logMessage("No script loaded on top of PowerWalk, running stand-alone");
-                }
-            }
-        }).start();
+        // TODO replace hardcoded available lodestones with correct checking method later
+        Lodestone.addLodestone(47);
+        Lodestone.addLodestone(51);
+        
         ContentFrame.theFrame = new ContentFrame();
         logMessage("PowerWalk started, waiting for tasks...");
         isStarted = true;
         if (theControlPanel != null) theControlPanel.notifyStateChange(isStarted);
     }
-
+    
     /**
-     * This method is intended for scripters who want to build their script on
-     * the PowerWalk API, and should be overridden to start their own script.
-     * <p/>
-     * This method is called on a separate Thread, so
-     * any methods calls made from this method will be asynchronous with PowerWalk
-     * or RSBot.
-     * <p/>
-     * It is not advised to build scripts on RSBot's script loader when intending
-     * to use PowerWalk. Instead, scripts that use PowerWalk should override
-     * this method to start their script.
-     * <p/>
-     * Furthermore, scripts that are run from this method should implement a
-     * looping mechanism themselves, since the script will end once this method
-     * returns.
-     * <p/>
-     * @throws RuntimeException when calling this method without having overridden it.
+     * returns whether PowerWalk is running in Developer mode. Certain log 
+     * messages and options are enabled or disabled based on this flag.
+     * @return whether PowerWalk is running in Developer mode.
      */
-    public void init() {
-        throw new RuntimeException("no implementing subclass");
+    public static boolean devmode() {
+        return DEV_MODE;
     }
     
     /**
@@ -192,8 +173,6 @@ public class Starter extends ActiveScript {
      * these action may be slower due to missing / reduced caches.</p>
      */
     public synchronized static void purge() {
-        // purge the destination list used by the travelTo(String dest) command
-        Destinations.purge();
 
         // purge the World Map (takes potentially long)
         Bot.getBot().getWorldMap().purge();
@@ -242,14 +221,17 @@ public class Starter extends ActiveScript {
     
     public static void main(String[] args) {
         setLoggerFormatAndHandlers();
-        
+        boolean showBar = true;
         
         ArrayList<String> params = new ArrayList<>(args.length);
         for (String param : args) {
             switch (param) {
-                case "-pwdebug":
+                case "-pwdev":
                     DEV_MODE = true;
                     logMessage("Powerwalk started in developer mode");
+                    break;
+                case "-nobar":
+                    showBar = false;
                     break;
                 default:
                     params.add(param);
@@ -262,42 +244,50 @@ public class Starter extends ActiveScript {
         Starter.logMessage("RSBot loaded, modifying RSBot JFrame");
         
         // set our awesome custom controls to the JFrame
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                for (Window w : Window.getWindows()) {
-                    if (w instanceof JFrame) {
-                        JFrame theFrame = (JFrame)w;
-                        if (!theFrame.getTitle().startsWith("RSBot"))
-                            continue;
-                        // Canvas used to draw the RSBot environment on is inside a JRootPane in the "Center" 
-                        // area of a BorderLayout applied to the JFrame.
-                        // because of this, it is possible to add controls to the north, 
-                        // west, east and south of the JRootPane by assigning JPanels 
-                        // to those areas of the BorderLayout.
-                        theControlPanel = new ControlPanel();
-                        
-                        Dimension frameSize = theFrame.getSize();
-                        if (frameSize == null) frameSize = new Dimension(650,480);
-                        frameSize.height += theControlPanel.getPreferredSize().height; // resize the frame to make room for the controlpanel
-                        
-                        theFrame.setSize(frameSize);
-                        theFrame.setMinimumSize(frameSize);
-                        
-                        theFrame.add(theControlPanel,"South");
-                        // we replace RSBot's logo with our own and adapt the title a little
-                        URL url = ClassLoader.getSystemResource("powerwalk/images/icon_small.png");
-                        theFrame.setTitle(theFrame.getTitle() + " (running through PowerWalk)");
-                        try { theFrame.setIconImage(ImageIO.read(url)); 
-                        Starter.logMessage("The PowerWalk Control panel has been successfully added to the RSBot JFrame");
-                        } 
-                        catch (IOException | IllegalArgumentException e) {
-                            Starter.logMessage("Error while setting JFrame icon",e);
+        if (showBar) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override public void run() {
+                    for (Window w : Window.getWindows()) {
+                        if (w instanceof JFrame) {
+                            JFrame theFrame = (JFrame)w;
+                            if (!theFrame.getTitle().startsWith("RSBot"))
+                                continue;
+                            // Canvas used to draw the RSBot environment on is inside a JRootPane in the "Center" 
+                            // area of a BorderLayout applied to the JFrame.
+                            // because of this, it is possible to add controls to the north, 
+                            // west, east and south of the JRootPane by assigning JPanels 
+                            // to those areas of the BorderLayout.
+                            theControlPanel = new ControlPanel();
+
+                            Dimension frameSize = theFrame.getSize();
+                            if (frameSize == null) frameSize = new Dimension(650,480);
+                            frameSize.height += theControlPanel.getPreferredSize().height; // resize the frame to make room for the controlpanel
+
+                            theFrame.setSize(frameSize);
+                            theFrame.setMinimumSize(frameSize);
+
+                            theFrame.add(theControlPanel,"South");
+                            // we replace RSBot's logo with our own and adapt the title a little
+                            URL url = ClassLoader.getSystemResource("powerwalk/images/icon_small.png");
+                            theFrame.setTitle(theFrame.getTitle() + " (running through PowerWalk)");
+                            try { 
+                                theFrame.setIconImage(ImageIO.read(url)); 
+                                Starter.logMessage("The PowerWalk Control panel has been added to the RSBot JFrame");
+                            } catch (IOException | IllegalArgumentException e) {
+                                Starter.logMessage("Error while setting JFrame icon",e);
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
-            }
-        });
+            });
+        } else {
+            JFrame f = new JFrame("Launcher");
+            f.setLayout(new BorderLayout());
+            f.add(new ControlPanel(),"Center");
+            f.pack();
+            f.setVisible(true);
+        }
     }
     
     /**

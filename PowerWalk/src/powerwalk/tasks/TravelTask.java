@@ -6,9 +6,10 @@ import org.powerbot.game.api.methods.Walking;
 import powerwalk.Bot;
 import powerwalk.Starter;
 import powerwalk.control.PathFinder;
-import powerwalk.model.Destinations;
+import powerwalk.model.Destination;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
+import powerwalk.model.interact.Lodestone;
 
 /**
  * This Task travels to the given destination using all available methods.
@@ -28,12 +29,17 @@ public class TravelTask extends StepTask {
      */
     public TravelTask(Point destination, int priority) {
         super(priority);
-        System.out.print("This is our goal:" + destination);
         this.destination = destination;
         
-        String name = Destinations.findNameForDestination(destination);
+        String name = Destination.getDestination(destination).getName();
         if (name == null) name = destination.toString();
         setName("Travel to " + name);
+    }
+    
+    public TravelTask(Destination d, int priority) {
+        super (priority);
+        this.destination = d.getPosition();
+        setName("Travel to " + d.getName());
     }
     
     /**
@@ -57,10 +63,23 @@ public class TravelTask extends StepTask {
         else {
             try {
                 path = PathFinder.findPath(Bot.getBot().getPosition(), destination);
+                if (Starter.devmode()) {
+                    StringBuilder sb = new StringBuilder("Composed path:\n");
+                    for (Point p : path) {
+                        Lodestone l = Lodestone.getLodestone(p);
+                        if (l == null)
+                            sb.append("  ").append(p.toString()).append("\n");
+                        else
+                            sb.append("  Lodestone to ").append(l.getName())
+                              .append(" (").append(p.toString()).append(")\n");
+                    }
+
+                    Starter.logMessage(sb.toString());
+                }
                 if (path.size() > 0) {
                     Point t = path.get(target);
                     Starter.logMessage("travel to " + path.get(path.size() - 1) + " has started, there are " + path.size() + " points on this path.", "Task");
-                    Walking.walk(t.toTile());
+                    walkToTile(t);
                 }
             } catch (OutOfReachException e) {
                 path = new ArrayList<>(1);
@@ -78,7 +97,7 @@ public class TravelTask extends StepTask {
      * When the Player has more then 20 stamina left, but the Player's run mode 
      * is set to false, Run mode is automatically enabled.
      */
-    @Override public void step() {
+    @Override public synchronized void step() {
         setStepsLeft(path.size() - target);
         Point playerPos = Bot.getBot().getPosition();
         // check the distance to our next point.
@@ -92,13 +111,13 @@ public class TravelTask extends StepTask {
         }
 
         // Are we are close enough?
-        if (distToTarget < (3 + 3 * Math.random())) {
+        if (distToTarget < (1 + 3 * Math.random())) {
             // Are there more points?
             if (target + 1 < path.size()) {
                 ++target;
                 // Then we walk to the next tile.
                 Point t = path.get(target);
-                Walking.walk(t.toTile());
+                walkToTile(t);
             } else {
                 // There are no more points, so we are done.
                 cancel();
@@ -107,13 +126,6 @@ public class TravelTask extends StepTask {
 
         // wait a while before checking again
         Task.sleep(130, 210);
-    }
-    
-    /**
-     * Reports to the console that the destination has been reached.
-     */
-    @Override public synchronized void finish() {
-        Starter.logMessage("Destination " + path.get(path.size() - 1) + " reached", "Task");
     }
     
     /**
@@ -137,5 +149,28 @@ public class TravelTask extends StepTask {
      */
     public Point getDestination() {
         return new Point(destination);
+    }
+    
+    // walks to the given tile and possibly executes the appropriate action
+    private void walkToTile(Point p) {
+        Point playerPos = Bot.getBot().getPosition();
+        if (playerPos.distance(p) > PathFinder.maxDist) {
+            Lodestone l = Lodestone.getLodestone(p);
+            if (l != null) {
+                try { 
+                    if (Starter.devmode()) Starter.logMessage("Attempting to follow Lodestone to " + l.getPosition(),"TravelTask");
+                    l.follow();
+                } catch (OutOfReachException e) {
+                    Starter.logMessage("Failed to follow Lodestone to " + l.getName() + ", aborting travel.","TravelTask",e);
+                    cancel();
+                }
+            } else {
+                // attempt walkTo anyways
+                Walking.walk(p.toTile());
+            }
+        } else {
+            Walking.walk(p.toTile());
+        }
+        
     }
 }

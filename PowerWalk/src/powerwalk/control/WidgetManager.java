@@ -1,8 +1,10 @@
 package powerwalk.control;
 
+import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Tabs;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
+import powerwalk.Starter;
 import powerwalk.model.interact.Lodestone;
 
 /**
@@ -25,7 +27,7 @@ public abstract class WidgetManager {
     public static void openSpellBook() {
         if (!Tabs.ABILITY_BOOK.isOpen()){
             Tabs.ABILITY_BOOK.open();
-            try { Thread.sleep(500); } catch (Exception e) {}
+            Task.sleep(400,600);
         }        
     }
 
@@ -35,7 +37,7 @@ public abstract class WidgetManager {
     public static void openNoticeboardTab() {
         if (!Tabs.NOTICEBOARD.isOpen()){
             Tabs.NOTICEBOARD.open(); 
-            try { Thread.sleep(150); } catch (Exception e) {}
+            Task.sleep(200,300);
         }      
     }
     
@@ -46,7 +48,7 @@ public abstract class WidgetManager {
         openNoticeboardTab();
         if (!Widgets.get(1345,192).visible()) {
             Widgets.get(1056, 9).click(true);
-            try { Thread.sleep(1200); } catch (Exception e) {}
+            Task.sleep(1200,1400);
         }
     }
 
@@ -57,7 +59,7 @@ public abstract class WidgetManager {
         openNoticeBoard();
         if (!Widgets.get(190, 40).visible()) {
             Widgets.get(1345, 192).click(true);
-            try { Thread.sleep(1200); } catch (Exception e) {}
+            Task.sleep(1200,1400);
         }
     }
 
@@ -68,7 +70,7 @@ public abstract class WidgetManager {
         openSpellBook();
         if (!Widgets.get(275, 38).visible()) {
             Widgets.get(275, 41).click(true);
-            try { Thread.sleep(500); } catch (Exception e) {}
+            Task.sleep(400,700);
         }
     }
 
@@ -80,6 +82,7 @@ public abstract class WidgetManager {
         if (!Widgets.get(275, 18).getChild(155).visible()) {
             Widgets.get(275, 38).click(true);
         }
+        Task.sleep(300,500);
     }
 
     /**
@@ -88,9 +91,14 @@ public abstract class WidgetManager {
     public static void openLodestoneWidget() {
         openTeleportSpells();
         if (!Widgets.get(1092).validate()) {
-            Widgets.get(275, 18).getChild(155).click(true);
+            if (!Widgets.get(275, 18).getChild(155).click(true))
+                Starter.logMessage("Opening Lodestone Widget failed","WidgetManager");
         }
-        try { Thread.sleep(500); } catch (Exception e) {}
+        Task.sleep(1100,1200);
+        if (!Widgets.get(1092).validate()) {
+            Starter.logMessage("Opening Lodestone widget takes a long time...","WidgetManager");
+            Task.sleep(1200);
+        }
         updateLodestones();
     }
 
@@ -109,7 +117,7 @@ public abstract class WidgetManager {
         // NoticeBoard
         WidgetChild closeBtn = Widgets.get(1345, 33);
         closeBtn.click(true);
-        try { Thread.sleep(1200); } catch(Exception e) {}
+        Task.sleep(1200,1300);
     }
     
     

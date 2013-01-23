@@ -12,8 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import org.powerbot.game.api.wrappers.Tile;
-import powerwalk.model.Destinations;
+import powerwalk.model.Destination;
 import powerwalk.model.Point;
 
 /**
@@ -79,12 +78,12 @@ public class TravelPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=1;
         gbc.insets.top = 2;
-        Set<Entry<String,Tile>> destEntries = Destinations.getEntries();
-        for (Entry<String,Tile> e : destEntries) {
-            String dest = e.getKey();
-            Tile t = e.getValue();
-            if (t != null && dest.toLowerCase().contains(query)) {
-                entries.add(new DestinationPanel(dest,Point.fromTile(t)),gbc);
+        Destination[] destEntries = Destination.getDestinations();
+        for (Destination e : destEntries) {
+            String dest = e.getName();
+            Point p = e.getPosition();
+            if (p != null && dest.toLowerCase().contains(query)) {
+                entries.add(new DestinationPanel(dest,p),gbc);
                 gbc.gridy++;
             }
         }

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lodestones>
-    <lodestone pos="(3214,2954)" name="bandit camp" widget="7" />
-    <lodestone pos="(3297,3185)" name="al kharid" widget="40" />
-    <lodestone pos="(2634,3349)" name="ardougne" widget="41" />
-    <lodestone pos="(2899,3545)" name="burthorpe" widget="42" />
-    <lodestone pos="(2831,3452)" name="catherby" widget="43" />    
-    <lodestone pos="(3105,3298)" name="draynor village" widget="44" />
-    <lodestone pos="(3067,3505)" name="edgeville" widget="45" />
-    <lodestone pos="(2967,3404)" name="falador" widget="46" />
-    <lodestone pos="(3233,3222)" name="lumbridge" widget="47" />
-    <lodestone pos="(3011,3216)" name="port sarim" widget="48" />
-    <lodestone pos="(2689,3483)" name="seers' village" widget="49" /> 
-    <lodestone pos="(2878,3443)" name="taverley" widget="50" />
-    <lodestone pos="(3214,3377)" name="varrock" widget="51" />
-    <lodestone pos="(2529,3095)" name="yanille" widget="52" />
+    <lodestone pos="(3214,2953)" name="bandit camp" widget="7" />
+    <lodestone pos="(3297,3184)" name="al kharid" widget="40" />
+    <lodestone pos="(2634,3348)" name="ardougne" widget="41" />
+    <lodestone pos="(2899,3544)" name="burthorpe" widget="42" />
+    <lodestone pos="(2831,3451)" name="catherby" widget="43" />    
+    <lodestone pos="(3105,3297)" name="draynor village" widget="44" />
+    <lodestone pos="(3067,3504)" name="edgeville" widget="45" />
+    <lodestone pos="(2967,3403)" name="falador" widget="46" />
+    <lodestone pos="(3233,3221)" name="lumbridge" widget="47" />
+    <lodestone pos="(3011,3215)" name="port sarim" widget="48" />
+    <lodestone pos="(2689,3482)" name="seers' village" widget="49" /> 
+    <lodestone pos="(2878,3442)" name="taverley" widget="50" />
+    <lodestone pos="(3214,3376)" name="varrock" widget="51" />
+    <lodestone pos="(2529,3094)" name="yanille" widget="52" />
 </lodestones>

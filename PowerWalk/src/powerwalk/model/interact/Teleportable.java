@@ -24,6 +24,7 @@ public abstract class Teleportable extends GameObject implements ComplexInteract
      * @param y the y-coordinate of the <code>Teleportable</code>
      * @param z the z-coordinate of the <code>Teleportable</code>
      * @param rawNumber the raw value for this object from the RSBot environment
+     * @param widgetNumber the widget number that belongs to this Teleportable 
      */
     public Teleportable(int x,int y,int z,int rawNumber, int widgetNumber){
         super(x, y, z, rawNumber);

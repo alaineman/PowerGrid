@@ -51,4 +51,16 @@ public class OutOfReachException extends Exception {
         if (outofreach==null) return null;
         else return new Point(outofreach);
     }
+
+    /**
+     * Returns the message passed along with this OutOfReachException, followed 
+     * by the destination that could not be reached if it was set.
+     * @return the message passed along with this OutOfReachException
+     */
+    @Override public String getMessage() {
+        String msg = super.getMessage();
+        if (outofreach != null)
+            msg += " (original destination: " + outofreach + ")";
+        return msg;
+    }
 }

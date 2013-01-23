@@ -3,16 +3,29 @@ package powerwalk.model;
 import org.powerbot.game.api.wrappers.Tile;
 
 /**
- * Three dimensional Point.
+ * This model class represents a Point in 3D space. 
+ * <p/>
+ * It offers many mathematical operations, such as adding / substracting other 
+ * Points, multiplication with a scalar, and conversion from/to polar coordinates.
+ * <p/>
+ * It replaces RSBot's Tile class, yet for compatibility it still offers possibility 
+ * to convert from Tile to Point (using the static fromTile(tile) method), and from 
+ * Point to Tile (using the toTile() method).
+ * <p/>
  * @author Chronio
  */
 public class Point {
     /** The X-coordinate of this Point */
-    public int x;
+    public int x = 0;
     /** The Y-coordinate of this Point */
-    public int y;
-    /** The Z-coordinate of this Point */
-    public int z;
+    public int y = 0;
+    /** The Z-coordinate of this Point (this was known as the plane in the RSBot environment) */
+    public int z = 0;
+    
+    /**
+     * Creates a new Point at (0,0,0).
+     */
+    public Point() {}
     
     /**
      * Creates a new Point with the given coordinates. 
@@ -23,7 +36,6 @@ public class Point {
     public Point(int x,int y) {
         this.x = x;
         this.y = y;
-        this.z = 0;
     }
     /**
      * Creates a new Point with the given coordinates
@@ -90,10 +102,21 @@ public class Point {
         return Math.atan2(y, x);
     }
     
-    public void normalize() {
-        
+    /**
+     * returns a normalized version of this Point, treating it as a vector in 2D space (the (x,y) plane).
+     * It discards the plane information of Point, the z-coordinate of the resulting Point is 0.
+     * @return the normalized version of this Point
+     */
+    public Point normalize() {
+        double theta = theta();
+        return new Point((int)Math.cos(theta),(int)Math.sin(theta));
     }
     
+    /**
+     * returns a copy of this Point where each coordinate is multiplied with the scalar s.
+     * @param s the number to multiply this Point with
+     * @return a copy of this Point where each coordinate is multiplied with the scalar s
+     */
     public Point multiply(double s) {
         return new Point((int)(s*x), (int)(s*y), (int)(s*z));
     }
@@ -143,7 +166,7 @@ public class Point {
      * @return a String-representation of this Point
      */
     @Override public String toString() {
-        return "(" + x + "," + y + "," + z + ")";
+        return "(" + x + "," + y + (z == 0 ? ")" : "," + z + ")");
     }
     
     /**

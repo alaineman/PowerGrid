@@ -51,7 +51,7 @@ public class PathFinder {
     /**
      * The maximum distance between two Points in the result Path.
      */
-    public static final int maxDist = 15;
+    public static final int maxDist = 14;
     
     private Point start,goal;
     private HashMap<Point, Point> cameFrom;
@@ -67,13 +67,13 @@ public class PathFinder {
         this.goal = goal;
         
         Point delta = start.subtract(goal);
-        int dist = delta.x + delta.y + delta.z;
-        int tiles = delta.x * delta.y;
+        int dist = Math.abs(delta.x) + Math.abs(delta.y) + Math.abs(delta.z);
+        int tiles = Math.abs(delta.x * delta.y);
         cameFrom = new HashMap<>(tiles);
         pathCost = new HashMap<>(tiles);
         fScore   = new HashMap<>(tiles);
         closedSet = new HashSet<>(tiles);
-        pending = new PriorityQueue(dist, new Comparator<Point>() {
+        pending = new PriorityQueue<>(dist, new Comparator<Point>() {
             @Override public int compare(Point p1, Point p2) {
                 return (int)(fScore.get(p1) - fScore.get(p2));
             }
@@ -99,7 +99,8 @@ public class PathFinder {
             if (p.distance(start) > maxDist) {
                 // we use 2*maxDist to indicate that we don't want to use teleports 
                 // for small distances (<2*maxDist).
-                fScore.put(p, (double)2*maxDist); 
+                pathCost.put(p, 1d*maxDist);
+                fScore.put(p, 2d*maxDist);
                 pending.add(p);
             }
         }
@@ -119,7 +120,7 @@ public class PathFinder {
                         if (!isPending || tempPathCost <= pathCost.get(p) || pathCost.get(p) == 0) {
                             cameFrom.put(p, current);
                             pathCost.put(p, tempPathCost);
-                            fScore.put(p,tempPathCost + Math.sqrt(Math.pow(start.x - goal.x, 2) + Math.pow(start.y - goal.y, 2)));
+                            fScore.put(p,tempPathCost + start.distance(goal));
                             if (!isPending) {
                                 pending.offer(p);
                             }
@@ -132,7 +133,7 @@ public class PathFinder {
     
     // helper method for determining the direction. 
     private static int getDirection(Point base, Point adj) {
-        double theta = adj.subtract(base).theta();
+        double theta = adj.subtract(base).theta(); // the angle from base to adj
         if (Math.abs(theta) <=   Math.PI/4) return Wall.EAST;
         if (Math.abs(theta) >= 3*Math.PI/4) return Wall.WEST;
         if (theta > 0) return Wall.NORTH;
@@ -183,13 +184,18 @@ public class PathFinder {
         int distSinceLastSelected = 0;
         int targetDistance = maxDist - (int) (3 + 5 * Math.random());
         for (Point p : path) {
-            if (distSinceLastSelected < targetDistance) {
-                distSinceLastSelected++;
-            } else {
-                // set a new targetDistance
-                targetDistance = maxDist - (int) (2 + 5 * Math.random());
+            Lodestone l = Lodestone.getLodestone(p);
+            if (l != null && (selected.isEmpty() || selected.get(selected.size()-1).distance(p) >= maxDist)) {
                 selected.add(p);
-                distSinceLastSelected = 0;
+            } else {
+                if (distSinceLastSelected < targetDistance) {
+                    distSinceLastSelected++;
+                } else {
+                    // set a new targetDistance
+                    targetDistance = maxDist - (int) (2 + 5 * Math.random());
+                    selected.add(p);
+                    distSinceLastSelected = 0;
+                }
             }
         }
         Point lastPoint = path.get(path.size() - 1);

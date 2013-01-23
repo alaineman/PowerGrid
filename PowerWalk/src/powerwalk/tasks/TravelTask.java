@@ -101,9 +101,7 @@ public class TravelTask extends StepTask {
         setStepsLeft(path.size() - target);
         Point playerPos = Bot.getBot().getPosition();
         // check the distance to our next point.
-        double distToTarget = Math.sqrt(
-            Math.pow(playerPos.x - path.get(target).x, 2)
-            + Math.pow(playerPos.y - path.get(target).y, 2));
+        double distToTarget = playerPos.distance(path.get(target));
 
         // check if we are running. If not, enable when we have some stamina left
         if (!Walking.isRunEnabled() && Walking.getEnergy() >= 20) {
@@ -160,6 +158,8 @@ public class TravelTask extends StepTask {
                 try { 
                     if (Starter.devmode()) Starter.logMessage("Attempting to follow Lodestone to " + l.getPosition(),"TravelTask");
                     l.follow();
+                    Task.sleep(134,245);
+                    walkToTile(path.get(++target));
                 } catch (OutOfReachException e) {
                     Starter.logMessage("Failed to follow Lodestone to " + l.getName() + ", aborting travel.","TravelTask",e);
                     cancel();
@@ -171,6 +171,5 @@ public class TravelTask extends StepTask {
         } else {
             Walking.walk(p.toTile());
         }
-        
     }
 }

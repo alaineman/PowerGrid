@@ -117,7 +117,7 @@ public class Lodestone extends Teleportable {
     @Override public void follow() throws OutOfReachException {
         // we locate the correct widgetChild in the lodestone widget
         WidgetManager.openLodestoneWidget();
-        WidgetChild w = Widgets.getChild(widgetNumber);
+        WidgetChild w = Widgets.get(1092,widgetNumber);
         if (w == null) throw new OutOfReachException("The required widget was not found");
         
         Mouse.click(w.getCentralPoint(),true);
@@ -130,6 +130,7 @@ public class Lodestone extends Teleportable {
                 throw new OutOfReachException(getPosition(),"Failed to click widget");
             }
         }
+        Task.sleep(2000,4000);
         // appeareantly, we succeeded in clicking the widget, now we wait for the animations.
         Player local = Players.getLocal();
         while (local.getAnimation() == 16385 || local.getAnimation() == 16393) {

@@ -1,7 +1,6 @@
 package powerwalk.control.noticeboard;
 
 import java.util.HashMap;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
@@ -11,11 +10,11 @@ import powerwalk.control.WidgetManager;
 /**
  * This class deals with checking the status of Quests and as such can be used 
  * to check requirements for various tasks.
- * <p />
+ * <p/>
  * Quest names are case-insensitive, and can be given with either underscores 
- * or spaces. Any special characters like apostrophes and such cannot be omitted
- * <p />
- * 
+ * or spaces. Any special characters like apostrophes and such cannot be omitted,
+ * but should either be included or replaced by underscores.
+ * <p/>
  * @author Alaineman
  * @author Chronio
  */
@@ -55,16 +54,14 @@ public abstract class Quests {
      * NoSuchElementException.
      * <p/>
      * @param quest the name of the quest
-     * @return the status of the quest
-     * @throws NoSuchElementException when no such quest is found
+     * @return the status of the quest, or UNAVAILABLE if the Quest is not registered.
      */
     public static int getStatus(String quest) {
         quest = formatString(quest);
         if (questStats.containsKey(quest)) {
             return questStats.get(quest);
         } else {
-            
-            throw new NoSuchElementException("This Quest is not registered");
+            return UNAVAILABLE;
         }
     }
     
@@ -76,7 +73,6 @@ public abstract class Quests {
      * <p/>
      * @param quest the name of the quest
      * @return true if the player has completed the given quest, false otherwise.
-     * @throws NoSuchElementException when no such quest is found
      */
     public static boolean isCompleted(String quest) {
         return getStatus(quest) == COMPLETED;
@@ -91,7 +87,6 @@ public abstract class Quests {
      * @param quest the name of the quest
      * @return true if the player has started the given quest but has yet to 
      *         complete it, false otherwise.
-     * @throws NoSuchElementException when no such quest is found
      */
     public static boolean isStarted(String quest) {
         return getStatus(quest) == STARTED;
@@ -105,7 +100,6 @@ public abstract class Quests {
      * <p/>
      * @param quest the name of the quest
      * @return true if the player has not yet started the given quest, false otherwise.
-     * @throws NoSuchElementException when no such quest is found
      */
     public static boolean isUnstarted(String quest) {
         return getStatus(quest) == NOT_STARTED;
@@ -134,25 +128,22 @@ public abstract class Quests {
         for (WidgetChild child : children) {
             String text = child.getText();
             if (child.visible() && text != null && !text.isEmpty()) {
-                if (text.equals("Free") || text.equals("Members") || text.equals("Seasonal quest")) {
+                if (text.equals("Free") || text.equals("Members") || text.equals("Seasonal quest")) 
                     continue;
+                
+                switch (child.getTextColor()) { 
+                    // decide whether a Quest is done by looking at color in noticeboard
+                    case 65280: // green
+                        questStats.put(formatString(text), COMPLETED);
+                        break;
+                    case 65535: // blue
+                        questStats.put(formatString(text), STARTED);
+                        break;
+                    default: // assume unstarted
+                        questStats.put(formatString(text), NOT_STARTED);
                 }
-                int s = NOT_STARTED;
-                int color = child.getTextColor(); // decide whether a Quest is done by looking at color in noticeboard
-                if (color == 65280) {
-                    s = COMPLETED;
-                    Starter.logMessage("Completed Quest: " + text,"Quests");
-                } // color = green, completed
-                if (color == 65535) {
-                    s = STARTED;
-                    Starter.logMessage("Started Quest:   " + text,"Quests");
-                }   // color = blue,  started
-                questStats.put(formatString(text), s);
             }
         }
-        // close the noticeboard
-        WidgetManager.clearScreen();
-        
         Starter.logMessage("The Quest information has been updated","Quests");
     }
     

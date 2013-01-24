@@ -95,7 +95,7 @@ public class XMLNode {
     }
     
     /**
-     * returns the XML for the XML tree with this Node as its root
+     * returns the full XML (including header) for the XML tree with this Node as its root
      * @return a String-representation of this XML tree
      */
     @Override public String toString() {

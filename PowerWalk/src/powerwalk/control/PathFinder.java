@@ -23,10 +23,11 @@ public class PathFinder {
      * Finds a path between the given start and end using the A* algorithm.
      * <p/>
      * An ArrayList of the Points is returned that indicates a shortest path 
-     * between the start and endpoints.
+     * between the start and endpoint.
      * @param start the startPoint
      * @param end the endPoint
      * @return a shortest path between the given start and endpoints.
+     * 
      * @throws OutOfReachException when no path exists between start and end
      * @throws IllegalArgumentException when the start or endpoint is null
      */
@@ -41,10 +42,11 @@ public class PathFinder {
      * <code>PathFinder.findPath(Bot.getBot().getPosition(),end)</code>.
      * @param end the Point to travel to
      * @return a shortest path between the player's current position and the given endpoint.
+     * 
      * @throws OutOfReachException when no path exists between the player's current position and the given endpoint.
      * @throws IllegalArgumentException when the endpoint is null.
      */
-    public static ArrayList<Point> findPathTo(Point end) throws OutOfReachException {
+    public static ArrayList<Point> findPath(Point end) throws OutOfReachException {
         return new PathFinder(Bot.getBot().getPosition(), end).calculatePath();
     }
     
@@ -59,8 +61,13 @@ public class PathFinder {
     private HashMap<Point, Double> fScore;
     private HashSet<Point> closedSet;
     private PriorityQueue<Point> pending;
-
-    private PathFinder(Point start,Point goal) {
+    
+    /**
+     * Creates new PathFinder instance that creates a path from start to goal.
+     * @param start the startpoint of this path
+     * @param goal the endpoint of this path
+     */
+    public PathFinder(Point start,Point goal) {
         if (start == null) throw new IllegalArgumentException("Startpoint is null");
         if (goal  == null) throw new IllegalArgumentException("Endpoint is null");
         this.start = start;
@@ -86,13 +93,14 @@ public class PathFinder {
     
     /**
      * Calculates a path between start and goal using the A* algorithm.
-     *
-     * @param start The start Point
-     * @param goal The goal Point
+     * <p/>
+     * When this method has been called before, the result of this method call 
+     * is undefined.
+     * <p/>
      * @return A Path from start to goal
      * @throws OutOfReachException When no path between start and goal exists
      */
-    private ArrayList<Point> calculatePath() throws OutOfReachException {
+    public ArrayList<Point> calculatePath() throws OutOfReachException {
         // add all available Lodestones.
         for (Lodestone l : Lodestone.getAvailableLodestones()) {
             Point p = l.getPosition();

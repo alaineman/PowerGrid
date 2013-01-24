@@ -1,14 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package powerwalk.model.world.resources;
 
 import powerwalk.model.Item;
 
 /**
  *
- * @author Vincent W
+ * @author Alaineman
  */
 public class Tree extends AbstractResource {
     
@@ -18,17 +15,20 @@ public class Tree extends AbstractResource {
 
     @Override
     public void gather() {
-        //get id and interact "chop"
+        if (canGather()) {
+            //get id and interact "chop"
+        }
     }
 
     @Override
     public boolean isAvailable() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
 
     @Override
-    public boolean meetsRequirements() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean canGather() {
+        if (isAvailable()) return true;
+        return false;
     }
     
 }

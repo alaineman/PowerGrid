@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package powerwalk.model.world.resources;
 
 import powerwalk.model.Item;
 
 /**
  *
- * @author Vincent W
+ * @author Alaineman
  */
 public class Ore extends AbstractResource {
     
@@ -18,17 +14,19 @@ public class Ore extends AbstractResource {
 
     @Override
     public void gather() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (canGather()) {
+            // interact(); << Why is a Resource tile not Interactable? I must disagree!
+        }
     }
 
     @Override
     public boolean isAvailable() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
 
     @Override
-    public boolean meetsRequirements() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean canGather() {
+        return isAvailable();
     }
     
 }

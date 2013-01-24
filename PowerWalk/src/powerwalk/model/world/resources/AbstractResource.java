@@ -1,21 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package powerwalk.model.world.resources;
 
 import powerwalk.model.GameObject;
 import powerwalk.model.Item;
 
-
 /**
  *
- * @author Vincent W
+ * @author Alaineman
  */
 public abstract class AbstractResource extends GameObject {
-    
-    private boolean available = true;
-    
+        
     private Item[] items;
     
     public AbstractResource(int x, int y, int rawValue, Item... it){
@@ -28,11 +21,11 @@ public abstract class AbstractResource extends GameObject {
     
     public abstract boolean isAvailable();
     
-    public Item[] getItems(){
+    public Item[] getItems() {
         Item[] its = new Item[items.length];
         System.arraycopy(items, 0, its, 0, items.length);
         return its;
     }
     
-    public abstract boolean meetsRequirements();
+    public abstract boolean canGather();
 }

@@ -20,24 +20,49 @@ public class Destination {
     private Point dest;
     private String name = "undefined";
     
+    /**
+     * Creates a new destination with the given name at the given position
+     * @param p the position this Destination points to
+     * @param name the name given to this Destination
+     * @throws IllegalArgumentException when the provided Point is null
+     */
     public Destination(Point p, String name) {
+        if (p == null) 
+            throw new IllegalArgumentException("Point cannot be null");
         this.dest = new Point(p);
         if (name != null && !name.isEmpty())
             this.name = name;
     }
-    
+    /**
+     * Returns the name assigned to this Destination.
+     * @return the name assigned to this Destination.
+     */
     public String getName() {
         return name;
     }
-    
+    /**
+     * Returns the Point that this Destination points to.
+     * @return the Point that this Destination points to.
+     */
     public Point getPosition() {
         return new Point(dest);
     }
-    
+    /**
+     * Returns the hashCode for this Destination
+     * @return the hashCode for this Destination
+     */
     @Override public int hashCode() {
         return 7 * Objects.hashCode(name) + 11 * Objects.hashCode(dest);
     }
-    
+    /**
+     * Returns whether this Destination is equal to another Object.
+     * <p/>
+     * This method returns true if the other Object is a Destination, the name 
+     * given to that Destination is the same as the name given to this Destination, 
+     * and the two Destination point to the same position.
+     * @param other the Object to compare with
+     * @return whether this Destination is equal to another Object
+     */
     @Override public boolean equals(Object other) {
         if (other instanceof Destination) {
             Destination that = (Destination)other;
@@ -45,7 +70,10 @@ public class Destination {
         }
         return false;
     }
-    
+    /**
+     * Returns a String-representation of this Destination.
+     * @return a String-representation of this Destination.
+     */
     @Override public String toString() {
         return "Destination(\"" + name + "\" at " + dest + ")";
     }

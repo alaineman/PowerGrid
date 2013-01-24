@@ -115,8 +115,7 @@ public class ActiveScriptTask extends StepTask {
     @Override public void step() {
         int waitTime = theScript.loop();
         if (waitTime >= 0) {
-            try { Thread.sleep(Math.abs((int)(2*Math.random()*waitSpread + waitTime - waitSpread))); }
-            catch (InterruptedException e) {}
+            Task.sleep(Math.abs((int)(2*Math.random()*waitSpread + waitTime - waitSpread)));
         } else {
             cancel();
         }
@@ -127,7 +126,7 @@ public class ActiveScriptTask extends StepTask {
      * <p/>
      * Do not use this method to stop a running Task. Instead, use the cancel() method.
      * <p/>
-     * It is not required to call this method automatically, as a TaskRunner or 
+     * It is not required to call this method manually, as a TaskRunner or 
      * the PowerWalk TaskManager will do this automatically.
      */
     @Override public void finish() {

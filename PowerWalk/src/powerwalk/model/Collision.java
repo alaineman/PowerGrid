@@ -18,6 +18,11 @@ public class Collision extends GameObject {
         super(x,y,z,raw);
     }
     
+    /**
+     * Creates a new Collision object at the given position
+     * @param p the position
+     * @param rawValue the raw value for the object
+     */
     public Collision(Point p, int rawValue) {
         super(p, rawValue);
     }

@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package powerwalk.model.world.gateway;
 
 import powerwalk.model.OutOfReachException;
 
 /**
  *
- * @author Vincent W
+ * @author Alaineman
  */
 public class Gate extends Gateway {
 

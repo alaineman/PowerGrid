@@ -1,8 +1,8 @@
 package powerwalk.model;
 
 /**
- * An exception that is thrown when an action involves 
- * moving towards an unreachable destination.
+ * An Exception that is thrown when an action involves 
+ * moving towards an unreachable or non-existing destination.
  * @author Chronio
  */
 public class OutOfReachException extends Exception {

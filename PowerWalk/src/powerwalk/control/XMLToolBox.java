@@ -12,7 +12,9 @@ import powerwalk.model.XMLNode;
  * Utility class providing methods for handling XML files
  * @author Chronio
  */
-public abstract class XMLToolBox {
+public class XMLToolBox {
+    
+    private XMLToolBox() {}
     
     /**
      * Returns a HashMap containing the attributes and their values from a valid XML-String

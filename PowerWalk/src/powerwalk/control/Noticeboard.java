@@ -1,5 +1,6 @@
 package powerwalk.control;
 
+import java.util.Objects;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 
@@ -9,8 +10,10 @@ import org.powerbot.game.api.wrappers.widget.WidgetChild;
  * <p/>
  * @author Alaineman
  */
-public abstract class Noticeboard {
-
+public class Noticeboard {
+    
+    private Noticeboard() {}
+    
     /** Tab object that represents the "Featured" Tab on the Noticeboard */
     public static final Tab FEATURED = new Tab(1345, "Featured");
     /** Tab object that represents the "Challenges" Tab on the Noticeboard */
@@ -61,14 +64,7 @@ public abstract class Noticeboard {
     }
 
     /**
-     * returns the currently opened Tab. This Tab can be compared using the following pattern:
-     * <p/>
-     * <code><pre>
-     *     if (Noticeboard.getCurrentTab() != Noticeboard.QUESTS) {
-     *         Noticeboard.openTab(Noticeboard.QUESTS);
-     *     }
-     *     // do something on the Quests Tab
-     * </pre></code>
+     * returns the currently opened Tab.
      * <p/>
      * @return the currently opened Tab
      */
@@ -101,6 +97,43 @@ public abstract class Noticeboard {
         private Tab(int num, String name) {
             widgetNum = num;
             this.name = name;
+        }
+        /**
+         * Returns the widgetNumber of this Tab.
+         * @return the widgetNumber of this Tab
+         */
+        public int widgetNumber() {
+            return widgetNum;
+        }
+        /**
+         * Returns the name of this Tab.
+         * @return the name of this Tab
+         */
+        public String tabName() {
+            return name;
+        }
+        /**
+         * Returns the hashCode of this Object.
+         * @return the hashCode of this Object
+         */
+        @Override public int hashCode() {
+            return 2 * widgetNum + 5 * Objects.hashCode(name);
+        }
+        /**
+         * Returns whether this Tab object is equal to another object.
+         * <p/>
+         * This method returns true if the given object is a Tab object and it 
+         * has the same widgetNumber. This method returns false otherwise.
+         * <p/>
+         * @param other the Object to compare with
+         * @return whether this Tab object is equal to another object
+         */
+        @Override public boolean equals(Object other) {
+            if (other instanceof Tab) {
+                Tab t = (Tab) other;
+                return this.widgetNumber() == t.widgetNumber();
+            }
+            return false;
         }
     }
 }

@@ -36,6 +36,7 @@ public class Mapper extends Thread {
      * to be thrown when trying to start mapping again.
      */
     public static final int MAP_NONE = 2;
+    
     private static volatile int mappingPolicy = MAP_NONE;
     private static Mapper theMapper = null;
     private static boolean eco_mode = false;
@@ -215,12 +216,10 @@ public class Mapper extends Thread {
                     }
                     // all data parsed; put all found GameObjects in the Grid
                     for (Point p : gos.keySet())
-                        ses.remove(p); // << first removing redundant entries saves time, 
-                                       //    since Grid.set is appr. 2 times as slow as 
-                                       //    HashMap.remove (still really fast though 
-                                       //    (somewhere in O(1) - O(n)))
+                        ses.remove(p);
                     if (MapViewer.theMapViewer != null) {
-                        // If the MapViewer is open, hold drawing while the map is being updated to prevent flicker
+                        // If the MapViewer is open, hold drawing while the map 
+                        // is being updated (some sort of V-sync).
                         MapViewer.theMapViewer.hold(true);
                         map.addAll(ses);
                         map.addAll(gos);
@@ -233,7 +232,7 @@ public class Mapper extends Thread {
                         Starter.logMessage("updating the WorldMap in " + Starter.worldMapFile + " failed", "Mapper");
                     }
                 } catch (Throwable t) { 
-                    // catch anything that passes by: The mapper must not crash or hang!
+                    // catch anything that passes by: The mapper cannot crash or hang.
                     Starter.logMessage("Something went wrong while Mapping; Mapping round aborted","Mapper",t);
                 } 
             }

@@ -38,8 +38,20 @@ public class GameObject {
         this.z = z;
     }
     
+    /**
+     * Creates a new GameObject at the given position. the <code>rawNumber</code> 
+     * indicates the type of object as provided by the RSBot environment.
+     * @param p the position of this GameObject
+     * @param rawNumber the raw value from the environment specifying the type
+     * @throws IllegalArgumentException when the provided Point is null
+     */
     public GameObject(Point p, int rawNumber) {
-        this(p.x,p.y,p.z,rawNumber);
+        if (p == null)
+            throw new IllegalArgumentException("");
+        x = p.x;
+        y = p.y;
+        z = p.z;
+        this.rawNumber = rawNumber;
     }
     /**
      * returns the position of this GameObject. 
@@ -57,8 +69,6 @@ public class GameObject {
     public int getRawNumber() {
         return rawNumber;
     }
-    
-    public void examine() {}
 
     public void setPosition(Point p) {
         if (p != null) {

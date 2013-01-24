@@ -14,8 +14,10 @@ import powerwalk.model.interact.Lodestone;
  * @author Alaineman
  * @author Chronio
  */
-public abstract class WidgetManager {
+public class WidgetManager {
 
+    private WidgetManager() {}
+    
     /**
      * Contains all values of widgets that represent lodestone locations.
      */

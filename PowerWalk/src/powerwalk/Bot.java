@@ -1,6 +1,5 @@
 package powerwalk;
 
-import com.sun.org.apache.bcel.internal.generic.FDIV;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
@@ -55,8 +54,9 @@ public class Bot {
     
     private Bot() {}
     
-    /** 
+    /**
      * returns the World Map data that is known to the bot.
+     *
      * @return the World Map
      */
     public Grid getWorldMap() {
@@ -64,9 +64,9 @@ public class Bot {
     }
     
     /**
-     * registers a Task that moves to the destination specified in dest.
+     * Registers a Task that moves to the destination specified in name.
      * <p/>
-     * @param name     The target destination (providing correct casing is faster, but not required)
+     * @param name The target destination (providing correct casing is faster, but not required)
      * @param priority The priority of this Task
      */
     public void travelTo(String name,int priority) {
@@ -94,9 +94,8 @@ public class Bot {
      * @param p        The Point to move to
      * @param priority The priority of this Task
      */
-    public void travelTo(Point p, int priority) { 
-        TravelTask task = new TravelTask(p,priority);
-        assignTask(task);
+    public void travelTo(Point p, int priority) {
+        assignTask(new TravelTask(p,priority));
     }
     
     /**
@@ -106,8 +105,7 @@ public class Bot {
      * @param abortOnTask whether this Task should be aborted when other Tasks are present.
      */
     public void rest(int priority, boolean abortOnTask) {
-        RestTask task = new RestTask(priority,abortOnTask);
-        assignTask(task);
+        assignTask(new RestTask(priority,abortOnTask));
     }
     
     /**
@@ -172,9 +170,11 @@ public class Bot {
     
     /**
      * Queues the given Runnable in the Bot. 
-     * <p>The Runnable will be executed when all tasks with a higher priority
+     * <p/>
+     * The Runnable will be executed when all tasks with a higher priority
      * are executed. When multiple tasks have the same priority, the tasks will 
-     * be executed in order of assignment.</p>
+     * be executed in order of assignment.
+     * <p/>
      * @param task The Runnable to store in the Queue
      */
     public void assignTask(Task task) {
@@ -266,10 +266,12 @@ public class Bot {
     
     /**
      * Clears the task queue and attempts to cancel the running task, if any.
-     * <p>When this method returns, the current task doesn't need to have be 
-     * stopped directly.</p>
-     * <p>Note that Tasks that do not override the cancel() method cannot be 
-     * canceled. All StepTasks and Tasks created by PowerWalk are cancelable</p>
+     * <p/>
+     * When this method returns, the current task doesn't need to have be 
+     * stopped directly.
+     * <p/>
+     * Note that Tasks that do not override the cancel() method cannot be 
+     * canceled. All Tasks included with PowerWalk can be canceled.
      */
     public void becomeIdle() {
         taskQueue.clear();

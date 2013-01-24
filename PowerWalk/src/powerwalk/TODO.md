@@ -13,8 +13,8 @@ subgoals to indicate progress.
 
 - Household work (I know: boring, but it has to happen, too)
     1. Clean up Git repo where possible
-    2. (Re-)write documentation
-        20. check / update Javadoc to match latest changes / features
+    2. [Chronio] (Re-)write documentation
+        20. [BUSY] check / update Javadoc to match latest changes / features
         21. update the class tree file with info on all classes
         22. check / update README.md file.
     3. Decide on a global progressing plan regarding PW / PG 

@@ -39,11 +39,19 @@ import powerwalk.view.MapViewer;
         singleinstance = true)
 public class Starter extends ActiveScript {
     
+    /** The Starter instance (also the main ActiveScript of PowerWalk) that is 
+     * running (can be null if PowerWalk is not running).
+     */
     public static Starter starter = null;
     
     private static boolean isStarted = false;
     
-    public static final Logger theLogger = Logger.getLogger(Starter.class.getName());
+    /** The Logger instance of PowerWalk.
+     * <p/>
+     * It is advised to use the logMessage methods of Starter instead of directly 
+     * calling log methods of this Logger. That way 
+     */
+    public static final Logger theLogger = Logger.getLogger("PowerWalk");
     private static boolean loggerOk = false; // set to true when logger initialized
     public static final String worldMapFile = "worldmap.xml";
     /** The name of the Plug-in */
@@ -54,11 +62,11 @@ public class Starter extends ActiveScript {
     
     private static boolean DEV_MODE = false;
     
-    /* Placeholder for controlpanel handle */
-    private static ControlPanel theControlPanel = null;
+    /** The Control panel that is shown on screen. */
+    public static ControlPanel theControlPanel = null;
     
     /**
-     * Creates a ContentFrame instance and shows it.
+     * Creates a Starter instance and shows it.
      */
     @Override public void onStart() {
         setLoggerFormatAndHandlers();
@@ -79,9 +87,6 @@ public class Starter extends ActiveScript {
             logMessage("WorldMap failed to load",e);
         }
         Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
-        
-        // Load Quest data directly from Noticeboard, since Quest class doesn't seem to work properly
-        //Quests.updateQuestData(); // revision: try not to, it's really annoying
         
         // TODO replace hardcoded available lodestones with correct checking method later
         Lodestone.addLodestone(47);
@@ -141,11 +146,10 @@ public class Starter extends ActiveScript {
         Bot.getBot().becomeIdle();
         Mapper.stopMapping();
         if (ContentFrame.theFrame != null) {
+            // dispose the Contentframe if it exists
             ContentFrame.theFrame.dispose();
             ContentFrame.theFrame = null;
         }
-        purge(); // free all data structures and objects they contain
-        System.gc(); // running Garbage Collector to ensure any potentially problematic objects (Readers/Writers, Task instances, etc..) are finalized and destroyed
         logMessage("PowerWalk has been terminated");
         
         isStarted = false;
@@ -162,30 +166,12 @@ public class Starter extends ActiveScript {
     }
 
     /**
-     * removes non-essential data structures and reduces the size of essential
-     * data structures in order to free memory or speed up general performance.
-     *
-     * <p>Since most non-essential data structures are used for caching, calling
-     * this method repeatedly will cause reduction of performance.</p>
-     *
-     * <p>Furthermore, after calling this method, some smaller data structures
-     * will be automatically rebuilt when performing actions on the Bot, and
-     * these action may be slower due to missing / reduced caches.</p>
-     */
-    public synchronized static void purge() {
-
-        // purge the World Map (takes potentially long)
-        Bot.getBot().getWorldMap().purge();
-
-        logMessage("The caches have been purged");
-    }
-
-    /**
      * Logs a message to the console. The message will be prefixed by "[PowerWalk] "
      * <p>The logged message will have a logging level identical to <code>Level.INFO</code></p>
      * @param message the message to log
      */
     public static void logMessage(String message) {
+        if (message != null && !message.isEmpty()) return;
         setLoggerFormatAndHandlers();
         theLogger.info(message);
     }
@@ -197,8 +183,13 @@ public class Starter extends ActiveScript {
      * @param group the group to display for this message
      */
     public static void logMessage(String message,String group) {
-        setLoggerFormatAndHandlers();
-        theLogger.log(Level.INFO,message,group);
+        if (message != null && !message.isEmpty()) return;
+        if (group == null || group.isEmpty()) {
+            logMessage(message);
+        } else {
+            setLoggerFormatAndHandlers();
+            theLogger.log(Level.INFO,message,group);
+        }
     }
     
     /**
@@ -210,13 +201,29 @@ public class Starter extends ActiveScript {
      * @param t the Throwable that caused the message
      */
     public static void logMessage(String message,String group, Throwable t) {
-        setLoggerFormatAndHandlers();
-        theLogger.log(Level.INFO,message,new Object[] {group,t});
+        if (message != null && !message.isEmpty()) return;
+        if (t == null)
+            logMessage(message,group);
+        else {
+            setLoggerFormatAndHandlers();
+            theLogger.log(Level.INFO,message,new Object[] {group,t});
+        }
     }
     
+    /**
+     * Logs the given message to the console. The message will be prefixed by "[PowerWalk] ".
+     * <p>t specifies the Throwable that caused the message, if any</p>
+     * @param message the message to log
+     * @param t the Throwable that caused the message
+     */
     public static void logMessage(String message,Throwable t) {
-        setLoggerFormatAndHandlers();
-        theLogger.log(Level.INFO,message,new Object[]{null,t});
+        if (message != null && !message.isEmpty()) return;
+        if (t == null)
+            logMessage(message);
+        else {
+            setLoggerFormatAndHandlers();
+            theLogger.log(Level.INFO,message,new Object[]{null,t});
+        }
     }
     
     public static void main(String[] args) {
@@ -291,14 +298,20 @@ public class Starter extends ActiveScript {
     }
     
     /**
-     * The control panel that appears below the RSBot window when launching through this class
+     * The control panel that appears when launching through this class
      */
     public static class ControlPanel extends JPanel {
+        /**
+         * The size of the Buttons on the ControlPanel
+         */
         public static final Dimension buttonSize = new Dimension(180,32);
         
-        private JLabel messageBox = new JLabel("  PowerWalk is not started");
+        private JLabel messageBox = new JLabel("Status:  PowerWalk is not started");
         private JButton showMap = new JButton("Show PowerWalk map");
         private JButton toggleMapping = new JButton("Disable Mapping");
+        /**
+         * Creates a new ControlPanel
+         */
         public ControlPanel() {
             super(new BorderLayout(5,3));
             createAndShowGUI();
@@ -349,13 +362,18 @@ public class Starter extends ActiveScript {
                 }
             });
         }
-        
+        /**
+         * Sets the message on the ControlPanel.
+         * <p/>
+         * When the message is either null or the empty String, this method does
+         * nothing.
+         * @param msg the message to set
+         */
         public void setMessage(String msg) {
-            if (msg != null) 
-                messageBox.setText("  Status:  " + msg);
+            if (msg != null && !msg.isEmpty()) 
+                messageBox.setText("Status:  " + msg);
         }
-        
-        public void notifyStateChange(boolean state) {
+        private void notifyStateChange(boolean state) {
             toggleMapping.setEnabled(state);
             if (state) setMessage("PowerWalk started");
             else setMessage("PowerWalk stopped");

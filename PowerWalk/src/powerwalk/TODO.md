@@ -9,6 +9,7 @@ subgoals to indicate progress.
 +--------Thoughts Box (Add stuff that you want to discuss here)----------------+
 | Chronio: Maybe refactor 'powerwalk.control.noticeboard' somewhere else.      |
 | Chronio: See 'Household work', point 3.                                      |
+| Chronio: Definitely work on WidgetManager, as it misses its point now.       |
 +------------------------------------------------------------------------------+
 
 - Household work (I know: boring, but it has to happen, too)
@@ -78,5 +79,5 @@ subgoals to indicate progress.
     1. Have a 'thoughts' balloon for PowerWalk, allowing the end-user to 'peek' into PowerWalk's decisions.
         10. This allows for ad-hoc decision-making without end-users going nuts due to PowerWalk doing 'weird' things.
         11. It's easier to debug tasks when you know what PowerWalk's up to.
-        12. It would provide the idea that PowerWalk works as an actual player and therefore enhance the awsomeness of PowerWalk.
+        12. It would provide the idea that PowerWalk works as an actual player and therefore enhance the awesomeness of PowerWalk.
     2. Add (more) cool and would-be-awesome ideas to this list.

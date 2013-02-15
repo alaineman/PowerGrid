@@ -98,9 +98,8 @@ public class XMLToolBox {
         if (attribute == null || root == null || value == null) {
             return null;
         }
-        ArrayList<XMLNode> nodes = root.children();
-        ArrayList<XMLNode> matches = new ArrayList<>(nodes.size());
-        for (XMLNode n : nodes) {
+        ArrayList<XMLNode> matches = new ArrayList<>();
+        for (XMLNode n : root) {
             String val = n.get(attribute);
             if (val != null && value.equals(val))
                 matches.add(n);
@@ -110,7 +109,7 @@ public class XMLToolBox {
     
     public static XMLNode[] filterNodesRecursive(XMLNode root, String attribute,String value) {
         ArrayList<XMLNode> matches = new ArrayList<>(Arrays.asList(filterNodes(root, attribute, value)));
-        for (XMLNode n : root.children()) {
+        for (XMLNode n : root) {
             matches.addAll(Arrays.asList(filterNodesRecursive(n, attribute, value)));
         }
         return matches.toArray(new XMLNode[0]);

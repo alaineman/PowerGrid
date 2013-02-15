@@ -7,13 +7,20 @@ import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Lodestone;
 import powerwalk.model.world.Wall;
+import sun.security.util.PathList;
 
 /**
  * This class deals with finding a path between two Points in the RSBot
  * environment.
  * <p/>
- * It uses the A* algorithm on the map data collected by the mapper.
- * 
+ * It uses the A* algorithm on the map data collected by the mapper. Therefore, 
+ * in order for the PathFinder to return the shortest known path, PowerWalk must 
+ * be running and the environment surrounding the start and endpoints must be mapped.
+ * <p/>
+ * When calculating the path, various teleports and shortcuts are also used 
+ * during calculation. The only teleports and shortcuts that are used are the ones 
+ * the player has access to.
+ * <p/>
  * @author Alaineman
  * @author Chronio
  */
@@ -22,16 +29,19 @@ public class PathFinder {
     /**
      * Finds a path between the given start and end using the A* algorithm.
      * <p/>
-     * An ArrayList of the Points is returned that indicates a shortest path 
+     * An ArrayList of the Points is returned that indicates a shortest path
      * between the start and endpoint.
+     * <p/>
+     * The returned List is immutable.
+     * <p/>
      * @param start the startPoint
      * @param end the endPoint
      * @return a shortest path between the given start and endpoints.
      * 
      * @throws OutOfReachException when no path exists between start and end
-     * @throws IllegalArgumentException when the start or endpoint is null
+     * @throws IllegalArgumentException when the given start or endpoint is null
      */
-    public static ArrayList<Point> findPath(Point start, Point end) throws OutOfReachException {
+    public static List<Point> findPath(Point start, Point end) throws OutOfReachException {
         return new PathFinder(start,end).calculatePath();
     }
     
@@ -40,13 +50,16 @@ public class PathFinder {
      * <p/>
      * This method is effectively the same as calling 
      * <code>PathFinder.findPath(Bot.getBot().getPosition(),end)</code>.
+     * <p/>
+     * The returned List is immutable.
+     * <p/>
      * @param end the Point to travel to
      * @return a shortest path between the player's current position and the given endpoint.
      * 
      * @throws OutOfReachException when no path exists between the player's current position and the given endpoint.
-     * @throws IllegalArgumentException when the endpoint is null.
+     * @throws IllegalArgumentException when the given endpoint is null.
      */
-    public static ArrayList<Point> findPath(Point end) throws OutOfReachException {
+    public static List<Point> findPath(Point end) throws OutOfReachException {
         return new PathFinder(Bot.getBot().getPosition(), end).calculatePath();
     }
     
@@ -61,6 +74,8 @@ public class PathFinder {
     private HashMap<Point, Double> fScore;
     private HashSet<Point> closedSet;
     private PriorityQueue<Point> pending;
+    
+    private ArrayList<Point> path = null;
     
     /**
      * Creates new PathFinder instance that creates a path from start to goal.
@@ -94,14 +109,16 @@ public class PathFinder {
     /**
      * Calculates a path between start and goal using the A* algorithm.
      * <p/>
-     * When this method has been called before, the result of this method call 
-     * is undefined.
+     * When this method has been called once, any consecutive calls to this 
+     * method will return the same path.
      * <p/>
-     * @return A Path from start to goal
+     * @return An immutable Path from start to goal
      * @throws OutOfReachException When no path between start and goal exists
      */
-    public ArrayList<Point> calculatePath() throws OutOfReachException {
+    public List<Point> calculatePath() throws OutOfReachException {
         // add all available Lodestones.
+        if (path != null)
+            return path;
         for (Lodestone l : Lodestone.getAvailableLodestones()) {
             Point p = l.getPosition();
             if (p.distance(start) > maxDist) {
@@ -117,7 +134,8 @@ public class PathFinder {
             Point current = pending.poll();
             if (current.equals(goal)) {
                 ArrayList<Point> fullPath = reconstruct(goal);
-                return reducePoints(fullPath);
+                path = reducePoints(fullPath);
+                return Collections.unmodifiableList(path);
             }
             closedSet.add(current);
             ArrayList<Point> adjacents = availableEdges(current);

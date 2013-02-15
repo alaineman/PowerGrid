@@ -3,7 +3,6 @@ package powerwalk.control;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Tabs;
 import org.powerbot.game.api.methods.Widgets;
-import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.Starter;
 import powerwalk.model.interact.Lodestone;
 
@@ -19,12 +18,12 @@ public class WidgetManager {
     private WidgetManager() {}
     
     /**
-     * Contains all values of widgets that represent lodestone locations.
+     * Contains all values of widgets that represent lodestone locations, sorted ascending.
      */
     public final static int[] lodestoneValues = {7, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52};
     
     /**
-     * Ensures that the SpellBook panel is visible
+     * Ensures that the SpellBook panel is visible.
      */
     public static void openSpellBook() {
         if (!Tabs.ABILITY_BOOK.isOpen()){
@@ -104,6 +103,8 @@ public class WidgetManager {
         updateLodestones();
     }
 
+    // helper method that automatically updates the available Lodestones when the
+    // Lodestone widget is opened
     private static void updateLodestones() {
         for (int i : lodestoneValues) {
             if (Widgets.get(1092, i).getTextureId() < 10117) {
@@ -111,17 +112,5 @@ public class WidgetManager {
             }
         }
     }
-    
-    /**
-     * Closes any open widgets that were opened by the WidgetManager.
-     */
-    public static void clearScreen() {
-        // NoticeBoard
-        WidgetChild closeBtn = Widgets.get(1345, 33);
-        closeBtn.click(true);
-        Task.sleep(1200,1300);
-    }
-    
-    
     
 }

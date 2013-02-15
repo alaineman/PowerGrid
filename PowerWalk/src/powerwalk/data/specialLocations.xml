@@ -2,9 +2,9 @@
 <!DOCTYPE speciallocations [
 <!ELEMENT speciallocations (special*)>
 <!ELEMENT special (location*)>
-<!ATTLIST special interact (npc|area|object) #REQUIRED name CDATA #REQUIRED >
+<!ATTLIST special interact (npc|area|object) #REQUIRED name ID #REQUIRED >
 <!ELEMENT location EMPTY>
-<!ATTLIST location target CDATA #REQUIRED pos CDATA #REQUIRED traits CDATA #IMPLIED requirements CDATA #IMPLIED> ]>
+<!ATTLIST location target CDATA #REQUIRED pos ID #REQUIRED traits CDATA #IMPLIED requirements CDATA #IMPLIED> ]>
 <speciallocations>
     <special name="Altar" interact="object">
         <location pos="(3253,3486)" target="Altar" />

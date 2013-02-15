@@ -2,6 +2,7 @@ package powerwalk.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -9,7 +10,7 @@ import java.util.Objects;
  * An XML node in an XML tree.
  * @author Chronio
  */
-public class XMLNode {
+public class XMLNode implements Iterable<XMLNode> {
     private String tag;
     private HashMap<String,String> attributes;
     private ArrayList<XMLNode> children;
@@ -20,6 +21,10 @@ public class XMLNode {
         this.children = childs;
     }
 
+    public XMLNode(String tag, HashMap<String,String> attributes) {
+        this(tag,attributes,null);
+    }
+    
     /**
      * returns the tag of this XMLNode
      * @return the tag of this XMLNode
@@ -91,7 +96,14 @@ public class XMLNode {
      * @return the value for the attribute, or null if no such value exists
      */
     public String get(String att) {
+        if (attributes == null) return null;
         return attributes.get(att);
+    }
+    
+    public String getOrElse(String att, String orElse) {
+        String val = get(att);
+        if (val == null) return orElse;
+        else return val;
     }
     
     /**
@@ -109,10 +121,12 @@ public class XMLNode {
      *         the specified prefix
      */
     private String toString(String prefix) {
-        
-        String res = prefix + "<" + tag + (attributes.isEmpty() ? "" : " ");
-        for (Entry<String,String> att : attributes.entrySet()) {
-            res += att.getKey() + "=\"" + att.getValue() + "\" ";
+        String res = prefix + "<" + tag;
+        if (attributes != null && !attributes.isEmpty()) {
+            res += " ";
+            for (Entry<String,String> att : attributes.entrySet()) {
+                res += att.getKey() + "=\"" + att.getValue() + "\" ";
+            }
         }
         if (isSelfClosing()) {
                 res += "/>\n";
@@ -146,5 +160,33 @@ public class XMLNode {
             return true;
         }
         return false;
+    }
+    
+    public String set(String att, String val) {
+        if (attributes == null) attributes = new HashMap<>(6);
+        return attributes.put(att, val);
+}
+
+    @Override public Iterator<XMLNode> iterator() {
+        return new XMLIterator();
+    }
+    
+    public class XMLIterator implements Iterator<XMLNode> {
+
+        private int position = 0;
+        
+        @Override public boolean hasNext() {
+            return children.size() > position;
+        }
+
+        @Override public XMLNode next() {
+            XMLNode next = children.get(position);
+            position++;
+            return next;
+        }
+
+        @Override public void remove() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
     }
 }

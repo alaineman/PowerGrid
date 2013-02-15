@@ -59,7 +59,7 @@ public class Door extends GameObject implements Interactable {
      * @throws OutOfReachException when the door could not be interacted with
      */
     @Override public void interact() throws OutOfReachException {
-        SceneObject d = SceneEntities.getAt(getPosition().toTile());
+        SceneObject d = SceneEntities.getAt(getPosition());
         if (d == null) throw new OutOfReachException("The door is not loaded");
         d.click(true);
     }
@@ -70,7 +70,7 @@ public class Door extends GameObject implements Interactable {
      */
     public void open() throws OutOfReachException {
         if (!isOpen()) {
-            SceneObject d = SceneEntities.getAt(getPosition().toTile());
+            SceneObject d = SceneEntities.getAt(getPosition());
             if (d == null) throw new OutOfReachException(getPosition(),"Door not loaded");
             d.click(true);
         }
@@ -82,7 +82,7 @@ public class Door extends GameObject implements Interactable {
      */
     public void close() throws OutOfReachException {
         if (isOpen()) {
-            SceneObject d = SceneEntities.getAt(getPosition().toTile());
+            SceneObject d = SceneEntities.getAt(getPosition());
             if (d == null) throw new OutOfReachException(getPosition(),"Door not loaded");
             d.click(true);
         }
@@ -102,7 +102,7 @@ public class Door extends GameObject implements Interactable {
      * @throws OutOfReachException when the door could not be reached
      */
     @Override public void interact(String method) throws OutOfReachException {
-        SceneObject d = SceneEntities.getAt(getPosition().toTile());
+        SceneObject d = SceneEntities.getAt(getPosition());
         if (d == null) throw new OutOfReachException(getPosition(),"Door not loaded");
         if (!d.interact(method))
             throw new UnsupportedOperationException("Operation not supported for this Door");

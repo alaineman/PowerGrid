@@ -1,6 +1,7 @@
 package powerwalk.tasks;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Walking;
 import powerwalk.Bot;
@@ -19,7 +20,7 @@ public class TravelTask extends StepTask {
 
     private Point destination = null;
     
-    private ArrayList<Point> path = null;
+    private List<Point> path = null;
     private int target = 0;
     
     /**
@@ -58,6 +59,7 @@ public class TravelTask extends StepTask {
      * or when the PathFinder class has found no path to the given destination.
      */
     @Override public synchronized void start() {
+        target = 0;
         if (destination == null)
             cancel();
         else {
@@ -127,19 +129,14 @@ public class TravelTask extends StepTask {
     }
     
     /**
-     * Resets the path counter so that the Task can be run again.
-     * <p />
-     * Re-running a TravelTask calculates a path from the current location to 
-     * the destination, regardless of the previous path. After this method is 
-     * called, the start() method must be called first to recalculate the path.
-     * Note that the PowerWalk Task Manager does this automatically, so when 
-     * re-assigning this Task to the TaskQueue using the assignTask method from 
-     * the PowerWalk Bot class or assigning it to a TaskRunner, manually calling 
-     * the start() method is not required.
+     * This method overrides the basic reset behavior of throwing an Exception.
+     * <p/>
+     * This method, however, does nothing by itself. TravelTask instances can be 
+     * run over and over again and the path will be recalculated every time. 
+     * This allows creation of reusable TravelTasks, which can be useful when 
+     * moving between a fixed set of Points.
      */
-    @Override public synchronized void reset() {
-        target = 0;
-    }
+    @Override public void reset() {}
     
     /**
      * returns the destination that this TravelTask is set to travel to.
@@ -166,10 +163,10 @@ public class TravelTask extends StepTask {
                 }
             } else {
                 // attempt walkTo anyways
-                Walking.walk(p.toTile());
+                Walking.walk(p);
             }
         } else {
-            Walking.walk(p.toTile());
+            Walking.walk(p);
         }
     }
 }

@@ -39,6 +39,9 @@ import powerwalk.view.MapViewer;
         singleinstance = true)
 public class Starter extends ActiveScript {
     
+    /** The ScriptLoader instance that loads PowerWalk. */
+    private static ScriptLoader loader = new ScriptLoader("powerwalk.Starter");
+    
     /** The Starter instance (also the main ActiveScript of PowerWalk) that is 
      * running (can be null if PowerWalk is not running).
      */
@@ -327,7 +330,7 @@ public class Starter extends ActiveScript {
             messageBox.setPreferredSize(new Dimension(300,30));
             showMap.setPreferredSize(buttonSize);
             toggleMapping.setPreferredSize(buttonSize);
-            JButton starter = ScriptLoader.pwLoader.createPlayButton();
+            JButton starter = loader.createPlayButton();
             starter.setPreferredSize(buttonSize);
             
             toggleMapping.setEnabled(false);

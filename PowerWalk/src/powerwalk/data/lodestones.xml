@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lodestones [
+<!ELEMENT lodestones (lodestone*)>
+<!ELEMENT lodestone EMPTY>
+<!ATTLIST lodestone pos CDATA #REQUIRED name ID #REQUIRED widget CDATA #REQUIRED> ]>
 <lodestones>
     <lodestone pos="(3214,2953)" name="bandit camp" widget="7" />
     <lodestone pos="(3297,3184)" name="al kharid" widget="40" />

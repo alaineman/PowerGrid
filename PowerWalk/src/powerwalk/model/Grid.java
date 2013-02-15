@@ -18,6 +18,9 @@ import powerwalk.model.world.Wall;
 
 /**
  * Three-dimensional data structure for GameObjects.
+ * <p/>
+ * When the size of the Grid is (n * m * p), then the time it takes to access any
+ * GameObject in the Grid lies somewhere between O(1) and O(n*m).
  * @author Chronio
  */
 public class Grid {
@@ -107,7 +110,12 @@ public class Grid {
      * raw values. This field can be modified, but classes in this array will only be 
      * used if they define the following field:
      * <p><code>public static final int[] values</code></p>
-     * <p>The values in this <code>int[]</code> must be sorted ascending.</p>
+     * <p/>
+     * The values in this <code>int[]</code> must be sorted ascending.
+     * Also, they must define a constructor with the following fields:
+     * <code>(int,int,int,int)</code>, where the first three values represent a 3D Point,
+     * and the last int represents the raw value of the Object.
+     * </p>
      */
     public static Class<?>[] objectclasses = new Class<?>[] {
         Wall.class,          Enemy.class,          Person.class,
@@ -258,7 +266,7 @@ public class Grid {
         if (root == null) return;
         try {
             if (root.getTag().equals("grid")) {
-                for (XMLNode column : root.children()) {
+                for (XMLNode column : root) {
                     fillColumn(column);
                 }
             }
@@ -268,7 +276,7 @@ public class Grid {
     private void fillColumn(XMLNode col) {
         if (col.getTag().equals("column")) {
             int index = Integer.parseInt(col.getAttributes().get("index"));
-            for (XMLNode cell : col.children()) {
+            for (XMLNode cell : col) {
                 fillCell(index,cell);
             }
         }
@@ -277,7 +285,7 @@ public class Grid {
     private void fillCell(int colIndex,XMLNode cell) {
         if (cell.getTag().equals("cell")) {
             int cellIndex = Integer.parseInt(cell.getAttributes().get("index"));
-            for (XMLNode o : cell.children()) {
+            for (XMLNode o : cell) {
                 HashMap<String,String> atts = o.getAttributes();
                 int z = Integer.parseInt(atts.get("plane"));
                 Point p = new Point(colIndex,cellIndex,z); 

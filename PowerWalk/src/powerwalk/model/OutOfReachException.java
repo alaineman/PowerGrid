@@ -53,13 +53,15 @@ public class OutOfReachException extends Exception {
     }
 
     /**
-     * Returns the message passed along with this OutOfReachException, followed 
-     * by the destination that could not be reached if it was set.
-     * @return the message passed along with this OutOfReachException
+     * Returns the message passed along with this OutOfReachException, if it was set, followed 
+     * by the destination that could not be reached, if it was set.
+     * @return the message describing the cause of the OutOfReachException
      */
     @Override public String getMessage() {
         String msg = super.getMessage();
-        if (outofreach != null)
+        if (msg == null || msg.isEmpty()) 
+            msg = "Could not travel to Point: " + outofreach;
+        else if (outofreach != null)
             msg += " (original destination: " + outofreach + ")";
         return msg;
     }

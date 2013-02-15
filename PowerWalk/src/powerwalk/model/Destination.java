@@ -91,7 +91,7 @@ public class Destination {
         destinations.clear();
         InputStream in = ClassLoader.getSystemResourceAsStream("powerwalk/data/destinations.xml");
         XMLNode tree = XMLToolBox.getXMLTree(in);
-        for (XMLNode n : tree.children()) {
+        for (XMLNode n : tree) {
             if (n.getTag().equals("dest")) {
                 try { 
                     destinations.put(n.get("name"),Point.fromString(n.get("pos")));

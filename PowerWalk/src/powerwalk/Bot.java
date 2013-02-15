@@ -172,7 +172,7 @@ public class Bot {
      * Queues the given Runnable in the Bot. 
      * <p/>
      * The Runnable will be executed when all tasks with a higher priority
-     * are executed. When multiple tasks have the same priority, the tasks will 
+     * have been executed. When multiple tasks have the same priority, the tasks will 
      * be executed in order of assignment.
      * <p/>
      * @param task The Runnable to store in the Queue
@@ -213,9 +213,10 @@ public class Bot {
     }
     
     /**
-     * Returns the next Task on the Task Queue without removing it. Note that 
-     * it is advised not to call any methods on this Task that will cause the 
-     * Task to run, since it might interfere with the PowerWalk's Task manager.
+     * Returns the next Task on the Task Queue without removing it. 
+     * <p />
+     * Note that it is advised not to call any methods on this Task that will cause 
+     * the Task to run, since it might interfere with the PowerWalk's Task manager.
      * <p />
      * When trying to take the Task from the Queue and run it separate from 
      * PowerWalk, it is advised to use the <code>retrieveTask()</code> method, 

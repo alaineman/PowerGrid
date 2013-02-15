@@ -1,5 +1,7 @@
 package powerwalk.model;
 
+import org.powerbot.game.api.wrappers.Locatable;
+import org.powerbot.game.api.wrappers.RegionOffset;
 import org.powerbot.game.api.wrappers.Tile;
 
 /**
@@ -11,10 +13,12 @@ import org.powerbot.game.api.wrappers.Tile;
  * It replaces RSBot's Tile class, yet for compatibility it still offers possibility 
  * to convert from Tile to Point (using the static fromTile(tile) method), and from 
  * Point to Tile (using the toTile() method).
+ * Point also implements RSBot's Locatable interface, allowing Points to be used 
+ * in most RSBot methods as-is.
  * <p/>
  * @author Chronio
  */
-public class Point {
+public class Point implements Locatable {
     /** The X-coordinate of this Point */
     public int x = 0;
     /** The Y-coordinate of this Point */
@@ -56,6 +60,31 @@ public class Point {
     public Point(Point p) {
         this(p.x,p.y,p.z);
     }
+    
+    /**
+     * Returns the Tile corresponding to this Point, conforming to the Locatable
+     * interface.
+     * <p/>
+     * This makes it possible to use Points directly as Locatables in RSBot classes and methods.
+     * <p/>
+     * This method is effectively the same as calling <code>toTile()</code>.
+     * @return a Tile object indicating the same location as this Point
+     */
+    @Override public Tile getLocation() {
+        return toTile();
+    }
+    /**
+     * returns a RegionOffset object set to (0,0,0).
+     * <p/>
+     * This method has no real purpose whatsoever, and is only here so that Point 
+     * conforms to the Locatable interface, allowing Points to be used in RSBot methods.
+     * <p/>
+     * @return a RegionOffset object set to (0,0,0)
+     */
+    @Override public RegionOffset getRegionOffset() {
+        return new RegionOffset(0,0,0);
+    }
+    
     
     /**
      * Returns the result of adding the given point to this Point.

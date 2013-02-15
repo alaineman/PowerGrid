@@ -70,6 +70,16 @@ public class GameObject {
         return rawNumber;
     }
 
+    /**
+     * Sets the position of this GameObject to the new Position, when the given 
+     * position is not null.
+     * <p/>
+     * Note that, obviously, this does not actually move the corresponding RS Object.
+     * Therefore, calling this without a good reason will probably lead to data 
+     * inconsistency and therefore prevent PowerWalk from creating correct paths.
+     * <p/>
+     * @param p the new Position of this Object
+     */
     public void setPosition(Point p) {
         if (p != null) {
             x = p.x;
@@ -78,6 +88,15 @@ public class GameObject {
         }
     }
     
+    /**
+     * Sets the raw value of this GameObject.
+     * <p/>
+     * Note that, obviously, this does not actually change the corresponding RS Object.
+     * Therefore, calling this without a good reason will probably lead to data 
+     * inconsistency and therefore prevent PowerWalk from creating correct paths.
+     * <p/>
+     * @param value the new raw value for this Object
+     */
     public void setRawValue(int value) {
         rawNumber = value;
     }

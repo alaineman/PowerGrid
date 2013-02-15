@@ -21,13 +21,60 @@ import org.powerbot.game.api.Manifest;
  * scripts. This fills in the gap in PowerBot's functionality, where different 
  * scripts cannot coorporate.
  * <p/>
+ * Special thanks to Float's ScriptInjector class for providing insight into RSBot's
+ * way of loading and starting scripts.
+ * <p/>
+ * <strong>How to use ScriptLoader to run your own plugins from outside RSBot</strong>
+ * <p/>
+ * The following example demonstrates how to use ScriptLoader to run plugins 
+ * without using the RSBot's internal loading mechanism. This also bypasses any 
+ * limitations on running time (for as far as is observable).
+ * <p/>
+ * <pre>
+ * // Create a main method of your own that creates the ScriptLoader instance and starts RSBot
+ * public static void main(String[] args) {
+ *     // The ActiveScript subclass that will be used.
+ *     // Replace this with your own class.
+ *     Class&lt;? extends ActiveScript&gt; script = MyScript.class;
+ * 
+ *     // Start RSBot using RSBot's own main method
+ *     org.powerbot.Boot.main(args);
+ * 
+ *     // Create the ScriptLoader instance
+ *     ScriptLoader loader = new ScriptLoader(script);
+ *     
+ *     // Create a JFrame with a JButton that runs the Script when clicked
+ *     // (or use any other kind of trigger, whatever fits your needs)
+ *     JFrame f = new JFrame("Launch " + loader.getName());
+ *     JButton startButton = loader.createPlayButton(); // convenience method that delivers a working play button
+ *     startButton.setPreferredSize(new Dimension(240,32));
+ *     f.add(startButton);
+ *     f.pack();
+ *     f.setResizable(false);
+ *     f.setVisible(true);
+ * }
+ * </pre>
+ * <p/>
+ * The above method will launch RSBot, and after that show a Button that allows the script
+ * given in the field <code>script</code> to be started by the RSBot client. 
+ * The script can be stopped using RSBot's native stop button.
+ * <p/>
+ * Note that this class provides a light-weight solution to manually loading scripts.
+ * This is to minimize any delay in RSBot loading time, and also to minimize the amount of 
+ * reflection done on the RSBot client.
+ * <p/>
+ * Another thing to note is that instead of searching the filesystem for classes 
+ * (like Float's ScriptInjector), ScriptLoader depends on Java's ClassLoader to 
+ * get the required classes. 
+ * This means that it must be possible for the ClassLoader to find the Script class(es)
+ * and the RSBot jar file. This implies importing RSBot.jar into your (Eclipse) project.
+ * <p/>
+ * One last thing: Feel free to use and/or modify this file to your heart's content, 
+ * but please provide credit when using it publicly.
+ * <p/>
  * @author Chronio
  */
 public class ScriptLoader {
-    
-    /** The ScriptLoader instance, stored here for global access. */ 
-    // Note: consider moving, not an essential part of ScriptLoader
-    public static ScriptLoader pwLoader = new ScriptLoader("powerwalk.Starter");
     
     private Class<? extends ActiveScript> scriptClass = null;
     
@@ -58,6 +105,18 @@ public class ScriptLoader {
             // if the class could not be found, throw an Exception
             throw new IllegalArgumentException("Invalid Class Name", e);
         }
+    }
+    
+    /**
+     * Creates a new ScriptLoader instance linked to the ActiveScript subclass 
+     * indicated by the Class object
+     * @param script the ActiveScript subclass that this ScriptLoader will load
+     * @throws IllegalArgumentException when <code>script == null</code>
+     */
+    public ScriptLoader(Class<? extends ActiveScript> script) {
+        if (script == null)
+            throw new IllegalArgumentException("Null-value for ActiveScript class");
+        scriptClass = script;
     }
     /**
      * Returns the name of the ActiveScript subclass, as described in the class' Manifest annotation.
@@ -100,12 +159,12 @@ public class ScriptLoader {
                 Constructor<?> cons = scriptDef.getDeclaredConstructor(Manifest.class);
                 Object scriptDefinition = cons.newInstance(scriptClass.getAnnotation(Manifest.class));
                 startMethod.invoke(handler, s, scriptDefinition);
-                Starter.logMessage(getName() + " launched","ScriptLoader");
+                logMessage(getName() + " launched",null);
                 state = running;
             } catch (NoSuchMethodException     | IllegalAccessException | IllegalArgumentException | 
                      InvocationTargetException | NoClassDefFoundError   | InstantiationException   |
                      SecurityException e) {
-                Starter.logMessage("An error occurred while trying to load script.","ScriptLoader",e);
+                logMessage("An error occurred while trying to load script.",e);
             }
         }
     }
@@ -124,19 +183,21 @@ public class ScriptLoader {
     private static Collection<Class<?>> getClasses(ClassLoader cl) {
         // this method loads all classes available to the given ClassLoader by 
         // checking out the ClassLoader's private "classes" field. Reflection is 
-        // used to access this field.
+        // used to access this field. When modifying this class to your own needs, 
+        // be sure not to change the result of this method, since this will also 
+        // alter the ClassLoader's loaded classes.
         try {
             Field f = ClassLoader.class.getDeclaredField("classes");
             f.setAccessible(true);
 
             @SuppressWarnings("unchecked") // << We know it is a Collection of Class objects
             Collection<Class<?>> cls = (Collection<Class<?>>)f.get(cl);
-
+            
             // restore original "private" status of ClassLoader's classes field
             f.setAccessible(false);
             return cls;
         } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException ex) {
-            Starter.logMessage("Exception while reading RSBot classes","ScriptLoader",ex);
+            logMessage("Exception while reading RSBot classes",ex);
         }
         return null;
     }
@@ -162,5 +223,26 @@ public class ScriptLoader {
             }
         });
         return play;
+    }
+    
+    /**
+     * Logs a message to the console using <code>System.err</code>. 
+     * <p/>
+     * Also displays a StackTrace when the given Throwable is not null.
+     * @param message the message to log.
+     * @param t the throwable that caused the message, can be null
+     */
+    public static void logMessage(String message, Throwable t) {
+        StringBuilder sb = new StringBuilder(message).append("\n");
+        if (t != null) {
+            sb.append("  caused by: ").append(t.getClass().getSimpleName()).append("\n");
+            for (StackTraceElement e : t.getStackTrace()) {
+                sb.append("in ")
+                        .append(e.getClassName()).append(": ")
+                        .append(e.getLineNumber()).append(" (")
+                        .append(e.getMethodName()).append(")\n");
+            }
+        }
+        System.err.print(sb.toString());
     }
 }

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE destinations [
+<!ELEMENT destinations (dest*)>
+<!ELEMENT dest EMPTY>
+<!ATTLIST dest name ID #REQUIRED pos CDATA #REQUIRED> ]>
 <destinations>
+    <!-- Cities, Towns and Villages -->
     <dest name="Al Kharid"       pos="(3293,3186)" />
     <dest name="Draynor Village" pos="(3109,3293)" />
     <dest name="Falador"         pos="(2965,3380)" />

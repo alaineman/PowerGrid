@@ -87,8 +87,7 @@ public abstract class Transportable extends Teleportable {
             XMLNode[] node = XMLToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
                 XMLNode transportType = node[0];
-                ArrayList<XMLNode> foundDestinations = transportType.children();
-                for (XMLNode vertex : foundDestinations) {
+                for (XMLNode vertex : transportType) {
                     if (Point.fromString(vertex.get("pos")).equals(getPosition())) {
                        return vertex.get("traits");
                     }
@@ -108,8 +107,7 @@ public abstract class Transportable extends Teleportable {
             XMLNode[] node = XMLToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
                 XMLNode transportType = node[0];
-                ArrayList<XMLNode> foundDestinations = transportType.children();
-                for (XMLNode vertex : foundDestinations) {
+                for (XMLNode vertex : transportType) {
                     if (Point.fromString(vertex.get("pos")).equals(getPosition())) {
                         if (vertex.get("target") != null) {
                             String[] npcidString = vertex.get("target").split("|");

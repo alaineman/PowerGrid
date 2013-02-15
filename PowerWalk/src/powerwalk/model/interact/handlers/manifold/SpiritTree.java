@@ -7,7 +7,6 @@ import org.powerbot.game.api.wrappers.node.SceneObject;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.control.uicontrols.Quests;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -25,8 +24,8 @@ public class SpiritTree extends Transportable {
     
     private static WidgetChild optionMenu = Widgets.get(864, 6);
 
-    public SpiritTree(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<SpiritTree>(5));
+    public SpiritTree(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<SpiritTree>(5));
     }
 
     @Override

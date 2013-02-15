@@ -9,7 +9,6 @@ import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -50,8 +49,8 @@ public class FairyRing extends Transportable {
         }
     }
 
-    public FairyRing(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<FairyRing>(70));
+    public FairyRing(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<FairyRing>(70));
     }
 
     @Override

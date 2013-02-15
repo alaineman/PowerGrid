@@ -9,7 +9,6 @@ import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -24,8 +23,8 @@ public class ShiloCart extends Transportable {
      */
     public final static int[] values = {2230,2265};
     
-    public ShiloCart(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<ShiloCart>(1));
+    public ShiloCart(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<ShiloCart>(1));
     }
 
     @Override

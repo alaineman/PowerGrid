@@ -18,8 +18,8 @@ public class LunarIsleShip extends Transportable {
 
     public static Point shift;
     
-    public LunarIsleShip(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<LunarIsleShip>(1));
+    public LunarIsleShip(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<LunarIsleShip>(1));
     }
 
     @Override

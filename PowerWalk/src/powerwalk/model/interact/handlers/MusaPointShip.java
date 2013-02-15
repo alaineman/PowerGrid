@@ -11,7 +11,6 @@ import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.interactive.NPC;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -21,8 +20,8 @@ import powerwalk.model.interact.Transportable;
 public class MusaPointShip extends Transportable {
     //380, 378, 377, 376
 
-    public MusaPointShip(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<MusaPointShip>(1));
+    public MusaPointShip(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<MusaPointShip>(1));
     }
 
     @Override

@@ -11,7 +11,6 @@ import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.interactive.NPC;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -22,8 +21,8 @@ public class EntranaBoat extends Transportable {
 
     // npc="_657|_2728|_2729"  , pos="(3045,3235)"
     // npc="_658|_2730|_2731"  , pos="(2833,3335)"  
-    public EntranaBoat(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<EntranaBoat>(1));
+    public EntranaBoat(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<EntranaBoat>(1));
     }
 
     @Override

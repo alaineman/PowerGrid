@@ -6,7 +6,6 @@ import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.interactive.NPC;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 import powerwalk.tasks.Task;
 
@@ -17,8 +16,8 @@ import powerwalk.tasks.Task;
 public class WaterbirthIsle extends Transportable {
 
     //224
-    public WaterbirthIsle(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<WaterbirthIsle>(1));
+    public WaterbirthIsle(int x,int y,int z,int rawNumber) {
+        super( x, y, z, rawNumber, new ArrayList<WaterbirthIsle>(1));
     }
 
     @Override

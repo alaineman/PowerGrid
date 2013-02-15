@@ -5,13 +5,11 @@
 package powerwalk.model.interact.handlers;
 
 import java.util.ArrayList;
-import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.interactive.NPC;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -20,8 +18,8 @@ import powerwalk.model.interact.Transportable;
  */
 public class MiscellaniaShip extends Transportable {
 
-    public MiscellaniaShip(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<MiscellaniaShip>(1));
+    public MiscellaniaShip(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<MiscellaniaShip>(1));
     }
 
     @Override

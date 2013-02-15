@@ -10,7 +10,6 @@ import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.interactive.NPC;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -22,8 +21,8 @@ public class NeitiznotBoat extends Transportable {
     // id _5508 , pos (2644,3710), "Travel-Neitiznot"
     // id _5507 , pos (2311,3781), "Travel-Rellekka"
 
-    public NeitiznotBoat(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<NeitiznotBoat>(1));
+    public NeitiznotBoat(int x,int y,int z,int rawNumber){
+        super(x, y, z, rawNumber, new ArrayList<NeitiznotBoat>(1));
     }
     
     @Override

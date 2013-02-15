@@ -1,7 +1,6 @@
 package powerwalk.model.interact.handlers.manifold;
 
 import java.util.ArrayList;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -10,8 +9,8 @@ import powerwalk.model.interact.Transportable;
  */
 public class Canoe extends Transportable{
     
-    public Canoe(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<Canoe>(5));
+    public Canoe(int x,int y,int z,int rawNumber){
+        super(x, y, z, rawNumber, new ArrayList<Canoe>(5));
     }
 
     @Override

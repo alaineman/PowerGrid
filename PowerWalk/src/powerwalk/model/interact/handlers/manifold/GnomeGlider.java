@@ -6,7 +6,6 @@ import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.interactive.NPC;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -17,8 +16,8 @@ public class GnomeGlider extends Transportable {
 
     public final static int[] values = {};
 
-    public GnomeGlider(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<GnomeGlider>(7));
+    public GnomeGlider(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<GnomeGlider>(7));
     }
 
     @Override

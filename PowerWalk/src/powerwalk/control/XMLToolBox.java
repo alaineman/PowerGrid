@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import org.powerbot.game.api.methods.Environment;
 import powerwalk.Starter;
 import powerwalk.model.XMLNode;
@@ -13,7 +14,6 @@ import powerwalk.model.XMLNode;
  * @author Chronio
  */
 public class XMLToolBox {
-    
     private XMLToolBox() {}
     
     /**
@@ -94,7 +94,7 @@ public class XMLToolBox {
      * @param value the value this attribute must have in order to be accepted
      * @return an array of XMLNodes matching the filter
      */
-    public static XMLNode[] filterNodes(XMLNode root,String attribute,String value) {
+    public static XMLNode[] filterNodes(Iterable<XMLNode> root,String attribute,String value) {
         if (attribute == null || root == null || value == null) {
             return null;
         }
@@ -107,12 +107,40 @@ public class XMLToolBox {
         return matches.toArray(new XMLNode[0]);
     }
     
-    public static XMLNode[] filterNodesRecursive(XMLNode root, String attribute,String value) {
+    public static XMLNode[] filterNodesRecursive(Iterable<XMLNode> root, String attribute,String value) {
         ArrayList<XMLNode> matches = new ArrayList<>(Arrays.asList(filterNodes(root, attribute, value)));
         for (XMLNode n : root) {
             matches.addAll(Arrays.asList(filterNodesRecursive(n, attribute, value)));
         }
         return matches.toArray(new XMLNode[0]);
+    }
+    
+    /**
+     * Binary searches the given List of XMLNodes for the required attribute-value pair.
+     * <p/>
+     * This method requires the List to be sorted on the provided attribute name. 
+     * @param list the List to binary search in
+     * @param att the attribute by which the list is sorted
+     * @param value the value for the given attribute to search for
+     * @return the XMLNode with the correct attribute-value pair
+     */
+    public static XMLNode binarySearch(List<XMLNode> list, String att, String value) {
+        int start=0,end=list.size();
+        
+        while (start < end) {
+            int mid = (start+end) / 2;
+            XMLNode midNode = list.get(mid);
+            int cmp = midNode.getOrElse(att, "").compareTo(value);
+            if (cmp == 0) // We found it, return found XMLNode
+                return midNode;
+            
+            if (cmp > 0) { // We're too high, skip all higher
+                end = mid;
+            } else { // We're too low, skip all lower
+                start = mid;
+            }
+        }
+        return null;
     }
     /**
      * Creates an XML Tree from the given list of lines, where every String element represents one XML Tag

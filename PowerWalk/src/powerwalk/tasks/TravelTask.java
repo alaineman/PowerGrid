@@ -20,7 +20,7 @@ public class TravelTask extends StepTask {
 
     private Point destination = null;
     
-    private List<Point> path = null;
+    protected List<Point> path = null;
     private int target = 0;
     
     /**
@@ -51,6 +51,14 @@ public class TravelTask extends StepTask {
      */
     public TravelTask(Point destination) {
         this(destination,0);
+    }
+    
+    public TravelTask() {
+        super(0);
+    }
+    
+    public synchronized void setDestination(Point dest) {
+        destination = dest;
     }
     
     /**
@@ -131,12 +139,15 @@ public class TravelTask extends StepTask {
     /**
      * This method overrides the basic reset behavior of throwing an Exception.
      * <p/>
-     * This method, however, does nothing by itself. TravelTask instances can be 
-     * run over and over again and the path will be recalculated every time. 
+     * This method resets the pathCounter so that the path will be recalculated. 
+     * TravelTask instances can be run over and over again and the path will be 
+     * recalculated every time. 
      * This allows creation of reusable TravelTasks, which can be useful when 
      * moving between a fixed set of Points.
      */
-    @Override public void reset() {}
+    @Override public void reset() {
+        target = 0;
+    }
     
     /**
      * returns the destination that this TravelTask is set to travel to.

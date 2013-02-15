@@ -69,7 +69,7 @@ public class Door extends GameObject implements Interactable {
      * @throws OutOfReachException when the door could not be opened
      */
     public void open() throws OutOfReachException {
-        if (!isOpen()) {
+        if (!stateIsOpen()) {
             SceneObject d = SceneEntities.getAt(getPosition());
             if (d == null) throw new OutOfReachException(getPosition(),"Door not loaded");
             d.click(true);
@@ -81,7 +81,7 @@ public class Door extends GameObject implements Interactable {
      * @throws OutOfReachException when the door could not be closed
      */
     public void close() throws OutOfReachException {
-        if (isOpen()) {
+        if (stateIsOpen()) {
             SceneObject d = SceneEntities.getAt(getPosition());
             if (d == null) throw new OutOfReachException(getPosition(),"Door not loaded");
             d.click(true);
@@ -108,9 +108,19 @@ public class Door extends GameObject implements Interactable {
             throw new UnsupportedOperationException("Operation not supported for this Door");
     }
     
+     /**
+     * returns whether this door is opened.
+     * @return true if this door is opened, false if it is not.
+     */
+    public boolean stateIsOpen() {
+        SceneObject d = SceneEntities.getAt(getPosition());
+        return d.interact("open");
+    }
+    
     /**
      * returns whether this door is opened.
      * @return true if this door is opened, false if it is not.
+     * @deprecated 
      */
     public boolean isOpen() {
         return (-1 != Arrays.binarySearch(openDoors, getRawNumber()));

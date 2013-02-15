@@ -8,7 +8,6 @@ import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -18,13 +17,14 @@ import powerwalk.model.interact.Transportable;
 public class Minecart extends Transportable {
 
     /**
-     * These are the hatch and minecart GameObject values.
+     * These are the hatch and Minecart GameObject values.
      * @see GameObject
+     * @see Minecart
      */
     public final static int[] values = {28094, 7030, 7029, 7028};
 
-    public Minecart(Point p, Collection<? extends Minecart> dests) {
-        super(p.x, p.y, p.z, -1, dests);
+    public Minecart(int x,int y,int z,int rawNumber, Collection<? extends Minecart> dests) {
+        super(x, y, z, rawNumber, dests);
     }
 
     @Override

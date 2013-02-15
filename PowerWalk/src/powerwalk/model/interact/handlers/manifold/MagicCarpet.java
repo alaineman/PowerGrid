@@ -10,7 +10,6 @@ import org.powerbot.game.api.wrappers.interactive.NPC;
 import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**
@@ -21,8 +20,8 @@ public class MagicCarpet extends Transportable {
 
     private static Widget optionMenu = Widgets.get(1188);
 
-    public MagicCarpet(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<MagicCarpet>(10));
+    public MagicCarpet(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<MagicCarpet>(10));
     }
 
     @Override

@@ -27,8 +27,8 @@ public class IcebergBoat extends Transportable {
      */
     public final static int[] values = {21176,};
     
-    public IcebergBoat(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<IcebergBoat>(1));
+    public IcebergBoat(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<IcebergBoat>(1));
     }
 
     @Override

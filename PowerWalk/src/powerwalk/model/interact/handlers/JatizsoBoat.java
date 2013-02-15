@@ -21,8 +21,8 @@ public class JatizsoBoat extends Transportable {
 
     // id _5481 , pos (2644,3709), "Travel-Jatizso"
     // id _5482 , pos (2421,3781), "Travel-Rellekka"
-    public JatizsoBoat(Point p) {
-        super(p.x, p.y, p.z, -1, new ArrayList<JatizsoBoat>(1));
+    public JatizsoBoat(int x,int y,int z,int rawNumber) {
+        super(x, y, z, rawNumber, new ArrayList<JatizsoBoat>(1));
     }
 
     @Override

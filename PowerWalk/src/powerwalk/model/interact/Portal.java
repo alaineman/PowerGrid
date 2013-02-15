@@ -2,8 +2,6 @@ package powerwalk.model.interact;
 
 import java.util.ArrayList;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
-import powerwalk.model.interact.Transportable;
 
 /**
  *
@@ -11,8 +9,8 @@ import powerwalk.model.interact.Transportable;
  */
 public class Portal extends Transportable {
     
-    public Portal(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<Portal>(1));
+    public Portal(int x,int y,int z,int rawNumber){
+        super(x, y, z, rawNumber, new ArrayList<Portal>(1));
     } 
 
     @Override

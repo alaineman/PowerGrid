@@ -2,7 +2,6 @@ package powerwalk.model.interact;
 
 import java.util.ArrayList;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 
 /**
  *
@@ -10,8 +9,8 @@ import powerwalk.model.Point;
  */
 public class Shortcut extends Transportable {
 
-    public Shortcut(Point p){
-        super(p.x, p.y, p.z, -1, new ArrayList<Shortcut>(1));
+    public Shortcut(int x,int y,int z,int rawNumber){
+        super(x, y, z, rawNumber, new ArrayList<Shortcut>(1));
     } 
 
     @Override

@@ -1,11 +1,10 @@
-package powerwalk.control.noticeboard;
+package powerwalk.control.uicontrols;
 
 import java.util.HashMap;
 import java.util.Set;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.Starter;
-import powerwalk.control.WidgetManager;
 
 /**
  * This class deals with checking the status of Quests and as such can be used 

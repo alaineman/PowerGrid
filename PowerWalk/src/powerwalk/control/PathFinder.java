@@ -7,7 +7,6 @@ import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Lodestone;
 import powerwalk.model.world.Wall;
-import sun.security.util.PathList;
 
 /**
  * This class deals with finding a path between two Points in the RSBot

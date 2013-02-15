@@ -1,5 +1,6 @@
-package powerwalk.control;
+package powerwalk.control.uicontrols;
 
+import powerwalk.control.uicontrols.WidgetManager;
 import java.util.Objects;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;

@@ -5,7 +5,7 @@ import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
-import powerwalk.control.noticeboard.Quests;
+import powerwalk.control.uicontrols.Quests;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;

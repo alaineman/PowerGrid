@@ -27,7 +27,14 @@ import powerwalk.view.MapViewer;
 
 /**
  * Starter and Task Manager class for the entire plug-in.
- *
+ * <p/>
+ * This method deals with starting the plug-in, and continously poll and execute 
+ * Tasks from the Bot's Task Queue. This is also the ActiveScript class that runs in RSBot.
+ * <p/>
+ * It also contains publicly accessible logging methods that use java.util.Logger, which 
+ * can be used to log messages to the console. These methods provide a way to log messages
+ * in a similar format regardless of the plug-in.
+ * <p/>
  * @author Chronio
  * @author Alaineman
  */
@@ -76,15 +83,16 @@ public class Starter extends ActiveScript {
         starter = this;
         logMessage("Loading required resources...");
         
-        try (FileInputStream worldMapIn = new FileInputStream(Environment.getStorageDirectory().toString() + "\\" + worldMapFile)) {
-            XMLNode worldMap = XMLToolBox.getXMLTree(worldMapIn);
-            Bot.getBot().getWorldMap().fillFromXML(worldMap);
-            logMessage("WorldMap loaded");
-        } catch (FileNotFoundException e) {
-            logMessage("WorldMap file does not exist; starting with empty WorldMap");
-            try { new File(Environment.getStorageDirectory().toString() + "\\" + worldMapFile).createNewFile(); }
-            catch (IOException iox) {
-                logMessage("The worldMap file could not be created. Map data will not be saved",iox);
+        File f = new File(Environment.getStorageDirectory().toString() + "\\" + worldMapFile);
+        try {
+            if (f.createNewFile()) {
+                logMessage("WorldMap file does not exist; starting with empty WorldMap");
+            } else {
+                try (FileInputStream worldMapIn = new FileInputStream(Environment.getStorageDirectory().toString() + "\\" + worldMapFile)) {
+                    XMLNode worldMap = XMLToolBox.getXMLTree(worldMapIn);
+                    Bot.getBot().getWorldMap().fillFromXML(worldMap);
+                    logMessage("WorldMap loaded");
+                }
             }
         } catch (IOException e) {
             logMessage("WorldMap failed to load",e);
@@ -102,8 +110,9 @@ public class Starter extends ActiveScript {
     }
     
     /**
-     * returns whether PowerWalk is running in Developer mode. Certain log 
-     * messages and options are enabled or disabled based on this flag.
+     * returns whether PowerWalk is running in Developer mode (started with "-pwdev" command-line parameter).
+     * <p/>
+     * Certain log messages and options are enabled or disabled based on this flag.
      * @return whether PowerWalk is running in Developer mode.
      */
     public static boolean devmode() {
@@ -264,7 +273,7 @@ public class Starter extends ActiveScript {
                                 continue;
                             // Canvas used to draw the RSBot environment on is inside a JRootPane in the "Center" 
                             // area of a BorderLayout applied to the JFrame.
-                            // because of this, it is possible to add controls to the north, 
+                            // Because of this, it is possible to add controls to the north, 
                             // west, east and south of the JRootPane by assigning JPanels 
                             // to those areas of the BorderLayout.
                             theControlPanel = new ControlPanel();
@@ -284,7 +293,7 @@ public class Starter extends ActiveScript {
                                 theFrame.setIconImage(ImageIO.read(url)); 
                                 Starter.logMessage("The PowerWalk Control panel has been added to the RSBot JFrame");
                             } catch (IOException | IllegalArgumentException e) {
-                                Starter.logMessage("Error while setting JFrame icon",e);
+                                Starter.logMessage("Exception while setting JFrame icon",e);
                             }
                             break;
                         }

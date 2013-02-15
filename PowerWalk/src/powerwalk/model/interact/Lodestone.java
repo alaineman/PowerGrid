@@ -12,7 +12,7 @@ import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.Bot;
 import powerwalk.Starter;
-import powerwalk.control.WidgetManager;
+import powerwalk.control.uicontrols.WidgetManager;
 import powerwalk.control.XMLToolBox;
 import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;

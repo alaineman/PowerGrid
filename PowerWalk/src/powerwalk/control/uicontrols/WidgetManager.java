@@ -1,4 +1,4 @@
-package powerwalk.control;
+package powerwalk.control.uicontrols;
 
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Tabs;

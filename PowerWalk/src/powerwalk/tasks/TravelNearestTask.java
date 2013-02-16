@@ -46,15 +46,19 @@ public class TravelNearestTask extends TravelTask {
     public String getTraits() {
         return traits;
     }
-    
-    @Override public synchronized void start() {
-        
+    public Iterable<XMLNode> getMatching() {
         XMLNode root = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powerwalk/data/specialLocations.xml"));
-        // look for the correct type, they are sorted on "type", so binSearch:
-        XMLNode typeNode = XMLToolBox.binarySearch(root.children(), "type", type);
+        // look for the correct type, they are sorted on "name", so binSearch:
+        XMLNode typeNode = null;// = XMLToolBox.binarySearch(root.children(), "name", type);
+        for (XMLNode child : root) {
+            if (child.get("name").equals(type)) {
+                typeNode = child;
+                break;
+            }
+        }
         if (typeNode == null) {
             cancel();
-            return;
+            return null;
         }
         // we now have the correct type, now match target
         Iterable<XMLNode> matches;
@@ -67,16 +71,22 @@ public class TravelNearestTask extends TravelTask {
         if (traits != null && !traits.isEmpty()) {
             matches = Arrays.asList(XMLToolBox.filterNodes(matches, "traits", traits));
         }
-        path = calculateNearest(matches);
+        return matches;
     }
     
-    public static List<Point> calculateNearest(Iterable<XMLNode> nodes) {
-        Point player = Bot.getBot().getPosition();
+    @Override public synchronized void start() {
+        Iterable<XMLNode> matches = getMatching();
+        path = calculateNearest(Bot.getBot().getPosition(),matches);
+    }
+    
+    public static List<Point> calculateNearest(Point from, Iterable<XMLNode> nodes) {
+        if(nodes == null) throw new IllegalArgumentException("Invalid Iterable of nodes: null");
+        if (from == null) throw new IllegalArgumentException("Invalid supplied origin: null");
         List<Point> shortest = null;
         int length = Integer.MAX_VALUE;
         for (XMLNode n : nodes) {
             try {
-                List<Point> path = new PathFinder(player,Point.fromString(n.getOrElse("pos", "(0,0)"))).calculatePath();
+                List<Point> path = new PathFinder(from,Point.fromString(n.getOrElse("pos", "(0,0)"))).calculatePath();
                 if (path.size() < length) {
                     shortest = path;
                     length = path.size();

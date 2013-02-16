@@ -108,6 +108,10 @@ public class TravelTask extends StepTask {
      * is set to false, Run mode is automatically enabled.
      */
     @Override public synchronized void step() {
+        if (path == null) {
+            cancel();
+            return;
+        }
         setStepsLeft(path.size() - target);
         Point playerPos = Bot.getBot().getPosition();
         // check the distance to our next point.

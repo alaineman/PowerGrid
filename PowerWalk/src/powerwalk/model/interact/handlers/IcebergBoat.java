@@ -11,7 +11,6 @@ import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.model.OutOfReachException;
-import powerwalk.model.Point;
 import powerwalk.model.interact.Transportable;
 
 /**

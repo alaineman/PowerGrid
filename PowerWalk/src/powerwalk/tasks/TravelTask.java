@@ -8,80 +8,88 @@ import powerwalk.Bot;
 import powerwalk.Starter;
 import powerwalk.control.PathFinder;
 import powerwalk.model.Destination;
+import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Lodestone;
+import powerwalk.model.interact.Transportable;
 
 /**
  * This Task travels to the given destination using all available methods.
+ *
  * @author Chronio
  */
 public class TravelTask extends StepTask {
 
     private Point destination = null;
-    
     protected List<Point> path = null;
     private int target = 0;
-    
+
     /**
      * Creates a new TravelTask set to travel to the specified Point
+     *
      * @param destination the point this TravelTask travels to
      * @param priority the priority of this Task
      */
     public TravelTask(Point destination, int priority) {
         super(priority);
         this.destination = destination;
-        
+
         String name = Destination.getDestination(destination).getName();
-        if (name == null) name = destination.toString();
+        if (name == null) {
+            name = destination.toString();
+        }
         setName("Travel to " + name);
     }
-    
+
     public TravelTask(Destination d, int priority) {
-        super (priority);
+        super(priority);
         this.destination = d.getPosition();
         setName("Travel to " + d.getName());
     }
-    
+
     /**
-     * Creates a new TravelTask set to travel to the specified Point.
-     * <p />
-     * The Task will be made with priority 0.
+     * Creates a new TravelTask set to travel to the specified Point. <p /> The
+     * Task will be made with priority 0.
+     *
      * @param destination the point this TravelTask travels to
      */
     public TravelTask(Point destination) {
-        this(destination,0);
+        this(destination, 0);
     }
-    
+
     public TravelTask() {
         super(0);
     }
-    
+
     public synchronized void setDestination(Point dest) {
         destination = dest;
     }
-    
+
     /**
-     * Calculates a path and checks preconditions for this TravelTask.
-     * The Task is immediately canceled when <code>getDestination() == null</code>, 
-     * or when the PathFinder class has found no path to the given destination.
+     * Calculates a path and checks preconditions for this TravelTask. The Task
+     * is immediately canceled when
+     * <code>getDestination() == null</code>, or when the PathFinder class has
+     * found no path to the given destination.
      */
-    @Override public synchronized void start() {
+    @Override
+    public synchronized void start() {
         target = 0;
-        if (destination == null)
+        if (destination == null) {
             cancel();
-        else {
+        } else {
             try {
                 path = PathFinder.findPath(Bot.getBot().getPosition(), destination);
                 if (Starter.devmode()) {
                     StringBuilder sb = new StringBuilder("Composed path:\n");
                     for (Point p : path) {
                         Lodestone l = Lodestone.getLodestone(p);
-                        if (l == null)
+                        if (l == null) {
                             sb.append("  ").append(p.toString()).append("\n");
-                        else
+                        } else {
                             sb.append("  Lodestone to ").append(l.getName())
-                              .append(" (").append(p.toString()).append(")\n");
+                                    .append(" (").append(p.toString()).append(")\n");
+                        }
                     }
 
                     Starter.logMessage(sb.toString());
@@ -94,20 +102,19 @@ public class TravelTask extends StepTask {
             } catch (OutOfReachException e) {
                 path = new ArrayList<>(1);
                 path.add(Bot.getBot().getPosition());
-                Starter.logMessage("No path found to " + destination + ", task was canceled","TravelTask");
+                Starter.logMessage("No path found to " + destination + ", task was canceled", "TravelTask");
                 cancel();
             }
         }
     }
-    
+
     /**
-     * Attempts to move to the next Point in the path, or waits if no action is 
-     * required.
-     * <p />
-     * When the Player has more then 20 stamina left, but the Player's run mode 
-     * is set to false, Run mode is automatically enabled.
+     * Attempts to move to the next Point in the path, or waits if no action is
+     * required. <p /> When the Player has more then 20 stamina left, but the
+     * Player's run mode is set to false, Run mode is automatically enabled.
      */
-    @Override public synchronized void step() {
+    @Override
+    public synchronized void step() {
         setStepsLeft(path.size() - target);
         Point playerPos = Bot.getBot().getPosition();
         // check the distance to our next point.
@@ -135,46 +142,59 @@ public class TravelTask extends StepTask {
         // wait a while before checking again
         Task.sleep(130, 210);
     }
-    
+
     /**
      * This method overrides the basic reset behavior of throwing an Exception.
      * <p/>
-     * This method resets the pathCounter so that the path will be recalculated. 
-     * TravelTask instances can be run over and over again and the path will be 
-     * recalculated every time. 
-     * This allows creation of reusable TravelTasks, which can be useful when 
-     * moving between a fixed set of Points.
+     * This method resets the pathCounter so that the path will be recalculated.
+     * TravelTask instances can be run over and over again and the path will be
+     * recalculated every time. This allows creation of reusable TravelTasks,
+     * which can be useful when moving between a fixed set of Points.
      */
-    @Override public void reset() {
+    @Override
+    public void reset() {
         target = 0;
     }
-    
+
     /**
      * returns the destination that this TravelTask is set to travel to.
+     *
      * @return the destination of this TravelTask
      */
     public Point getDestination() {
         return new Point(destination);
     }
-    
+
     // walks to the given tile and possibly executes the appropriate action
     private void walkToTile(Point p) {
         Point playerPos = Bot.getBot().getPosition();
         if (playerPos.distance(p) > PathFinder.maxDist) {
             Lodestone l = Lodestone.getLodestone(p);
             if (l != null) {
-                try { 
-                    if (Starter.devmode()) Starter.logMessage("Attempting to follow Lodestone to " + l.getPosition(),"TravelTask");
+                try {
+                    if (Starter.devmode()) {
+                        Starter.logMessage("Attempting to follow Lodestone to " + l.getPosition(), "TravelTask");
+                    }
                     l.follow();
-                    Task.sleep(134,245);
+                    Task.sleep(134, 245);
                     walkToTile(path.get(++target));
                 } catch (OutOfReachException e) {
-                    Starter.logMessage("Failed to follow Lodestone to " + l.getName() + ", aborting travel.","TravelTask",e);
+                    Starter.logMessage("Failed to follow Lodestone to " + l.getName() + ", aborting travel.", "TravelTask", e);
                     cancel();
                 }
             } else {
-                // attempt walkTo anyways
-                Walking.walk(p);
+                //attempt walkTo anyways, insert teleportable / transportable usage
+                GameObject obj = Bot.getBot().getWorldMap().get(p);
+                if (obj instanceof Transportable) {
+                    Transportable trans = (Transportable) obj;
+                    try {
+                        trans.follow();
+                        Task.sleep(200, 400);
+                    } catch (OutOfReachException e) {
+                        Starter.logMessage("Failed to follow " + trans.getClass().getSimpleName() + " to " + trans + ", aborting travel.", "TravelTask", e);
+                        cancel();
+                    }
+                }
             }
         } else {
             Walking.walk(p);

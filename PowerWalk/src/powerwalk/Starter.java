@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,34 +45,39 @@ import powerwalk.view.MapViewer;
         singleinstance = true)
 public class Starter extends ActiveScript {
     
-    /** The ScriptLoader instance that loads PowerWalk. */
-    private static ScriptLoader loader = new ScriptLoader("powerwalk.Starter");
+    /** The ScriptLoader instance that loads PowerGrid. */
+    private static ScriptLoader loader = new ScriptLoader(new Starter());
     
-    /** The Starter instance (also the main ActiveScript of PowerWalk) that is 
-     * running (can be null if PowerWalk is not running).
+    /** The Starter instance (also the main ActiveScript of PowerGrid) that is 
+     * running (can be null if PowerGrid is not running).
      */
     public static Starter starter = null;
     
     private static boolean isStarted = false;
     
-    /** The Logger instance of PowerWalk.
+    /** The Logger instance of PowerGrid.
      * <p/>
      * It is advised to use the logMessage methods of Starter instead of directly 
-     * calling log methods of this Logger. That way 
+     * calling log methods of this Logger.
      */
-    public static final Logger theLogger = Logger.getLogger("PowerWalk");
+    public static final Logger theLogger = Logger.getLogger("PowerGrid");
     private static boolean loggerOk = false; // set to true when logger initialized
     public static final String worldMapFile = "worldmap.xml";
     /** The name of the Plug-in */
-    public static final String productName = "PowerWalk";
+    public static final String productName = "PowerGrid";
     /** The version number */
-    public static final double version = 1.1;
+    public static final double version = 0.1;
     private static Task currentTask = null;
     
     private static boolean DEV_MODE = false;
     
     /** The Control panel that is shown on screen. */
     public static ControlPanel theControlPanel = null;
+    
+    public Starter() {
+        if (isStarted)
+            throw new IllegalStateException("Starter instance already exists");
+    }
     
     /**
      * Creates a Starter instance and shows it.
@@ -83,9 +87,9 @@ public class Starter extends ActiveScript {
         starter = this;
         logMessage("Loading required resources...");
         
-        File f = new File(Environment.getStorageDirectory().toString() + "\\" + worldMapFile);
+        File worldmap = new File(Environment.getStorageDirectory().toString() + "\\" + worldMapFile);
         try {
-            if (f.createNewFile()) {
+            if (worldmap.createNewFile()) {
                 logMessage("WorldMap file does not exist; starting with empty WorldMap");
             } else {
                 try (FileInputStream worldMapIn = new FileInputStream(Environment.getStorageDirectory().toString() + "\\" + worldMapFile)) {
@@ -104,7 +108,7 @@ public class Starter extends ActiveScript {
         Lodestone.addLodestone(51);
         
         ContentFrame.theFrame = new ContentFrame();
-        logMessage("PowerWalk started, waiting for tasks...");
+        logMessage("PowerGrid started, waiting for tasks...");
         isStarted = true;
         if (theControlPanel != null) theControlPanel.notifyStateChange(isStarted);
     }
@@ -154,7 +158,7 @@ public class Starter extends ActiveScript {
      * cleans up as much objects related to PowerWalk as possible.
      */
     @Override public void onStop() {
-        logMessage("stopping PowerWalk...");
+        logMessage("stopping PowerGrid...");
         Bot.getBot().becomeIdle();
         Mapper.stopMapping();
         if (ContentFrame.theFrame != null) {
@@ -162,7 +166,7 @@ public class Starter extends ActiveScript {
             ContentFrame.theFrame.dispose();
             ContentFrame.theFrame = null;
         }
-        logMessage("PowerWalk has been terminated");
+        logMessage("PowerGrid has been terminated");
         
         isStarted = false;
         if (theControlPanel != null) theControlPanel.notifyStateChange(isStarted);
@@ -247,7 +251,7 @@ public class Starter extends ActiveScript {
             switch (param) {
                 case "-pwdev":
                     DEV_MODE = true;
-                    logMessage("Powerwalk started in developer mode");
+                    logMessage("PowerGrid started in developer mode");
                     break;
                 case "-nobar":
                     showBar = false;
@@ -260,7 +264,7 @@ public class Starter extends ActiveScript {
         // start RSBot
         Starter.logMessage("Loading RSBot");
         org.powerbot.Boot.main(params.toArray(new String[0]));
-        Starter.logMessage("RSBot loaded, modifying RSBot JFrame");
+        Starter.logMessage("RSBot loaded, setting up PowerGrid controls");
         
         // set our awesome custom controls to the JFrame
         if (showBar) {
@@ -291,7 +295,7 @@ public class Starter extends ActiveScript {
                             theFrame.setTitle(theFrame.getTitle() + " (running through PowerWalk)");
                             try { 
                                 theFrame.setIconImage(ImageIO.read(url)); 
-                                Starter.logMessage("The PowerWalk Control panel has been added to the RSBot JFrame");
+                                Starter.logMessage("The PowerGrid Control panel has been added to the RSBot JFrame");
                             } catch (IOException | IllegalArgumentException e) {
                                 Starter.logMessage("Exception while setting JFrame icon",e);
                             }
@@ -301,10 +305,16 @@ public class Starter extends ActiveScript {
                 }
             });
         } else {
+            Point pos = null;
+            for (Window w : Window.getWindows()) {
+                pos = new Point(w.getX(),w.getY()+w.getHeight()+24);
+            }
             JFrame f = new JFrame("Launcher");
             f.setLayout(new BorderLayout());
             f.add(new ControlPanel(),"Center");
             f.pack();
+            if (pos != null)
+                f.setLocation(pos);
             f.setVisible(true);
         }
     }
@@ -318,8 +328,8 @@ public class Starter extends ActiveScript {
          */
         public static final Dimension buttonSize = new Dimension(180,32);
         
-        private JLabel messageBox = new JLabel("Status:  PowerWalk is not started");
-        private JButton showMap = new JButton("Show PowerWalk map");
+        private JLabel messageBox = new JLabel("Status:  PowerGrid is not started");
+        private JButton showMap = new JButton("Show PowerGrid map");
         private JButton toggleMapping = new JButton("Disable Mapping");
         /**
          * Creates a new ControlPanel
@@ -387,8 +397,8 @@ public class Starter extends ActiveScript {
         }
         private void notifyStateChange(boolean state) {
             toggleMapping.setEnabled(state);
-            if (state) setMessage("PowerWalk started");
-            else setMessage("PowerWalk stopped");
+            if (state) setMessage("PowerGrid started");
+            else setMessage("PowerGrid stopped");
         }
     }
     
@@ -399,7 +409,7 @@ public class Starter extends ActiveScript {
         handler.setFormatter(new Formatter() {
             @Override public String format(final LogRecord record) {
                 Object[] params = record.getParameters();
-                StringBuilder sb = new StringBuilder("[PowerWalk");
+                StringBuilder sb = new StringBuilder("[PowerGrid");
                 if (params != null && params.length > 0 && params[0] != null) {
                     sb.append(" > ").append(record.getParameters()[0]);
                 }

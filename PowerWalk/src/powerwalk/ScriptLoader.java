@@ -21,14 +21,18 @@ import org.powerbot.game.api.Manifest;
  * scripts. This fills in the gap in PowerBot's functionality, where different 
  * scripts cannot coorporate.
  * <p/>
+ * A ScriptLoader can be instantiated with either a String denoting an ActiveScript subclass,
+ * a Class object representing a ActiveScript subclass, or an ActiveScript instance.
+ * Because of this, ScriptLoader can be used in nearly all situations and setups.
+ * <p/>
  * Special thanks to Float's ScriptInjector class for providing insight into RSBot's
  * way of loading and starting scripts.
  * <p/>
  * <strong>How to use ScriptLoader to run your own plugins from outside RSBot</strong>
  * <p/>
  * The following example demonstrates how to use ScriptLoader to run plugins 
- * without using the RSBot's internal loading mechanism. This also bypasses any 
- * limitations on running time (for as far as is observable).
+ * without needing to use the RSBot's internal loading mechanism. ScriptLoader will 
+ * perform all required method calls to start the ActiveScript in RSBot.
  * <p/>
  * <pre>
  * // Create a main method of your own that creates the ScriptLoader instance and starts RSBot
@@ -42,6 +46,10 @@ import org.powerbot.game.api.Manifest;
  * 
  *     // Create the ScriptLoader instance
  *     ScriptLoader loader = new ScriptLoader(script);
+ *     
+ *     // Alternatively, instantiate the ActiveScript yourself and pass it as an argument.
+ *     // This allows you to configure your script instance before loading it.
+ *     // ScriptLoader loader = new ScriptLoader(new MyScript());
  *     
  *     // Create a JFrame with a JButton that runs the Script when clicked
  *     // (or use any other kind of trigger, whatever fits your needs)
@@ -76,13 +84,14 @@ import org.powerbot.game.api.Manifest;
  */
 public class ScriptLoader {
     
-    private Class<? extends ActiveScript> scriptClass = null;
+    private ActiveScript script = null;
     
-    private static int stopped = 0;
-    private static int busy = 1;
-    private static int running = 2;
+    public static final int stopped = 0;
+    public static final int busy = 1;
+    public static final int running = 2;
+    public static final int paused = 3;
     
-    private int state = stopped;
+    private boolean isBusy = false;
     
     /**
      * Creates a new ScriptLoader instance linked to the ActiveScript subclass 
@@ -97,9 +106,14 @@ public class ScriptLoader {
         try {
             // load and verify the Class Name using reflection
             Class<?> c = Class.forName(scriptClassName);
-            if (ActiveScript.class.isAssignableFrom(c) && c.isAnnotationPresent(Manifest.class))
-                scriptClass = c.asSubclass(ActiveScript.class);
-            else // if the class is not an ActiveScript subclass, throw an Exception
+            if (ActiveScript.class.isAssignableFrom(c) && c.isAnnotationPresent(Manifest.class)) {
+                Class<? extends ActiveScript> scriptClass = c.asSubclass(ActiveScript.class);
+                try { 
+                    script = scriptClass.getConstructor().newInstance();
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    throw new IllegalArgumentException("The given script cannot be instantiated", e);
+                }
+            } else // if the class is not an ActiveScript subclass, throw an Exception
                 throw new IllegalArgumentException(scriptClassName + " does not resemble a valid ActiveScript subclass");
         } catch (ClassNotFoundException e) {
             // if the class could not be found, throw an Exception
@@ -108,23 +122,101 @@ public class ScriptLoader {
     }
     
     /**
-     * Creates a new ScriptLoader instance linked to the ActiveScript subclass 
-     * indicated by the Class object
+     * Creates a new ScriptLoader instance that runs an instance of the ActiveScript subclass 
+     * modeled by the Class object.
      * @param script the ActiveScript subclass that this ScriptLoader will load
-     * @throws IllegalArgumentException when <code>script == null</code>
+     * @throws IllegalArgumentException when <code>script == null</code>, or the 
+     *                                  provided ActiveScript class could not be 
+     *                                  instantiated.
      */
     public ScriptLoader(Class<? extends ActiveScript> script) {
         if (script == null)
             throw new IllegalArgumentException("Null-value for ActiveScript class");
-        scriptClass = script;
+        try { 
+            this.script = script.getConstructor().newInstance();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalArgumentException("The given script cannot be instantiated", e);
+        }
     }
+    
+    /**
+     * Creates a new ScriptLoader instance that runs the given ActiveScript.
+     * @param script the ActiveScript to run
+     * @throws IllegalArgumentException when <code>script == null</code>.
+     */
+    public ScriptLoader(ActiveScript script) {
+        if (script == null)
+            throw new IllegalArgumentException("null value for script");
+        this.script = script;
+    }
+    
+    /**
+     * Returns the ActiveScript instance that this ScriptLoader holds.
+     * @return the ActiveScript instance
+     */
+    public ActiveScript getScript() {
+        return script;
+    }
+    
+    /**
+     * instructs RSBot to set the ActiveScript instance to the desired state.
+     * <p/>
+     * Valid states are running, paused and stopped.
+     * <p/>
+     * Since this method delegates to RSBot for the actual instruction, no guarantees 
+     * can be made that this method behaves as expected in all situations.
+     * <p/>
+     * If the ScriptLoader's state as given by <code>getState()</code> is <code>busy</code>,
+     * this method does nothing and returns false.
+     * <p/>
+     * @param state the desired state
+     * @return true if the operation was succesful, false if it was not.
+     */
+    public boolean setState(int state) {
+        if (getState() == state) 
+            return true;
+        if (isBusy)
+            return false;
+        isBusy = true;
+        switch (state) {
+            case stopped:
+                script.shutdown();
+                break;
+            case paused:
+                script.setPaused(true);
+                break;
+            case running:
+                if (script.isPaused())
+                    script.setPaused(false);
+                else
+                    run();
+                break;
+        }
+        isBusy = false;
+        return getState() == state;
+    }
+    
     /**
      * Returns the name of the ActiveScript subclass, as described in the class' Manifest annotation.
      * @return the name of the ActiveScript according to its Manifest
      */
     public String getName() {
         // return the Manifest associated with this class
-        return scriptClass.getAnnotation(Manifest.class).name();
+        return script.getClass().getAnnotation(Manifest.class).name();
+    }
+
+    /**
+     * Determines and returns the state of the ActiveScript.
+     * <p/>
+     * When this method returns <code>busy</code>, it means that this ScriptLoader
+     * is performing operations on the Script.
+     * @return the state of the ActiveScript
+     */
+    public int getState() {
+        if (isBusy) return busy;
+        if (script.isActive()) return running;
+        if (script.isPaused()) return paused;
+        return stopped;
     }
     
     /**
@@ -133,10 +225,10 @@ public class ScriptLoader {
      * When this is called once, any further calls to this method are ignored.
      */
     public synchronized void run() {
-        if (state != stopped) return;
+        if (getState() != stopped) return;
         // get scriptClass instance and run it.
         // at this moment, reflection has to be used to get to the ScriptLoader class
-        state = busy;
+        isBusy = true;
         Bot bot = Bot.getInstance();
         if (bot != null) {
             try {
@@ -155,18 +247,17 @@ public class ScriptLoader {
                 if (scriptDef == null) throw new NoClassDefFoundError("scriptDef");
                 Method startMethod = fetchMethod(ScriptHandler.class, Boolean.TYPE, Script.class, scriptDef);
                 
-                ActiveScript s = scriptClass.newInstance();
                 Constructor<?> cons = scriptDef.getDeclaredConstructor(Manifest.class);
-                Object scriptDefinition = cons.newInstance(scriptClass.getAnnotation(Manifest.class));
-                startMethod.invoke(handler, s, scriptDefinition);
+                Object scriptDefinition = cons.newInstance(script.getClass().getAnnotation(Manifest.class));
+                startMethod.invoke(handler, script, scriptDefinition);
                 logMessage(getName() + " launched",null);
-                state = running;
             } catch (NoSuchMethodException     | IllegalAccessException | IllegalArgumentException | 
                      InvocationTargetException | NoClassDefFoundError   | InstantiationException   |
                      SecurityException e) {
                 logMessage("An error occurred while trying to load script.",e);
             }
         }
+        isBusy = false;
     }
     
     private static Method fetchMethod(Class<?> clazz, Class<?> returnType, Class<?>... params) throws NoSuchMethodException {
@@ -214,7 +305,7 @@ public class ScriptLoader {
         JButton play = new JButton("Run " + getName());
         play.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                if (state == stopped) {
+                if (getState() == stopped) {
                     JButton theButton = (JButton)e.getSource();
                     theButton.setText(getName() + " running");
                     theButton.setEnabled(false);

@@ -89,7 +89,7 @@ public class TravelNearestTask extends TravelTask {
         Collections.sort(options, new PointComparator(from));
         
         List<Point> shortest = null;
-        // ensure that 3 <= retries <= 5, but retries < options.size()
+        // ensure that 3 <= retries <= 7, but retries < options.size()
         int retries = Math.min(Math.max(3, Math.min(7, options.size()/6)), options.size());
         long startTime = System.currentTimeMillis();
         Iterator<XMLNode> it = options.iterator();

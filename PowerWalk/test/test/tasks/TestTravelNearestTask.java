@@ -1,21 +1,24 @@
 package test.tasks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import static org.hamcrest.CoreMatchers.*;
 import org.hamcrest.Matcher;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import powerwalk.model.Point;
 import powerwalk.model.XMLNode;
 import powerwalk.tasks.TravelNearestTask;
 
-public class TravelNearestTest {
+public class TestTravelNearestTask {
     
     private static TravelNearestTask t;
     
-    public TravelNearestTest() {}
+    public TestTravelNearestTask() {}
     
     @BeforeClass public static void setUp() {
         t = new TravelNearestTask("WaterSource");
@@ -70,5 +73,33 @@ public class TravelNearestTest {
         List<Point> path = TravelNearestTask.calculateNearest(new Point(3100,3463), matches);
         
         assertEquals(new Point(3191,3469), path.get(path.size()-1));
+    }
+    
+    @Test public void testGetMatchingTraits() {
+        TravelNearestTask t2 = new TravelNearestTask("MagicCarpet",null,"Shantay Pass");
+        List<XMLNode> matches = t2.getMatching();
+        assertEquals(1, matches.size());
+        XMLNode res = matches.get(0);
+        assertEquals("(3309,3109)", res.get("pos"));
+    }
+    
+    @Test public void testCalculateNearestNoMatches() {
+        List<XMLNode> matches = new ArrayList<>();
+        List<Point> path = TravelNearestTask.calculateNearest(new Point(), matches);
+        assertNull(path);
+    }
+    
+    @Ignore // note: this test takes ~12 seconds to complete (it tests if the timeout works)
+    @Test public void testCalculateNearestTimeOut() {
+        XMLNode[] nodes = new XMLNode[60];
+        HashMap<String,String> atts = new HashMap<>();
+        atts.put("pos", new Point().toString());
+        atts.put("target", "Fountain");
+        XMLNode data = new XMLNode("location",atts);
+        for (int i=0;i<nodes.length;i++) {
+            nodes[i] = data;
+        }
+        List<Point> path = TravelNearestTask.calculateNearest(new Point(200,200), Arrays.asList(nodes));
+        assertEquals(new Point(), path.get(path.size()-1));
     }
 }

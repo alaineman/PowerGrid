@@ -10,9 +10,9 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import powerwalk.model.Point;
-import powerwalk.model.XMLNode;
-import powerwalk.tasks.TravelNearestTask;
+import powergrid.model.Point;
+import powergrid.model.XMLNode;
+import powergrid.tasks.TravelNearestTask;
 
 public class TestTravelNearestTask {
     

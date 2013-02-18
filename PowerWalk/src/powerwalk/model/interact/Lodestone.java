@@ -10,8 +10,8 @@ import org.powerbot.game.api.methods.input.Mouse;
 import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
-import powerwalk.Bot;
 import powerwalk.PowerGrid;
+import powerwalk.control.Mapper;
 import powerwalk.control.XMLToolBox;
 import powerwalk.control.uicontrols.WidgetManager;
 import powerwalk.model.GameObject;
@@ -51,7 +51,7 @@ public class Lodestone extends Teleportable {
         XMLNode[] matches = XMLToolBox.filterNodes(lodestoneTree, "widget", String.valueOf(dest));
         if (matches.length > 0) {
             Point p = Point.fromString(matches[0].get("pos"));
-            GameObject go = Bot.getBot().getWorldMap().get(p);
+            GameObject go = Mapper.getWorldMap().get(p);
             lodestones.add(new Lodestone(p.x,p.y,p.z,(go == null ? 0 : go.getRawNumber()),dest,matches[0].get("name")));
         }
     }

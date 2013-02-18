@@ -31,7 +31,7 @@ public class ReturnTask extends Task {
     @Override public synchronized void execute() {
         stop = false;
         // save the position for later
-        Point p = Bot.getBot().getPosition();
+        Point p = Bot.getPosition();
         // run the task that was set to run
         runningTask = theTask;
         new TaskRunner(theTask).run();

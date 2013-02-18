@@ -1,5 +1,6 @@
 package powerwalk;
 
+import java.util.PriorityQueue;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import powerwalk.tasks.StepTask;
@@ -8,7 +9,6 @@ import powerwalk.tasks.Task;
 /**
  * Task Manager class for the entire plug-in.
  * <p/>
-<<<<<<< HEAD
  * This method deals with starting the plug-in, and continously poll and execute
  * Tasks from the Bot's Task Queue. This is also the ActiveScript class that
  * runs in RSBot.
@@ -17,10 +17,6 @@ import powerwalk.tasks.Task;
  * java.util.Logger, which can be used to log messages to the console. These
  * methods provide a way to log messages in a similar format regardless of the
  * plug-in.
-=======
- * This method deals with continously polling and executing Tasks from the Bot's 
- * Task Queue. This is also the ActiveScript class that runs in RSBot.
->>>>>>> 53f5b15073f0663fdbeac9f50626bf4f23368edf
  * <p/>
  * @author Chronio
  * @author Alaineman
@@ -31,24 +27,30 @@ import powerwalk.tasks.Task;
         description    = "TaskManager for PowerGrid. It runs the Tasks provided to the Bot",
         version        = PowerGrid.VERSION,
         singleinstance = true)
-public class Starter extends ActiveScript {
+public class TaskManager extends ActiveScript {
     
-    private static Task currentTask = null;
+    public static final TaskManager TM = new TaskManager();
     
-    @Override public void onStart() {
-        
+    private PriorityQueue<Task> pendingTasks = new PriorityQueue<>();
+    private Task currentTask = null;
+    
+    private TaskManager() {}
+    
+    public boolean assignTask(Task t) {
+        if (pendingTasks.contains(t))
+            return false;
+        return pendingTasks.offer(t);
     }
-
+    
     /**
      * executes a Task from the TaskQueue.
      *
      * @return an integer specifying the amount of milliseconds the caller
      * should wait before calling this method again.
      */
-    @Override
-    public int loop() {
-        if (Bot.getBot().tasksPending() > 0) {
-            currentTask = Bot.getBot().retrieveTask();
+    @Override public int loop() {
+        if (tasksPending() > 0) {
+            currentTask = retrieveTask();
             if (currentTask instanceof StepTask) {
                 StepTask task = (StepTask) currentTask;
                 PowerGrid.logMessage("Beginning StepTask \"" + task.getName() + "\"...");
@@ -71,19 +73,30 @@ public class Starter extends ActiveScript {
     }
 
     /**
-     * Ensures the Mapper is stopped and the ContentFrame is destroyed. Also
-     * cleans up as much objects related to PowerWalk as possible.
-     */
-    @Override public void onStop() {
-        
-    }
-
-    /**
      * returns the currently running task.
      *
      * @return the currently running task, or null is no task is running
      */
-    public static Task currentTask() {
+    public Task currentTask() {
         return currentTask;
     }
+    
+    public Task retrieveTask() {
+        return pendingTasks.poll();
+    }
+    
+    public Task checkNextTask() {
+        return pendingTasks.peek();
+    }
+    
+    public int tasksPending() {
+        return pendingTasks.size();
+    }
+    
+    public void emptyQueue() {
+        pendingTasks.clear();
+        if (currentTask != null)
+            currentTask.cancel();
+    }
+    
 }

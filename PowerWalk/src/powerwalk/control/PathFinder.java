@@ -6,9 +6,7 @@ import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
 import powerwalk.model.interact.Lodestone;
-import powerwalk.model.interact.Teleportable;
 import powerwalk.model.interact.Transportable;
-import powerwalk.model.interact.handlers.IcebergBoat;
 import powerwalk.model.world.Wall;
 
 /**
@@ -66,7 +64,7 @@ public class PathFinder {
      * @throws IllegalArgumentException when the given endpoint is null.
      */
     public static List<Point> findPath(Point end) throws OutOfReachException {
-        return new PathFinder(Bot.getBot().getPosition(), end).calculatePath();
+        return new PathFinder(Bot.getPosition(), end).calculatePath();
     }
     /**
      * The maximum distance between two Points in the result Path.
@@ -197,14 +195,14 @@ public class PathFinder {
             new Point(base.x - 1, base.y, base.z)
         };
         for (Point p : edges) {
-            GameObject go = Bot.getBot().getWorldMap().get(p);
+            GameObject go = Mapper.getWorldMap().get(p);
             if (!(go instanceof Wall)) {
                 points.add(p);
             } else if (!((Wall) go).containsType(getDirection(p, base))) {
                 points.add(p);
             }
         }
-        GameObject obj = Bot.getBot().getWorldMap().get(base);
+        GameObject obj = Mapper.getWorldMap().get(base);
         if (obj instanceof Transportable) {
             Transportable trans = (Transportable) obj;
             Transportable[] tray = trans.getDestinations();

@@ -13,6 +13,8 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powerwalk.Bot;
+import powerwalk.TaskManager;
+import powerwalk.control.Mapper;
 import powerwalk.control.XMLToolBox;
 import powerwalk.model.*;
 import powerwalk.model.Point;
@@ -40,7 +42,7 @@ public class MapViewer extends Canvas implements ActionListener {
     public static MapViewer theMapViewer = null;
     
     // the default drawing colors
-    private static HashMap<String,Color> defaults = new HashMap<>(12);
+    private static final HashMap<String,Color> defaults = new HashMap<>(12);
     static { 
         defaults.put("background",  Color.LIGHT_GRAY);
         defaults.put("wall",        Color.DARK_GRAY);
@@ -98,7 +100,7 @@ public class MapViewer extends Canvas implements ActionListener {
      */
     public MapViewer() {
         super();
-        theMap = Bot.getBot().getWorldMap();
+        theMap = Mapper.getWorldMap();
         setSize(r.width*scale, r.height*scale);
     }
     
@@ -178,7 +180,7 @@ public class MapViewer extends Canvas implements ActionListener {
         }
         // try to draw the player, if any exists
         try {
-            Point p = Bot.getBot().getPosition();
+            Point p = Bot.getPosition();
             if (p.x > r.x && p.x < r.x+r.width &&
                 p.y > r.x && p.y < r.y+r.height) {
                 g.setColor(current.get("player"));
@@ -209,7 +211,7 @@ public class MapViewer extends Canvas implements ActionListener {
         File file = new File(path + ""); //TODO link to world map
         try (FileInputStream worldMapIn = new FileInputStream(file)) {
             XMLNode worldMap = XMLToolBox.getXMLTree(worldMapIn);
-            Bot.getBot().getWorldMap().fillFromXML(worldMap);
+            Mapper.getWorldMap().fillFromXML(worldMap);
             System.out.println("The World Map was loaded");
         } catch (IOException e) {
             System.out.println("The World Map failed to load from file: " + file.getAbsolutePath());
@@ -243,8 +245,8 @@ public class MapViewer extends Canvas implements ActionListener {
                     p.x += r.x;
                     p.y += r.y;
                     Point dest = new Point(p.x,p.y);
-                    Bot.getBot().becomeIdle();
-                    Bot.getBot().assignTask(new TravelTask(dest,0));
+                    TaskManager.TM.emptyQueue();
+                    TaskManager.TM.assignTask(new TravelTask(dest,0));
                 }
             }
         });

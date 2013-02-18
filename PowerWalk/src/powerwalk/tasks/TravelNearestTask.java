@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import powerwalk.Bot;
 import powerwalk.PowerGrid;
-import powerwalk.Starter;
 import powerwalk.control.PathFinder;
 import powerwalk.control.XMLToolBox;
 import powerwalk.model.OutOfReachException;
@@ -80,7 +79,7 @@ public class TravelNearestTask extends TravelTask {
     
     @Override public synchronized void start() {
         List<XMLNode> matches = getMatching();
-        path = calculateNearest(Bot.getBot().getPosition(),matches);
+        path = calculateNearest(Bot.getPosition(),matches);
     }
     
     public static List<Point> calculateNearest(final Point from, List<XMLNode> options) {

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.powerbot.game.api.methods.Environment;
 import powerwalk.PowerGrid;
-import powerwalk.Starter;
+import powerwalk.TaskManager;
 import powerwalk.model.XMLNode;
 
 /**

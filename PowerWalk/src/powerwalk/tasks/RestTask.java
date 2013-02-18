@@ -4,7 +4,7 @@ import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.Widgets;
 import powerwalk.Bot;
 import powerwalk.PowerGrid;
-import powerwalk.Starter;
+import powerwalk.TaskManager;
 
 /**
  * Creates a Task that rests the local Player. A boolean can be set to abort 
@@ -61,10 +61,10 @@ public class RestTask extends StepTask {
      */
     @Override public void start() {
         for (int attempt=0;attempt<5;attempt++) {
-            if (Bot.getBot().getState() == Bot.STATE_RESTING) break;
+            if (Bot.getState() == Bot.STATE_RESTING) break;
             Widgets.get(750, 5).interact("Rest");
         }
-        if (Bot.getBot().getState() != Bot.STATE_RESTING) {
+        if (Bot.getState() != Bot.STATE_RESTING) {
             cancel();
             PowerGrid.logMessage("RestTask: Resting Failed");
         }
@@ -80,14 +80,14 @@ public class RestTask extends StepTask {
      * Task ends.
      */
     @Override public synchronized void step() {
-        if (abortOnTask && Bot.getBot().tasksPending() > 0) {
+        if (abortOnTask && TaskManager.TM.tasksPending() > 0) {
             cancel();
         } else {
             if (Walking.getEnergy() >= targetEnergy) {
                 cancel();
                 PowerGrid.logMessage("RestTask: Target Energy (" + targetEnergy + ") achieved, RestTask completed");
             }
-            if (Bot.getBot().getState() != Bot.STATE_RESTING) {
+            if (Bot.getState() != Bot.STATE_RESTING) {
                 // re-run the start method to start resting
                 PowerGrid.logMessage("Currently not resting, restarting RestTask");
                 start();

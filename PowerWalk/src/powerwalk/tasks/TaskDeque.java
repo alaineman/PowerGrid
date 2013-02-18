@@ -2,7 +2,7 @@ package powerwalk.tasks;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
-import powerwalk.Bot;
+import powerwalk.TaskManager;
 
 /**
  * This class executes multiple Tasks in sequence.
@@ -116,7 +116,7 @@ public class TaskDeque {
     public synchronized void moveFirstToQueue() {
         if (theTasks.isEmpty()) return;
         Task t = theTasks.pollFirst();
-        Bot.getBot().assignTask(t);
+        TaskManager.TM.assignTask(t);
     }
     
     /**

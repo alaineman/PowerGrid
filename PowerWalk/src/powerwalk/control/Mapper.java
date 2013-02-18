@@ -5,7 +5,6 @@ import org.powerbot.game.api.methods.Game;
 import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
-import powerwalk.Bot;
 import powerwalk.PowerGrid;
 import powerwalk.model.Collision;
 import powerwalk.model.GameObject;
@@ -127,6 +126,12 @@ public class Mapper extends Thread {
     /** Collision Mask for low walls and fences */
     public static final int RANGEDWALL = (0x800000  | 0x2000000  | 0x8000000 | 0x20000000);
     
+    private static Grid map = new Grid();
+    
+    public static Grid getWorldMap() {
+        return map;
+    }
+    
     /**
      * run-method for the Mapper.
      * <p>It should not be called directly. Instead, the
@@ -140,7 +145,6 @@ public class Mapper extends Thread {
         setName("Mapper");
         PowerGrid.logMessage("started mapping with policy: " + mappingPolicy);
         while (mappingPolicy != MAP_NONE) {
-            Grid map = Bot.getBot().getWorldMap();
             boolean skip = false;
             if (eco_mode) {
                 // optimize CPU-load and reduce CPU-intensity before mapping.

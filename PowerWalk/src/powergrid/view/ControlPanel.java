@@ -35,6 +35,8 @@ public class ControlPanel extends JPanel {
             target = new JFrame("PowerGrid controls");
             target.setLayout(new BorderLayout());
             target.add(cp,"Center");
+            target.pack();
+            target.setVisible(true);
         } else {
             if (addOption == null) 
                 target.add(cp);

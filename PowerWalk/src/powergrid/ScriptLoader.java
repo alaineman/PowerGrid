@@ -1,5 +1,6 @@
 package powergrid;
 
+import com.sun.xml.internal.ws.api.pipe.Tube;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
@@ -89,9 +90,9 @@ public class ScriptLoader {
     public static final int stopped = 0;
     public static final int busy = 1;
     public static final int running = 2;
-    public static final int paused = 3;
     
     private boolean isBusy = false;
+    private boolean isRunning = false;
     
     /**
      * Creates a new ScriptLoader instance linked to the ActiveScript subclass 
@@ -182,9 +183,6 @@ public class ScriptLoader {
             case stopped:
                 script.shutdown();
                 break;
-            case paused:
-                script.setPaused(true);
-                break;
             case running:
                 if (script.isPaused())
                     script.setPaused(false);
@@ -214,8 +212,7 @@ public class ScriptLoader {
      */
     public int getState() {
         if (isBusy) return busy;
-        if (script.isActive()) return running;
-        if (script.isPaused()) return paused;
+        if (isRunning) return running;
         return stopped;
     }
     
@@ -257,7 +254,12 @@ public class ScriptLoader {
                 logMessage("An error occurred while trying to load script.",e);
             }
         }
+        isRunning = true;
         isBusy = false;
+    }
+    
+    public synchronized void stop() {
+        script.shutdown();
     }
     
     private static Method fetchMethod(Class<?> clazz, Class<?> returnType, Class<?>... params) throws NoSuchMethodException {

@@ -1,5 +1,6 @@
 package powergrid;
 
+import java.awt.BorderLayout;
 import java.awt.Window;
 import java.io.File;
 import java.util.Arrays;
@@ -8,6 +9,7 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import org.powerbot.Boot;
 import powergrid.control.Mapper;
@@ -21,7 +23,7 @@ import powergrid.view.ControlPanel;
  * <p/>
  * PowerGrid's main method can take the following arguments:
  * <dl>
- *   <dt>-pgdev</dt>
+ *   <dt>-dev</dt>
  *   <dd>PowerGrid developer mode. Setting this flag logs more detailed messages
  *       to the console.</dd>
  *   <dt>-eco</dt>
@@ -62,16 +64,12 @@ public class PowerGrid {
      */
     public static void main(String[] args) {
         System.out.println("Launching RSBot...");
-        boolean rsBotDevMode = false;
         boolean dev=false,split=false,eco=false;
         Iterator<String> it = Arrays.asList(args).iterator();
         while (it.hasNext()) {
             String arg = it.next().toLowerCase();
             switch(arg) {
-                case "-dev": 
-                    rsBotDevMode = true; 
-                    break;
-                case "-pgdev":
+                case "-dev":
                     dev = true;
                     break;
                 case "-splitui":
@@ -90,17 +88,23 @@ public class PowerGrid {
             }
         }
         
-        // Start RSBot
-        if (rsBotDevMode) {
-            Boot.main(new String[]{"-dev"});
-        } else {
+        // launch RSBot
+        try {
             Boot.main(new String[]{});
+            logMessage("RSBot started");
+        } catch (Exception e) {
+            logMessage("RSBot failed to start because of a " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
         
-        if (!PG.launch(dev,split,eco)) {
-            logMessage("PowerGrid failed to launch");
-        }
-        
+        // Create play button in frame for TaskManager
+        ScriptLoader loader = new ScriptLoader(TaskManager.TM);
+        JButton play = loader.createPlayButton();
+        JFrame frame = new JFrame("Start TM");
+        frame.setLayout(new BorderLayout());
+        play.setPreferredSize(ControlPanel.buttonSize);
+        frame.add(play,"Center");
+        frame.pack();
+        frame.setVisible(true);
     }
     
     private boolean isRunning = false;

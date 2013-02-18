@@ -5,6 +5,7 @@ import java.util.List;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Walking;
 import powerwalk.Bot;
+import powerwalk.PowerGrid;
 import powerwalk.Starter;
 import powerwalk.control.PathFinder;
 import powerwalk.model.Destination;
@@ -80,7 +81,7 @@ public class TravelTask extends StepTask {
         } else {
             try {
                 path = PathFinder.findPath(Bot.getBot().getPosition(), destination);
-                if (Starter.devmode()) {
+                if (PowerGrid.PG.isDevmode()) {
                     StringBuilder sb = new StringBuilder("Composed path:\n");
                     for (Point p : path) {
                         Lodestone l = Lodestone.getLodestone(p);
@@ -92,17 +93,17 @@ public class TravelTask extends StepTask {
                         }
                     }
 
-                    Starter.logMessage(sb.toString());
+                    PowerGrid.logMessage(sb.toString());
                 }
                 if (path.size() > 0) {
                     Point t = path.get(target);
-                    Starter.logMessage("travel to " + path.get(path.size() - 1) + " has started, there are " + path.size() + " points on this path.", "Task");
+                    PowerGrid.logMessage("Travel to " + path.get(path.size() - 1) + " has started, there are " + path.size() + " points on this path.");
                     walkToTile(t);
                 }
             } catch (OutOfReachException e) {
                 path = new ArrayList<>(1);
                 path.add(Bot.getBot().getPosition());
-                Starter.logMessage("No path found to " + destination + ", task was canceled", "TravelTask");
+                PowerGrid.logMessage("No path found to " + destination + ", task was canceled");
                 cancel();
             }
         }
@@ -172,14 +173,13 @@ public class TravelTask extends StepTask {
             Lodestone l = Lodestone.getLodestone(p);
             if (l != null) {
                 try {
-                    if (Starter.devmode()) {
-                        Starter.logMessage("Attempting to follow Lodestone to " + l.getPosition(), "TravelTask");
-                    }
+                    PowerGrid.debugMessage("Attempting to follow Lodestone to " + l.getPosition());
+                    
                     l.follow();
                     Task.sleep(134, 245);
                     walkToTile(path.get(++target));
                 } catch (OutOfReachException e) {
-                    Starter.logMessage("Failed to follow Lodestone to " + l.getName() + ", aborting travel.", "TravelTask", e);
+                    PowerGrid.logMessage("Failed to follow Lodestone to " + l.getName() + ", aborting travel.");
                     cancel();
                 }
             } else {
@@ -191,7 +191,7 @@ public class TravelTask extends StepTask {
                         trans.follow();
                         Task.sleep(200, 400);
                     } catch (OutOfReachException e) {
-                        Starter.logMessage("Failed to follow " + trans.getClass().getSimpleName() + " to " + trans + ", aborting travel.", "TravelTask", e);
+                        PowerGrid.logMessage("Failed to follow " + trans.getClass().getSimpleName() + " to " + trans + ", aborting travel.");
                         cancel();
                     }
                 }

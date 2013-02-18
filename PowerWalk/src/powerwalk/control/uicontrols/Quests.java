@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Set;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
-import powerwalk.Starter;
+import powerwalk.PowerGrid;
 
 /**
  * This class deals with checking the status of Quests and as such can be used 
@@ -143,7 +143,7 @@ public abstract class Quests {
                 }
             }
         }
-        Starter.logMessage("The Quest information has been updated","Quests");
+        PowerGrid.logMessage("The Quest information has been updated");
     }
     
     /**

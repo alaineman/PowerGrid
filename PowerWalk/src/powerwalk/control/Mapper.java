@@ -6,7 +6,7 @@ import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.Bot;
-import powerwalk.Starter;
+import powerwalk.PowerGrid;
 import powerwalk.model.Collision;
 import powerwalk.model.GameObject;
 import powerwalk.model.Grid;
@@ -67,7 +67,7 @@ public class Mapper extends Thread {
                 throw new IllegalThreadStateException("Thread is still running");
         }
         if (policy < 0 || policy > 1) {
-            Starter.logMessage("Illegal State set for Mapper: " + policy + ", state set to MAP_ONCE", "Mapper");
+            PowerGrid.logMessage("Illegal State set for Mapper: " + policy + ", state set to MAP_ONCE");
             policy = MAP_ONCE;
         }
         theMapper = new Mapper();
@@ -81,7 +81,7 @@ public class Mapper extends Thread {
      * unnecessary World Map writes. Instead, the Mapper tries to reduce CPU-load
      * by checking for map data less frequently, but still frequent enough to not miss any data.
      * <p/>
-     * @param mode
+     * @param mode whether to enable Eco mode
      */
     public static synchronized void setEcoMode(boolean mode) {
         eco_mode = mode;
@@ -138,7 +138,7 @@ public class Mapper extends Thread {
     public void run() {
 
         setName("Mapper");
-        Starter.logMessage("started mapping with policy: " + mappingPolicy, "Mapper");
+        PowerGrid.logMessage("started mapping with policy: " + mappingPolicy);
         while (mappingPolicy != MAP_NONE) {
             Grid map = Bot.getBot().getWorldMap();
             boolean skip = false;
@@ -168,7 +168,7 @@ public class Mapper extends Thread {
                         flags = Walking.getCollisionFlags(Game.getPlane());
                         offset = Point.fromTile(Game.getMapBase()).add(new Point(-1,-1));
                     } catch (NullPointerException e) {
-                        Starter.logMessage("Detected Environment unloading","Mapper");
+                        PowerGrid.logMessage("Detected Environment unloading");
                         stopMapping();
                         break;
                     }
@@ -228,23 +228,23 @@ public class Mapper extends Thread {
                         map.addAll(ses);
                         map.addAll(gos);
                     }
-                    if (!XMLToolBox.writeToFile(map.toString(), Starter.worldMapFile)) {
-                        Starter.logMessage("updating the WorldMap in " + Starter.worldMapFile + " failed", "Mapper");
+                    if (!XMLToolBox.writeToFile(map.toString(), "")) {
+                        PowerGrid.logMessage("updating the WorldMap in " + "" + " failed");
                     }
                 } catch (Throwable t) { 
                     // catch anything that passes by: The mapper cannot crash or hang.
-                    Starter.logMessage("Something went wrong while Mapping; Mapping round aborted","Mapper",t);
+                    PowerGrid.logMessage("Something went wrong while Mapping; Mapping round aborted");
                 } 
             }
 
             if (mappingPolicy == MAP_ONCE) {
                 setPolicy(MAP_NONE);
-                Starter.logMessage("stopped after runOnce", "Mapper");
+                PowerGrid.logMessage("Mapper stopped after runOnce");
                 return;
             }
 
         }
-        Starter.logMessage("stopped mapping", "Mapper");
+        PowerGrid.logMessage("stopped mapping");
     }
     
     private int convertToSides(int flag) {

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import powerwalk.Bot;
+import powerwalk.PowerGrid;
 import powerwalk.Starter;
 import powerwalk.control.PathFinder;
 import powerwalk.control.XMLToolBox;
@@ -109,7 +110,7 @@ public class TravelNearestTask extends TravelTask {
                 }
                 retries--;
             } catch (OutOfReachException e) {
-                Starter.logMessage("Found point " + dest + ", but could not reach it","TravelNearestTask",e);
+                PowerGrid.logMessage("Found point " + dest + ", but could not reach it");
             }
         }
         

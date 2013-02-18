@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import powerwalk.Starter;
+import powerwalk.PowerGrid;
 import powerwalk.model.interact.Lodestone;
 import powerwalk.model.interact.handlers.LunarIsleShip;
 import powerwalk.model.interact.handlers.PiratesCove;
@@ -306,7 +306,7 @@ public class Grid {
                         set(p,g);
                     } catch (ClassNotFoundException    | InstantiationException | IllegalAccessException 
                            | InvocationTargetException | NoSuchMethodException  e) {
-                        Starter.logMessage("Construction for \"" + o + "\" failed: " + e);
+                        PowerGrid.logMessage("Construction for \"" + o + "\" failed: " + e);
                         set(p,value);
                     }
                 } else {
@@ -327,7 +327,7 @@ public class Grid {
             else 
                 invalid = true;
         }
-        if (invalid) Starter.logMessage("Invalid data supplied for Grid","Grid");
+        if (invalid) PowerGrid.logMessage("Invalid data supplied for Grid");
     } 
     
     /**

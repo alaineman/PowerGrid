@@ -1,6 +1,6 @@
 package powerwalk.tasks;
 
-import powerwalk.Starter;
+import powerwalk.PowerGrid;
 
 /**
  * Runs a Task instance separate from PowerWalk. It can be used to run tasks 
@@ -27,17 +27,17 @@ public class TaskRunner {
     public synchronized void run() {
         if (task instanceof StepTask) {
             StepTask t = (StepTask) task;
-            Starter.logMessage("Beginning StepTask \"" + t.getName() + "\"...", "TaskRunner");
+            PowerGrid.logMessage("TaskRunner: Beginning StepTask \"" + t.getName() + "\"...");
             t.start();
             while (t.hasMoreSteps()) {
                 t.execute();
             }
             t.finish();
-            Starter.logMessage("StepTask \"" + t.getName() + "\" has ended", "TaskRunner");
+            PowerGrid.logMessage("TaskRunner: StepTask \"" + t.getName() + "\" has ended");
         } else {
-            Starter.logMessage("Beginning Task \"" + task.getName() + "\"...", "TaskRunner");
+            PowerGrid.logMessage("TaskRunner: Beginning Task \"" + task.getName() + "\"...");
             task.execute();
-            Starter.logMessage("Task \"" + task.getName() + "\" has ended.", "TaskRunner");
+            PowerGrid.logMessage("TaskRunner: Task \"" + task.getName() + "\" has ended.");
         }
     }
     

@@ -11,9 +11,9 @@ import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powerwalk.Bot;
-import powerwalk.Starter;
-import powerwalk.control.uicontrols.WidgetManager;
+import powerwalk.PowerGrid;
 import powerwalk.control.XMLToolBox;
+import powerwalk.control.uicontrols.WidgetManager;
 import powerwalk.model.GameObject;
 import powerwalk.model.OutOfReachException;
 import powerwalk.model.Point;
@@ -126,7 +126,7 @@ public class Lodestone extends Teleportable {
             Task.sleep(134,257);
             if (!Mouse.click(w.getCentralPoint(),true)) {
                 // we still failed. Now, something must be wrong. Report and cancel the follow() operation
-                Starter.logMessage("Teleport to " + name + " failed: cannot click widget","Lodestone");
+                PowerGrid.logMessage("Teleport to " + name + " failed: cannot click widget");
                 throw new OutOfReachException(getPosition(),"Failed to click widget");
             }
         }

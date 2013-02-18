@@ -1,9 +1,6 @@
 package powerwalk.tasks;
 
-import java.util.List;
 import org.powerbot.core.script.ActiveScript;
-import org.powerbot.core.script.job.Job;
-import powerwalk.Starter;
 
 /**
  * Task that runs an ActiveScript instance inside of PowerWalk as if it where running in RSBot.
@@ -65,12 +62,6 @@ public class ActiveScriptTask extends StepTask {
      * In the case of an ActiveScriptTask, the onStart() method of the ActiveScript is called.
      */
     @Override public void start() {
-        List<Job> jobs = theScript.getStartupJobs();
-        if (Starter.starter != null) {
-            for (Job j : jobs) {
-                Starter.starter.getContainer().submit(j);
-            }
-        }
         theScript.onStart();
     }
     

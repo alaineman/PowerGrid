@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import powerwalk.Starter;
+import powerwalk.PowerGrid;
 import powerwalk.control.XMLToolBox;
 
 /**
@@ -96,7 +96,7 @@ public class Destination {
                 try { 
                     destinations.put(n.get("name"),Point.fromString(n.get("pos")));
                 } catch (NumberFormatException e) {
-                    Starter.logMessage("A Destination could not be read","Destinations",e);
+                    PowerGrid.logMessage("A Destination could not be read");
                 }
             }
         }

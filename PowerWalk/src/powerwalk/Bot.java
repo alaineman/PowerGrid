@@ -161,7 +161,7 @@ public class Bot {
             if (nearest.x == Integer.MAX_VALUE) {
                 throw new NoSuchElementException("There are no valid Points for this destination");
             }
-            Starter.logMessage("Nearest " + dest + " found at position " + nearest);
+            PowerGrid.logMessage("Nearest " + dest + " found at position " + nearest);
             travelTo(nearest, priority);
         } else {
             throw new IllegalArgumentException("No such location found");
@@ -179,7 +179,7 @@ public class Bot {
      */
     public void assignTask(Task task) {
         taskQueue.offer(task);
-        Starter.logMessage(task.getClass().getSimpleName() + " \"" + task.getName() + "\" assigned with priority " + task.getPriority());
+        PowerGrid.logMessage(task.getClass().getSimpleName() + " \"" + task.getName() + "\" assigned with priority " + task.getPriority());
     }
     
     /**
@@ -278,6 +278,6 @@ public class Bot {
         taskQueue.clear();
         Task current = Starter.currentTask();
         if (current != null) current.cancel();
-        Starter.logMessage("The Bot has become idle","TaskManager");
+        PowerGrid.logMessage("The Bot has become idle");
     }
 }

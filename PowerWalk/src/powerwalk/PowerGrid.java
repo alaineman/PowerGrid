@@ -1,10 +1,17 @@
 package powerwalk;
 
+import java.awt.Window;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
 import org.powerbot.Boot;
 import powerwalk.control.Mapper;
+import powerwalk.view.ControlPanel;
 
 /**
  * Main class for PowerGrid.
@@ -29,6 +36,11 @@ import powerwalk.control.Mapper;
  * @author Chronio
  */
 public class PowerGrid {
+    
+    public static final Logger LOGGER = Logger.getLogger("PowerGrid");
+    /** The PowerGrid version */
+    public static final double VERSION = 0.1;
+    
     /** The PowerGrid instance. */
     public static final PowerGrid PG = new PowerGrid();
     /** The plugin directory. Default is "plugins". */
@@ -72,6 +84,7 @@ public class PowerGrid {
                     File f = new File(it.next());
                     if (f.isDirectory())
                         pluginDirectory = f;
+                    break;
                 default:
                     debugMessage("Unknown command-line parameter: " + arg);
             }
@@ -94,6 +107,8 @@ public class PowerGrid {
     private boolean devmode = false; 
     private boolean splitUI = false;
     private boolean ecoMode = false;
+    
+    private boolean loggersInitialized = false;
     
     private PowerGrid() {}
     
@@ -123,8 +138,22 @@ public class PowerGrid {
         if (isRunning) 
             return false;
         logMessage("starting PowerGrid...");
+        debugMessage("With parameters: Developer mode" 
+                                        + (splitUI ? ", Split user interface":"") 
+                                        + (ecoMode ? ", Eco mode":""));
+        
         Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
+        Mapper.setEcoMode(ecoMode);
         debugMessage("Mapper started");
+        if (splitUI) {
+            ControlPanel.addControlPanel(null, null);
+        } else {
+            for (Window w : Window.getWindows()) {
+                if (w instanceof JFrame)
+                    ControlPanel.addControlPanel((JFrame)w, "South");
+            }
+        }
+        debugMessage("ControlPanel created");
         Runtime.getRuntime().addShutdownHook(terminatorThread);
         logMessage("PowerGrid started");
         isRunning = true;
@@ -167,6 +196,10 @@ public class PowerGrid {
             return false;
         }
     }
+
+    public boolean isDevmode() {
+        return devmode;
+    }
     
     /**
      * Logs a message to the console.
@@ -182,5 +215,45 @@ public class PowerGrid {
      */
     public static void debugMessage(String message) {
         if (PG.devmode) System.out.println("[PowerGrid] <debug> " + message);
+    }
+    
+    
+    
+    private void setLoggerFormatAndHandlers() {
+        if (loggersInitialized) return;
+        LOGGER.setUseParentHandlers(false);
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new Formatter() {
+            @Override public String format(final LogRecord record) {
+                Object[] params = record.getParameters();
+                StringBuilder sb = new StringBuilder("[PowerGrid");
+                if (params != null && params.length > 0 && params[0] != null) {
+                    sb.append(" > ").append(record.getParameters()[0]);
+                }
+                sb.append("] ").append(record.getMessage()).append("\r\n");
+                if (params != null && params.length > 1 && params[1] instanceof Throwable) {
+                    Throwable t = (Throwable)params[1];
+                    sb.append("      caused by ").append(t.getClass().getSimpleName());
+                    sb.append(": ").append(t.getMessage()).append("\r\n");
+                    if (devmode) {
+                        // print stack trace
+                        StackTraceElement[] traces = t.getStackTrace();
+                        for (StackTraceElement e : traces) {
+                            sb.append("        at ").append(e.getClassName()).append(".");
+                            sb.append(e.getMethodName()).append(": ");
+                            int ln = e.getLineNumber();
+                            if (ln > 0) 
+                                sb.append(e.getLineNumber());
+                            else // line numbers less than 0 are invalid
+                                sb.append("(unknown line number)");
+                            sb.append("\r\n");
+                        }
+                    }
+                }
+                return sb.toString();
+            }
+        });
+        LOGGER.addHandler(handler);
+        loggersInitialized = true;
     }
 }

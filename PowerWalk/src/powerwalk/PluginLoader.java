@@ -38,6 +38,7 @@ public class PluginLoader {
         loadClasses();
     }
     
+    @SuppressWarnings("unchecked") 
     private void loadClasses() {
         File[] files = folder.listFiles();
         ArrayList<URL> urls = new ArrayList<>(files.length);
@@ -45,9 +46,9 @@ public class PluginLoader {
             if (f.isFile() && (f.getName().endsWith(".jar") || f.getName().endsWith(".class"))) {
                 try { 
                     urls.add(f.toURI().toURL()); 
-                    if (Starter.devmode()) Starter.logMessage("Plugin found: " + f.getName());
+                    PowerGrid.debugMessage("Plugin found: " + f.getName());
                 } catch(MalformedURLException e) {
-                    Starter.logMessage("Foud malformed url for file: " + f.getName(),"PluginLoader",e);
+                    PowerGrid.logMessage("Foud malformed url for file: " + f.getName());
                 }
             }
         }
@@ -59,7 +60,7 @@ public class PluginLoader {
             classes = Collections.unmodifiableCollection((Collection<Class<?>>)f.get(loader));
             f.setAccessible(false);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            Starter.logMessage("Could not retrieve classes from ClassLoader",e);
+            PowerGrid.logMessage("Could not retrieve classes from ClassLoader");
         }
     }
 

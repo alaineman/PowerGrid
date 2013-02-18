@@ -1,6 +1,8 @@
 package powerwalk.view;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
@@ -11,7 +13,6 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powerwalk.Bot;
-import powerwalk.Starter;
 import powerwalk.control.XMLToolBox;
 import powerwalk.model.*;
 import powerwalk.model.Point;
@@ -20,57 +21,25 @@ import powerwalk.model.world.Wall;
 import powerwalk.tasks.TravelTask;
 
 /**
- * Canvas that the WorldMap is printed on to show the mapped areas in the Grid
+ * Canvas that the WorldMap is printed on to show the mapped areas in the Grid.
  * @author Chronio
  */
-public class MapViewer extends Canvas {
+public class MapViewer extends Canvas implements ActionListener {
     
     /**
      * Shows a MapViewer in a new JFrame
      */
     public static void showMapViewer() {
-        JFrame f = new JFrame("Map View");
-        theMapViewer = new MapViewer();
-        JScrollPane sp = new JScrollPane(theMapViewer);
-        f.setLayout(new BorderLayout());
-        f.add(sp,"Center");
-        f.setSize(r.width*scale + 48,r.height*scale + 48);
-        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        
-        f.setVisible(true);
-        theMapViewer.setupBufferStrategyAndRepaint();
-        theMapViewer.addMouseListener(new MouseAdapter() {
-            @Override public void mouseReleased(MouseEvent me) {
-                if (me.getButton() == MouseEvent.BUTTON1) {
-                    // walk to point that was clicked on map
-                    java.awt.Point p = me.getPoint();
-                    p.x /= scale;
-                    p.y /= scale;
-                    p.x += r.x;
-                    p.y += r.y;
-                    Point dest = new Point(p.x,p.y);
-                    Bot.getBot().becomeIdle();
-                    Bot.getBot().assignTask(new TravelTask(dest,0));
-                }
-            }
-        });
+        if (theMapViewer == null)
+            theMapViewer = new MapViewer();
+        theMapViewer.actionPerformed(null);
     }
     
     private static Grid theMap = null;
     
     public static MapViewer theMapViewer = null;
     
-    // the drawing colors; personal color schemes is a 
-    // possible (optional) future feature
-    public static Color background = Color.LIGHT_GRAY;
-    public static Color walls = Color.DARK_GRAY;
-    public static Color water = new Color(22,53,160);
-    public static Color empty = Color.WHITE;
-    public static Color fences = new Color(147,111,36);
-    public static Color interactions = Color.RED;
-    public static Color player = Color.GREEN;
-    
+    // the default drawing colors
     private static HashMap<String,Color> defaults = new HashMap<>(12);
     static { 
         defaults.put("background",  Color.LIGHT_GRAY);
@@ -82,13 +51,20 @@ public class MapViewer extends Canvas {
         defaults.put("player",      Color.GREEN);
     };
     
+    // custom drawing colors
     private static HashMap<String,Color> custom = new HashMap<>(12);
     
     public static void setCustomColor(String element, Color color) {
         if (color == null || element == null) 
             throw new IllegalArgumentException("Neither the element nor the color is allowed to be null");
-        if (!defaults.containsKey(element))
-            throw new IllegalArgumentException("Not a valid argument");
+        if (!defaults.containsKey(element)) {
+            String values = "";
+            for (String key : defaults.keySet()) {
+                values += ", " + key;
+            }
+            throw new IllegalArgumentException("Not a valid argument, valid arguments are: " + values.substring(2));
+        }
+            
         
         custom.put(element, color);
     }
@@ -178,14 +154,14 @@ public class MapViewer extends Canvas {
                 else
                     g.setColor(current.get("background"));
                 
-                if (go instanceof Wall && scale != 1 && g.getColor().equals(walls)) {
+                if (go instanceof Wall && scale != 1 && g.getColor().equals(current.get("wall"))) {
                     Wall w = (Wall)go;
                     if (w.isType(Wall.BLOCK))
                         g.fillRect(area.x, area.y, scale, scale);
                     else {
-                        g.setColor(empty);
+                        g.setColor(current.get("empty"));
                         g.fillRect(area.x, area.y, scale, scale);
-                        g.setColor(walls);
+                        g.setColor(current.get("wall"));
                         if (w.containsType(Wall.NORTH))
                             g.drawLine(area.x, area.y, area.x+scale-1, area.y);
                         if (w.containsType(Wall.EAST))
@@ -205,12 +181,20 @@ public class MapViewer extends Canvas {
             Point p = Bot.getBot().getPosition();
             if (p.x > r.x && p.x < r.x+r.width &&
                 p.y > r.x && p.y < r.y+r.height) {
-                g.setColor(player);
+                g.setColor(current.get("player"));
                 g.fillRect(scale*(p.x-r.x),scale*(r.height-(p.y-r.y)),scale,scale);
             }
         } catch (NullPointerException p) {}
     }
     
+    /**
+     * Holds drawing when set to true. Resumes drawing when set to false.
+     * <p/>
+     * It can be used to hold drawing while updating the world map. This prevents
+     * tearing.
+     * <p/>
+     * @param hold 
+     */
     public void hold(boolean hold) {
         holding = hold;
     }
@@ -222,7 +206,7 @@ public class MapViewer extends Canvas {
      */
     public static void showMapViewerStandAlone(boolean exitOnClose) {
         String path = System.getProperty("user.home") + "\\Appdata\\Local\\Temp\\PowerWalk\\";
-        File file = new File(path + Starter.worldMapFile);
+        File file = new File(path + ""); //TODO link to world map
         try (FileInputStream worldMapIn = new FileInputStream(file)) {
             XMLNode worldMap = XMLToolBox.getXMLTree(worldMapIn);
             Bot.getBot().getWorldMap().fillFromXML(worldMap);
@@ -235,5 +219,34 @@ public class MapViewer extends Canvas {
     
     public static void main(String[] args) {
         showMapViewerStandAlone(true);
+    }
+    
+    @Override public void actionPerformed(ActionEvent ae) {
+        JFrame f = new JFrame("Map View");
+        JScrollPane sp = new JScrollPane(this);
+        f.setLayout(new BorderLayout());
+        f.add(sp,"Center");
+        f.setSize(r.width*scale + 48,r.height*scale + 48);
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        f.setVisible(true);
+        setupBufferStrategyAndRepaint();
+        addMouseListener(new MouseAdapter() {
+            @Override public void mouseReleased(MouseEvent me) {
+                if (me.getButton() == MouseEvent.BUTTON1) {
+                    // walk to point that was clicked on map
+                    // This might or might not work as-is
+                    java.awt.Point p = me.getPoint();
+                    p.x /= scale;
+                    p.y /= scale;
+                    p.x += r.x;
+                    p.y += r.y;
+                    Point dest = new Point(p.x,p.y);
+                    Bot.getBot().becomeIdle();
+                    Bot.getBot().assignTask(new TravelTask(dest,0));
+                }
+            }
+        });
     }
 }

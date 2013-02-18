@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import org.powerbot.game.api.methods.Environment;
+import powerwalk.PowerGrid;
 import powerwalk.Starter;
 import powerwalk.model.XMLNode;
 
@@ -46,7 +47,7 @@ public class XMLToolBox {
                 vals.put(att, val);
                 xml = xml.substring(closeVal+1);
             } catch (StringIndexOutOfBoundsException e) {
-                Starter.logMessage("Not the entire XML String could be parsed","ToolBox",e);
+                PowerGrid.logMessage("Not the entire XML String could be parsed");
             }
         }
         return vals;
@@ -82,7 +83,7 @@ public class XMLToolBox {
             }
             return getXMLTree(lines,0);
         } catch (IOException iox) {
-            Starter.logMessage("Could not read the InputStream","ToolBox",iox);
+            PowerGrid.logMessage("Could not read the InputStream");
             return null;
         }
     }
@@ -189,7 +190,7 @@ public class XMLToolBox {
         }
         return new XMLNode(tag,attributes,children);
         } catch (Exception e) {
-            Starter.logMessage("Error while parsing XML tree","ToolBox",e);
+            PowerGrid.logMessage("Error while parsing XML tree");
             return null;
         }
     }
@@ -202,14 +203,14 @@ public class XMLToolBox {
             File target = new File(fullpath);
             if (!target.exists()) {
                 target.createNewFile();
-                Starter.logMessage("New File created at " + target.getAbsolutePath(),"ToolBox");
+                PowerGrid.logMessage("New File created at " + target.getAbsolutePath());
             }
             try (FileWriter w = new FileWriter(target)) {
                 w.write(text);
             }
             return true;
         } catch (IOException e) {
-            Starter.logMessage("Error writing to file", "ToolBox", e);
+            PowerGrid.logMessage("Error writing to file");
             return false;
         }
     }

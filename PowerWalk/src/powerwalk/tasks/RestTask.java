@@ -3,6 +3,7 @@ package powerwalk.tasks;
 import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.Widgets;
 import powerwalk.Bot;
+import powerwalk.PowerGrid;
 import powerwalk.Starter;
 
 /**
@@ -65,11 +66,11 @@ public class RestTask extends StepTask {
         }
         if (Bot.getBot().getState() != Bot.STATE_RESTING) {
             cancel();
-            Starter.logMessage("Resting Failed","RestTask");
+            PowerGrid.logMessage("RestTask: Resting Failed");
         }
         if (Walking.getEnergy() >= targetEnergy) {
             cancel();
-            Starter.logMessage("Energy is already suffiecient, task has been canceled","RestTask");
+            PowerGrid.logMessage("RestTask: Energy is already sufficient, task has been canceled");
         }
     }
     
@@ -84,11 +85,11 @@ public class RestTask extends StepTask {
         } else {
             if (Walking.getEnergy() >= targetEnergy) {
                 cancel();
-                Starter.logMessage("Target Energy (" + targetEnergy + ") achieved, RestTask completed","RestTask");
+                PowerGrid.logMessage("RestTask: Target Energy (" + targetEnergy + ") achieved, RestTask completed");
             }
             if (Bot.getBot().getState() != Bot.STATE_RESTING) {
                 // re-run the start method to start resting
-                Starter.logMessage("Currently not resting, restarting RestTask");
+                PowerGrid.logMessage("Currently not resting, restarting RestTask");
                 start();
             }
         }

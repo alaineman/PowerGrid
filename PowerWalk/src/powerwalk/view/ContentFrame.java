@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import powerwalk.Starter;
+import powerwalk.PowerGrid;
 
 /**
  * This JFrame provides a user-friendly way of accessing the functionality of 
@@ -44,7 +44,7 @@ public class ContentFrame extends JFrame {
      * Creates a new ContentFrame and shows it.
      */
     public ContentFrame() {
-        super("PowerWalk - version " + Starter.version);
+        super("PowerGrid - version " + PowerGrid.VERSION);
         createAndShowGUI();
     }
     

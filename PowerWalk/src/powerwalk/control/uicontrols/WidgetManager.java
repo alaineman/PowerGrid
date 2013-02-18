@@ -3,7 +3,7 @@ package powerwalk.control.uicontrols;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Tabs;
 import org.powerbot.game.api.methods.Widgets;
-import powerwalk.Starter;
+import powerwalk.PowerGrid;
 import powerwalk.model.interact.Lodestone;
 
 /**
@@ -93,11 +93,10 @@ public class WidgetManager {
         openTeleportSpells();
         if (!Widgets.get(1092).validate()) {
             if (!Widgets.get(275, 18).getChild(155).click(true))
-                Starter.logMessage("Opening Lodestone Widget failed","WidgetManager");
+                PowerGrid.logMessage("Opening Lodestone Widget failed");
         }
         Task.sleep(1100,1200);
         if (!Widgets.get(1092).validate()) {
-            Starter.logMessage("Opening Lodestone widget takes a long time...","WidgetManager");
             Task.sleep(1200);
         }
         updateLodestones();

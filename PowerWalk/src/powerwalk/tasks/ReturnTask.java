@@ -1,7 +1,7 @@
 package powerwalk.tasks;
 
 import powerwalk.Bot;
-import powerwalk.Starter;
+import powerwalk.PowerGrid;
 import powerwalk.model.Point;
 
 /**
@@ -37,7 +37,7 @@ public class ReturnTask extends Task {
         new TaskRunner(theTask).run();
         
         if (!stop) {
-            Starter.logMessage("Task \"" + theTask.getName() + "\" completed, returning to " + p,"ReturnTask");
+            PowerGrid.logMessage("ReturnTask: Task \"" + theTask.getName() + "\" completed, returning to " + p);
             Task.sleep(200,300);
             // go back to the original position
             runningTask = new TravelTask(p);

@@ -1,6 +1,8 @@
 package powerwalk.model.interact;
 
 import java.util.ArrayList;
+import org.powerbot.game.api.methods.node.SceneEntities;
+import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.model.OutOfReachException;
 
 /**
@@ -15,7 +17,10 @@ public class Portal extends Transportable {
 
     @Override
     protected void handle(Transportable dest) throws OutOfReachException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        SceneObject po = SceneEntities.getAt(this.getPosition());
+        if(po != null){
+            po.interact("Enter");
+        }
     }
 
     @Override

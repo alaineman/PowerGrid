@@ -11,7 +11,7 @@ public class Gate extends Transportable {
     
     public Gate(int x,int y,int z,int rawNumber){
         super(x, y, z, rawNumber, new ArrayList<Gate>(1));
-    }    
+    }
 
     @Override
     protected void handle(Transportable dest) throws OutOfReachException {

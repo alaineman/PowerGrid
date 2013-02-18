@@ -15,10 +15,13 @@ import javax.swing.border.LineBorder;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Environment;
+import org.powerbot.game.api.methods.node.SceneEntities;
+import org.powerbot.game.api.wrappers.node.SceneObject;
 import powerwalk.control.Mapper;
 import powerwalk.control.XMLToolBox;
 import powerwalk.model.XMLNode;
 import powerwalk.model.interact.Lodestone;
+import powerwalk.model.interact.handlers.manifold.FairyRing;
 import powerwalk.tasks.StepTask;
 import powerwalk.tasks.Task;
 import powerwalk.view.ContentFrame;
@@ -27,66 +30,75 @@ import powerwalk.view.MapViewer;
 /**
  * Starter and Task Manager class for the entire plug-in.
  * <p/>
- * This method deals with starting the plug-in, and continously poll and execute 
- * Tasks from the Bot's Task Queue. This is also the ActiveScript class that runs in RSBot.
+ * This method deals with starting the plug-in, and continously poll and execute
+ * Tasks from the Bot's Task Queue. This is also the ActiveScript class that
+ * runs in RSBot.
  * <p/>
- * It also contains publicly accessible logging methods that use java.util.Logger, which 
- * can be used to log messages to the console. These methods provide a way to log messages
- * in a similar format regardless of the plug-in.
+ * It also contains publicly accessible logging methods that use
+ * java.util.Logger, which can be used to log messages to the console. These
+ * methods provide a way to log messages in a similar format regardless of the
+ * plug-in.
  * <p/>
  * @author Chronio
  * @author Alaineman
  */
 @Manifest(
-        authors        = { "Alaineman" , "Chronio" },
-        name           = Starter.productName,
-        description    = "Runs all day!",
-        version        = Starter.version,
-        singleinstance = true)
+        authors = {"Alaineman", "Chronio"},
+name = Starter.productName,
+description = "Runs all day!",
+version = Starter.version,
+singleinstance = true)
 public class Starter extends ActiveScript {
-    
-    /** The ScriptLoader instance that loads PowerGrid. */
+
+    /**
+     * The ScriptLoader instance that loads PowerGrid.
+     */
     private static ScriptLoader loader = new ScriptLoader(new Starter());
-    
-    /** The Starter instance (also the main ActiveScript of PowerGrid) that is 
+    /**
+     * The Starter instance (also the main ActiveScript of PowerGrid) that is
      * running (can be null if PowerGrid is not running).
      */
     public static Starter starter = null;
-    
     private static boolean isStarted = false;
-    
-    /** The Logger instance of PowerGrid.
+    /**
+     * The Logger instance of PowerGrid.
      * <p/>
-     * It is advised to use the logMessage methods of Starter instead of directly 
-     * calling log methods of this Logger.
+     * It is advised to use the logMessage methods of Starter instead of
+     * directly calling log methods of this Logger.
      */
     public static final Logger theLogger = Logger.getLogger("PowerGrid");
     private static boolean loggerOk = false; // set to true when logger initialized
     public static final String worldMapFile = "worldmap.xml";
-    /** The name of the Plug-in */
+    /**
+     * The name of the Plug-in
+     */
     public static final String productName = "PowerGrid";
-    /** The version number */
+    /**
+     * The version number
+     */
     public static final double version = 0.1;
     private static Task currentTask = null;
-    
     private static boolean DEV_MODE = false;
-    
-    /** The Control panel that is shown on screen. */
+    /**
+     * The Control panel that is shown on screen.
+     */
     public static ControlPanel theControlPanel = null;
-    
+
     public Starter() {
-        if (isStarted)
+        if (isStarted) {
             throw new IllegalStateException("Starter instance already exists");
+        }
     }
-    
+
     /**
      * Creates a Starter instance and shows it.
      */
-    @Override public void onStart() {
+    @Override
+    public void onStart() {
         setLoggerFormatAndHandlers();
         starter = this;
         logMessage("Loading required resources...");
-        
+
         File worldmap = new File(Environment.getStorageDirectory().toString() + "\\" + worldMapFile);
         try {
             if (worldmap.createNewFile()) {
@@ -99,52 +111,72 @@ public class Starter extends ActiveScript {
                 }
             }
         } catch (IOException e) {
-            logMessage("WorldMap failed to load",e);
+            logMessage("WorldMap failed to load", e);
         }
         Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
-        
+
         // TODO replace hardcoded available lodestones with correct checking method later
         Lodestone.addLodestone(47);
         Lodestone.addLodestone(51);
-        
+
         ContentFrame.theFrame = new ContentFrame();
         logMessage("PowerGrid started, waiting for tasks...");
         isStarted = true;
-        if (theControlPanel != null) theControlPanel.notifyStateChange(isStarted);
+        if (theControlPanel != null) {
+            theControlPanel.notifyStateChange(isStarted);
+        }
+
+        Task objectTrack = new Task() {
+            @Override
+            public void execute() {
+                SceneObject so;
+                do {
+                    so = SceneEntities.getNearest(FairyRing.values);
+                } while (so == null);
+                for (String i : so.getDefinition().getActions()) {
+                    System.out.println(i);
+                }
+            }
+        };
+        Bot.getBot().assignTask(objectTrack);
     }
-    
+
     /**
-     * returns whether PowerWalk is running in Developer mode (started with "-pwdev" command-line parameter).
+     * returns whether PowerWalk is running in Developer mode (started with
+     * "-pwdev" command-line parameter).
      * <p/>
-     * Certain log messages and options are enabled or disabled based on this flag.
+     * Certain log messages and options are enabled or disabled based on this
+     * flag.
+     *
      * @return whether PowerWalk is running in Developer mode.
      */
     public static boolean devmode() {
         return DEV_MODE;
     }
-    
+
     /**
      * executes a Task from the TaskQueue.
      *
      * @return an integer specifying the amount of milliseconds the caller
      * should wait before calling this method again.
      */
-    @Override public int loop() {
+    @Override
+    public int loop() {
         if (Bot.getBot().tasksPending() > 0) {
             currentTask = Bot.getBot().retrieveTask();
             if (currentTask instanceof StepTask) {
                 StepTask task = (StepTask) currentTask;
-                logMessage("Beginning StepTask \"" + task.getName() + "\"...","TaskManager");
+                logMessage("Beginning StepTask \"" + task.getName() + "\"...", "TaskManager");
                 task.start();
                 while (task.hasMoreSteps()) {
                     task.execute();
                 }
                 task.finish();
-                logMessage("StepTask \"" + task.getName() + "\" has ended","TaskManager");
+                logMessage("StepTask \"" + task.getName() + "\" has ended", "TaskManager");
             } else {
-                logMessage("Beginning Task \"" + currentTask.getName() + "\"...","TaskManager");
+                logMessage("Beginning Task \"" + currentTask.getName() + "\"...", "TaskManager");
                 currentTask.execute();
-                logMessage("Task \"" + currentTask.getName() + "\" has ended.","TaskManager");
+                logMessage("Task \"" + currentTask.getName() + "\" has ended.", "TaskManager");
             }
             currentTask = null;
             return 20;
@@ -157,7 +189,8 @@ public class Starter extends ActiveScript {
      * Ensures the Mapper is stopped and the ContentFrame is destroyed. Also
      * cleans up as much objects related to PowerWalk as possible.
      */
-    @Override public void onStop() {
+    @Override
+    public void onStop() {
         logMessage("stopping PowerGrid...");
         Bot.getBot().becomeIdle();
         Mapper.stopMapping();
@@ -167,9 +200,11 @@ public class Starter extends ActiveScript {
             ContentFrame.theFrame = null;
         }
         logMessage("PowerGrid has been terminated");
-        
+
         isStarted = false;
-        if (theControlPanel != null) theControlPanel.notifyStateChange(isStarted);
+        if (theControlPanel != null) {
+            theControlPanel.notifyStateChange(isStarted);
+        }
     }
 
     /**
@@ -182,70 +217,87 @@ public class Starter extends ActiveScript {
     }
 
     /**
-     * Logs a message to the console. The message will be prefixed by "[PowerWalk] "
-     * <p>The logged message will have a logging level identical to <code>Level.INFO</code></p>
+     * Logs a message to the console. The message will be prefixed by
+     * "[PowerWalk] " <p>The logged message will have a logging level identical
+     * to
+     * <code>Level.INFO</code></p>
+     *
      * @param message the message to log
      */
     public static void logMessage(String message) {
-        if (message != null && !message.isEmpty()) return;
+        if (message != null && !message.isEmpty()) {
+            return;
+        }
         setLoggerFormatAndHandlers();
         theLogger.info(message);
     }
-    
+
     /**
-     * Logs the given message to the console. The message will be prefixed by "[PowerWalk] ".
-     * <p>Group specifies the name that must be displayed along with the message</p>
+     * Logs the given message to the console. The message will be prefixed by
+     * "[PowerWalk] ". <p>Group specifies the name that must be displayed along
+     * with the message</p>
+     *
      * @param message the message to log
      * @param group the group to display for this message
      */
-    public static void logMessage(String message,String group) {
-        if (message != null && !message.isEmpty()) return;
+    public static void logMessage(String message, String group) {
+        if (message != null && !message.isEmpty()) {
+            return;
+        }
         if (group == null || group.isEmpty()) {
             logMessage(message);
         } else {
             setLoggerFormatAndHandlers();
-            theLogger.log(Level.INFO,message,group);
+            theLogger.log(Level.INFO, message, group);
         }
     }
-    
+
     /**
-     * Logs the given message to the console. The message will be prefixed by "[PowerWalk] ".
-     * <p>Group specifies the name that must be displayed along with the message</p>
-     * <p>t specifies the Throwable that caused the message, if any</p>
+     * Logs the given message to the console. The message will be prefixed by
+     * "[PowerWalk] ". <p>Group specifies the name that must be displayed along
+     * with the message</p> <p>t specifies the Throwable that caused the
+     * message, if any</p>
+     *
      * @param message the message to log
      * @param group the group to display for this message
      * @param t the Throwable that caused the message
      */
-    public static void logMessage(String message,String group, Throwable t) {
-        if (message != null && !message.isEmpty()) return;
-        if (t == null)
-            logMessage(message,group);
-        else {
+    public static void logMessage(String message, String group, Throwable t) {
+        if (message != null && !message.isEmpty()) {
+            return;
+        }
+        if (t == null) {
+            logMessage(message, group);
+        } else {
             setLoggerFormatAndHandlers();
-            theLogger.log(Level.INFO,message,new Object[] {group,t});
+            theLogger.log(Level.INFO, message, new Object[]{group, t});
         }
     }
-    
+
     /**
-     * Logs the given message to the console. The message will be prefixed by "[PowerWalk] ".
-     * <p>t specifies the Throwable that caused the message, if any</p>
+     * Logs the given message to the console. The message will be prefixed by
+     * "[PowerWalk] ". <p>t specifies the Throwable that caused the message, if
+     * any</p>
+     *
      * @param message the message to log
      * @param t the Throwable that caused the message
      */
-    public static void logMessage(String message,Throwable t) {
-        if (message != null && !message.isEmpty()) return;
-        if (t == null)
+    public static void logMessage(String message, Throwable t) {
+        if (message != null && !message.isEmpty()) {
+            return;
+        }
+        if (t == null) {
             logMessage(message);
-        else {
+        } else {
             setLoggerFormatAndHandlers();
-            theLogger.log(Level.INFO,message,new Object[]{null,t});
+            theLogger.log(Level.INFO, message, new Object[]{null, t});
         }
     }
-    
+
     public static void main(String[] args) {
         setLoggerFormatAndHandlers();
         boolean showBar = true;
-        
+
         ArrayList<String> params = new ArrayList<>(args.length);
         for (String param : args) {
             switch (param) {
@@ -260,21 +312,23 @@ public class Starter extends ActiveScript {
                     params.add(param);
             }
         }
-        
+
         // start RSBot
         Starter.logMessage("Loading RSBot");
         org.powerbot.Boot.main(params.toArray(new String[0]));
         Starter.logMessage("RSBot loaded, setting up PowerGrid controls");
-        
+
         // set our awesome custom controls to the JFrame
         if (showBar) {
             SwingUtilities.invokeLater(new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     for (Window w : Window.getWindows()) {
                         if (w instanceof JFrame) {
-                            JFrame theFrame = (JFrame)w;
-                            if (!theFrame.getTitle().startsWith("RSBot"))
+                            JFrame theFrame = (JFrame) w;
+                            if (!theFrame.getTitle().startsWith("RSBot")) {
                                 continue;
+                            }
                             // Canvas used to draw the RSBot environment on is inside a JRootPane in the "Center" 
                             // area of a BorderLayout applied to the JFrame.
                             // Because of this, it is possible to add controls to the north, 
@@ -283,21 +337,23 @@ public class Starter extends ActiveScript {
                             theControlPanel = new ControlPanel();
 
                             Dimension frameSize = theFrame.getSize();
-                            if (frameSize == null) frameSize = new Dimension(650,480);
+                            if (frameSize == null) {
+                                frameSize = new Dimension(650, 480);
+                            }
                             frameSize.height += theControlPanel.getPreferredSize().height; // resize the frame to make room for the controlpanel
 
                             theFrame.setSize(frameSize);
                             theFrame.setMinimumSize(frameSize);
 
-                            theFrame.add(theControlPanel,"South");
+                            theFrame.add(theControlPanel, "South");
                             // we replace RSBot's logo with our own and adapt the title a little
                             URL url = ClassLoader.getSystemResource("powerwalk/images/icon_small.png");
                             theFrame.setTitle(theFrame.getTitle() + " (running through PowerWalk)");
-                            try { 
-                                theFrame.setIconImage(ImageIO.read(url)); 
+                            try {
+                                theFrame.setIconImage(ImageIO.read(url));
                                 Starter.logMessage("The PowerGrid Control panel has been added to the RSBot JFrame");
                             } catch (IOException | IllegalArgumentException e) {
-                                Starter.logMessage("Exception while setting JFrame icon",e);
+                                Starter.logMessage("Exception while setting JFrame icon", e);
                             }
                             break;
                         }
@@ -307,64 +363,68 @@ public class Starter extends ActiveScript {
         } else {
             Point pos = null;
             for (Window w : Window.getWindows()) {
-                pos = new Point(w.getX(),w.getY()+w.getHeight()+24);
+                pos = new Point(w.getX(), w.getY() + w.getHeight() + 24);
             }
             JFrame f = new JFrame("Launcher");
             f.setLayout(new BorderLayout());
-            f.add(new ControlPanel(),"Center");
+            f.add(new ControlPanel(), "Center");
             f.pack();
-            if (pos != null)
+            if (pos != null) {
                 f.setLocation(pos);
+            }
             f.setVisible(true);
         }
     }
-    
+
     /**
      * The control panel that appears when launching through this class
      */
     public static class ControlPanel extends JPanel {
+
         /**
          * The size of the Buttons on the ControlPanel
          */
-        public static final Dimension buttonSize = new Dimension(180,32);
-        
+        public static final Dimension buttonSize = new Dimension(180, 32);
         private JLabel messageBox = new JLabel("Status:  PowerGrid is not started");
         private JButton showMap = new JButton("Show PowerGrid map");
         private JButton toggleMapping = new JButton("Disable Mapping");
+
         /**
          * Creates a new ControlPanel
          */
         public ControlPanel() {
-            super(new BorderLayout(5,3));
+            super(new BorderLayout(5, 3));
             createAndShowGUI();
         }
+
         private void createAndShowGUI() {
             setBackground(Color.BLACK);
-            setBorder(new LineBorder(Color.WHITE,2));
-            setPreferredSize(new Dimension(300,72));
-            messageBox.setFont(new Font(messageBox.getFont().getName(),Font.BOLD,14));
+            setBorder(new LineBorder(Color.WHITE, 2));
+            setPreferredSize(new Dimension(300, 72));
+            messageBox.setFont(new Font(messageBox.getFont().getName(), Font.BOLD, 14));
             messageBox.setForeground(Color.WHITE);
             messageBox.setHorizontalAlignment(JLabel.CENTER);
-            
-            messageBox.setPreferredSize(new Dimension(300,30));
+
+            messageBox.setPreferredSize(new Dimension(300, 30));
             showMap.setPreferredSize(buttonSize);
             toggleMapping.setPreferredSize(buttonSize);
             JButton starter = loader.createPlayButton();
             starter.setPreferredSize(buttonSize);
-            
+
             toggleMapping.setEnabled(false);
-            
+
             JPanel buttons = new JPanel();
             buttons.setOpaque(false);
             buttons.add(showMap);
             buttons.add(toggleMapping);
             buttons.add(starter);
-            
-            add(buttons,"North");
-            add(messageBox,"Center");
-            
+
+            add(buttons, "North");
+            add(messageBox, "Center");
+
             showMap.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent ae) {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
                     if (isStarted) { // if it's started we can use the existing world map
                         MapViewer.showMapViewer();
                     } else { // else we have to load the world map first
@@ -373,7 +433,8 @@ public class Starter extends ActiveScript {
                 }
             });
             toggleMapping.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
                     if (Mapper.isMapping()) {
                         Mapper.stopMapping();
                         toggleMapping.setText("Enable Mapping");
@@ -384,30 +445,40 @@ public class Starter extends ActiveScript {
                 }
             });
         }
+
         /**
          * Sets the message on the ControlPanel.
          * <p/>
          * When the message is either null or the empty String, this method does
          * nothing.
+         *
          * @param msg the message to set
          */
         public void setMessage(String msg) {
-            if (msg != null && !msg.isEmpty()) 
+            if (msg != null && !msg.isEmpty()) {
                 messageBox.setText("Status:  " + msg);
+            }
         }
+
         private void notifyStateChange(boolean state) {
             toggleMapping.setEnabled(state);
-            if (state) setMessage("PowerGrid started");
-            else setMessage("PowerGrid stopped");
+            if (state) {
+                setMessage("PowerGrid started");
+            } else {
+                setMessage("PowerGrid stopped");
+            }
         }
     }
-    
+
     private static void setLoggerFormatAndHandlers() {
-        if (loggerOk) return;
+        if (loggerOk) {
+            return;
+        }
         theLogger.setUseParentHandlers(false);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new Formatter() {
-            @Override public String format(final LogRecord record) {
+            @Override
+            public String format(final LogRecord record) {
                 Object[] params = record.getParameters();
                 StringBuilder sb = new StringBuilder("[PowerGrid");
                 if (params != null && params.length > 0 && params[0] != null) {
@@ -415,7 +486,7 @@ public class Starter extends ActiveScript {
                 }
                 sb.append("] ").append(record.getMessage()).append("\r\n");
                 if (params != null && params.length > 1 && params[1] instanceof Throwable) {
-                    Throwable t = (Throwable)params[1];
+                    Throwable t = (Throwable) params[1];
                     sb.append("      caused by ").append(t.getClass().getSimpleName());
                     sb.append(": ").append(t.getMessage()).append("\r\n");
                     if (DEV_MODE) {
@@ -425,10 +496,12 @@ public class Starter extends ActiveScript {
                             sb.append("        at ").append(e.getClassName()).append(".");
                             sb.append(e.getMethodName()).append(": ");
                             int ln = e.getLineNumber();
-                            if (ln > 0) 
+                            if (ln > 0) {
                                 sb.append(e.getLineNumber());
-                            else // line numbers less than 0 are invalid
+                            } else // line numbers less than 0 are invalid
+                            {
                                 sb.append("(unknown line number)");
+                            }
                             sb.append("\r\n");
                         }
                     }

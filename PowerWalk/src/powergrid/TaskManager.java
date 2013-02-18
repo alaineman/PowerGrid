@@ -38,6 +38,10 @@ public class TaskManager extends ActiveScript {
         return pendingTasks.offer(t);
     }
     
+    @Override public void onStart() {
+        PowerGrid.logMessage("TaskManager started");
+    }
+    
     /**
      * executes a Task from the TaskQueue.
      *

@@ -1,12 +1,11 @@
 package powergrid;
 
-import com.sun.xml.internal.ws.api.pipe.Tube;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.Serializable;
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import javax.swing.JButton;
 import org.powerbot.core.bot.Bot;
 import org.powerbot.core.bot.handlers.ScriptHandler;
@@ -232,15 +231,10 @@ public class ScriptLoader {
                 // unfortunately, RSBot has some required classes obfuscated, 
                 // so reflection has to be used to fetch the required objects and
                 // classes.
-                Method getHandler = fetchMethod(Bot.class, ScriptHandler.class);
-                ScriptHandler handler = (ScriptHandler)getHandler.invoke(bot);
-                Class<?> scriptDef = null;
-                for (Class<?> c : getClasses(getClass().getClassLoader())) {
-                    if (Comparable.class.isAssignableFrom(c) && Serializable.class.isAssignableFrom(c) &&
-                        c.getModifiers() == (Modifier.PUBLIC | Modifier.FINAL)) {
-                        scriptDef = c; // << the ScriptDefinition class that is used to read the Manifest
-                    }
-                }
+                ScriptHandler handler = bot.getScriptHandler();
+                Class<?> scriptDef = org.powerbot.v.class; // dirty obfuscated hardcode.
+                // it solves the issue, but for some reason it doesn't work any other way
+                
                 if (scriptDef == null) throw new NoClassDefFoundError("scriptDef");
                 Method startMethod = fetchMethod(ScriptHandler.class, Boolean.TYPE, Script.class, scriptDef);
                 
@@ -288,7 +282,7 @@ public class ScriptLoader {
             
             // restore original "private" status of ClassLoader's classes field
             f.setAccessible(false);
-            return cls;
+            return Collections.unmodifiableCollection(cls);
         } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException ex) {
             logMessage("Exception while reading RSBot classes",ex);
         }

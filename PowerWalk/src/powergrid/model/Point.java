@@ -114,7 +114,7 @@ public class Point implements Locatable {
     
     /**
      * Calculates and returns the distance between (0,0) and this Point, ignoring the plane.
-     * @return the length of the vector denoted by this Point, where this Point's z coordinate is taken as 0.
+     * @return the length of the vector denoted by this Point, where this Point's z coordinate is ignored.
      */
     public double lengthOnPlane() {
         return Math.sqrt(x*x + y*y);

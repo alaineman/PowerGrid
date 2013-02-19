@@ -84,13 +84,14 @@ public class TaskDeque {
     public synchronized void executeOne() {
         Task t = theTasks.pollFirst();
         if (t != null)
-            new TaskRunner(t).run();
+            t.execute();
     }
     
     /**
      * Removes the first n Tasks from the Deque and executes them in order.
      * <p/>
-     * if <code>n &lt; 0</code>, no tasks will be executed. If <code>n &gt; size()</code>
+     * if <code>n &lt; 0</code>, no tasks will be executed. If 
+     * <code>n &gt; size()</code>, all tasks will be executed.
      * @param n the number of tasks to execute
      */
     public synchronized void executeN(int n) {
@@ -103,7 +104,7 @@ public class TaskDeque {
     /**
      * Removes and executes all Tasks from the Deque.
      * <p/>
-     * This method is effectively the same as calling <code>executeN(Integer.MAX_VALUE);</code>
+     * This method is a shorthand for calling <code>executeN(Integer.MAX_VALUE);</code>
      */
     public synchronized void executeAll() {
         executeN(Integer.MAX_VALUE);

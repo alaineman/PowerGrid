@@ -34,14 +34,14 @@ public class ReturnTask extends Task {
         Point p = Bot.getPosition();
         // run the task that was set to run
         runningTask = theTask;
-        new TaskRunner(theTask).run();
+        theTask.execute();
         
         if (!stop) {
             PowerGrid.logMessage("ReturnTask: Task \"" + theTask.getName() + "\" completed, returning to " + p);
             Task.sleep(200,300);
             // go back to the original position
             runningTask = new TravelTask(p);
-            new TaskRunner(runningTask).run();
+            runningTask.execute();
             runningTask = null;
         }
     }

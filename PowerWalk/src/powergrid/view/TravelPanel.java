@@ -5,8 +5,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Map.Entry;
-import java.util.Set;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -70,8 +68,6 @@ public class TravelPanel extends JPanel {
     public void setData(String query) {
         entries.removeAll();
         query = query.toLowerCase();
-        
-        entries.setSize(ContentFrame.theFrame.getSize());
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx=0;

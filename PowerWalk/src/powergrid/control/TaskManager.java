@@ -4,7 +4,6 @@ import java.util.PriorityQueue;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import powergrid.PowerGrid;
-import powergrid.tasks.StepTask;
 import powergrid.tasks.Task;
 
 /**
@@ -56,20 +55,9 @@ public class TaskManager extends ActiveScript {
     @Override public int loop() {
         if (tasksPending() > 0) {
             currentTask = retrieveTask();
-            if (currentTask instanceof StepTask) {
-                StepTask task = (StepTask) currentTask;
-                PowerGrid.logMessage("Beginning StepTask \"" + task.getName() + "\"...");
-                task.start();
-                while (task.hasMoreSteps()) {
-                    task.execute();
-                }
-                task.finish();
-                PowerGrid.logMessage("StepTask \"" + task.getName() + "\" has ended");
-            } else {
-                PowerGrid.logMessage("Beginning Task \"" + currentTask.getName() + "\"...");
-                currentTask.execute();
-                PowerGrid.logMessage("Task \"" + currentTask.getName() + "\" has ended.");
-            }
+            PowerGrid.logMessage("Beginning " + currentTask.getClass().getSimpleName() + " \"" + currentTask.getName() + "\"...");
+            currentTask.execute();
+            PowerGrid.logMessage(currentTask.getClass().getSimpleName() + " \"" + currentTask.getName() + "\" has ended.");
             currentTask = null;
             return 20;
         } else {

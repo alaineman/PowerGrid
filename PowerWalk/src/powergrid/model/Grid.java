@@ -1,13 +1,5 @@
 package powergrid.model;
 
-import powergrid.model.interact.handlers.manifold.CharterShip;
-import powergrid.model.interact.handlers.manifold.Canoe;
-import powergrid.model.interact.handlers.manifold.SpiritTree;
-import powergrid.model.interact.handlers.manifold.Minecart;
-import powergrid.model.interact.handlers.manifold.MagicCarpet;
-import powergrid.model.interact.handlers.manifold.HotAirBalloon;
-import powergrid.model.interact.handlers.manifold.FairyRing;
-import powergrid.model.interact.handlers.manifold.GnomeGlider;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,13 +7,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import powergrid.PowerGrid;
 import powergrid.model.interact.Lodestone;
-import powergrid.model.interact.handlers.LunarIsleShip;
-import powergrid.model.interact.handlers.PiratesCove;
-import powergrid.model.interact.handlers.WaterbirthIsle;
-import powergrid.model.world.Door;
-import powergrid.model.world.Enemy;
-import powergrid.model.world.Person;
-import powergrid.model.world.Wall;
+import powergrid.model.interact.handlers.*;
+import powergrid.model.interact.handlers.manifold.*;
+import powergrid.model.world.*;
 
 /**
  * Three-dimensional data structure for GameObjects.

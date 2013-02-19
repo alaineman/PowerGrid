@@ -1,9 +1,5 @@
 package powergrid.view;
 
-import powergrid.model.Collision;
-import powergrid.model.GameObject;
-import powergrid.model.XMLNode;
-import powergrid.model.Grid;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,10 +13,13 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powergrid.Bot;
-import powergrid.control.TaskManager;
 import powergrid.control.Mapper;
+import powergrid.control.TaskManager;
 import powergrid.control.XMLToolBox;
+import powergrid.model.GameObject;
+import powergrid.model.Grid;
 import powergrid.model.Point;
+import powergrid.model.XMLNode;
 import powergrid.model.interact.Interactable;
 import powergrid.model.world.Wall;
 import powergrid.tasks.TravelTask;
@@ -154,7 +153,7 @@ public class MapViewer extends Canvas implements ActionListener {
                     g.setColor(current.get("water"));
                 else if (go.getRawNumber() == -3)
                     g.setColor(current.get("fence"));
-                else if (go instanceof Collision)
+                else if (go instanceof Wall)
                     g.setColor(current.get("wall"));
                 else
                     g.setColor(current.get("background"));

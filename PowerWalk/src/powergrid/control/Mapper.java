@@ -6,7 +6,6 @@ import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powergrid.PowerGrid;
-import powergrid.model.Collision;
 import powergrid.model.GameObject;
 import powergrid.model.Grid;
 import powergrid.model.Point;
@@ -201,7 +200,7 @@ public class Mapper extends Thread {
                                     break;
                                 case 0: // set walkable tile
                                     if (g == null) gos.put(p, new GameObject(p,0));
-                                    else if (g instanceof Collision)
+                                    else if (g instanceof Wall)
                                         gos.put(p, new GameObject(p, Math.abs(g.getRawNumber())));
                                     break;
                                 case WATER: // set water as -5 in the Grid
@@ -213,7 +212,7 @@ public class Mapper extends Thread {
                                         gos.put(p, new Wall(p, -5, Wall.BLOCK));
                                     else if (sides != 0)
                                         gos.put(p, new Wall(p,num,sides));
-                                    else if (g instanceof Collision)
+                                    else if (g instanceof Wall)
                                         gos.put(p, new GameObject(p,g.getRawNumber()));
                             }
                         }

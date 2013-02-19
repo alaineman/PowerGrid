@@ -45,7 +45,7 @@ public class Bot {
         if (dest == null) 
             throw new IllegalArgumentException("Undefined Destination: " + name);
         // travel to the matched destination
-        TaskManager.TM.assignTask(new TravelTask(dest,priority));
+        TaskManager.getTM().assignTask(new TravelTask(dest,priority));
     }
     
     /**
@@ -55,7 +55,7 @@ public class Bot {
      * @param priority The priority of this Task
      */
     public static void travelTo(Point p, int priority) {
-        TaskManager.TM.assignTask(new TravelTask(p,priority));
+        TaskManager.getTM().assignTask(new TravelTask(p,priority));
     }
     
     /**
@@ -65,7 +65,7 @@ public class Bot {
      * @param abortOnTask whether this Task should be aborted when other Tasks are present.
      */
     public static void rest(int priority, boolean abortOnTask) {
-        TaskManager.TM.assignTask(new RestTask(priority,abortOnTask));
+        TaskManager.getTM().assignTask(new RestTask(priority,abortOnTask));
     }
     
     /**
@@ -85,7 +85,7 @@ public class Bot {
         if (Players.getLocal().isMoving()) return STATE_WALKING;
         int anim = Players.getLocal().getAnimation();
         if (anim == 12108 || anim == 2033 || anim == 2716 || anim == 11786 || anim == 5713) return STATE_RESTING;
-        if (TaskManager.TM.tasksPending() == 0) return STATE_IDLE;
+        if (TaskManager.getTM().tasksPending() == 0) return STATE_IDLE;
         return STATE_UNKNOWN;
     }
     

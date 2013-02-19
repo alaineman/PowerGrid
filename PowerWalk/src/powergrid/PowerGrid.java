@@ -97,7 +97,7 @@ public class PowerGrid {
         }
         
         // Create play button in frame for TaskManager
-        ScriptLoader loader = new ScriptLoader(TaskManager.TM);
+        ScriptLoader loader = new ScriptLoader(TaskManager.getTM());
         JButton play = loader.createPlayButton();
         JFrame frame = new JFrame("Start TM");
         frame.setLayout(new BorderLayout());

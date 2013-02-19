@@ -22,15 +22,20 @@ import powergrid.tasks.Task;
         name           = "PowerGrid TaskManager",
         description    = "TaskManager for PowerGrid. It runs the Tasks it receives.",
         version        = PowerGrid.VERSION,
-        singleinstance = true)
+        singleinstance = false)
 public class TaskManager extends ActiveScript {
     
-    public static final TaskManager TM = new TaskManager();
+    private static TaskManager tm = new TaskManager();
+    public static TaskManager getTM() {
+        return tm;
+    }
     
     private PriorityQueue<Task> pendingTasks = new PriorityQueue<>();
     private Task currentTask = null;
     
-    private TaskManager() {}
+    private TaskManager() {
+        tm = this;
+    }
     
     public boolean assignTask(Task t) {
         if (pendingTasks.contains(t))
@@ -70,6 +75,10 @@ public class TaskManager extends ActiveScript {
         } else {
             return 10;
         }
+    }
+
+    @Override public void onStop() {
+        PowerGrid.logMessage("TaskManager stopped");
     }
 
     /**

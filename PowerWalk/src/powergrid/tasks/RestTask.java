@@ -80,7 +80,7 @@ public class RestTask extends StepTask {
      * Task ends.
      */
     @Override public synchronized void step() {
-        if (abortOnTask && TaskManager.TM.tasksPending() > 0) {
+        if (abortOnTask && TaskManager.getTM().tasksPending() > 0) {
             cancel();
         } else {
             if (Walking.getEnergy() >= targetEnergy) {

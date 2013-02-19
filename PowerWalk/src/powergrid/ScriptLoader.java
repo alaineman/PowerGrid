@@ -2,15 +2,13 @@ package powergrid;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.*;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import javax.swing.JButton;
 import org.powerbot.core.bot.Bot;
 import org.powerbot.core.bot.handlers.ScriptHandler;
 import org.powerbot.core.script.ActiveScript;
-import org.powerbot.core.script.Script;
 import org.powerbot.game.api.Manifest;
 
 /**
@@ -54,7 +52,7 @@ import org.powerbot.game.api.Manifest;
  *     // Create a JFrame with a JButton that runs the Script when clicked
  *     // (or use any other kind of trigger, whatever fits your needs)
  *     JFrame f = new JFrame("Launch " + loader.getName());
- *     JButton startButton = loader.createPlayButton(); // convenience method that delivers a working play button
+ *     JButton startButton = loader.createPlayButton(); // convenience method that delivers a working play/stop button
  *     startButton.setPreferredSize(new Dimension(240,32));
  *     f.add(startButton);
  *     f.pack();
@@ -69,13 +67,13 @@ import org.powerbot.game.api.Manifest;
  * <p/>
  * Note that this class provides a light-weight solution to manually loading scripts.
  * This is to minimize any delay in RSBot loading time, and also to minimize the amount of 
- * reflection done on the RSBot client.
+ * reflection done on the RSBot client. ScriptLoader can also be controlled through Java code
+ * by using the start() and stop() methods of a ScriptLoader instance.
  * <p/>
  * Another thing to note is that instead of searching the filesystem for classes 
- * (like Float's ScriptInjector), ScriptLoader depends on Java's ClassLoader to 
- * get the required classes. 
- * This means that it must be possible for the ClassLoader to find the Script class(es)
- * and the RSBot jar file. This implies importing RSBot.jar into your (Eclipse) project.
+ * (like Float's ScriptInjector), ScriptLoader solely depends on Java's Reflect to 
+ * get the required classes. This means that RSBot has to be included as an external 
+ * library for ScriptLoader to work.
  * <p/>
  * One last thing: Feel free to use and/or modify this file to your heart's content, 
  * but please provide credit when using it publicly.
@@ -86,12 +84,15 @@ public class ScriptLoader {
     
     private ActiveScript script = null;
     
+    private static Class<?> scriptDef = null;
+    private static Method startMethod = null;
+    
     public static final int stopped = 0;
     public static final int busy = 1;
     public static final int running = 2;
     
     private boolean isBusy = false;
-    private boolean isRunning = false;
+    private boolean hasStarted = false;
     
     /**
      * Creates a new ScriptLoader instance linked to the ActiveScript subclass 
@@ -159,47 +160,16 @@ public class ScriptLoader {
     }
     
     /**
-     * instructs RSBot to set the ActiveScript instance to the desired state.
-     * <p/>
-     * Valid states are running, paused and stopped.
-     * <p/>
-     * Since this method delegates to RSBot for the actual instruction, no guarantees 
-     * can be made that this method behaves as expected in all situations.
-     * <p/>
-     * If the ScriptLoader's state as given by <code>getState()</code> is <code>busy</code>,
-     * this method does nothing and returns false.
-     * <p/>
-     * @param state the desired state
-     * @return true if the operation was succesful, false if it was not.
-     */
-    public boolean setState(int state) {
-        if (getState() == state) 
-            return true;
-        if (isBusy)
-            return false;
-        isBusy = true;
-        switch (state) {
-            case stopped:
-                script.shutdown();
-                break;
-            case running:
-                if (script.isPaused())
-                    script.setPaused(false);
-                else
-                    run();
-                break;
-        }
-        isBusy = false;
-        return getState() == state;
-    }
-    
-    /**
      * Returns the name of the ActiveScript subclass, as described in the class' Manifest annotation.
-     * @return the name of the ActiveScript according to its Manifest
+     * @return the name of the ActiveScript according to its Manifest, or null if the ActiveScript does
+     *         not have a Manifest annotation
      */
     public String getName() {
-        // return the Manifest associated with this class
-        return script.getClass().getAnnotation(Manifest.class).name();
+        // return the Manifest name attribute associated with this class
+        if (!script.getClass().isAnnotationPresent(Manifest.class)) 
+            return null;
+        else 
+            return script.getClass().getAnnotation(Manifest.class).name();
     }
 
     /**
@@ -211,7 +181,7 @@ public class ScriptLoader {
      */
     public int getState() {
         if (isBusy) return busy;
-        if (isRunning) return running;
+        if (hasStarted) return running;
         return stopped;
     }
     
@@ -222,6 +192,7 @@ public class ScriptLoader {
      */
     public synchronized void run() {
         if (getState() != stopped) return;
+        
         // get scriptClass instance and run it.
         // at this moment, reflection has to be used to get to the ScriptLoader class
         isBusy = true;
@@ -229,64 +200,70 @@ public class ScriptLoader {
         if (bot != null) {
             try {
                 // unfortunately, RSBot has some required classes obfuscated, 
-                // so reflection has to be used to fetch the required objects and
+                // so reflection has to be used to fetch the required methods and
                 // classes.
                 ScriptHandler handler = bot.getScriptHandler();
-                Class<?> scriptDef = org.powerbot.v.class; // dirty obfuscated hardcode.
-                // it solves the issue, but for some reason it doesn't work any other way
-                
-                if (scriptDef == null) throw new NoClassDefFoundError("scriptDef");
-                Method startMethod = fetchMethod(ScriptHandler.class, Boolean.TYPE, Script.class, scriptDef);
-                
+                if (scriptDef == null || startMethod == null) {
+                    // If the ScriptDef and startMethod were not yet found, look for them
+                    Method[] methods = ScriptHandler.class.getDeclaredMethods();
+                    for (Method m : methods) {
+                        if (m.getName().equals("start")) {
+                            scriptDef = m.getParameterTypes()[1];
+                            startMethod = m;
+                            logMessage("ScriptLoader: ScriptDefinition class found and loaded as " + scriptDef.getName(),null);
+                            break;
+                        }
+                    }
+                    if (scriptDef == null) {
+                        logMessage("Required ScriptDefinition class not found, aborting",null);
+                        isBusy = false;
+                        return;
+                    }
+                }
                 Constructor<?> cons = scriptDef.getDeclaredConstructor(Manifest.class);
                 Object scriptDefinition = cons.newInstance(script.getClass().getAnnotation(Manifest.class));
                 startMethod.invoke(handler, script, scriptDefinition);
-                logMessage(getName() + " launched",null);
+                logMessage("ScriptLoader: " + getName() + " launched",null);
             } catch (NoSuchMethodException     | IllegalAccessException | IllegalArgumentException | 
                      InvocationTargetException | NoClassDefFoundError   | InstantiationException   |
                      SecurityException e) {
                 logMessage("An error occurred while trying to load script.",e);
             }
+            hasStarted = true;
+        } else {
+            logMessage("ScriptLoader: RSBot doesn't seem to be running", null);
         }
-        isRunning = true;
         isBusy = false;
     }
     
+    /**
+     * stops the running script.
+     * <p/>
+     * If the script is not running, this method does nothing.
+     * <p/>
+     * Once a script has been stopped, a new ScriptHandler has to be created to 
+     * start the script again.
+     */
     public synchronized void stop() {
-        script.shutdown();
+        
+        if (hasStarted) {
+            ScriptHandler handler = Bot.getInstance().getScriptHandler();
+            handler.shutdown();
+        }
+        logMessage("ScriptLoader: " + getName() + " stopped",null);
     }
     
-    private static Method fetchMethod(Class<?> clazz, Class<?> returnType, Class<?>... params) throws NoSuchMethodException {
-        // This method checks all methods in a given class to match the given
-        // pattern of input and output arguments.
-        for (Method m : clazz.getDeclaredMethods()) {
-            if (m.getReturnType().equals(returnType) &&
-                Arrays.equals(params, m.getParameterTypes()))
-                return m;
-        }
-        throw new NoSuchMethodException();
-    }
-    
-    private static Collection<Class<?>> getClasses(ClassLoader cl) {
-        // this method loads all classes available to the given ClassLoader by 
-        // checking out the ClassLoader's private "classes" field. Reflection is 
-        // used to access this field. When modifying this class to your own needs, 
-        // be sure not to change the result of this method, since this will also 
-        // alter the ClassLoader's loaded classes.
-        try {
-            Field f = ClassLoader.class.getDeclaredField("classes");
-            f.setAccessible(true);
-
-            @SuppressWarnings("unchecked") // << We know it is a Collection of Class objects
-            Collection<Class<?>> cls = (Collection<Class<?>>)f.get(cl);
-            
-            // restore original "private" status of ClassLoader's classes field
-            f.setAccessible(false);
-            return Collections.unmodifiableCollection(cls);
-        } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException ex) {
-            logMessage("Exception while reading RSBot classes",ex);
-        }
-        return null;
+    /**
+     * Returns a copy of this ScriptLoader.
+     * <p/>
+     * The copy can be run regardless of the state of this ScriptLoader.
+     * @return a copy of this ScripLoader
+     * @throws IllegalArgumentException when the ActiveScript class has no accessible
+     *                                  parameterless constructor
+     */
+    public ScriptLoader copyLoader() {
+        ScriptLoader copy = new ScriptLoader(script.getClass());
+        return copy;
     }
     
     /**
@@ -301,11 +278,13 @@ public class ScriptLoader {
         JButton play = new JButton("Run " + getName());
         play.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
+                JButton theButton = (JButton)e.getSource();
                 if (getState() == stopped) {
-                    JButton theButton = (JButton)e.getSource();
-                    theButton.setText(getName() + " running");
-                    theButton.setEnabled(false);
+                    theButton.setText("Stop " + getName());
                     run();
+                } else {
+                    theButton.setText("Run " + getName());
+                    stop();
                 }
             }
         });
@@ -324,7 +303,7 @@ public class ScriptLoader {
         if (t != null) {
             sb.append("  caused by: ").append(t.getClass().getSimpleName()).append("\n");
             for (StackTraceElement e : t.getStackTrace()) {
-                sb.append("in ")
+                sb.append("    in ")
                         .append(e.getClassName()).append(": ")
                         .append(e.getLineNumber()).append(" (")
                         .append(e.getMethodName()).append(")\n");

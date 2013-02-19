@@ -116,7 +116,7 @@ public class TaskDeque {
     public synchronized void moveFirstToQueue() {
         if (theTasks.isEmpty()) return;
         Task t = theTasks.pollFirst();
-        TaskManager.TM.assignTask(t);
+        TaskManager.getTM().assignTask(t);
     }
     
     /**

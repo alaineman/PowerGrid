@@ -19,7 +19,7 @@ public class IOHandler {
     private IOHandler() {}
     
     /**
-     * Copies a File using Java NIO.
+     * Copies a File using Java NIO FileChannels.
      * <p/>
      * This is generally the fastest way to copy files, but it will be blocked by 
      * a SecurityManager if the SecurityManager does not allow reading/writing to the
@@ -62,6 +62,8 @@ public class IOHandler {
     
     /**
      * Writes the given Object's String value to the given File. 
+     * <p/>
+     * The write can be blocked by a SecurityManager
      * @param destination the destination to write to
      * @param data the Object to write
      * @throws IOException when the data could not be written
@@ -102,6 +104,15 @@ public class IOHandler {
         }
     }
     
+    /**
+     * Reads a File from the specified location and returns the result as a String.
+     * <p/>
+     * A SecurityException may be thrown if a SecurityManager does not allow access
+     * to the given File.
+     * @param origin the File to read from
+     * @return the result String
+     * @throws IOException when the read operation failed.
+     */
     public static String read(File origin) throws IOException {
         StringBuilder sb = new StringBuilder();
         try (FileReader reader = new FileReader(origin)) {
@@ -112,6 +123,17 @@ public class IOHandler {
         return sb.toString();
     }
     
+    /**
+     * Reads the given File and returns the result as a String.
+     * <p/>
+     * If the provided File is inaccessible, the File is first 
+     * copied to a temporary File, and then read using the read(File) method.
+     * <p/>
+     * Any and all IOExceptions are caught within this method.
+     * <p/>
+     * @param origin the File to read from
+     * @return the result String, which may be null in case of failure.
+     */
     public static String readSafe(File origin) {
         if (origin.canRead()) {
             try { return read(origin); }

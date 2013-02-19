@@ -1,6 +1,7 @@
 package powergrid;
 
 import org.powerbot.game.api.methods.interactive.Players;
+import powergrid.control.TaskManager;
 import powergrid.model.Destination;
 import powergrid.model.Point;
 import powergrid.tasks.RestTask;

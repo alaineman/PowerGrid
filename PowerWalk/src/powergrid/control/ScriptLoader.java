@@ -1,4 +1,4 @@
-package powergrid;
+package powergrid.control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -133,7 +133,7 @@ public class ScriptLoader {
     public ScriptLoader(Class<? extends ActiveScript> script) {
         if (script == null)
             throw new IllegalArgumentException("Null-value for ActiveScript class");
-        try { 
+        try {
             this.script = script.getConstructor().newInstance();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new IllegalArgumentException("The given script cannot be instantiated", e);

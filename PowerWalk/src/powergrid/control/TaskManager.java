@@ -1,17 +1,17 @@
-package powergrid;
+package powergrid.control;
 
 import java.util.PriorityQueue;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
+import powergrid.PowerGrid;
 import powergrid.tasks.StepTask;
 import powergrid.tasks.Task;
 
 /**
  * Task Manager class for the entire plug-in.
  * <p/>
- * This method deals with starting the plug-in, and continously poll and execute
- * Tasks from the Bot's Task Queue. This is also the ActiveScript class that
- * runs in RSBot.
+ * This method deals continously polling and executing Tasks from its Task Queue. 
+ * This is also the ActiveScript class that runs in RSBot.
  * <p/>
  * The TaskManager uses RSBot to run.
  * @author Chronio

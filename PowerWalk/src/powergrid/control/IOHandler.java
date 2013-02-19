@@ -1,4 +1,4 @@
-package powergrid;
+package powergrid.control;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +12,10 @@ import org.powerbot.game.api.methods.Environment;
 /**
  * Handles basic I/O functions, such as writing and reading from files and moving 
  * or copying files.
+ * <p/>
+ * This class has been made to allow File I/O operations even in directories that 
+ * are blocked by a SecuriryManager. Use the copyShell, readSafe and writeSafe 
+ * methods for this purpose.
  * <p/>
  * @author Chronio
  */

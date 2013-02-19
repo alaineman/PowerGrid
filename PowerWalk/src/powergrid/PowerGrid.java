@@ -1,18 +1,20 @@
 package powergrid;
 
-import java.awt.BorderLayout;
 import java.awt.Window;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import javax.swing.JButton;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import org.powerbot.Boot;
 import powergrid.control.Mapper;
+import powergrid.control.ScriptLoader;
+import powergrid.control.TaskManager;
+import powergrid.plugins.Plugin;
+import powergrid.plugins.PluginLoader;
 import powergrid.view.ControlPanel;
 
 /**
@@ -39,7 +41,6 @@ import powergrid.view.ControlPanel;
  */
 public class PowerGrid {
     
-    public static final Logger LOGGER = Logger.getLogger("PowerGrid");
     /** The PowerGrid version */
     public static final double VERSION = 0.1;
     
@@ -55,6 +56,8 @@ public class PowerGrid {
         }
     };
     
+    private static Collection<Class<? extends Plugin>> plugins = null;
+    
     /**
      * Main method of PowerGrid. 
      * <p/>
@@ -63,6 +66,7 @@ public class PowerGrid {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
         System.out.println("Launching RSBot...");
         boolean dev=false,split=false,eco=false;
         Iterator<String> it = Arrays.asList(args).iterator();
@@ -82,29 +86,32 @@ public class PowerGrid {
                     File f = new File(it.next());
                     if (f.isDirectory())
                         pluginDirectory = f;
+                    else
+                        logMessage("The provided plugins folder (" + f.getName() + ") is not a valid directory");
                     break;
                 default:
                     debugMessage("Unknown command-line parameter: " + arg);
             }
         }
+        // Load the plugins in the plugin folder
+        PluginLoader pl = new PluginLoader(pluginDirectory);
+        plugins = pl.getSubclasses(Plugin.class);
         
         // launch RSBot
+        long passedTime = System.currentTimeMillis() - startTime;
         try {
             Boot.main(new String[]{});
             logMessage("RSBot started");
         } catch (Exception e) {
             logMessage("RSBot failed to start because of a " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
+        startTime = System.currentTimeMillis();
+        // Launch PowerGrid
+        PG.launch(dev,split,eco);
         
-        // Create play button in frame for TaskManager
-        ScriptLoader loader = new ScriptLoader(TaskManager.getTM());
-        JButton play = loader.createPlayButton();
-        JFrame frame = new JFrame("Start TM");
-        frame.setLayout(new BorderLayout());
-        play.setPreferredSize(ControlPanel.buttonSize);
-        frame.add(play,"Center");
-        frame.pack();
-        frame.setVisible(true);
+        passedTime += System.currentTimeMillis() - startTime;
+        
+        System.out.println("PowerGrid started in " + passedTime/1000d +  "s");
     }
     
     private boolean isRunning = false;
@@ -112,7 +119,8 @@ public class PowerGrid {
     private boolean splitUI = false;
     private boolean ecoMode = false;
     
-    private boolean loggersInitialized = false;
+    private ControlPanel theControlPanel = null;
+    private ScriptLoader taskManagerLoader = null;
     
     private PowerGrid() {}
     
@@ -152,12 +160,29 @@ public class PowerGrid {
         if (splitUI) {
             ControlPanel.addControlPanel(null, null);
         } else {
+            PowerGrid.debugMessage("Modifying RSBot JFrame...");
             for (Window w : Window.getWindows()) {
-                if (w instanceof JFrame)
-                    ControlPanel.addControlPanel((JFrame)w, "South");
+                if (w instanceof JFrame) {
+                    JFrame f = (JFrame)w;
+                    theControlPanel = ControlPanel.addControlPanel(f, "South");
+                    f.pack();
+                    try {
+                        BufferedImage icon = ImageIO.read(ClassLoader.getSystemResource("powergrid/images/icon_small.png"));
+                        f.setIconImage(icon);
+                        f.setTitle(f.getTitle() + " - Running PowerGrid v" + PowerGrid.VERSION);
+                        PowerGrid.debugMessage("JFrame modification complete");
+                    } catch (IOException e) {
+                        PowerGrid.logMessage("Error setting image on RSBot JFrame: " + e);
+                    }
+                }
             }
         }
         debugMessage("ControlPanel created");
+        
+        taskManagerLoader = new ScriptLoader(TaskManager.getTM());
+        taskManagerLoader.run();
+        debugMessage("TaskManager started");
+        
         Runtime.getRuntime().addShutdownHook(terminatorThread);
         logMessage("PowerGrid started");
         isRunning = true;
@@ -181,6 +206,12 @@ public class PowerGrid {
         } catch (IllegalStateException e) {} // was already shutting down
         Mapper.stopMapping();
         debugMessage("Mapper stopped");
+        theControlPanel.getParent().remove(theControlPanel);
+        theControlPanel = null;
+        debugMessage("ControlPanel removed");
+        taskManagerLoader.stop();
+        taskManagerLoader = taskManagerLoader.copyLoader();
+        debugMessage("TaskManager stopped");
         logMessage("PowerGrid stopped");
         isRunning = false;
         return false;
@@ -189,7 +220,8 @@ public class PowerGrid {
     /**
      * terminates PowerGrid and launches it again using the same settings.
      * <p/>
-     * This does not affect RSBot or any running scripts.
+     * This does not affect RSBot or any running scripts, but it will clear the TaskQueue
+     * and cause the Mapper to reset to MAP_CONTINOUSLY.
      * <p/>
      * @return whether the operation was succesful
      */
@@ -214,50 +246,40 @@ public class PowerGrid {
     }
     
     /**
+     * Logs a message to the console, followed by a stack trace of the provided 
+     * Throwable if PowerGrid runs in devmode.
+     * <p/>
+     * If PowerGrid is not running in devmode, only a line with "caused by 
+     * ExceptionClass: Exception message" will be displayed.
+     * @param message the message to log
+     * @param cause the Throwable that caused the message to be logged
+     */
+    public static void logMessage(String message, Throwable cause) {
+        if (cause == null) {
+            logMessage(message);
+            return;
+        }
+        System.out.println("[PowerGrid] " + message);
+        System.out.println("  caused by: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
+        if (PG.isDevmode()) {
+            StackTraceElement[] trace = cause.getStackTrace();
+            int elementCount = 0;
+            for (StackTraceElement e : trace) {
+                System.out.println("    in " + e.getClassName() + ": " + e.getLineNumber() + " (" + e.getMethodName() + ")");
+                elementCount++;
+                if (elementCount > 10) {
+                    System.out.println("    (" + (trace.length-10) + " more...)");
+                    break;
+                }
+            }
+        }
+    }
+    
+    /**
      * Logs a message to the console only if PowerGrid is running in devmode.
      * @param message the message to log
      */
     public static void debugMessage(String message) {
-        if (PG.devmode) System.out.println("[PowerGrid] <debug> " + message);
-    }
-    
-    
-    
-    private void setLoggerFormatAndHandlers() {
-        if (loggersInitialized) return;
-        LOGGER.setUseParentHandlers(false);
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new Formatter() {
-            @Override public String format(final LogRecord record) {
-                Object[] params = record.getParameters();
-                StringBuilder sb = new StringBuilder("[PowerGrid");
-                if (params != null && params.length > 0 && params[0] != null) {
-                    sb.append(" > ").append(record.getParameters()[0]);
-                }
-                sb.append("] ").append(record.getMessage()).append("\r\n");
-                if (params != null && params.length > 1 && params[1] instanceof Throwable) {
-                    Throwable t = (Throwable)params[1];
-                    sb.append("      caused by ").append(t.getClass().getSimpleName());
-                    sb.append(": ").append(t.getMessage()).append("\r\n");
-                    if (devmode) {
-                        // print stack trace
-                        StackTraceElement[] traces = t.getStackTrace();
-                        for (StackTraceElement e : traces) {
-                            sb.append("        at ").append(e.getClassName()).append(".");
-                            sb.append(e.getMethodName()).append(": ");
-                            int ln = e.getLineNumber();
-                            if (ln > 0) 
-                                sb.append(e.getLineNumber());
-                            else // line numbers less than 0 are invalid
-                                sb.append("(unknown line number)");
-                            sb.append("\r\n");
-                        }
-                    }
-                }
-                return sb.toString();
-            }
-        });
-        LOGGER.addHandler(handler);
-        loggersInitialized = true;
+        if (PG.isDevmode()) System.out.println("[PowerGrid] <debug> " + message);
     }
 }

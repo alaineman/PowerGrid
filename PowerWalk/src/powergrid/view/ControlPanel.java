@@ -1,9 +1,13 @@
 package powergrid.view;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -29,14 +33,14 @@ public class ControlPanel extends JPanel {
      * @param addOption the add option. null means no option will be used.
      * @return the ControlPanel instance that was added to the JFrame.
      */
-    public static ControlPanel addControlPanel(JFrame target, Object addOption) {
+    public static ControlPanel addControlPanel(Container target, Object addOption) {
         ControlPanel cp = new ControlPanel();
         if (target == null) {
-            target = new JFrame("PowerGrid controls");
-            target.setLayout(new BorderLayout());
-            target.add(cp,"Center");
-            target.pack();
-            target.setVisible(true);
+            JFrame f = new JFrame("PowerGrid controls");
+            f.setLayout(new BorderLayout());
+            f.add(cp,"Center");
+            f.pack();
+            f.setVisible(true);
         } else {
             if (addOption == null) 
                 target.add(cp);
@@ -52,8 +56,10 @@ public class ControlPanel extends JPanel {
     private JButton runScripts = new JButton("Scripts/Tasks");
     private JButton showStatus = new JButton("Show PG status");
     
+    private JLabel messageArea = new JLabel("PowerGrid is not yet started");
+    
     public ControlPanel() {
-        super(new BorderLayout());
+        super(new GridBagLayout());
         setupPanel();
     }
     
@@ -66,10 +72,29 @@ public class ControlPanel extends JPanel {
         runScripts.addActionListener(null);
         showStatus.addActionListener(null);
         
-        add(showWorldMap,"West");
-        add(runScripts,"East");
-        add(showStatus,"Center");
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1;
+        add(showWorldMap,gbc);
+        gbc.gridx++;
+        add(runScripts,gbc);
+        gbc.gridx++;
+        add(showStatus,gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(messageArea,gbc);
         
-        setPreferredSize(new Dimension(buttonSize.width*3+12,buttonSize.height+8));
+        setPreferredSize(new Dimension(buttonSize.width*3+12,buttonSize.height+24));
+    }
+    
+    public void setMessage(String message) {
+        if (message != null)
+            messageArea.setText(message);
+    }
+    
+    public String getMessage() {
+        return messageArea.getText();
     }
 }

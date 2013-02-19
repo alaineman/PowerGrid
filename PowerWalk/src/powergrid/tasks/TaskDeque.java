@@ -2,7 +2,7 @@ package powergrid.tasks;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
-import powergrid.TaskManager;
+import powergrid.control.TaskManager;
 
 /**
  * This class executes multiple Tasks in sequence.

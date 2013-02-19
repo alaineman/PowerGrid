@@ -82,7 +82,7 @@ public class Point implements Locatable {
      * @return a RegionOffset object set to (0,0,0)
      */
     @Override public RegionOffset getRegionOffset() {
-        return new RegionOffset(0,0,0);
+        return null;
     }
     
     

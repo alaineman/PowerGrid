@@ -16,8 +16,8 @@ subgoals to indicate progress.
     3. Read from cache when Lodestones have been checked already.
 
 - Gadgets, Details, Cool stuff and more...
-    1. Have a 'thoughts' balloon for PowerWalk, allowing the end-user to 'peek' into PowerWalk's decisions.
-        10. This allows for ad-hoc decision-making without end-users going nuts due to PowerWalk doing 'weird' things.
-        11. It's easier to debug tasks when you know what PowerWalk's up to.
+    1. Have a 'thoughts' balloon for PowerGrid, allowing the end-user to 'peek' into PowerGrid's decisions.
+        10. This allows for ad-hoc decision-making without end-users going nuts due to PowerGrid doing 'weird' things.
+        11. It's easier to debug tasks when you know what PowerGrid's up to.
         12. It would provide the idea that PowerWalk works as an actual player and therefore enhance the awesomeness of PowerWalk.
     2. Add (more) cool and would-be-awesome ideas to this list.

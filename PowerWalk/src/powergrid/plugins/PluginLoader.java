@@ -33,8 +33,14 @@ public class PluginLoader {
     public PluginLoader(File folder) {
         if (folder == null) 
             throw new IllegalArgumentException("folder is null");
-        if (!folder.isDirectory())
-            throw new IllegalArgumentException("provided File is no directory");
+        if (!folder.isDirectory()) {
+            if (folder.exists()) 
+                throw new IllegalArgumentException("Plugin folder exists but is no directory");
+            else {
+                if (!folder.mkdir()) 
+                    throw new IllegalArgumentException("Could not create plugin directory");
+            }
+        }
         this.folder = folder;
         loadClasses();
     }
@@ -49,19 +55,19 @@ public class PluginLoader {
                     urls.add(f.toURI().toURL()); 
                     PowerGrid.debugMessage("Plugin found: " + f.getName());
                 } catch(MalformedURLException e) {
-                    PowerGrid.logMessage("Foud malformed url for file: " + f.getName());
+                    PowerGrid.logMessage("Found malformed url for file: " + f.getName());
                 }
             }
         }
         loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
         
         try {
-            Field f = loader.getClass().getField("classes");
+            Field f = ClassLoader.class.getDeclaredField("classes");
             f.setAccessible(true);
             classes = Collections.unmodifiableCollection((Collection<Class<?>>)f.get(loader));
             f.setAccessible(false);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            PowerGrid.logMessage("Could not retrieve classes from ClassLoader");
+            PowerGrid.logMessage("Could not retrieve classes from ClassLoader: " + e);
         }
     }
 

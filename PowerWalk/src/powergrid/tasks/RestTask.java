@@ -4,7 +4,7 @@ import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.Widgets;
 import powergrid.Bot;
 import powergrid.PowerGrid;
-import powergrid.TaskManager;
+import powergrid.control.TaskManager;
 
 /**
  * Creates a Task that rests the local Player. A boolean can be set to abort 

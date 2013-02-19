@@ -17,7 +17,7 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powergrid.Bot;
-import powergrid.TaskManager;
+import powergrid.control.TaskManager;
 import powergrid.control.Mapper;
 import powergrid.control.XMLToolBox;
 import powergrid.model.Point;

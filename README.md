@@ -1,32 +1,13 @@
-Powerwalk
-=========
+# PowerGrid #
+PowerGrid is an extension on RSBot that aims to completely replace faulty or inefficient classes and methods with a completely new suite of classes and tools to make scripting much easier and less frustrating. 
 
-Introduction
-------------
-PowerWalk is a walking plug-in for RSBot. It aims to completely replace the current RSBot Walking facility by embedding functionality that would allow the user to select any destination in the RS world, after which PowerWalk would compute the shortest path to that destination and walk there, using all available shortcuts and teleports in the process. 
+## PowerGrid functionality ##
+PowerGrid offers a completely new travelling system that allows the user to walk to any location in the Runescape world, while also using available teleports and shortcurs to get to the destination in the fastest possible way.
 
-This is a huge improvement over the existing Walking facility, which does not allow for such complex tasks. The current Walking facility only allows for travelling small distances at a time, does not look at teleports or shortcuts, and also does not check whether running could be enabled to speed up the travel.
+It also provides a mechanism to check a variety of stats and settings without needing to nagivate through widgets, PowerGrid automatically checks these when required, but caches the results so that consecutive calls are much faster.
 
-PowerWalk is designed both for end-users and scripters: End-users can use the Graphical user interface to easily select a destination to travel to, while scripters can use PowerWalk's travel methods to travel between places more efficiently.
+PowerGrid offers a full user interface to travel to any destination or location using either landmarks, special locations such as banks and stores, or even an actual world map, allowing the user to click any tile on the map, after which PowerGrid computes a route and executes it for maximum control.
 
-As for now, PowerWalk still uses the RSBot Walking facility at its core. However, most of PowerWalk works independantly from RSBot, and as such is highly resistant against code-breaking changes in RSBot.
+Scripters can use PowerGrid's functions to make scripts easier, but that's not all: PowerGrid comes with a unique plugin system, that allows scripters to create so-called Tasks that integrate seamlessly with the existing PowerGrid tasks to form larger, more complex tasks, making scripting much easier. Imagine the possibility of executing a task that gets you to the right location using only one line of code! These kind of possibilities make PowerGrid worthwhile, whether you're a scripter or an end-user.
 
-Powerwalk can also be used by multiple scripts, without needing a clone of PowerWalk along with every script that uses it. This is an important matter, because PowerWalk is quite a robust facility, which could slow down the RSBot client a bit on older or slower machines. Having multiple instances of PowerWalk could decrease the performance of the scripts running on top of PowerWalk, so reducing this redundancy is a useful addition to PowerWalk. It also allows for PowerWalk map data gathered in one session to be carried over to the other, regardless of what script is running.
-
-Another reason for placing PowerWalk outside of all other scripts, is that updates and fixes for PowerWalk can be released, without requiring the users to wait for updates for each individual script that uses it. Instead, users can update PowerWalk itself, and the fixes and changes made will be available to all scripts automatically. After that, scripters can update their scripts to newer versions at their own leisure, without worrying about checking whether they are using the latest PowerWalk version all the time. This is also convenient when unexpected bugs occur in PowerWalk, since these bugs can be fixed without requiring all scripters to release new versions again because of those bugs.
-
-Current functionality
----------------------
-- The Bot can find paths between two points.
-- The Bot is able to follow paths it computed.
-- The Bot remembers the environment and uses that information to get around walls and objects
-- The Bot is able to use Lodestones to minimize the required walking distance
-
-First upcoming functionality
-----------------------------
-The Bot is able to use (simple) interactions that will help the bot to find more efficient paths between points.
-
-Long-term planning
-------------------
-Eventually, the bot will be able to move around freely over the World Map, 
-can use interactions, and can compute and follow paths from one point to another.
+Since PowerGrid does not simply run as a script in RSBot, but is actually using RSBot as a library, it is possible for PowerGrid to completely integrate in RSBot itself, providing a control bar right in the RSBot window for quick access to PowerGrid's functions.

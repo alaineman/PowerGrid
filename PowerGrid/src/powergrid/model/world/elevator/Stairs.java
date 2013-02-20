@@ -18,12 +18,16 @@ public class Stairs extends Elevator {
 
     @Override
     public void move(int direction) throws OutOfReachException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(direction == UP){
+            //move up
+        } else {
+            //move down
+        }
     }
 
     @Override
     public void interact() throws OutOfReachException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //
     }
 
     @Override

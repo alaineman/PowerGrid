@@ -1,5 +1,15 @@
 package powergrid.tasks;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.io.IOException;
+import java.net.URL;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.Widgets;
 import powergrid.Bot;
@@ -7,14 +17,22 @@ import powergrid.PowerGrid;
 import powergrid.control.TaskManager;
 
 /**
- * Creates a Task that rests the local Player. A boolean can be set to abort 
- * resting when there are other Tasks in the Queue. 
+ * Creates a Task that rests the local Player. 
+ * <p/>
+ * A boolean can be set to abort resting when there are other Tasks in the Queue.
+ * <p/>
+ * This Task is Configurable and publicly accessible to end-users.
+ * <p/>
  * @author Chronio
  */
-public class RestTask extends StepTask {
+public class RestTask extends StepTask implements Configurable {
 
     private boolean abortOnTask = false;
     private int targetEnergy = 100;
+    
+    private ConfigPanel panel = null;
+    
+    public RestTask() {}
     
     /**
      * Creates a new RestTask with the given priority.
@@ -94,5 +112,45 @@ public class RestTask extends StepTask {
             }
         }
     }
+
+    @Override public JPanel configPanel() {
+         panel = new ConfigPanel();
+         return panel;
+    }
+
+    @Override public void apply() {
+        if (panel != null) {
+            targetEnergy = panel.getEnergy();
+        }
+    }
+
+    @Override public void configCanceled() {
+        panel = null;
+    }
     
+    private class ConfigPanel extends JPanel {
+        private JTextField targetEnergy = new JTextField("100");
+        private ConfigPanel() {
+            super(new BorderLayout());
+            try {
+                ImageIcon icon = new ImageIcon(new URL("powergrid/images/logo.png"));
+                icon = new ImageIcon(icon.getImage().getScaledInstance(240, 61, Image.SCALE_SMOOTH));
+                add(new JLabel(icon),"North");
+            } catch (IOException ex) {
+                System.err.println("Could not load the specified icon:\n"+ex);
+            }
+            add(new JLabel("Value:"),"West");
+            add(targetEnergy,"Center");
+            setPreferredSize(new Dimension(240,85));
+        }
+        
+        private int getEnergy() {
+            try {
+                return Integer.parseInt(targetEnergy.getText());
+            } catch (NumberFormatException nfe) {
+                JOptionPane.showMessageDialog(null, "The given value is not valid, the value will be taken as 100.","Invalid value",JOptionPane.WARNING_MESSAGE);
+                return 100;
+            }
+        }
+    }
 }

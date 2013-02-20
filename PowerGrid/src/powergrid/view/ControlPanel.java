@@ -1,6 +1,7 @@
 package powergrid.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -64,6 +65,14 @@ public class ControlPanel extends JPanel {
     }
     
     private void setupPanel() {
+        setBackground(Color.BLACK);
+        showStatus.setBackground(Color.BLACK);
+        runScripts.setBackground(Color.BLACK);
+        showWorldMap.setBackground(Color.BLACK);
+        
+        messageArea.setForeground(Color.WHITE);
+        
+        
         showWorldMap.setPreferredSize(buttonSize);
         runScripts.setPreferredSize(buttonSize);
         showStatus.setPreferredSize(buttonSize);

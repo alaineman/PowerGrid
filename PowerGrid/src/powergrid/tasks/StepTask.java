@@ -32,6 +32,16 @@ public abstract class StepTask extends Task {
         super(priority);
     }
     
+    public StepTask() {}
+    
+    public StepTask(String name) {
+        super(name);
+    }
+    
+    public StepTask(int priority,String name) {
+        super(priority,name);
+    }
+    
     /**
      * Creates a new StepTask with the specified priority, set to run for <code>numSteps</code> steps.
      * <p>When <code>numSteps &lt; 0</code>, this Task loops indefinitely.</p>

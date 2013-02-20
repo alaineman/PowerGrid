@@ -5,16 +5,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import org.powerbot.Boot;
+import org.powerbot.game.api.methods.Environment;
+import org.powerbot.game.api.methods.Game;
+import org.powerbot.game.bot.Context;
 import powergrid.control.Mapper;
 import powergrid.control.ScriptLoader;
 import powergrid.control.TaskManager;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginLoader;
+import powergrid.tasks.Task;
 import powergrid.view.ControlPanel;
 
 /**
@@ -56,7 +59,7 @@ public class PowerGrid {
         }
     };
     
-    private static Collection<Class<? extends Plugin>> plugins = null;
+    private static Plugin[] plugins = null;
     
     /**
      * Main method of PowerGrid. 
@@ -66,7 +69,6 @@ public class PowerGrid {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
-        long startTime = System.currentTimeMillis();
         System.out.println("Launching RSBot...");
         boolean dev=false,split=false,eco=false;
         Iterator<String> it = Arrays.asList(args).iterator();
@@ -95,23 +97,36 @@ public class PowerGrid {
         }
         // Load the plugins in the plugin folder
         PluginLoader pl = new PluginLoader(pluginDirectory);
-        plugins = pl.getSubclasses(Plugin.class);
+        plugins = pl.getLoadedPlugins();
+        for (Plugin plugin : plugins) {
+            plugin.setUp();
+        }
+        logMessage(plugins.length + " Plugins loaded");
         
         // launch RSBot
-        long passedTime = System.currentTimeMillis() - startTime;
         try {
             Boot.main(new String[]{});
             logMessage("RSBot started");
         } catch (Exception e) {
             logMessage("RSBot failed to start because of a " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
-        startTime = System.currentTimeMillis();
+        
+        // Wait for Client's Thread to start
+        Thread main = Thread.currentThread();
+        ThreadGroup mainGroup = main.getThreadGroup();
+        ThreadGroup[] groups = new ThreadGroup[1];
+        while (true) {
+            mainGroup.enumerate(groups, false);
+            if (groups[0] != null) {
+                break;
+            }
+            Task.sleep(50);
+        }
+        Task.sleep(1200);
+        
         // Launch PowerGrid
         PG.launch(dev,split,eco);
-        
-        passedTime += System.currentTimeMillis() - startTime;
-        
-        System.out.println("PowerGrid started in " + passedTime/1000d +  "s");
+        PG.taskManagerLoader.run();
     }
     
     private boolean isRunning = false;
@@ -153,10 +168,6 @@ public class PowerGrid {
         debugMessage("With parameters: Developer mode" 
                                         + (splitUI ? ", Split user interface":"") 
                                         + (ecoMode ? ", Eco mode":""));
-        
-        Mapper.startMapping(Mapper.MAP_CONTINOUSLY);
-        Mapper.setEcoMode(ecoMode);
-        debugMessage("Mapper started");
         if (splitUI) {
             ControlPanel.addControlPanel(null, null);
         } else {
@@ -180,8 +191,8 @@ public class PowerGrid {
         debugMessage("ControlPanel created");
         
         taskManagerLoader = new ScriptLoader(TaskManager.getTM());
-        taskManagerLoader.run();
-        debugMessage("TaskManager started");
+        //taskManagerLoader.run();
+        debugMessage("TaskManager created");
         
         Runtime.getRuntime().addShutdownHook(terminatorThread);
         logMessage("PowerGrid started");

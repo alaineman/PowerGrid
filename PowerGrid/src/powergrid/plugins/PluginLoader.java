@@ -1,7 +1,9 @@
 package powergrid.plugins;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -67,7 +69,9 @@ public class PluginLoader {
             classes = Collections.unmodifiableCollection((Collection<Class<?>>)f.get(loader));
             f.setAccessible(false);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            PowerGrid.logMessage("Could not retrieve classes from ClassLoader: " + e);
+            PowerGrid.logMessage("Could not retrieve classes from ClassLoader: ",e);
+        } catch (NullPointerException npe) {
+            PowerGrid.logMessage("Could not load plugins, no plugins found",npe);
         }
     }
 
@@ -100,10 +104,30 @@ public class PluginLoader {
         ArrayList<Class<? extends U>> subclasses = new ArrayList<>();
         for (Class<?> c : classes) {
             if (clazz.isAssignableFrom(c)) {
-                Class<? extends U> subclazz = c.asSubclass(clazz);
-                subclasses.add(subclazz);
+                Class<? extends U> subclass = c.asSubclass(clazz);
+                subclasses.add(subclass);
             }
         }
         return subclasses;
+    }
+    
+    public Plugin[] getLoadedPlugins() {
+        Collection<Class<? extends Plugin>> plugins = getSubclasses(Plugin.class);
+        ArrayList<Plugin> ps = new ArrayList<>(plugins.size());
+        for (Class<? extends Plugin> p : plugins) {
+            if (p.isAnnotationPresent(PluginInfo.class)) {
+                PluginInfo info = p.getAnnotation(PluginInfo.class);
+                if (info.requiredVersion() > PowerGrid.VERSION)
+                    continue;
+            }
+            try {
+                Constructor<? extends Plugin> cons = p.getConstructor();
+                Plugin plugin = cons.newInstance();
+                ps.add(plugin);
+            } catch (IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
+                PowerGrid.logMessage("Could not load the Plugin, since the plugin could not be instantiated",e);
+            }
+        }
+        return ps.toArray(new Plugin[ps.size()]);
     }
 }

@@ -1,7 +1,5 @@
 package powergrid.tasks;
 
-import java.util.Objects;
-
 /**
  * Task Class that is used to queue tasks for the Bot to execute.
  * <p />

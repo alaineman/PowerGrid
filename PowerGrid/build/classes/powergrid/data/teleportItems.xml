@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE teleportitems [
+<!ELEMENT teleportitems (item*)>
+<!ELEMENT item (dest+)>
+<!ELEMENT dest EMPTY>
+<!ATTLIST item name ID #REQUIRED cmd CDATA #REQUIRED ids CDATA #REQUIRED>
+<!ATTLIST pos ID #REQUIRED> ]>
+<teleportitems>
+    <item name="undefined" cmd="use" ids="[0,1,2,3,4]">
+        <dest pos="(x,y,z)" />
+    </item>
+</teleportitems>

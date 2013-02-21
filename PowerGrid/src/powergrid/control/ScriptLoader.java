@@ -262,8 +262,11 @@ public class ScriptLoader {
      *                                  parameterless constructor
      */
     public ScriptLoader copyLoader() {
-        ScriptLoader copy = new ScriptLoader(script.getClass());
-        return copy;
+        try {
+            return new ScriptLoader(script.getClass());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
     
     /**

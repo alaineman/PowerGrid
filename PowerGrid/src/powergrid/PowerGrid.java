@@ -9,9 +9,6 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import org.powerbot.Boot;
-import org.powerbot.game.api.methods.Environment;
-import org.powerbot.game.api.methods.Game;
-import org.powerbot.game.bot.Context;
 import powergrid.control.Mapper;
 import powergrid.control.ScriptLoader;
 import powergrid.control.TaskManager;
@@ -46,6 +43,8 @@ public class PowerGrid {
     
     /** The PowerGrid version */
     public static final double VERSION = 0.1;
+    
+    private static boolean securityManagerDisabled = false;
     
     /** The PowerGrid instance. */
     public static final PowerGrid PG = new PowerGrid();
@@ -91,6 +90,9 @@ public class PowerGrid {
                     else
                         logMessage("The provided plugins folder (" + f.getName() + ") is not a valid directory");
                     break;
+                case "-smbypass":
+                    securityManagerDisabled = true;
+                    break;
                 default:
                     debugMessage("Unknown command-line parameter: " + arg);
             }
@@ -105,10 +107,24 @@ public class PowerGrid {
         
         // launch RSBot
         try {
-            Boot.main(new String[]{});
-            logMessage("RSBot started");
+            if (securityManagerDisabled) {
+                try {
+                    org.powerbot.ob theOB = org.powerbot.ob.a();
+                    theOB.d.a();
+                    theOB.d.c.setEnabled(true);
+                    logMessage("RSBot started - no SecurityManager set");
+                } catch (Exception e) {
+                    securityManagerDisabled = false;
+                    Boot.main(new String[0]);
+                    logMessage("RSBot started normally, since a " + e.getClass().getSimpleName() + " occurred");
+                }
+            } else {
+                Boot.main(new String[0]);
+                logMessage("RSBot started");
+            }
         } catch (Exception e) {
             logMessage("RSBot failed to start because of a " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            System.exit(1);
         }
         
         // Wait for Client's Thread to start
@@ -126,7 +142,12 @@ public class PowerGrid {
         
         // Launch PowerGrid
         PG.launch(dev,split,eco);
+        
         PG.taskManagerLoader.run();
+    }
+    
+    public static boolean isSecurityManagerDisabled() {
+        return securityManagerDisabled;
     }
     
     private boolean isRunning = false;
@@ -180,7 +201,7 @@ public class PowerGrid {
                     try {
                         BufferedImage icon = ImageIO.read(ClassLoader.getSystemResource("powergrid/images/icon_small.png"));
                         f.setIconImage(icon);
-                        f.setTitle(f.getTitle() + " - Running PowerGrid v" + PowerGrid.VERSION);
+                        f.setTitle(f.getTitle() + " - Running PowerGrid v" + PowerGrid.VERSION + (isSecurityManagerDisabled()?" (No SecurityManager)":""));
                         PowerGrid.debugMessage("JFrame modification complete");
                     } catch (IOException e) {
                         PowerGrid.logMessage("Error setting image on RSBot JFrame: " + e);

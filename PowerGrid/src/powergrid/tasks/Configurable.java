@@ -1,6 +1,7 @@
 package powergrid.tasks;
 
 import javax.swing.JPanel;
+import powergrid.view.TaskConfigurationPanel;
 
 /**
  * This interface represents Tasks that need or can be configured before use.
@@ -21,7 +22,7 @@ public interface Configurable {
      * Returns a JPanel that contains options / information for the Task.
      * @return a configuration panel.
      */
-    public JPanel configPanel();
+    public TaskConfigurationPanel configPanel();
     
     /**
      * Called by PowerGrid to indicate that the Task should parse the configuration 

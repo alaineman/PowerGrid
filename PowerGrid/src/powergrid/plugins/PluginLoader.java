@@ -1,6 +1,7 @@
 package powergrid.plugins;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -10,6 +11,9 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import powergrid.PowerGrid;
 
 /**
@@ -22,8 +26,8 @@ import powergrid.PowerGrid;
 public class PluginLoader {
     
     private File folder;
-    private ClassLoader loader;
-    private Collection<Class<?>> classes;
+    private static ClassLoader loader;
+    private static Collection<Class<?>> classes;
     
     /**
      * Create a new PluginLoader that loads all jar files in the specified folder.
@@ -50,31 +54,43 @@ public class PluginLoader {
     @SuppressWarnings("unchecked") 
     private void loadClasses() {
         File[] files = folder.listFiles();
-        ArrayList<URL> urls = new ArrayList<>(files.length);
+        URL[] urls = new URL[files.length];
+        for (int i = 0; i < files.length; i++) {
+            try { urls[i] = files[i].toURI().toURL(); }
+            catch (MalformedURLException e) {}
+        }
+        loader = new URLClassLoader(urls);
+        classes = new ArrayList<>();
         for (File f : files) {
-            if (f.isFile() && (f.getName().endsWith(".jar") || f.getName().endsWith(".class"))) {
+            if (f.getName().endsWith(".jar") && f.isFile()) {
                 try { 
-                    urls.add(f.toURI().toURL()); 
-                    PowerGrid.debugMessage("Plugin found: " + f.getName());
-                } catch(MalformedURLException e) {
-                    PowerGrid.logMessage("Found malformed url for file: " + f.getName());
+                    classes.addAll(getClasses(new JarFile(f)));
+                } catch (IOException e) {
+                    System.out.println("Error while reading from jar file: " + f.getName() + "\n  " + e.getMessage());
                 }
             }
         }
-        loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
         
-        try {
-            Field f = ClassLoader.class.getDeclaredField("classes");
-            f.setAccessible(true);
-            classes = Collections.unmodifiableCollection((Collection<Class<?>>)f.get(loader));
-            f.setAccessible(false);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            PowerGrid.logMessage("Could not retrieve classes from ClassLoader: ",e);
-        } catch (NullPointerException npe) {
-            PowerGrid.logMessage("Could not load plugins, no plugins found",npe);
-        }
     }
 
+    private Collection<Class<?>> getClasses(JarFile jar) {
+        Enumeration<JarEntry> entries = jar.entries();
+        ArrayList<Class<?>> cls = new ArrayList<>();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            String className = entry.getName().replaceAll("/", ".");
+            int index = className.lastIndexOf(".class");
+            if (index < 0) continue;
+            className = className.substring(0,index);
+            try {
+                cls.add(loader.loadClass(className));
+            } catch (ClassNotFoundException e) {
+                System.out.println("Could not load entry: " + jar.getName() + ":" + className);
+            }
+        }
+        return cls;
+    }
+    
     /**
      * Returns the folder that this PluginLoader loaded from
      * @return the folder that this PluginLoader loaded from
@@ -117,8 +133,10 @@ public class PluginLoader {
         for (Class<? extends Plugin> p : plugins) {
             if (p.isAnnotationPresent(PluginInfo.class)) {
                 PluginInfo info = p.getAnnotation(PluginInfo.class);
-                if (info.requiredVersion() > PowerGrid.VERSION)
+                if (info.requiredVersion() > PowerGrid.VERSION) {
+                    System.out.println("[PluginLoader] " + info.name() + " needs PowerGrid v" + info.requiredVersion() + " or higher to work. Please update PowerGrid");
                     continue;
+                }
             }
             try {
                 Constructor<? extends Plugin> cons = p.getConstructor();

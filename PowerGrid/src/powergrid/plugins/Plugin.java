@@ -43,7 +43,7 @@ public interface Plugin {
      * <p/>
      * PowerGrid expects a Collection of Tasks that should be provided to the end-user
      * as runnable tasks.
-     * @return 
+     * @return a Collection of the tasks that PowerGrid is allowed to provide to the user
      */
     public Collection<Class<? extends Task>> getPublicTasks();
     

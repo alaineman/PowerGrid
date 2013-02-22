@@ -1,18 +1,30 @@
 package powergrid;
 
+import java.awt.Color;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.powerbot.Boot;
 import powergrid.control.Mapper;
 import powergrid.control.ScriptLoader;
 import powergrid.control.TaskManager;
 import powergrid.plugins.Plugin;
+import powergrid.plugins.PluginInfo;
 import powergrid.plugins.PluginLoader;
 import powergrid.tasks.Task;
 import powergrid.view.ControlPanel;
@@ -101,17 +113,31 @@ public class PowerGrid {
         PluginLoader pl = new PluginLoader(pluginDirectory);
         plugins = pl.getLoadedPlugins();
         for (Plugin plugin : plugins) {
+            String pluginName = plugin.getClass().getAnnotation(PluginInfo.class).name();
             plugin.setUp();
+            logMessage("Plugin \"" + pluginName + "\" loaded");
         }
-        logMessage(plugins.length + " Plugins loaded");
+        logMessage("Total " + plugins.length + " Plugins loaded");
         
         // launch RSBot
         try {
             if (securityManagerDisabled) {
                 try {
+                    Logger logger = Logger.getLogger("");
+                    for (Handler h : logger.getHandlers()) {
+                        logger.removeHandler(h);
+                    }
+                    ConsoleHandler handler = new ConsoleHandler();
+                    handler.setFormatter(new Formatter(){
+                        @Override public String format(LogRecord record) {
+                            return "[RSBot] " + record.getMessage() + "\n";
+                        }
+                    });
+                    logger.addHandler(handler);
+                    
                     org.powerbot.ob theOB = org.powerbot.ob.a();
                     theOB.d.a();
-                    theOB.d.c.setEnabled(true);
+                    //theOB.d.c.setEnabled(true);
                     logMessage("RSBot started - no SecurityManager set");
                 } catch (Exception e) {
                     securityManagerDisabled = false;
@@ -148,6 +174,10 @@ public class PowerGrid {
     
     public static boolean isSecurityManagerDisabled() {
         return securityManagerDisabled;
+    }
+    
+    public static List<Plugin> getPlugins() {
+        return Collections.unmodifiableList(Arrays.asList(plugins));
     }
     
     private boolean isRunning = false;
@@ -196,6 +226,7 @@ public class PowerGrid {
             for (Window w : Window.getWindows()) {
                 if (w instanceof JFrame) {
                     JFrame f = (JFrame)w;
+                    f.setBackground(Color.BLACK);
                     theControlPanel = ControlPanel.addControlPanel(f, "South");
                     f.pack();
                     try {

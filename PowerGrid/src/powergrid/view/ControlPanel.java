@@ -66,11 +66,12 @@ public class ControlPanel extends JPanel {
     
     private void setupPanel() {
         setBackground(Color.BLACK);
-        showStatus.setBackground(Color.BLACK);
+        /*showStatus.setBackground(Color.BLACK);
         runScripts.setBackground(Color.BLACK);
-        showWorldMap.setBackground(Color.BLACK);
+        showWorldMap.setBackground(Color.BLACK);*/
         
         messageArea.setForeground(Color.WHITE);
+        
         
         
         showWorldMap.setPreferredSize(buttonSize);

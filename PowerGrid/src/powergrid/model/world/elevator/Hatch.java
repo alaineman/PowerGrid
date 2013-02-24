@@ -14,4 +14,9 @@ public class Hatch extends Stairs {
         super(x, y, z, rawValue, otherPlanes);
     }
     
+    public boolean isOpen() {
+        //
+        return true;
+    }
+    
 }

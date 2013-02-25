@@ -135,8 +135,7 @@ public class PowerGrid {
                     });
                     logger.addHandler(handler);
                     
-                    org.powerbot.ob theOB = org.powerbot.ob.a();
-                    theOB.d.a();
+                    org.powerbot.qb.a();
                     //theOB.d.c.setEnabled(true);
                     logMessage("RSBot started - no SecurityManager set");
                 } catch (Exception e) {

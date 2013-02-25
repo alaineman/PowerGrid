@@ -1,6 +1,5 @@
 package powergrid.tasks;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.io.IOException;
@@ -8,13 +7,13 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.Widgets;
 import powergrid.Bot;
 import powergrid.PowerGrid;
 import powergrid.control.TaskManager;
+import powergrid.view.TaskConfigurationPanel;
 
 /**
  * Creates a Task that rests the local Player. 
@@ -113,8 +112,8 @@ public class RestTask extends StepTask implements Configurable {
         }
     }
 
-    @Override public JPanel configPanel() {
-         panel = new ConfigPanel();
+    @Override public TaskConfigurationPanel configPanel() {
+         panel = new ConfigPanel(this);
          return panel;
     }
 
@@ -128,10 +127,10 @@ public class RestTask extends StepTask implements Configurable {
         panel = null;
     }
     
-    private class ConfigPanel extends JPanel {
+    private class ConfigPanel extends TaskConfigurationPanel {
         private JTextField targetEnergy = new JTextField("100");
-        private ConfigPanel() {
-            super(new BorderLayout());
+        private ConfigPanel(RestTask instance) {
+            super(instance);
             try {
                 ImageIcon icon = new ImageIcon(new URL("powergrid/images/logo.png"));
                 icon = new ImageIcon(icon.getImage().getScaledInstance(240, 61, Image.SCALE_SMOOTH));

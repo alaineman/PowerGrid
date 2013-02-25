@@ -6,7 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.JButton;
-import org.powerbot.core.bot.Bot;
+import org.powerbot.core.Bot;
 import org.powerbot.core.bot.handlers.ScriptHandler;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
@@ -196,7 +196,7 @@ public class ScriptLoader {
         // get scriptClass instance and run it.
         // at this moment, reflection has to be used to get to the ScriptLoader class
         isBusy = true;
-        Bot bot = Bot.getInstance();
+        Bot bot = Bot.instance();
         if (bot != null) {
             try {
                 // unfortunately, RSBot has some required classes obfuscated, 
@@ -247,7 +247,7 @@ public class ScriptLoader {
     public synchronized void stop() {
         
         if (hasStarted) {
-            ScriptHandler handler = Bot.getInstance().getScriptHandler();
+            ScriptHandler handler = Bot.instance().getScriptHandler();
             handler.shutdown();
         }
         logMessage("ScriptLoader: " + getName() + " stopped",null);

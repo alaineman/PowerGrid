@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DTD for the teleports XML structure -->
+<!DOCTYPE teleports [
+<!ELEMENT teleports (serverset*,peerset*)>
+<!ELEMENT serverset (server,client+)>
+<!ELEMENT peerset (peer+)>
+<!ELEMENT server EMPTY>
+<!ELEMENT client EMPTY>
+<!ELEMENT peer EMPTY>
+<!ATTLIST serverset type ID #REQUIRED manifold CDATA #IMPLIED >
+<!ATTLIST peerset type ID #REQUIRED manifold CDATA #IMPLIED >
+<!ATTLIST server pos ID #REQUIRED>
+<!ATTLIST client pos ID #REQUIRED>
+<!ATTLIST peer pos ID #REQUIRED> ]>
+
+<teleports>
+    <!-- The type attribute can be specified as the appropriate class name for easy recognition -->
+    <peerset type="EntranaBoat">
+        <!-- Travels between two points -->
+        <peer pos="(0,0)"/>
+        <peer pos="(1,1)"/>
+    </peerset>
+    <serverset type="Minecart" manifold="manifold" >
+        <!-- Travels from one point to multiple others -->
+        <server pos="(0,0)" />
+        <client pos="(1,1)" />
+        <client pos="(2,0)" />
+    </serverset>
+    <!-- TODO add more and correct positions -->
+</teleports>

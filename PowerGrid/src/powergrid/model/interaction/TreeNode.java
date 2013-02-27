@@ -79,7 +79,7 @@ public class TreeNode<T> {
     public boolean addChild(TreeNode<T> node) {
         if (node == null) return false;
         if (parents().contains(node))
-            throw new IllegalArgumentException("This will create a loop of parents");
+            throw new IllegalArgumentException("This will create a loop of parents.");
         if (node.hasParent()) 
             node.getParent().removeChild(node);
         node.setParent(this);
@@ -99,6 +99,14 @@ public class TreeNode<T> {
             node = node.getParent();
         }
         return list;
+    }
+    
+    public TreeNode<T> getRoot() {
+        TreeNode<T> node = this;
+        while (node.getParent() != null) {
+            node = node.getParent();
+        } 
+        return node;
     }
     
     public boolean removeChild(TreeNode<T> node) {

@@ -1,8 +1,9 @@
-package powergrid.control;
+package powergrid.model.interaction;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import powergrid.PowerGrid;
+import powergrid.control.XMLToolBox;
 import powergrid.model.GameObject;
 import powergrid.model.XMLNode;
 

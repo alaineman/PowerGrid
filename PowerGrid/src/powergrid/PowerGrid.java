@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -17,8 +16,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import org.powerbot.Boot;
 import powergrid.control.Mapper;
 import powergrid.control.ScriptLoader;
@@ -247,6 +244,7 @@ public class PowerGrid {
         
         Runtime.getRuntime().addShutdownHook(terminatorThread);
         logMessage("PowerGrid started");
+        theControlPanel.setMessage("PowerGrid running...");
         isRunning = true;
         return true;
     }
@@ -263,6 +261,7 @@ public class PowerGrid {
         if (!isRunning)
             return false;
         logMessage("stopping PowerGrid...");
+        theControlPanel.setMessage("PowerGrid stopping...");
         try {
             Runtime.getRuntime().removeShutdownHook(terminatorThread);
         } catch (IllegalStateException e) {} // was already shutting down

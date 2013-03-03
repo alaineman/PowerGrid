@@ -1,6 +1,5 @@
 package powergrid.tasks;
 
-import javax.swing.JPanel;
 import powergrid.view.TaskConfigurationPanel;
 
 /**

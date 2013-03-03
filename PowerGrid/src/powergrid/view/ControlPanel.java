@@ -6,6 +6,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -79,7 +81,11 @@ public class ControlPanel extends JPanel {
         showStatus.setPreferredSize(buttonSize);
         
         showWorldMap.addActionListener(new MapViewer());
-        runScripts.addActionListener(null);
+        runScripts.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent ae) {
+                TaskPanel.showTaskPanel();
+            }
+        });
         showStatus.addActionListener(null);
         
         GridBagConstraints gbc = new GridBagConstraints();

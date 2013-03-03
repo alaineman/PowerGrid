@@ -47,9 +47,13 @@ public class ConfigureFrame extends JFrame {
             @Override public void actionPerformed(ActionEvent ae) {
                 Configurable c = config.getTask();
                 if (c instanceof Task) {
+                    c.apply();
                     TaskManager.getTM().assignTask((Task)c);
+                    dispose();
                 } else {
+                    c.configCanceled();
                     JOptionPane.showMessageDialog(null, "Error creating Task, configuration failed.","Failed to assign Task",JOptionPane.ERROR_MESSAGE);
+                    dispose();
                 }
             }
         });

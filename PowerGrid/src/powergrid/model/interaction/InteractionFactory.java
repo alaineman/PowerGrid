@@ -3,9 +3,10 @@ package powergrid.model.interaction;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import powergrid.PowerGrid;
 import powergrid.control.XMLToolBox;
-import powergrid.model.GameObject;
 import powergrid.model.Point;
 import powergrid.model.XMLNode;
 import powergrid.model.interact.Transportable;
@@ -18,30 +19,36 @@ import powergrid.model.interact.Transportable;
  */
 public class InteractionFactory {
     
-    private XMLNode data;
+    private HashMap<String,TransportNetwork> networks = new HashMap<>();
     
-    public InteractionFactory(InputStream source) {
-        data = XMLToolBox.getXMLTree(source);
-    }
-    
-    public void setUpInteractions() {
+    public void loadConnections(InputStream source) {
+        XMLNode data = XMLToolBox.getXMLTree(source);
+        networks.clear();
         for (XMLNode type : data) {
             switch (type.getTag()) {
                 case "serverset":
                     setUpServerClient(type);
-                    break;
                 case "peerset":
                     setUpPeers(type);
-                    break;
                 default:
                     PowerGrid.logMessage("The interaction type \"" + type.getTag() + "\" is not recognized.");
             }
         }
     }
     
-    private void setUpServerClient(XMLNode type) {
+    public TransportNetwork getInteractions(String type) {
+        TransportNetwork nw = networks.get(type);
+        if (nw != null) return nw;
+        else throw new IllegalArgumentException("Unknown transport type: " + type);
+    }
+    
+    public Collection<TransportNetwork> getLoadedNetworks() {
+        return networks.values();
+    }
+    
+    private TreeNetwork setUpServerClient(XMLNode type) {
         Class<? extends Transportable> clazz = getClass(type);
-        if (clazz == null) return;
+        if (clazz == null) return null;
         XMLNode serverNode = null;
         ArrayList<XMLNode> clients = new ArrayList<>(type.children().size());
         for (XMLNode n : type) {
@@ -50,7 +57,7 @@ public class InteractionFactory {
                     serverNode = n;
                 } else {
                     PowerGrid.logMessage("Critical error for type " + type.get("type") + ", there are multiple servers defined.");
-                    return;
+                    return null;
                 }
             } else {
                 clients.add(n);
@@ -61,7 +68,7 @@ public class InteractionFactory {
             Point p = Point.fromString(serverNode.getOrElse("pos", "(0,0)"));
             server = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            return;
+            return null;
         }
         
         TreeNetwork network = new TreeNetwork(server);
@@ -75,7 +82,8 @@ public class InteractionFactory {
                 PowerGrid.logMessage("Could not instantiate transportable at " + p,e);
             }
         }
-        //TODO instantiate and connect the interactables.
+        networks.put(type.get("type"), network);
+        return network;
     }
     
     private Class<? extends Transportable> getClass(XMLNode type) {
@@ -97,9 +105,9 @@ public class InteractionFactory {
         return null;
     }
     
-    private void setUpPeers(XMLNode type) {
+    private PeerNetwork setUpPeers(XMLNode type) {
         Class<? extends Transportable> clazz = getClass(type);
-        if (clazz == null) return;
+        if (clazz == null) return null;
         PeerNetwork network = new PeerNetwork();
         for (XMLNode node : type) {
             Point p = Point.fromString(node.getOrElse("pos", "(0,0)"));
@@ -111,5 +119,7 @@ public class InteractionFactory {
                 PowerGrid.logMessage("Could not instantiate transportable at " + p,e);
             }
         }
+        networks.put(type.get("type"), network);
+        return network;
     }
 }

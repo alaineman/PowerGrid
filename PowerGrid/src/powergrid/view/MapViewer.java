@@ -13,6 +13,7 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powergrid.Bot;
+import powergrid.PowerGrid;
 import powergrid.control.Mapper;
 import powergrid.control.TaskManager;
 import powergrid.control.XMLToolBox;
@@ -182,7 +183,7 @@ public class MapViewer extends Canvas implements ActionListener {
         }
         // try to draw the player, if any exists
         try {
-            Point p = Bot.getPosition();
+            Point p = PowerGrid.BOT.getPosition();
             if (p.x > r.x && p.x < r.x+r.width &&
                 p.y > r.x && p.y < r.y+r.height) {
                 g.setColor(current.get("player"));

@@ -21,7 +21,6 @@ public class FairyRing extends Transportable {
      * These are the Transportable GameObject Id's.
      *
      * @see Transportable
-     * @see GameObject
      */
     public final static int[] values = {61345};
     

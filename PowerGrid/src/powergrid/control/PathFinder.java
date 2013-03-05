@@ -1,7 +1,7 @@
 package powergrid.control;
 
 import java.util.*;
-import powergrid.Bot;
+import powergrid.PowerGrid;
 import powergrid.model.GameObject;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
@@ -64,7 +64,7 @@ public class PathFinder {
      * @throws IllegalArgumentException when the given endpoint is null.
      */
     public static List<Point> findPath(Point end) throws OutOfReachException {
-        return new PathFinder(Bot.getPosition(), end).calculatePath();
+        return new PathFinder(PowerGrid.BOT.getPosition(), end).calculatePath();
     }
     /**
      * The maximum distance between two Points in the result Path.

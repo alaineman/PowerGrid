@@ -1,6 +1,7 @@
 package powergrid.control;
 
 import java.util.HashMap;
+import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Game;
 import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.node.SceneEntities;
@@ -14,24 +15,38 @@ import powergrid.model.world.Wall;
 import powergrid.view.MapViewer;
 
 /**
- * This class collects data from the RSBot environment and stores it in the singleton WorldMap-object
+ * This class collects data from the RSBot environment and stores it in the singleton Grid-object.
+ * <p/>
+ * The Mapper has two main policies that can be set: 
+ * <code>MAP_CONTINUOUSLY</code> and <code>MAP_ONCE</code>.
+ * <code>MAP_CONTINUOUSLY</code> continuously polls the RSBot environment for 
+ * map data and processes it, while the <code>MAP_ONCE</code> policy only polls
+ * for data once and then stops.
+ * <p/>
+ * The Mapper can be started and stopped using the <code>startMapping(int policy)</code> 
+ * and <code>stopMapping()</code> methods.
+ * <p/>
+ * When the mapper is running, the mapping policy can be set using the 
+ * <code>setPolicy(int policy)</code> method.
  * <p/>
  * @author Chronio
  */
 public class Mapper extends Thread {
 
     /**
-     * Policy for the Mapper, indicating that the world map should be updated continously.
+     * Policy for the Mapper, indicating that the world map should be updated 
+     * continuously.
      */
-    public static final int MAP_CONTINOUSLY = 0;
+    public static final int MAP_CONTINUOUSLY = 0;
     /**
-     * Policy for the Mapper, indicating that the world map should be updated once, and then stop.
+     * Policy for the Mapper, indicating that the world map should be updated once, 
+     * after which the Mapper stops.
      */
     public static final int MAP_ONCE = 1;
     /**
      * Policy for the Mapper, indicating that the Mapper should not update the map.
-     * Warning: Setting this policy manually may cause an IllegalThreadStateException
-     * to be thrown when trying to start mapping again.
+     * <p/>It is not possible to set this Mapping policy directly. Use 
+     * <code>stopMapping()</code> instead.
      */
     public static final int MAP_NONE = 2;
     
@@ -41,12 +56,14 @@ public class Mapper extends Thread {
 
     /**
      * Changes the mapping policy to the given policy.
-     * When the given policy is not valid, this method does nothing.
      * <p/>
-     * @param policy the new mapping policy
+     * When the given policy is not valid or the mapper is not currently mapping, 
+     * this method does nothing.
+     * <p/>
+     * @param policy the new mapping policy (<code>MAP_ONCE</code> or <code>MAP_CONTINUOUSLY</code>)
      */
     public static synchronized void setPolicy(int policy) {
-        if (policy >= 0 && policy <= 2) {
+        if (mappingPolicy != MAP_NONE && policy >= 0 && policy < 2) {
             mappingPolicy = policy;
         }
     }
@@ -56,7 +73,6 @@ public class Mapper extends Thread {
      * When the given policy is not valid, the MAP_ONCE policy will be used.
      * <p/>
      * @param policy the policy to use for the Mapper (MAP_CONTINOUSLY or MAP_ONCE)
-     * <p/>
      * @throws IllegalThreadStateException when the Mapper is already / still running
      */
     public static synchronized void startMapping(int policy) {
@@ -69,7 +85,7 @@ public class Mapper extends Thread {
             policy = MAP_ONCE;
         }
         theMapper = new Mapper();
-        setPolicy(policy);
+        mappingPolicy = policy;
         theMapper.start();
     }
 
@@ -85,35 +101,48 @@ public class Mapper extends Thread {
         eco_mode = mode;
     }
 
+    /**
+     * Returns wheather the Mapper is running in eco-mode.
+     * @return wheather the Mapper is running in eco-mode
+     */
     public static boolean ecoMode() {
         return eco_mode;
     }
 
     /**
      * Stops the currently running Mapper.
-     * <p> If there is no running Mapper, this method does nothing.
+     * <p/>
+     * If there is no running Mapper, this method does nothing.
      * Otherwise, it sets the mapping policy to MAP_NONE and lets the Mapper end gracefully.
-     * </p>
-     * <p>
+     * <p/>
      * Please note that the Mapper might not be stopped directly when this method returns.
      * However, after this method returns, it is possible to start a new Mapper.
-     * </p>
      */
     public static synchronized void stopMapping() {
-        setPolicy(MAP_NONE);
+        mappingPolicy = MAP_NONE;
         theMapper = null;
     }
 
     /**
      * Returns whether or not the Mapper is mapping.
      * <p/>
-     * <p>When the mapping policy has been set to MAP_NONE, but the Mapper hasn't
-     * completed gracefully yet, this method returns false.</p>
+     * When the stopMapping method has been called, but the Mapper hasn't
+     * ended gracefully yet, this method returns false.
      * <p/>
      * @return true if and only if the Mapper is currently mapping, returns false otherwise.
      */
     public static boolean isMapping() {
         return (mappingPolicy != MAP_NONE);
+    }
+    
+    /**
+     * Returns the currently set Mapping policy.
+     * <p/>
+     * When the Mapper is not mapping, this method returns <code>MAP_NONE</code>
+     * @return the current Mapping policy
+     */
+    public int getMappingPolicy() {
+        return mappingPolicy;
     }
     
     /** Collision Mask for Blocked tiles */
@@ -127,6 +156,10 @@ public class Mapper extends Thread {
     
     private static Grid map = new Grid();
     
+    /**
+     * Returns the Grid that the Mapper maps to.
+     * @return the Grid that the Mapper maps to
+     */
     public static Grid getWorldMap() {
         return map;
     }
@@ -134,11 +167,13 @@ public class Mapper extends Thread {
     /**
      * run-method for the Mapper.
      * <p>It should not be called directly. Instead, the
-     * <code>startMapping(int)</code>
+     * <code>startMapping(int policy)</code>
      * and
      * <code>stopMapping()</code> methods should be used.
      */
-    @Override @SuppressWarnings("SleepWhileInLoop") 
+    @Override 
+    /* Any performance issue caused by sleep in loop is not a problem here.*/
+    @SuppressWarnings("SleepWhileInLoop") 
     public void run() {
 
         setName("Mapper");
@@ -159,7 +194,7 @@ public class Mapper extends Thread {
                 skip |= mapped; // skip if area is mapped
             }
             if (skip) {
-                try { Thread.sleep(3500); } catch (Exception e) {}
+                Task.sleep(3500);
             } else {
                 try {
                     // get data and create data structures
@@ -222,7 +257,7 @@ public class Mapper extends Thread {
                         ses.remove(p);
                     if (MapViewer.theMapViewer != null) {
                         // If the MapViewer is open, hold drawing while the map 
-                        // is being updated (some sort of V-sync).
+                        // is being updated.
                         MapViewer.theMapViewer.hold(true);
                         map.addAll(ses);
                         map.addAll(gos);
@@ -231,12 +266,12 @@ public class Mapper extends Thread {
                         map.addAll(ses);
                         map.addAll(gos);
                     }
-                    if (!XMLToolBox.writeToFile(map.toString(), "")) {
-                        PowerGrid.logMessage("updating the WorldMap in " + "" + " failed");
+                    if (!XMLToolBox.writeToFile(map.toString(), "worldmap.xml")) {
+                        PowerGrid.logMessage("updating the WorldMap in " + "worldmap.xml" + " failed");
                     }
                 } catch (Throwable t) { 
                     // catch anything that passes by: The mapper cannot crash or hang.
-                    PowerGrid.logMessage("Something went wrong while Mapping; Mapping round aborted");
+                    PowerGrid.logMessage("Something went wrong while Mapping; Mapping round aborted",t);
                 } 
             }
 
@@ -251,18 +286,18 @@ public class Mapper extends Thread {
     }
     
     private int convertToSides(int flag) {
-        if ((flag | 0x20100) == flag) // Object_Block | Object_Tile flag => Collision (normal walls and such)
+        if ((flag | 0x20100) == flag)    // Object_Block | Object_Tile flag => Collision (normal walls and such)
             return Wall.BLOCK;
         if ((flag | 0x40000100) == flag) // Object_Allow_Range | Object_Tile => Collision (fences and such)
             return Wall.BLOCK;
         int res = 0;
-        if ((flag & (0x800402)) != 0)
+        if ((flag & (0x800402)) != 0)    // RangedWall_North | Wall_North => North
             res |= Wall.NORTH;
-        if ((flag & (0x2001008)) != 0)
+        if ((flag & (0x2001008)) != 0)   // RangedWall_East | Wall_East => East
             res |= Wall.EAST;
-        if ((flag & (0x8004020)) != 0)
+        if ((flag & (0x8004020)) != 0)   // RangedWall_South | Wall_South => South
             res |= Wall.SOUTH;
-        if ((flag & (0x20010080)) != 0)
+        if ((flag & (0x20010080)) != 0)  // RangedWall_West | Wall_West => West
             res |= Wall.WEST;
         return res;
     }

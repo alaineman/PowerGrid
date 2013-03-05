@@ -112,7 +112,7 @@ public class TreeNode<T> {
      * Returns whether this TreeNode has a parent.
      * <p/>
      * If a TreeNode has no parent, it means the TreeNode is the root of a Tree.
-     * @return 
+     * @return The TreeNode's parent
      */
     public boolean hasParent() {
         return parent != null;

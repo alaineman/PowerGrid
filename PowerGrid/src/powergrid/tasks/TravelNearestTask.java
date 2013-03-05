@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import powergrid.Bot;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
 import powergrid.control.XMLToolBox;
@@ -79,7 +78,7 @@ public class TravelNearestTask extends TravelTask {
     
     @Override public synchronized void start() {
         List<XMLNode> matches = getMatching();
-        path = calculateNearest(Bot.getPosition(),matches);
+        path = calculateNearest(PowerGrid.BOT.getPosition(),matches);
     }
     
     public static List<Point> calculateNearest(final Point from, List<XMLNode> options) {

@@ -18,7 +18,6 @@ public class Minecart extends Transportable {
 
     /**
      * These are the hatch and Minecart GameObject values.
-     * @see GameObject
      * @see Minecart
      */
     public final static int[] values = {28094, 7030, 7029, 7028};

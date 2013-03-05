@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Walking;
-import powergrid.Bot;
 import powergrid.PowerGrid;
 import powergrid.control.Mapper;
 import powergrid.control.PathFinder;
@@ -80,7 +79,7 @@ public class TravelTask extends StepTask {
             cancel();
         } else {
             try {
-                path = PathFinder.findPath(Bot.getPosition(), destination);
+                path = PathFinder.findPath(PowerGrid.BOT.getPosition(), destination);
                 if (PowerGrid.PG.isDevmode()) {
                     StringBuilder sb = new StringBuilder("Composed path:\n");
                     for (Point p : path) {
@@ -102,7 +101,7 @@ public class TravelTask extends StepTask {
                 }
             } catch (OutOfReachException e) {
                 path = new ArrayList<>(1);
-                path.add(Bot.getPosition());
+                path.add(PowerGrid.BOT.getPosition());
                 PowerGrid.logMessage("No path found to " + destination + ", task was canceled");
                 cancel();
             }
@@ -117,7 +116,7 @@ public class TravelTask extends StepTask {
     @Override
     public synchronized void step() {
         setStepsLeft(path.size() - target);
-        Point playerPos = Bot.getPosition();
+        Point playerPos = PowerGrid.BOT.getPosition();
         // check the distance to our next point.
         double distToTarget = playerPos.distance(path.get(target));
 
@@ -168,7 +167,7 @@ public class TravelTask extends StepTask {
 
     // walks to the given tile and possibly executes the appropriate action
     private void walkToTile(Point p) {
-        Point playerPos = Bot.getPosition();
+        Point playerPos = PowerGrid.BOT.getPosition();
         if (playerPos.distance(p) > PathFinder.maxDist) {
             Lodestone l = Lodestone.getLodestone(p);
             if (l != null) {
@@ -200,4 +199,14 @@ public class TravelTask extends StepTask {
             Walking.walk(p);
         }
     }
+
+    @Override public boolean equals(Object other) {
+        if (other instanceof TravelTask) {
+            TravelTask that = (TravelTask)other;
+            return this.getDestination().equals(that.getDestination());
+        }
+        return false;
+    }
+    
+    
 }

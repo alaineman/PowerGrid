@@ -21,7 +21,6 @@ public class IcebergBoat extends Transportable {
 
    /**
      * These are boat GameObject values.
-     * @see GameObject
      * @see ShiloCart
      */
     public final static int[] values = {21176,};

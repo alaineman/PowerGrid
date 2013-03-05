@@ -17,8 +17,6 @@ public class SpiritTree extends Transportable {
 
     /**
      * These are the spirit tree GameObject values.
-     *
-     * @see GameObject
      */
     public final static int[] values = {1317};
     

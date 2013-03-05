@@ -1,6 +1,5 @@
 package powergrid.tasks;
 
-import powergrid.Bot;
 import powergrid.PowerGrid;
 import powergrid.model.Point;
 
@@ -31,7 +30,7 @@ public class ReturnTask extends Task {
     @Override public synchronized void execute() {
         stop = false;
         // save the position for later
-        Point p = Bot.getPosition();
+        Point p = PowerGrid.BOT.getPosition();
         // run the task that was set to run
         runningTask = theTask;
         theTask.execute();

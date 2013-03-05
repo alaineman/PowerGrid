@@ -55,10 +55,16 @@ public class PowerGrid {
     
     /** The PowerGrid instance. */
     public static final PowerGrid PG = new PowerGrid();
-    /** The plugin directory. Default is "plugins". */
+    /** The default Bot instance. */
+    public static final Bot BOT = new Bot(null,TaskManager.getTM());
+    
+    /** The plugin directory, default is "plugins". */
     public static File pluginDirectory = new File("plugins");
     
-    /** Thread that terminates PowerGrid in case of shutdown. Ensures that everything is cleaned up. */
+    /** Thread that shut down PowerGrid in case of RSBot shutdown. 
+     * <p/>
+     * Ensures that everything is cleaned up and terminated gracefully. 
+     */
     private static Thread terminatorThread = new Thread("Terminator") {
         @Override public void run() {
             PG.terminate();
@@ -212,6 +218,7 @@ public class PowerGrid {
         //taskManagerLoader.run();
         debugMessage("TaskManager created");
         
+        BOT.reloadLocalPlayer();
         Runtime.getRuntime().addShutdownHook(terminatorThread);
         logMessage("PowerGrid started");
         theControlPanel.setMessage("PowerGrid running...");

@@ -35,7 +35,8 @@ public class TravelTask extends StepTask {
         super(priority);
         this.destination = destination;
 
-        String name = Destination.getDestination(destination).getName();
+        Destination d = Destination.getDestination(destination);
+        String name = (d==null ? null : d.getName());
         if (name == null) {
             name = destination.toString();
         }

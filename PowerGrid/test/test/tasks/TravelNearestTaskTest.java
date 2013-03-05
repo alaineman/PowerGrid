@@ -14,11 +14,9 @@ import powergrid.model.Point;
 import powergrid.model.XMLNode;
 import powergrid.tasks.TravelNearestTask;
 
-public class TestTravelNearestTask {
+public class TravelNearestTaskTest {
     
     private static TravelNearestTask t;
-    
-    public TestTravelNearestTask() {}
     
     @BeforeClass public static void setUp() {
         t = new TravelNearestTask("WaterSource");

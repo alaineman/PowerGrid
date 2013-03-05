@@ -49,7 +49,7 @@ public class TravelNearestTask extends TravelTask {
         return traits;
     }
     public List<XMLNode> getMatching() {
-        XMLNode root = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powerwalk/data/specialLocations.xml"));
+        XMLNode root = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/specialLocations.xml"));
         // look for the correct type
         XMLNode typeNode = null;
         for (XMLNode child : root) {

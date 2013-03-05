@@ -35,7 +35,7 @@ public class Bot {
     public static final int STATE_WALKING = 3;
     
     private TaskManager theTM = null;
-    private Player rsPlayer = Players.getLocal();
+    private Player rsPlayer = null;
     
     /**
      * Creates a new Bot that connects to the specified TaskManager.
@@ -49,10 +49,12 @@ public class Bot {
     }
     
     public void reloadLocalPlayer() {
-        Player rsLocal = Players.getLocal();
-        if (rsLocal != null) {
-            rsPlayer = rsLocal;
-        }
+        try {
+            Player rsLocal = Players.getLocal();
+            if (rsLocal != null) {
+                rsPlayer = rsLocal;
+            }
+        } catch (NullPointerException npe) {}
     }
     
     /**

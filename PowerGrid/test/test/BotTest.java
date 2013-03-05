@@ -15,20 +15,18 @@ import powergrid.model.Point;
 import powergrid.tasks.TravelTask;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestBot {
+public class BotTest {
     @Mock public TaskManager mockedTaskManager;
     @Mock public Player mockedPlayer;
     
     public Bot bot;
     
-    @BeforeClass public void setupMocks() {
+    @Before public void setup() {
+        bot = new Bot(mockedPlayer,mockedTaskManager);
+        
         when(mockedPlayer.getLocation()).thenReturn(new Tile(2,2,0));
         when(mockedPlayer.isMoving()).thenReturn(true);
         when(mockedPlayer.getAnimation()).thenReturn(-1);
-    }
-    
-    @Before public void setup() {
-        bot = new Bot(mockedPlayer,mockedTaskManager);
     }
     
     @Test public void testTravelToPoint() {

@@ -152,4 +152,13 @@ public class RestTask extends StepTask implements Configurable {
             }
         }
     }
+
+    @Override public boolean equals(Object other) {
+        if (other instanceof RestTask) {
+            RestTask that = (RestTask)other;
+            return this.getPriority() == that.getPriority() 
+                    && this.abortOnTask == that.abortOnTask;
+        }
+        return false;
+    }
 }

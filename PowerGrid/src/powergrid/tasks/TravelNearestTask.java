@@ -128,4 +128,17 @@ public class TravelNearestTask extends TravelTask {
         }
         
     }
+
+    @Override public boolean equals(Object other) {
+        if (other instanceof TravelNearestTask) {
+            TravelNearestTask that = (TravelNearestTask)other;
+            if (!this.getTarget().equals(that.getTarget())) return false;
+            if (!this.getTraits().equals(that.getTraits())) return false;
+            if (!this.getType().equals(that.getType())) return false;
+            
+            return true;
+        }
+        
+        return false;
+    }
 }

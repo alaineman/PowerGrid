@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="Patrick-PC" name="test.tasks.TravelNearestTaskTest" tests="9" time="0.453" timestamp="2013-03-05T20:39:35">
+<testsuite errors="0" failures="0" hostname="Patrick-PC" name="test.tasks.TravelNearestTaskTest" tests="9" time="0.452" timestamp="2013-03-05T22:15:25">
   <properties>
     <property name="netbeans.autoupdate.country" value="US" />
     <property name="nb.wait.for.caches" value="true" />
@@ -42,7 +42,7 @@
     <property name="user.name" value="Patrick" />
     <property name="copylibs.rebase" value="true" />
     <property name="libs.swing-layout.maven-pom" value="" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner test.tasks.TravelNearestTaskTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\test\results\TEST-test.tasks.TravelNearestTaskTest.xml crashfile=C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\junitvmwatcher1632066374917157784.properties propsfile=C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\junit8727601776777827780.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner test.tasks.TravelNearestTaskTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\test\results\TEST-test.tasks.TravelNearestTaskTest.xml crashfile=C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\junitvmwatcher5842348491942887093.properties propsfile=C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\junit570472890139547926.properties" />
     <property name="build.classes.dir" value="build/classes" />
     <property name="netbeans.accept_license_class" value="org.netbeans.license.AcceptLicense" />
     <property name="jnlp.descriptor" value="application" />
@@ -310,14 +310,14 @@
     <property name="platform.active" value="default_platform" />
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit" />
   </properties>
+  <testcase classname="test.tasks.TravelNearestTaskTest" name="testMatchingOnMismatchWithTargetFilter" time="0.0" />
+  <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetMatchingNonExistingType" time="0.0" />
+  <testcase classname="test.tasks.TravelNearestTaskTest" name="testCalculateNearestNoMatches" time="0.016" />
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetMatchingEmptyType" time="0.0" />
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testMatchingOnCompleteness" time="0.0" />
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testCalculateNearest" time="0.39" />
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testMatchingOnMismatch" time="0.0" />
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetMatchingTraits" time="0.0" />
-  <testcase classname="test.tasks.TravelNearestTaskTest" name="testMatchingOnMismatchWithTargetFilter" time="0.0" />
-  <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetMatchingNonExistingType" time="0.0" />
-  <testcase classname="test.tasks.TravelNearestTaskTest" name="testCalculateNearestNoMatches" time="0.0" />
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetters" time="0.0" />
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

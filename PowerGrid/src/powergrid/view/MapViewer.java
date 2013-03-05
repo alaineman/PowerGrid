@@ -247,7 +247,7 @@ public class MapViewer extends Canvas implements ActionListener {
                     p.x += r.x;
                     p.y += r.y;
                     Point dest = new Point(p.x,p.y);
-                    TaskManager.getTM().emptyQueue();
+                    TaskManager.getTM().clear();
                     TaskManager.getTM().assignTask(new TravelTask(dest,0));
                 }
             }

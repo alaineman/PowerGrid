@@ -5,6 +5,7 @@ import powergrid.control.TaskManager;
 import powergrid.model.Destination;
 import powergrid.model.Point;
 import powergrid.tasks.RestTask;
+import powergrid.tasks.TravelNearestTask;
 import powergrid.tasks.TravelTask;
 
 /**
@@ -107,6 +108,6 @@ public class Bot {
      * @throws IllegalArgumentException when the provided destination type is invalid
      */
     public static void gotoNearest(String dest, int priority) {
-        
+        TaskManager.getTM().assignTask(new TravelNearestTask(dest),priority);
     }
 }

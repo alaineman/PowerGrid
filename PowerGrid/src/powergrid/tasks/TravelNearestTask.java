@@ -51,8 +51,8 @@ public class TravelNearestTask extends TravelTask {
     }
     public List<XMLNode> getMatching() {
         XMLNode root = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powerwalk/data/specialLocations.xml"));
-        // look for the correct type, they are sorted on "name", so binSearch:
-        XMLNode typeNode = null;// = XMLToolBox.binarySearch(root.children(), "name", type);
+        // look for the correct type
+        XMLNode typeNode = null;
         for (XMLNode child : root) {
             if (child.get("name").equals(type)) {
                 typeNode = child;

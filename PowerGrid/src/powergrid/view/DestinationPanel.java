@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-import powergrid.Bot;
+import powergrid.PowerGrid;
 import powergrid.model.Point;
 
 /**
@@ -55,7 +55,7 @@ public class DestinationPanel extends JPanel {
             setBackground(Color.WHITE);
             go.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
-                    Bot.travelTo(destination, 0);
+                    PowerGrid.BOT.travelTo(destination, 0);
                 }
             });
         }

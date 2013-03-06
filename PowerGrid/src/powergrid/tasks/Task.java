@@ -69,6 +69,18 @@ public abstract class Task implements Comparable<Task> {
     }
     
     /**
+     * Sets the priority of the Task to the new value.
+     * <p/>
+     * Note that this does not mean that the Task is moved in the TaskManager 
+     * if it was already assigned.
+     * <p/>
+     * @param priority the new priority of this Task
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    
+    /**
      * Returns the difference in Priority between this Task and Task t
      * @param t The Task to compare this Task to
      * @return a negative number when this Task has a lower Priority, 

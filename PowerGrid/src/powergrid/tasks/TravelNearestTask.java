@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import powergrid.Bot;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
 import powergrid.control.XMLToolBox;
@@ -50,9 +49,9 @@ public class TravelNearestTask extends TravelTask {
         return traits;
     }
     public List<XMLNode> getMatching() {
-        XMLNode root = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powerwalk/data/specialLocations.xml"));
-        // look for the correct type, they are sorted on "name", so binSearch:
-        XMLNode typeNode = null;// = XMLToolBox.binarySearch(root.children(), "name", type);
+        XMLNode root = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/specialLocations.xml"));
+        // look for the correct type
+        XMLNode typeNode = null;
         for (XMLNode child : root) {
             if (child.get("name").equals(type)) {
                 typeNode = child;
@@ -79,7 +78,7 @@ public class TravelNearestTask extends TravelTask {
     
     @Override public synchronized void start() {
         List<XMLNode> matches = getMatching();
-        path = calculateNearest(Bot.getPosition(),matches);
+        path = calculateNearest(PowerGrid.BOT.getPosition(),matches);
     }
     
     public static List<Point> calculateNearest(final Point from, List<XMLNode> options) {
@@ -128,5 +127,18 @@ public class TravelNearestTask extends TravelTask {
             return (int)(pOne.distance(from) - pTwo.distance(from));
         }
         
+    }
+
+    @Override public boolean equals(Object other) {
+        if (other instanceof TravelNearestTask) {
+            TravelNearestTask that = (TravelNearestTask)other;
+            if (!this.getTarget().equals(that.getTarget())) return false;
+            if (!this.getTraits().equals(that.getTraits())) return false;
+            if (!this.getType().equals(that.getType())) return false;
+            
+            return true;
+        }
+        
+        return false;
     }
 }

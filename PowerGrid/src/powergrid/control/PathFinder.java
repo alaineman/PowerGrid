@@ -1,7 +1,7 @@
 package powergrid.control;
 
 import java.util.*;
-import powergrid.Bot;
+import powergrid.PowerGrid;
 import powergrid.model.GameObject;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
@@ -64,7 +64,7 @@ public class PathFinder {
      * @throws IllegalArgumentException when the given endpoint is null.
      */
     public static List<Point> findPath(Point end) throws OutOfReachException {
-        return new PathFinder(Bot.getPosition(), end).calculatePath();
+        return new PathFinder(PowerGrid.BOT.getPosition(), end).calculatePath();
     }
     /**
      * The maximum distance between two Points in the result Path.
@@ -195,14 +195,14 @@ public class PathFinder {
             new Point(base.x - 1, base.y, base.z)
         };
         for (Point p : edges) {
-            GameObject go = Mapper.getWorldMap().get(p);
+            GameObject go = PowerGrid.MAPPER.getWorldMap().getObject(p);
             if (!(go instanceof Wall)) {
                 points.add(p);
             } else if (!((Wall) go).containsType(getDirection(p, base))) {
                 points.add(p);
             }
         }
-        GameObject obj = Mapper.getWorldMap().get(base);
+        GameObject obj = PowerGrid.MAPPER.getWorldMap().getObject(base);
         if (obj instanceof Transportable) {
             Transportable trans = (Transportable) obj;
             Transportable[] tray = trans.getDestinations();

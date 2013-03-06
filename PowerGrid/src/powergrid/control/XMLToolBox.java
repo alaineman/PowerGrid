@@ -75,6 +75,8 @@ public class XMLToolBox {
      *         could not be read.
      */
     public static XMLNode getXMLTree(InputStream in) {
+        if (in == null) 
+            return null;
         ArrayList<String> lines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             while (reader.ready()) {

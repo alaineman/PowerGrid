@@ -49,7 +49,7 @@ public class ActiveScriptTask extends StepTask {
     
     /**
      * Returns the ActiveScript instance connected to this ActiveScriptTask
-     * @return 
+     * @return the ActiveScript instance connected to this ActiveScriptTask
      */
     public ActiveScript getInstance() {
         return theScript;
@@ -67,7 +67,7 @@ public class ActiveScriptTask extends StepTask {
     
     /**
      * Returns the region of spread between waiting times returned from the loop() method of the ActiveScript.
-     * @see ActiveScriptTask#setWaitSpread(double) for info about the waitSpread feature
+     * @see ActiveScriptTask#setWaitSpread(int) for info about the waitSpread feature
      * @return the waitSpread setting of this ActiveScriptTask
      */
     public double getWaitSpread() {

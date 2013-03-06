@@ -11,25 +11,25 @@ import powergrid.model.interact.Transportable;
  * <p/>
  * @author Chronio
  */
-public interface TransportNetwork<T extends Transportable> {
+public interface TransportNetwork {
     /**
      * returns true if and only if the specified element is contained in this network, returns false otherwise.
      * @param element the element to check
      * @return whether this network contains the given element
      */
-    public boolean contains(T element);
+    public boolean contains(Transportable element);
     /**
      * Adds the given element to this network.
      * @param element the element to add.
      * @return true if the element was succesfully added, false otherwise
      */
-    public boolean add(T element);
+    public boolean add(Transportable element);
     /**
      * removes the given element from this network.
      * @param element the element to remove.
      * @return true if this network contained the element and it was successfully removed, false otherwise
      */
-    public boolean remove(T element);
+    public boolean remove(Transportable element);
     /**
      * returns the amount of elements in this network
      * @return the amount of elements in this network
@@ -42,5 +42,5 @@ public interface TransportNetwork<T extends Transportable> {
      * @param destination the endpoint
      * @return a shortest path to the destination.
      */
-    public List<T> findPath(T source, T destination);
+    public List<Transportable> findPath(Transportable source, Transportable destination);
 }

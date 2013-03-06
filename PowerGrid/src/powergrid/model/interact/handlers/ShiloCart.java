@@ -19,7 +19,6 @@ public class ShiloCart extends Transportable {
 
    /**
      * These are the cart GameObject values.
-     * @see GameObject
      */
     public final static int[] values = {2230,2265};
     

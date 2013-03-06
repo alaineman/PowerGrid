@@ -6,19 +6,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import org.powerbot.Boot;
 import powergrid.control.Mapper;
 import powergrid.control.ScriptLoader;
@@ -40,33 +32,46 @@ import powergrid.view.ControlPanel;
  *   <dt>-dev</dt>
  *   <dd>PowerGrid developer mode. Setting this flag logs more detailed messages
  *       to the console.</dd>
- *   <dt>-eco</dt>
+ *   <dt>-eco (or -e)</dt>
  *   <dd>Eco-mode. Setting this flag will cause PowerGrid to put more effort into
  *       maintaining a low memory footprint. Might increase performance on low-end
  *       computers.</dd>
- *   <dt>-splitui</dt>
+ *   <dt>-splitui (or -s)</dt>
  *   <dd>Split PowerGrid's user interface from RSBot window. This means that the
  *       PowerGrid control panel will appear in a separate frame.</dd>
+ *   <dt>-plugins (or -p)</dt>
+ *   <dd>Specify a custom Plugins directory. For example: 
+ *       <code>java -jar PowerGrid.jar -p C:\customPluginDirectory</code> will look 
+ *       for plugins in the directory named <code>C:\customPluginDirectory</code>
+ *       instead of the default "plugins" directory.</dd>
  * </dl>
  * <p/>
  * @author Chronio
  */
 public class PowerGrid {
     
-    /** The PowerGrid version */
+    /** The PowerGrid version. */
     public static final double VERSION = 0.1;
-    
-    private static boolean securityManagerDisabled = false;
     
     /** The PowerGrid instance. */
     public static final PowerGrid PG = new PowerGrid();
-    /** The plugin directory. Default is "plugins". */
+    /** The default Bot instance. */
+    public static final Bot BOT = new Bot(null,TaskManager.getTM());
+    /** The default Mapper instance. */
+    public static final Mapper MAPPER = new Mapper();
+    
+    
+    /** The plugin directory, default is "plugins". */
     public static File pluginDirectory = new File("plugins");
     
-    /** Thread that terminates PowerGrid in case of shutdown. Ensures that everything is cleaned up. */
+    /** Thread that shut down PowerGrid in case of RSBot shutdown. 
+     * <p/>
+     * Ensures that everything is cleaned up and terminated gracefully. 
+     */
     private static Thread terminatorThread = new Thread("Terminator") {
         @Override public void run() {
-            PG.terminate();
+            if (!PG.terminate())
+                System.err.println("WARNING: PowerGrid termination failed");
         }
     };
     
@@ -90,20 +95,20 @@ public class PowerGrid {
                     dev = true;
                     break;
                 case "-splitui":
+                case "-s":
                     split = true;
                     break;
                 case "-eco":
+                case "-e":
                     eco = true;
                     break;
                 case "-plugins":
+                case "-p":
                     File f = new File(it.next());
                     if (f.isDirectory())
                         pluginDirectory = f;
                     else
                         logMessage("The provided plugins folder (" + f.getName() + ") is not a valid directory");
-                    break;
-                case "-smbypass":
-                    securityManagerDisabled = true;
                     break;
                 default:
                     debugMessage("Unknown command-line parameter: " + arg);
@@ -121,32 +126,8 @@ public class PowerGrid {
         
         // launch RSBot
         try {
-            if (securityManagerDisabled) {
-                try {
-                    Logger logger = Logger.getLogger("");
-                    for (Handler h : logger.getHandlers()) {
-                        logger.removeHandler(h);
-                    }
-                    ConsoleHandler handler = new ConsoleHandler();
-                    handler.setFormatter(new Formatter(){
-                        @Override public String format(LogRecord record) {
-                            return "[RSBot] " + record.getMessage() + "\n";
-                        }
-                    });
-                    logger.addHandler(handler);
-                    
-                    org.powerbot.qb.a();
-                    //theOB.d.c.setEnabled(true);
-                    logMessage("RSBot started - no SecurityManager set");
-                } catch (Exception e) {
-                    securityManagerDisabled = false;
-                    Boot.main(new String[0]);
-                    logMessage("RSBot started normally, since a " + e.getClass().getSimpleName() + " occurred");
-                }
-            } else {
-                Boot.main(new String[0]);
-                logMessage("RSBot started");
-            }
+            Boot.main(new String[0]);
+            logMessage("RSBot started");
         } catch (Exception e) {
             logMessage("RSBot failed to start because of a " + e.getClass().getSimpleName() + ": " + e.getMessage());
             System.exit(1);
@@ -169,10 +150,6 @@ public class PowerGrid {
         PG.launch(dev,split,eco);
         
         PG.taskManagerLoader.run();
-    }
-    
-    public static boolean isSecurityManagerDisabled() {
-        return securityManagerDisabled;
     }
     
     public static List<Plugin> getPlugins() {
@@ -231,7 +208,7 @@ public class PowerGrid {
                     try {
                         BufferedImage icon = ImageIO.read(ClassLoader.getSystemResource("powergrid/images/icon_small.png"));
                         f.setIconImage(icon);
-                        f.setTitle(f.getTitle() + " - Running PowerGrid v" + PowerGrid.VERSION + (isSecurityManagerDisabled()?" (No SecurityManager)":""));
+                        f.setTitle(f.getTitle() + " - Running PowerGrid v" + PowerGrid.VERSION);
                         PowerGrid.debugMessage("JFrame modification complete");
                     } catch (IOException e) {
                         PowerGrid.logMessage("Error setting image on RSBot JFrame: " + e);
@@ -242,11 +219,13 @@ public class PowerGrid {
         debugMessage("ControlPanel created");
         
         taskManagerLoader = new ScriptLoader(TaskManager.getTM());
-        //taskManagerLoader.run();
+        
         debugMessage("TaskManager created");
         
+        BOT.reloadLocalPlayer();
         Runtime.getRuntime().addShutdownHook(terminatorThread);
         logMessage("PowerGrid started");
+        theControlPanel.setMessage("PowerGrid running...");
         isRunning = true;
         return true;
     }
@@ -263,10 +242,11 @@ public class PowerGrid {
         if (!isRunning)
             return false;
         logMessage("stopping PowerGrid...");
+        theControlPanel.setMessage("PowerGrid stopping...");
         try {
             Runtime.getRuntime().removeShutdownHook(terminatorThread);
         } catch (IllegalStateException e) {} // was already shutting down
-        Mapper.stopMapping();
+        MAPPER.stopMapping();
         debugMessage("Mapper stopped");
         theControlPanel.getParent().remove(theControlPanel);
         theControlPanel = null;
@@ -276,7 +256,7 @@ public class PowerGrid {
         debugMessage("TaskManager stopped");
         logMessage("PowerGrid stopped");
         isRunning = false;
-        return false;
+        return true;
     }
     
     /**
@@ -343,5 +323,17 @@ public class PowerGrid {
      */
     public static void debugMessage(String message) {
         if (PG.isDevmode()) System.out.println("[PowerGrid] <debug> " + message);
+    }
+    
+    /**
+     * Logs a message to the console followed by the stack trace of the provided 
+     * Throwable if and only if PowerGrid is started in Developer mode.
+     * @param message the message to log
+     * @param cause the Throwable that caused this message to be logged.
+     */
+    public static void debugMessage(String message, Throwable cause) {
+        if (PG.isDevmode()) {
+            logMessage("<debug> " + message, cause);
+        }
     }
 }

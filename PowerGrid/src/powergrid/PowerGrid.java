@@ -57,6 +57,9 @@ public class PowerGrid {
     public static final PowerGrid PG = new PowerGrid();
     /** The default Bot instance. */
     public static final Bot BOT = new Bot(null,TaskManager.getTM());
+    /** The default Mapper instance. */
+    public static final Mapper MAPPER = new Mapper();
+    
     
     /** The plugin directory, default is "plugins". */
     public static File pluginDirectory = new File("plugins");
@@ -67,7 +70,8 @@ public class PowerGrid {
      */
     private static Thread terminatorThread = new Thread("Terminator") {
         @Override public void run() {
-            PG.terminate();
+            if (!PG.terminate())
+                System.err.println("WARNING: PowerGrid termination failed");
         }
     };
     
@@ -215,7 +219,7 @@ public class PowerGrid {
         debugMessage("ControlPanel created");
         
         taskManagerLoader = new ScriptLoader(TaskManager.getTM());
-        //taskManagerLoader.run();
+        
         debugMessage("TaskManager created");
         
         BOT.reloadLocalPlayer();
@@ -242,7 +246,7 @@ public class PowerGrid {
         try {
             Runtime.getRuntime().removeShutdownHook(terminatorThread);
         } catch (IllegalStateException e) {} // was already shutting down
-        Mapper.stopMapping();
+        MAPPER.stopMapping();
         debugMessage("Mapper stopped");
         theControlPanel.getParent().remove(theControlPanel);
         theControlPanel = null;
@@ -252,7 +256,7 @@ public class PowerGrid {
         debugMessage("TaskManager stopped");
         logMessage("PowerGrid stopped");
         isRunning = false;
-        return false;
+        return true;
     }
     
     /**

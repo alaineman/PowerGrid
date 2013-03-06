@@ -5,7 +5,6 @@ import java.util.List;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Walking;
 import powergrid.PowerGrid;
-import powergrid.control.Mapper;
 import powergrid.control.PathFinder;
 import powergrid.model.Destination;
 import powergrid.model.GameObject;
@@ -184,7 +183,7 @@ public class TravelTask extends StepTask {
                 }
             } else {
                 //attempt walkTo anyways, insert teleportable / transportable usage
-                GameObject obj = Mapper.getWorldMap().get(p);
+                GameObject obj = PowerGrid.MAPPER.getWorldMap().getObject(p);
                 if (obj instanceof Transportable) {
                     Transportable trans = (Transportable) obj;
                     try {

@@ -20,16 +20,18 @@ import org.powerbot.game.api.wrappers.Tile;
  */
 public class Point implements Locatable {
     /** The X-coordinate of this Point */
-    public int x = 0;
+    public final int x;
     /** The Y-coordinate of this Point */
-    public int y = 0;
+    public final int y;
     /** The Z-coordinate of this Point (this was known as the plane in the RSBot environment) */
-    public int z = 0;
+    public final int z;
     
     /**
      * Creates a new Point at (0,0,0).
      */
-    public Point() {}
+    public Point() {
+        this(0,0,0);
+    }
     
     /**
      * Creates a new Point with the given coordinates. 
@@ -38,8 +40,7 @@ public class Point implements Locatable {
      * @param y the y-coordinate of the Point
      */
     public Point(int x,int y) {
-        this.x = x;
-        this.y = y;
+        this(x,y,0);
     }
     /**
      * Creates a new Point with the given coordinates

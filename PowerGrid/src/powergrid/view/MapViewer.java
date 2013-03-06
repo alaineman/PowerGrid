@@ -12,14 +12,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import powergrid.Bot;
 import powergrid.PowerGrid;
-import powergrid.control.Mapper;
 import powergrid.control.TaskManager;
 import powergrid.control.XMLToolBox;
 import powergrid.model.GameObject;
-import powergrid.model.Grid;
 import powergrid.model.Point;
+import powergrid.model.WorldMap;
 import powergrid.model.XMLNode;
 import powergrid.model.interact.Interactable;
 import powergrid.model.world.Wall;
@@ -40,7 +38,7 @@ public class MapViewer extends Canvas implements ActionListener {
         theMapViewer.actionPerformed(null);
     }
     
-    private static Grid theMap = null;
+    private static WorldMap theMap = null;
     
     public static MapViewer theMapViewer = null;
     
@@ -103,7 +101,7 @@ public class MapViewer extends Canvas implements ActionListener {
      */
     public MapViewer() {
         super();
-        theMap = Mapper.getWorldMap();
+        theMap = PowerGrid.MAPPER.getWorldMap();
         setSize(r.width*scale, r.height*scale);
     }
     
@@ -143,7 +141,7 @@ public class MapViewer extends Canvas implements ActionListener {
         if (g == null) return;
         for (int x=r.x;x<r.x+r.width;x++) {
             for (int y=r.y;y<r.y+r.height;y++) {
-                GameObject go = theMap.get(new Point(x,y));
+                GameObject go = theMap.getObject(new Point(x,y));
                 Rectangle area = new Rectangle(scale*(x-r.x),scale*(r.height-(y-r.y)),scale,scale); // the rectangle we draw in
                 
                 if (go == null)
@@ -205,7 +203,7 @@ public class MapViewer extends Canvas implements ActionListener {
     }
     
     /**
-     * Shows the World Map in a separate frame without loading the entire plug-in.
+     * Shows the World Map in a separate frame without loading PowerGrid
      * This can be done without RSBot.
      * @param exitOnClose when true, terminates the application when the window is closed
      */
@@ -214,7 +212,7 @@ public class MapViewer extends Canvas implements ActionListener {
         File file = new File(path + ""); //TODO link to world map
         try (FileInputStream worldMapIn = new FileInputStream(file)) {
             XMLNode worldMap = XMLToolBox.getXMLTree(worldMapIn);
-            Mapper.getWorldMap().fillFromXML(worldMap);
+            //PowerGrid.MAPPER.getWorldMap().fillFromXML(worldMap);
             System.out.println("The World Map was loaded");
         } catch (IOException e) {
             System.out.println("The World Map failed to load from file: " + file.getAbsolutePath());

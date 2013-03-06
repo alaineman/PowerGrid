@@ -20,7 +20,7 @@ subgoals to indicate progress.
 ### PowerGrid feature implementations ###
   - Make sure there is/are:
     - Working interactions using handle method
-    - a Mapper that maps the environment to a bitset representation instead of the current mapping
+    - a Mapper that maps the environment to a more native representation instead of the current mapping
     - a Fully working GUI with Plugin/Script loading options
     - Working dynamic path finding with interaction checking
     - Maintainable API for Plugin developers

@@ -20,7 +20,7 @@ public class TreeNetwork implements TransportNetwork {
     
     /**
      * Creates a new TreeNetwork with the given element as root.
-     * @param rootElement 
+     * @param rootElement the root of the TreeNetwork
      */
     public TreeNetwork(Transportable rootElement) {
         root = new TreeNode<>(rootElement);

@@ -27,10 +27,12 @@ public class Mapper {
     private Client client = null;
     private MapperThread thread = null;
 
-    public Mapper() {
-        assert Bot.instantiated();
-        client = Bot.client();
-        assert invariant();
+    public Mapper(boolean useDefaultClient) {
+        if (useDefaultClient) {
+            assert Bot.instantiated();
+            client = Bot.client();
+            assert invariant();
+        }
     }
     
     public Mapper(Client client) {
@@ -40,12 +42,17 @@ public class Mapper {
     }
     
     public Mapper withMap(WorldMap map) {
-        assert this.map == null;
-        assert map != null;
+        assert this.map == null && map != null;
         this.map = map;
         return this;
     }
 
+    public Mapper withClient(Client client) {
+        assert this.client == null && client != null;
+        this.client = client;
+        return this;
+    }
+    
     /**
      * Starts the Mapper with the given policy.
      * <p/>
@@ -90,6 +97,9 @@ public class Mapper {
 
     private synchronized void mapOnce() {
         assert invariant();
+        if (map == null) {
+            map = new WorldMap();
+        }
         RSInfo info = client.getRSGroundInfo();
         Point basePoint = new Point(
                 info.getBaseInfo().getX(),

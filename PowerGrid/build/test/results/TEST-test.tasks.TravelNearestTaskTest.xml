@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="Patrick-PC" name="test.tasks.TravelNearestTaskTest" tests="9" time="0.452" timestamp="2013-03-05T22:15:25">
+<testsuite errors="1" failures="0" hostname="Patrick-PC" name="test.tasks.TravelNearestTaskTest" tests="9" time="0.094" timestamp="2013-03-06T20:37:47">
   <properties>
     <property name="netbeans.autoupdate.country" value="US" />
     <property name="nb.wait.for.caches" value="true" />
-    <property name="javac.test.classpath" value="../lib/RSBot.jar:build/classes:C:\Program Files\NetBeans 7.2.1\platform\modules\ext\junit-4.10.jar:..\lib\Mockito.jar" />
+    <property name="javac.test.classpath" value="..\lib\RSBot.jar:build/classes:C:\Program Files\NetBeans 7.2.1\platform\modules\ext\junit-4.10.jar:..\lib\Mockito.jar" />
     <property name="libs.junit.javadoc" value="C:\Program Files\NetBeans 7.2.1\java\docs\junit-3.8.2-api.zip" />
     <property name="ant.core.lib" value="C:\Program Files\NetBeans 7.2.1\java\ant\lib\ant.jar" />
     <property name="javadoc.windowtitle" value="PowerWalk" />
@@ -23,7 +23,7 @@
     <property name="sun.os.patch.level" value="Service Pack 1" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
     <property name="ant.file.PowerGrid-impl" value="C:\cygwin\home\Patrick\PowerGrid\PowerGrid\nbproject\build-impl.xml" />
-    <property name="file.reference.RSBot.jar" value="../lib/RSBot.jar" />
+    <property name="file.reference.RSBot.jar" value="..\lib\RSBot.jar" />
     <property name="nb.show.statistics.ui" value="usageStatisticsEnabled" />
     <property name="netbeans.autoupdate.variant" value="" />
     <property name="have.tests" value="true" />
@@ -42,7 +42,7 @@
     <property name="user.name" value="Patrick" />
     <property name="copylibs.rebase" value="true" />
     <property name="libs.swing-layout.maven-pom" value="" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner test.tasks.TravelNearestTaskTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\test\results\TEST-test.tasks.TravelNearestTaskTest.xml crashfile=C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\junitvmwatcher5842348491942887093.properties propsfile=C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\junit570472890139547926.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner test.tasks.TravelNearestTaskTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\test\results\TEST-test.tasks.TravelNearestTaskTest.xml crashfile=C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\junitvmwatcher5710541955360839327.properties propsfile=C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build\junit4285948364699413463.properties" />
     <property name="build.classes.dir" value="build/classes" />
     <property name="netbeans.accept_license_class" value="org.netbeans.license.AcceptLicense" />
     <property name="jnlp.descriptor" value="application" />
@@ -52,7 +52,7 @@
     <property name="includes" value="**" />
     <property name="user.country" value="US" />
     <property name="javadoc.encoding" value="UTF-8" />
-    <property name="javac.classpath" value="../lib/RSBot.jar" />
+    <property name="javac.classpath" value="..\lib\RSBot.jar" />
     <property name="libs.JAVADB_DRIVER_LABEL.src" value="" />
     <property name="debug-transport" value="dt_shmem" />
     <property name="netbeans.home" value="C:\Program Files\NetBeans 7.2.1\platform" />
@@ -77,7 +77,7 @@
     <property name="file.separator" value="\" />
     <property name="libs.junit_4.maven-pom" value="" />
     <property name="mkdist.disabled" value="true" />
-    <property name="javac.test.processorpath" value="../lib/RSBot.jar:build/classes:C:\Program Files\NetBeans 7.2.1\platform\modules\ext\junit-4.10.jar:..\lib\Mockito.jar" />
+    <property name="javac.test.processorpath" value="..\lib\RSBot.jar:build/classes:C:\Program Files\NetBeans 7.2.1\platform\modules\ext\junit-4.10.jar:..\lib\Mockito.jar" />
     <property name="netbeans.buildnumber" value="201210100934" />
     <property name="libs.JWSAntTasks.javadoc" value="" />
     <property name="build.generated.sources.dir" value="build/generated-sources" />
@@ -113,10 +113,9 @@
     <property name="libs.eclipselink.maven-pom" value="" />
     <property name="application.vendor" value="Alaineman; Chronio" />
     <property name="libs.spring-framework300.maven-pom" value="" />
-    <property name="run.test.classpath" value="../lib/RSBot.jar:build/classes:C:\Program Files\NetBeans 7.2.1\platform\modules\ext\junit-4.10.jar:..\lib\Mockito.jar:build/test/classes" />
+    <property name="run.test.classpath" value="..\lib\RSBot.jar:build/classes:C:\Program Files\NetBeans 7.2.1\platform\modules\ext\junit-4.10.jar:..\lib\Mockito.jar:build/test/classes" />
     <property name="ant.project.invoked-targets" value="test" />
     <property name="libs.swing-layout.javadoc" value="C:\Program Files\NetBeans 7.2.1\platform\docs\swing-layout-1.0.4-doc.zip" />
-    <property name="source.reference.RSBot.jar" value="../lib/src" />
     <property name="libs.ejb3-persistence.maven-pom" value="" />
     <property name="libs.PostgreSQLDriver.maven-pom" value="" />
     <property name="java.class.version" value="51.0" />
@@ -137,7 +136,7 @@
     <property name="javadoc.preview" value="true" />
     <property name="libs.jpa20-persistence.javadoc" value="" />
     <property name="java.home" value="C:\Program Files\Java\jdk1.7.0_11\jre" />
-    <property name="debug.test.classpath" value="../lib/RSBot.jar:build/classes:C:\Program Files\NetBeans 7.2.1\platform\modules\ext\junit-4.10.jar:..\lib\Mockito.jar:build/test/classes" />
+    <property name="debug.test.classpath" value="..\lib\RSBot.jar:build/classes:C:\Program Files\NetBeans 7.2.1\platform\modules\ext\junit-4.10.jar:..\lib\Mockito.jar:build/test/classes" />
     <property name="netbeans.importclass" value="org.netbeans.upgrade.AutoUpgrade" />
     <property name="ant.project.default-target" value="default" />
     <property name="annotation.processing.run.all.processors" value="true" />
@@ -147,7 +146,7 @@
     <property name="libs.PostgreSQLDriver.javadoc" value="" />
     <property name="libs.MySQLDriver.maven-pom" value="" />
     <property name="libs.junit_4.javadoc" value="C:\Program Files\NetBeans 7.2.1\java\docs\junit-4.10-javadoc.jar" />
-    <property name="run.classpath" value="../lib/RSBot.jar:build/classes" />
+    <property name="run.classpath" value="..\lib\RSBot.jar:build/classes" />
     <property name="libs.hibernate-support.src" value="" />
     <property name="jna.boot.library.name" value="jnidispatch-340" />
     <property name="annotation.processing.enabled.in.editor" value="false" />
@@ -155,7 +154,7 @@
     <property name="javac.deprecation" value="false" />
     <property name="javadoc.use" value="true" />
     <property name="sun.java2d.noddraw" value="true" />
-    <property name="javac.processorpath" value="../lib/RSBot.jar" />
+    <property name="javac.processorpath" value="..\lib\RSBot.jar" />
     <property name="javac.compilerargs" value="" />
     <property name="ant.file" value="C:\cygwin\home\Patrick\PowerGrid\PowerGrid\build.xml" />
     <property name="libs.beans-binding.maven-pom" value="" />
@@ -166,6 +165,7 @@
     <property name="org.openide.major.version" value="IDE/1" />
     <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
     <property name="netbeans.user" value="C:\Users\Patrick\AppData\Roaming\NetBeans\7.2.1" />
+    <property name="tests.failed" value="true" />
     <property name="javadoc.additionalparam" value="" />
     <property name="jnlp.offline-allowed" value="false" />
     <property name="java.io.tmpdir" value="C:\Users\Patrick\AppData\Local\Temp\" />
@@ -174,7 +174,7 @@
     <property name="junit.available" value="true" />
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.7.0_11\jre\bin" />
     <property name="have.sources" value="true" />
-    <property name="debug.classpath" value="../lib/RSBot.jar:build/classes" />
+    <property name="debug.classpath" value="..\lib\RSBot.jar:build/classes" />
     <property name="javadoc.private" value="false" />
     <property name="test.src.dir" value="test" />
     <property name="libs.MyLibrary.javadoc" value="" />
@@ -183,6 +183,7 @@
     <property name="meta.inf.dir" value="src/META-INF" />
     <property name="javadoc.encoding.used" value="UTF-8" />
     <property name="dist.jar" value="dist/PowerGrid.jar" />
+    <property name="netbeans.automatic.build" value="true" />
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
     <property name="ant.project.name" value="PowerGrid" />
     <property name="netbeans.hash.code" value="unique=NBJDK_JAVA_JDK0d72fa806-fca5-4641-84b4-4bf5732ac2f9_2918644e-d9f9-48b6-a667-c040a4b272ce" />
@@ -311,14 +312,21 @@
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit" />
   </properties>
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testMatchingOnMismatchWithTargetFilter" time="0.0" />
-  <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetMatchingNonExistingType" time="0.0" />
-  <testcase classname="test.tasks.TravelNearestTaskTest" name="testCalculateNearestNoMatches" time="0.016" />
+  <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetMatchingNonExistingType" time="0.015" />
+  <testcase classname="test.tasks.TravelNearestTaskTest" name="testCalculateNearestNoMatches" time="0.0" />
+  <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetters" time="0.0" />
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetMatchingEmptyType" time="0.0" />
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testMatchingOnCompleteness" time="0.0" />
-  <testcase classname="test.tasks.TravelNearestTaskTest" name="testCalculateNearest" time="0.39" />
+  <testcase classname="test.tasks.TravelNearestTaskTest" name="testCalculateNearest" time="0.032">
+    <error type="java.lang.NullPointerException">java.lang.NullPointerException
+	at powergrid.control.PathFinder.availableEdges(PathFinder.java:198)
+	at powergrid.control.PathFinder.calculatePath(PathFinder.java:149)
+	at powergrid.tasks.TravelNearestTask.calculateNearest(TravelNearestTask.java:100)
+	at test.tasks.TravelNearestTaskTest.testCalculateNearest(TravelNearestTaskTest.java:71)
+</error>
+  </testcase>
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testMatchingOnMismatch" time="0.0" />
   <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetMatchingTraits" time="0.0" />
-  <testcase classname="test.tasks.TravelNearestTaskTest" name="testGetters" time="0.0" />
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

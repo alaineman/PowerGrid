@@ -18,6 +18,7 @@ import powergrid.control.TaskManager;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
 import powergrid.plugins.PluginLoader;
+import powergrid.plugins.PowerGridPlugin;
 import powergrid.tasks.Task;
 import powergrid.view.ControlPanel;
 
@@ -58,7 +59,7 @@ public class PowerGrid {
     /** The default Bot instance. */
     public static final Bot BOT = new Bot(null,TaskManager.getTM());
     /** The default Mapper instance. */
-    public static final Mapper MAPPER = new Mapper();
+    public static final Mapper MAPPER = new Mapper(false);
     
     
     /** The plugin directory, default is "plugins". */
@@ -117,6 +118,8 @@ public class PowerGrid {
         // Load the plugins in the plugin folder
         PluginLoader pl = new PluginLoader(pluginDirectory);
         plugins = pl.getLoadedPlugins();
+        plugins = Arrays.copyOf(plugins, plugins.length+1);
+        plugins[plugins.length-1] = new PowerGridPlugin();
         for (Plugin plugin : plugins) {
             String pluginName = plugin.getClass().getAnnotation(PluginInfo.class).name();
             plugin.setUp();
@@ -139,7 +142,9 @@ public class PowerGrid {
         ThreadGroup[] groups = new ThreadGroup[1];
         while (true) {
             mainGroup.enumerate(groups, false);
-            if (groups[0] != null) {
+            if (groups[0] != null && 
+                    org.powerbot.core.Bot.instantiated() &&
+                    org.powerbot.core.Bot.client() != null) {
                 break;
             }
             Task.sleep(50);
@@ -149,7 +154,7 @@ public class PowerGrid {
         // Launch PowerGrid
         PG.launch(dev,split,eco);
         
-        PG.taskManagerLoader.run();
+        
     }
     
     public static List<Plugin> getPlugins() {
@@ -223,6 +228,11 @@ public class PowerGrid {
         debugMessage("TaskManager created");
         
         BOT.reloadLocalPlayer();
+        taskManagerLoader.run();
+        MAPPER.withClient(org.powerbot.core.Bot.client());
+        MAPPER.startMapping();
+        debugMessage("Mapper Started");
+        
         Runtime.getRuntime().addShutdownHook(terminatorThread);
         logMessage("PowerGrid started");
         theControlPanel.setMessage("PowerGrid running...");

@@ -22,6 +22,7 @@ public class InteractionFactory {
     private HashMap<String,TransportNetwork> networks = new HashMap<>();
     
     public void loadConnections(InputStream source) {
+        assert source != null;
         XMLNode data = XMLToolBox.getXMLTree(source);
         networks.clear();
         for (XMLNode type : data) {
@@ -87,20 +88,20 @@ public class InteractionFactory {
     }
     
     private Class<? extends Transportable> getClass(XMLNode type) {
+        assert type != null;
         String packageName = "powergrid.model.interact";
         if (type.get("manifold") != null)
             packageName += ".manifold";
         String className = type.get("type");
-        if (type != null) {
-            String name = packageName + "." + className;
-            try {
-                Class<?> clazz = Class.forName(name);
-                if (Transportable.class.isAssignableFrom(clazz)) {
-                    return clazz.asSubclass(Transportable.class);
-                }
-            } catch (ClassNotFoundException e) {
-                PowerGrid.logMessage("The specified interaction type is not recognized: \"" + name + "\"", e);
+        String name = packageName + "." + className;
+        try {
+            Class<?> clazz = Class.forName(name);
+            if (Transportable.class.isAssignableFrom(clazz)) {
+                return clazz.asSubclass(Transportable.class);
             }
+        } catch (ClassNotFoundException e) {
+            PowerGrid.logMessage("The specified interaction type is not recognized: \"" + name + "\"", e);
+
         }
         return null;
     }

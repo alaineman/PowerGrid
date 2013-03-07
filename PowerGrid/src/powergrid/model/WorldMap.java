@@ -48,9 +48,13 @@ public class WorldMap {
     }
     
     public boolean isBoundary(Point p, int mask) {
+        return (getMask(p) & mask) != 0;
+    }
+    
+    public int getMask(Point p) {
         Field f = data.get(p);
-        if (f == null) return false;
-        return (f.mask() & mask) != 0;
+        if (f == null) return 0;
+        return f.mask();
     }
     
     public Field getField(Point p) {
@@ -67,7 +71,7 @@ public class WorldMap {
         Field f = data.get(p);
         if (f == null || f.ground() == null) 
             return null;
-        //TODO instantiate GameObject
+        // ... 
         return null;
     }
     

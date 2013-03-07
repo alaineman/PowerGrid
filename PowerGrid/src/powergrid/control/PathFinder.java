@@ -2,12 +2,10 @@ package powergrid.control;
 
 import java.util.*;
 import powergrid.PowerGrid;
-import powergrid.model.GameObject;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
 import powergrid.model.interact.Lodestone;
-import powergrid.model.interact.Transportable;
 import powergrid.model.world.Wall;
 
 /**
@@ -89,6 +87,7 @@ public class PathFinder {
      */
     public PathFinder(Point start, Point goal) {
         assert start != null && goal != null;
+        
         theMap = PowerGrid.MAPPER.getWorldMap();
         this.start = start;
         this.goal = goal;
@@ -100,7 +99,7 @@ public class PathFinder {
         pathCost = new HashMap<>(tiles);
         fScore = new HashMap<>(tiles);
         closedSet = new HashSet<>(tiles);
-        pending = new PriorityQueue<>(dist, new Comparator<Point>() {
+        pending = new PriorityQueue<>(Math.abs(dist) + 1, new Comparator<Point>() {
             @Override
             public int compare(Point p1, Point p2) {
                 return (int) (fScore.get(p1) - fScore.get(p2));
@@ -112,6 +111,11 @@ public class PathFinder {
         pending.offer(start);
     }
     
+    /**
+     * Specifies the WorldMap that is used for the pathfinding.
+     * @param map the WorldMap to use
+     * @return itself for fluency
+     */
     public PathFinder withMap(WorldMap map) {
         assert map != null;
         theMap = map;
@@ -119,24 +123,32 @@ public class PathFinder {
     }
     
     /**
-     * Calculates a path between start and goal using the A* algorithm.
+     * Calculates a precise path between start and goal using the A* algorithm.
      * <p/>
      * When this method has been called once, any consecutive calls to this
      * method will return the same path.
      * <p/>
-     * @return An immutable Path from start to goal
+     * @return A Path from start to goal
      * @throws OutOfReachException When no path between start and goal exists
      */
-    public List<Point> calculatePath() throws OutOfReachException {
-        // add all available Lodestones.
-        if (path != null) {
+    public List<Point> calculatePrecise() throws OutOfReachException {
+        
+        if (path != null) { 
+            /* if a path already exists, return that path, since we assume that
+             * the environment is static. */
             return path;
         }
+        if (start.equals(goal)) {
+            /* Return an empty List when we are already at the specified destination,
+             * because no action needs to be taken to reach the destination. */
+            return new ArrayList<>(1);
+        }
         for (Lodestone l : Lodestone.getAvailableLodestones()) {
+            /* Check for available Lodestones at the beginning, and add them to 
+             * the PriorityQueue. If a Lodestone teleport is feasible, it will
+             * be the most appropriate at the start. */
             Point p = l.getPosition();
             if (p.distance(start) > maxDist) {
-                // we use 2*maxDist to indicate that we don't want to use teleports 
-                // for small distances (<2*maxDist).
                 pathCost.put(p, 1d * maxDist);
                 fScore.put(p, 2d * maxDist);
                 pending.add(p);
@@ -146,12 +158,19 @@ public class PathFinder {
         while (!pending.isEmpty()) {
             Point current = pending.poll();
             if (current.equals(goal)) {
-                ArrayList<Point> fullPath = reconstruct(goal);
-                path = reducePoints(fullPath);
-                return Collections.unmodifiableList(path);
+                /* We save this path in the pathfinder for fast retrieval later.*/
+                path = reconstruct(goal);
+                /* We also release all references to data structures, since we 
+                 * won't need them anymore. */
+                cameFrom = null;
+                pathCost = null;
+                fScore = null;
+                closedSet = null;
+                pending = null;
+                return path;
             }
             closedSet.add(current);
-            ArrayList<Point> adjacents = availableEdges(current);
+            Set<Point> adjacents = availableEdges(current);
             for (Point p : adjacents) {
                 if (!closedSet.contains(p)) {
                     double tempPathCost = pathCost.get(current) + 1;
@@ -169,9 +188,31 @@ public class PathFinder {
         }
         throw new OutOfReachException(goal, "Destination could not be reached, is the area explored?");
     }
-
-    // helper method for determining the direction. 
-    private static int getDirection(Point base, Point adj) {
+    
+    /**
+     * Calculates a path between start and goal using the A* algorithm.
+     * <p/>
+     * The returned List will contain Points placed at most <code>maxDist</code>
+     * from one another, allowing the path to be executed in the RSBot environment
+     * Point by Point.
+     * <p/>
+     * When this method has been called once, any consecutive calls to this
+     * method will return the same path.
+     * <p/>
+     * @return A Path from start to goal with gaps between the Points
+     * @throws OutOfReachException When no path between start and goal exists
+     */
+    public List<Point> calculatePath() throws OutOfReachException {
+        return Collections.unmodifiableList(reducePoints(calculatePrecise()));
+    }
+    
+    /**
+     * Returns the direction of the Point adj as seen from base.
+     * @param base the Point from which to look
+     * @param adj the adjacent Point.
+     * @return the mask that specifies the Wall side that would block going from base to adj.
+     */
+    public static int getDirection(Point base, Point adj) {
         double theta = adj.subtract(base).theta(); // the angle from base to adj
         if (Math.abs(theta) <= Math.PI / 4) {
             return Wall.EAST;
@@ -182,17 +223,16 @@ public class PathFinder {
         if (theta > 0) {
             return Wall.NORTH;
         }
-        if (theta < 0) {
-            return Wall.SOUTH;
-        }
-
-        return Wall.BLOCK;
+        return Wall.SOUTH;
     }
 
-    // helper method that returns all tiles that are directly next to base, 
-    // and can be reached from base.
-    private ArrayList<Point> availableEdges(Point base) {
-        ArrayList<Point> points = new ArrayList<>(4);
+    /**
+     * Helper method that returns all available edges going from base.
+     * @param base the Point to check from
+     * @return a Set of Points that contains the available edges.
+     */
+    public Set<Point> availableEdges(Point base) {
+        HashSet<Point> points = new HashSet<>(6);
         Point[] edges = { // the possible adjacent edges
             new Point(base.x, base.y - 1, base.z),
             new Point(base.x + 1, base.y, base.z),
@@ -200,33 +240,26 @@ public class PathFinder {
             new Point(base.x - 1, base.y, base.z)
         };
         for (Point p : edges) {
-            GameObject go = theMap.getObject(p);
-            if (!(go instanceof Wall)) {
+            if (theMap.getMask(p) == 0) {
                 points.add(p);
-            } else if (!((Wall) go).containsType(getDirection(p, base))) {
+            } else if (!theMap.isBoundary(p,getDirection(p, base))) {
                 points.add(p);
-            }
-        }
-        GameObject obj = theMap.getObject(base);
-        if (obj instanceof Transportable) {
-            Transportable trans = (Transportable) obj;
-            Transportable[] tray = trans.getDestinations();
-            for(Transportable t : tray){
-                points.add(t.getPosition());
             }
         }
         return points;
     }
 
-    // helper method that reconstructs the path that was found using the cameFrom map
+    /**
+     * Helper method that reconstructs the Path recursively using the cameFrom HashMap
+     * @param current the node to look up
+     * @return the path leading to <code>current</code>
+     */
     private ArrayList<Point> reconstruct(Point current) {
-        // reconstruct the path from the came_from HashMap
+        // reconstruct the path from the cameFrom HashMap
         Point prev = cameFrom.get(current);
         if (prev == null) {
             // we reached the start of the path
-            ArrayList<Point> thePath = new ArrayList<>();
-            thePath.add(current);
-            return thePath;
+            return new ArrayList<>();
         } else {
             ArrayList<Point> thePath = reconstruct(cameFrom.get(current));
             thePath.add(current);
@@ -234,13 +267,23 @@ public class PathFinder {
         }
     }
 
-    // helper method that reduces the amount of Points in the result path to
-    // prevent unnecessary clicking.
-    private static ArrayList<Point> reducePoints(ArrayList<Point> path) {
-        // Greedy algorithm reducing the points the Bot will click
+    /**
+     * Reduces points in a path to contain only points that are approximately 
+     * <code>maxDist</code> tiles apart.
+     * <p/>
+     * For this, a pseudo-optimal Greedy algorithm is used that picks Points
+     * <code>maxDist - (2 + 4 * Math.random())</code> apart, where this value 
+     * is recomputed for each Point in the resulting path, leading to variations 
+     * in distance between the path's points.
+     * <p/>
+     * @param path the original path with all points.
+     * @return the resulting path with obsolete Points removed
+     */
+    public static ArrayList<Point> reducePoints(List<Point> path) {
+        // Greedy (pseudo-optimal) algorithm reducing the points the Bot will click
         ArrayList<Point> selected = new ArrayList<>((int) Math.ceil(path.size() / (maxDist - 3)));
         int distSinceLastSelected = 0;
-        int targetDistance = maxDist - (int) (3 + 5 * Math.random());
+        int targetDistance = maxDist - (int) (2 + 4 * Math.random());
         for (Point p : path) {
             Lodestone l = Lodestone.getLodestone(p);
             if (l != null && (selected.isEmpty() || selected.get(selected.size() - 1).distance(p) >= maxDist)) {
@@ -250,7 +293,7 @@ public class PathFinder {
                     distSinceLastSelected++;
                 } else {
                     // set a new targetDistance
-                    targetDistance = maxDist - (int) (2 + 5 * Math.random());
+                    targetDistance = maxDist - (int) (2 + 4 * Math.random());
                     selected.add(p);
                     distSinceLastSelected = 0;
                 }

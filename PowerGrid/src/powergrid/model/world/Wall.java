@@ -37,6 +37,8 @@ public class Wall extends GameObject {
         35305,35306,35330,35331,35332,35333,35336,35340,35341 // Varrock walls
     };
     
+    /** No Walls */
+    public static final int EMPTY = 0x0;
     /** Wall on North side */
     public static final int NORTH = 0x1;
     /** Wall on East side */

@@ -3,9 +3,9 @@
 # Package Files #
 *.war
 *.ear
-/PowerWalk/nbproject/private/
-/PowerWalk/build/
-/PowerWalk/dist/
+/PowerGrid/nbproject/private/
+/PowerGrid/build/
+/PowerGrid/dist/
 
 # MS Office backup files
 ~$*

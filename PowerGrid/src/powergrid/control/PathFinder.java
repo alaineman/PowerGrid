@@ -5,6 +5,7 @@ import powergrid.PowerGrid;
 import powergrid.model.GameObject;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
+import powergrid.model.WorldMap;
 import powergrid.model.interact.Lodestone;
 import powergrid.model.interact.Transportable;
 import powergrid.model.world.Wall;
@@ -69,6 +70,8 @@ public class PathFinder {
     /**
      * The maximum distance between two Points in the result Path.
      */
+    private WorldMap theMap = null;
+    
     public static final int maxDist = 14;
     private Point start, goal;
     private HashMap<Point, Point> cameFrom;
@@ -85,12 +88,8 @@ public class PathFinder {
      * @param goal the endpoint of this path
      */
     public PathFinder(Point start, Point goal) {
-        if (start == null) {
-            throw new IllegalArgumentException("Startpoint is null");
-        }
-        if (goal == null) {
-            throw new IllegalArgumentException("Endpoint is null");
-        }
+        assert start != null && goal != null;
+        theMap = PowerGrid.MAPPER.getWorldMap();
         this.start = start;
         this.goal = goal;
 
@@ -112,7 +111,13 @@ public class PathFinder {
         fScore.put(start, start.distance(goal));
         pending.offer(start);
     }
-
+    
+    public PathFinder withMap(WorldMap map) {
+        assert map != null;
+        theMap = map;
+        return this;
+    }
+    
     /**
      * Calculates a path between start and goal using the A* algorithm.
      * <p/>
@@ -186,7 +191,7 @@ public class PathFinder {
 
     // helper method that returns all tiles that are directly next to base, 
     // and can be reached from base.
-    private static ArrayList<Point> availableEdges(Point base) {
+    private ArrayList<Point> availableEdges(Point base) {
         ArrayList<Point> points = new ArrayList<>(4);
         Point[] edges = { // the possible adjacent edges
             new Point(base.x, base.y - 1, base.z),
@@ -195,14 +200,14 @@ public class PathFinder {
             new Point(base.x - 1, base.y, base.z)
         };
         for (Point p : edges) {
-            GameObject go = PowerGrid.MAPPER.getWorldMap().getObject(p);
+            GameObject go = theMap.getObject(p);
             if (!(go instanceof Wall)) {
                 points.add(p);
             } else if (!((Wall) go).containsType(getDirection(p, base))) {
                 points.add(p);
             }
         }
-        GameObject obj = PowerGrid.MAPPER.getWorldMap().getObject(base);
+        GameObject obj = theMap.getObject(base);
         if (obj instanceof Transportable) {
             Transportable trans = (Transportable) obj;
             Transportable[] tray = trans.getDestinations();

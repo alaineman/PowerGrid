@@ -10,13 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import powergrid.PowerGrid;
 import powergrid.control.TaskManager;
@@ -48,6 +48,7 @@ public class TaskPanel extends JPanel {
             taskFrame.setLayout(new BorderLayout());
             taskFrame.add(theTaskPanel,"Center");
             taskFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            taskFrame.setMinimumSize(new Dimension(300,240));
             
             taskFrame.pack();
         }
@@ -59,19 +60,17 @@ public class TaskPanel extends JPanel {
         return theTaskPanel;
     }
     
-    private Class<?>[] tasks;
-    
     public TaskPanel () {
         super(new BorderLayout());
-        ArrayList<Class<? extends Task>> ts = new ArrayList<>();
-        
-        tasks = ts.toArray(new Class<?>[ts.size()]);
-        
         setupPanel();
     }
     
     private void setupPanel() {
         JPanel entries = new JPanel (new GridBagLayout());
+        JScrollPane scrollPane = new JScrollPane(entries);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        
         GridBagConstraints gbc = new GridBagConstraints();
         entries.setPreferredSize(new Dimension(250,200));
         setPreferredSize(new Dimension(250,200));
@@ -115,6 +114,7 @@ public class TaskPanel extends JPanel {
             add(run,"East");
             
             setBorder(new LineBorder(Color.BLACK));
+            setBackground(Color.WHITE);
             
             run.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent ae) {

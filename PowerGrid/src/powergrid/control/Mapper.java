@@ -1,5 +1,6 @@
 package powergrid.control;
 
+import java.util.Objects;
 import org.powerbot.core.Bot;
 import org.powerbot.game.client.Client;
 import org.powerbot.game.client.RSGround;
@@ -22,11 +23,13 @@ import powergrid.tasks.Task;
  */
 public class Mapper {
     
-    private volatile boolean stop = false;
+    private volatile boolean stop = true;
     private WorldMap map = null;
     private Client client = null;
     private MapperThread thread = null;
 
+    public Mapper() {}
+    
     public Mapper(boolean useDefaultClient) {
         if (useDefaultClient) {
             assert Bot.instantiated();
@@ -64,7 +67,7 @@ public class Mapper {
             throw new IllegalStateException("Mapper is already active");
         assert invariant();
         stop = false;
-        thread = new MapperThread();
+        thread = new MapperThread(5000);
         thread.start();
     }
 
@@ -109,18 +112,17 @@ public class Mapper {
         RSGround[][][] data = info.getRSGroundInfo().getRSGroundArray();
         assert data != null;
         
-        for (int y=0;y<data.length;y++) {
-            RSGround[][] row = data[y];
-            for (int x=0;x<row.length;x++) {
-                RSGround[] cell = row[x];
-                for (int plane = 0;plane<cell.length;plane++) {
-                    RSGround value = cell[plane];
-                    RSInteractableLocation location = ((RSInteractable)value).getData().getLocation();
-                    Point position = new Point(
-                            (int)(location.getX()/512),
-                            (int)(location.getY()/512),
-                            -1 ).add(basePoint);
-                    map.putGround(position, value);
+        for (RSGround[][] row : data) {
+            for (RSGround[] cell : row) {
+                for (RSGround value : cell) {
+                    if (value != null) {
+                        RSInteractableLocation location = ((RSInteractable)value).getData().getLocation();
+                        Point position = new Point(
+                                (int)(location.getX()/512),
+                                (int)(location.getY()/512)
+                                ).add(basePoint);
+                        map.putGround(position, value);
+                    }
                 }
             }
         }
@@ -145,6 +147,10 @@ public class Mapper {
      */
     public WorldMap getWorldMap() {
         return map;
+    }
+    
+    public Client getClient() {
+        return client;
     }
     
     private static int convertToSides(int flag) {
@@ -180,14 +186,32 @@ public class Mapper {
     }
     
     public class MapperThread extends Thread {
-        public MapperThread() {
+        private int delay;
+        public MapperThread(int delayBetweenRounds) {
             setName("MapperThread");
+            delay = delayBetweenRounds;
         }
         @Override public void run() {
-            while (!stop) {
+            do {
                 mapOnce();
-                Task.sleep(5000);
-            }
+                Task.sleep(delay);
+            } while (!stop);
         }
+    }
+
+    @Override public int hashCode() {
+        int hash = 3;
+        hash = 61 * hash + Objects.hashCode(this.map);
+        hash = 61 * hash + Objects.hashCode(this.client);
+        return hash;
+    }
+    
+    @Override public boolean equals(Object other) {
+        if (other instanceof Mapper) {
+            Mapper that = (Mapper)other;
+            return this.getWorldMap().equals(that.getWorldMap()) &&
+                    this.getClient().equals(that.getClient());
+        }
+        return false;
     }
 }

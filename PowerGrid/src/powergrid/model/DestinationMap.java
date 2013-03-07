@@ -144,11 +144,38 @@ public class DestinationMap implements Copyable<DestinationMap> {
     }
     
     /**
+     * Returns the amount of registered Destinations
+     * @return the amount of registered Destinations
+     */
+    public int size() {
+        return destinations.size();
+    }
+    
+    /**
      * Returns a copy of the DestinationMap.
      * @return a copy of the DestinationMap
      */
     @Override public DestinationMap copy() {
         return new DestinationMap().withData(this);
+    }
+
+    @Override public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.destinations);
+        return hash;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (o instanceof DestinationMap) {
+            DestinationMap d = (DestinationMap)o;
+            if (size() != d.size()) return false;
+            for (String name : destinationNames()) {
+                if (!getPoint(name).equals(d.getPoint(name)))
+                    return false;
+            }
+            return true;
+        }
+        return false;
     }
     
     public static class Destination {
@@ -177,6 +204,9 @@ public class DestinationMap implements Copyable<DestinationMap> {
                 return d.name.equals(name) && d.pos.equals(pos);
             }
             return false;
+        }
+        @Override public String toString() {
+            return "Destination(\"" + name + "\" => " + pos + ")";
         }
     }
 }

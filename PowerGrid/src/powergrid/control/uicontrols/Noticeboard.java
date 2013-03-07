@@ -1,6 +1,5 @@
 package powergrid.control.uicontrols;
 
-import powergrid.control.uicontrols.WidgetManager;
 import java.util.Objects;
 import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;

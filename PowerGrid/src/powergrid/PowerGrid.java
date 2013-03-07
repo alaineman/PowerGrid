@@ -56,11 +56,12 @@ public class PowerGrid {
     
     /** The PowerGrid instance. */
     public static final PowerGrid PG = new PowerGrid();
+    /** The default TaskManager instance. */
+    public static final TaskManager TM = new TaskManager();
     /** The default Bot instance. */
-    public static final Bot BOT = new Bot(null,TaskManager.getTM());
+    public static final Bot BOT = new Bot(null,TM);
     /** The default Mapper instance. */
     public static final Mapper MAPPER = new Mapper(false);
-    
     
     /** The plugin directory, default is "plugins". */
     public static File pluginDirectory = new File("plugins");
@@ -223,7 +224,7 @@ public class PowerGrid {
         }
         debugMessage("ControlPanel created");
         
-        taskManagerLoader = new ScriptLoader(TaskManager.getTM());
+        taskManagerLoader = new ScriptLoader(TM);
         
         debugMessage("TaskManager created");
         

@@ -19,7 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import powergrid.PowerGrid;
-import powergrid.control.TaskManager;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
 import powergrid.tasks.Configurable;
@@ -130,7 +129,7 @@ public class TaskPanel extends JPanel {
                         } else {
                             if (JOptionPane.showConfirmDialog(null, "Run the Task \"" + task.getName() + "\"?", "Run this Task", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
                                     == JOptionPane.YES_OPTION) {
-                                TaskManager.getTM().assignTask(t);
+                                PowerGrid.TM.assignTask(t);
                             }
                         }
                     } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {

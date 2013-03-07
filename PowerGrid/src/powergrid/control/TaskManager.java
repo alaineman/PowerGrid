@@ -24,22 +24,8 @@ import powergrid.tasks.Task;
         singleinstance = true)
 public class TaskManager extends ActiveScript {
     
-    private static TaskManager tm = new TaskManager();
-    /**
-     * Returns the TaskManager instance.
-     * @return the TaskManager instance
-     */
-    public static TaskManager getTM() {
-        if (tm == null) {
-            tm = new TaskManager();
-        }
-        return tm;
-    }
-    
     private PriorityQueue<Task> pendingTasks = new PriorityQueue<>();
     private Task currentTask = null;
-    
-    private TaskManager() {}
     
     /**
      * Assigns a Task to the TaskManager.

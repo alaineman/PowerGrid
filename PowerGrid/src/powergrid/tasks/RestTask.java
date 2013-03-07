@@ -12,7 +12,6 @@ import org.powerbot.game.api.methods.Walking;
 import org.powerbot.game.api.methods.Widgets;
 import powergrid.Bot;
 import powergrid.PowerGrid;
-import powergrid.control.TaskManager;
 import powergrid.view.TaskConfigurationPanel;
 
 /**
@@ -97,7 +96,7 @@ public class RestTask extends StepTask implements Configurable {
      * Task ends.
      */
     @Override public synchronized void step() {
-        if (abortOnTask && TaskManager.getTM().tasksPending() > 0) {
+        if (abortOnTask && PowerGrid.TM.tasksPending() > 0) {
             cancel();
         } else {
             if (Walking.getEnergy() >= targetEnergy) {

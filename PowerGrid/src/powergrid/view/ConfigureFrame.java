@@ -8,7 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import powergrid.control.TaskManager;
+import powergrid.PowerGrid;
 import powergrid.tasks.Configurable;
 import powergrid.tasks.Task;
 
@@ -48,7 +48,7 @@ public class ConfigureFrame extends JFrame {
                 Configurable c = config.getTask();
                 if (c instanceof Task) {
                     c.apply();
-                    TaskManager.getTM().assignTask((Task)c);
+                    PowerGrid.TM.assignTask((Task)c);
                     dispose();
                 } else {
                     c.configCanceled();

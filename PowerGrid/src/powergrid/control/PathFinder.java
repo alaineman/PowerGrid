@@ -37,7 +37,6 @@ public class PathFinder {
      * @param start the startPoint
      * @param end the endPoint
      * @return a shortest path between the given start and endpoints.
-     *
      * @throws OutOfReachException when no path exists between start and end
      * @throws IllegalArgumentException when the given start or endpoint is null
      */
@@ -57,7 +56,6 @@ public class PathFinder {
      * @param end the Point to travel to
      * @return a shortest path between the player's current position and the
      * given endpoint.
-     *
      * @throws OutOfReachException when no path exists between the player's
      * current position and the given endpoint.
      * @throws IllegalArgumentException when the given endpoint is null.
@@ -128,7 +126,7 @@ public class PathFinder {
      * When this method has been called once, any consecutive calls to this
      * method will return the same path.
      * <p/>
-     * @return A Path from start to goal
+     * @return An unmodifyable List describing a shortest path from start to goal
      * @throws OutOfReachException When no path between start and goal exists
      */
     public List<Point> calculatePrecise() throws OutOfReachException {
@@ -167,7 +165,7 @@ public class PathFinder {
                 fScore = null;
                 closedSet = null;
                 pending = null;
-                return path;
+                return Collections.unmodifiableList(path);
             }
             closedSet.add(current);
             Set<Point> adjacents = availableEdges(current);

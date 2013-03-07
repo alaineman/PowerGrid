@@ -13,7 +13,6 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powergrid.PowerGrid;
-import powergrid.control.TaskManager;
 import powergrid.control.XMLToolBox;
 import powergrid.model.GameObject;
 import powergrid.model.Point;
@@ -246,8 +245,8 @@ public class MapViewer extends Canvas implements ActionListener {
                     p.x += r.x;
                     p.y += r.y;
                     Point dest = new Point(p.x,p.y);
-                    TaskManager.getTM().clear();
-                    TaskManager.getTM().assignTask(new TravelTask(dest,0));
+                    PowerGrid.TM.clear();
+                    PowerGrid.TM.assignTask(new TravelTask(dest,0));
                 }
             }
         });

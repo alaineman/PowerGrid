@@ -2,6 +2,7 @@ package powergrid.tasks;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
+import powergrid.PowerGrid;
 import powergrid.control.TaskManager;
 
 /**
@@ -117,7 +118,7 @@ public class TaskDeque {
     public synchronized void moveFirstToQueue() {
         if (theTasks.isEmpty()) return;
         Task t = theTasks.pollFirst();
-        TaskManager.getTM().assignTask(t);
+        PowerGrid.TM.assignTask(t);
     }
     
     /**

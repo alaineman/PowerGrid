@@ -16,8 +16,7 @@ import org.powerbot.game.api.Manifest;
  * <p/>
  * Since a required class is obfuscated, some reflection need to be done on the 
  * client. This class can be instantiated, and allows for scripts to load other 
- * scripts. This fills in the gap in PowerBot's functionality, where different 
- * scripts cannot coorporate.
+ * scripts.
  * <p/>
  * A ScriptLoader can be instantiated with either a String denoting an ActiveScript subclass,
  * a Class object representing a ActiveScript subclass, or an ActiveScript instance.
@@ -28,8 +27,8 @@ import org.powerbot.game.api.Manifest;
  * <p/>
  * <strong>How to use ScriptLoader to run your own plugins from outside RSBot</strong>
  * <p/>
- * The following example demonstrates how to use ScriptLoader to run plugins 
- * without needing to use the RSBot's internal loading mechanism. ScriptLoader will 
+ * The following example demonstrates how to use ScriptLoader to run scripts 
+ * without needing to use the RSBot's own loading mechanism. ScriptLoader will 
  * perform all required method calls to start the ActiveScript in RSBot.
  * <p/>
  * <pre>
@@ -46,7 +45,8 @@ import org.powerbot.game.api.Manifest;
  *     ScriptLoader loader = new ScriptLoader(script);
  *     
  *     // Alternatively, instantiate the ActiveScript yourself and pass it as an argument.
- *     // This allows you to configure your script instance before loading it.
+ *     // This allows you to configure your script instance before loading it
+ *     // (something that is not possible using RSBot's native loader).
  *     // ScriptLoader loader = new ScriptLoader(new MyScript());
  *     
  *     // Create a JFrame with a JButton that runs the Script when clicked
@@ -63,7 +63,8 @@ import org.powerbot.game.api.Manifest;
  * <p/>
  * The above method will launch RSBot, and after that show a Button that allows the script
  * given in the field <code>script</code> to be started by the RSBot client. 
- * The script can be stopped using RSBot's native stop button.
+ * The script can be stopped using RSBot's own stop script button. The stop method 
+ * of the ScriptLoader instance can also be called to stop the script.
  * <p/>
  * Note that this class provides a light-weight solution to manually loading scripts.
  * This is to minimize any delay in RSBot loading time, and also to minimize the amount of 
@@ -87,8 +88,11 @@ public class ScriptLoader {
     private static Class<?> scriptDef = null;
     private static Method startMethod = null;
     
+    /** Script state indicating the script is stopped. */
     public static final int stopped = 0;
+    /** Script state indicating that ScriptLoader is performing an operation. */
     public static final int busy = 1;
+    /** Script state indicating that the script is running. */
     public static final int running = 2;
     
     private boolean isBusy = false;
@@ -165,11 +169,23 @@ public class ScriptLoader {
      *         not have a Manifest annotation
      */
     public String getName() {
-        // return the Manifest name attribute associated with this class
+        Manifest m = getManifest();
+        if (m == null)
+            return null;
+        else 
+            return m.name();
+    }
+    
+    /**
+     * Returns the loaded script's Manifest annotation, providing a way to get information
+     * on the ScriptLoader's loaded script.
+     * @return the loaded script's Manifest, if any.
+     */
+    public Manifest getManifest() {
         if (!script.getClass().isAnnotationPresent(Manifest.class)) 
             return null;
         else 
-            return script.getClass().getAnnotation(Manifest.class).name();
+            return script.getClass().getAnnotation(Manifest.class);
     }
 
     /**
@@ -193,8 +209,6 @@ public class ScriptLoader {
     public synchronized void run() {
         if (getState() != stopped) return;
         
-        // get scriptClass instance and run it.
-        // at this moment, reflection has to be used to get to the ScriptLoader class
         isBusy = true;
         Bot bot = Bot.instance();
         if (bot != null) {
@@ -221,7 +235,7 @@ public class ScriptLoader {
                     }
                 }
                 Constructor<?> cons = scriptDef.getDeclaredConstructor(Manifest.class);
-                Object scriptDefinition = cons.newInstance(script.getClass().getAnnotation(Manifest.class));
+                Object scriptDefinition = cons.newInstance(getManifest());
                 startMethod.invoke(handler, script, scriptDefinition);
                 logMessage("ScriptLoader: " + getName() + " launched",null);
             } catch (NoSuchMethodException     | IllegalAccessException | IllegalArgumentException | 
@@ -245,7 +259,6 @@ public class ScriptLoader {
      * start the script again.
      */
     public synchronized void stop() {
-        
         if (hasStarted) {
             ScriptHandler handler = Bot.instance().getScriptHandler();
             handler.shutdown();
@@ -257,9 +270,8 @@ public class ScriptLoader {
      * Returns a copy of this ScriptLoader.
      * <p/>
      * The copy can be run regardless of the state of this ScriptLoader.
-     * @return a copy of this ScripLoader
-     * @throws IllegalArgumentException when the ActiveScript class has no accessible
-     *                                  parameterless constructor
+     * @return a copy of this ScripLoader, or null if the script could not be 
+     * instantiated.
      */
     public ScriptLoader copyLoader() {
         try {
@@ -273,7 +285,8 @@ public class ScriptLoader {
      * Creates an easy-to-use button to run the script. 
      * <p/>
      * The returned JButton can be placed in any GUI to run the script.
-     * The button will automatically disable once it has been clicked.
+     * The button will automatically switch to a stop button once it has been 
+     * clicked.
      * <p/>
      * @return a JButton that can be used to activate this ScriptLoader
      */

@@ -10,6 +10,7 @@ import org.powerbot.core.Bot;
 import org.powerbot.core.bot.handlers.ScriptHandler;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
+import powergrid.model.Copyable;
 
 /**
  * Loads a script by class name and executes it on the RSBot client. 
@@ -81,7 +82,7 @@ import org.powerbot.game.api.Manifest;
  * <p/>
  * @author Chronio
  */
-public class ScriptLoader {
+public class ScriptLoader implements Copyable<ScriptLoader> {
     
     private ActiveScript script = null;
     
@@ -273,7 +274,7 @@ public class ScriptLoader {
      * @return a copy of this ScripLoader, or null if the script could not be 
      * instantiated.
      */
-    public ScriptLoader copyLoader() {
+    @Override public ScriptLoader copy() {
         try {
             return new ScriptLoader(script.getClass());
         } catch (IllegalArgumentException e) {

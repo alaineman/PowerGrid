@@ -2,6 +2,7 @@ package powergrid.control;
 
 import java.util.*;
 import powergrid.PowerGrid;
+import powergrid.model.Copyable;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
@@ -24,7 +25,7 @@ import powergrid.model.world.Wall;
  * @author Alaineman
  * @author Chronio
  */
-public class PathFinder {
+public class PathFinder implements Copyable<PathFinder> {
 
     /**
      * Finds a path between the given start and end using the A* algorithm.
@@ -303,5 +304,9 @@ public class PathFinder {
             selected.add(lastPoint);
         }
         return selected;
+    }
+
+    @Override public PathFinder copy() {
+        return new PathFinder(start, goal).withMap(theMap);
     }
 }

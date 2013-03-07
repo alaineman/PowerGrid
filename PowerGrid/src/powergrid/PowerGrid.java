@@ -15,6 +15,8 @@ import org.powerbot.Boot;
 import powergrid.control.Mapper;
 import powergrid.control.ScriptLoader;
 import powergrid.control.TaskManager;
+import powergrid.control.XMLToolBox;
+import powergrid.model.DestinationMap;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
 import powergrid.plugins.PluginLoader;
@@ -62,6 +64,9 @@ public class PowerGrid {
     public static final Bot BOT = new Bot(null,TM);
     /** The default Mapper instance. */
     public static final Mapper MAPPER = new Mapper(false);
+    /** The default DestinationMap. */
+    public static final DestinationMap DESTINATIONS = new DestinationMap();
+    
     
     /** The plugin directory, default is "plugins". */
     public static File pluginDirectory = new File("plugins");
@@ -136,6 +141,8 @@ public class PowerGrid {
             logMessage("RSBot failed to start because of a " + e.getClass().getSimpleName() + ": " + e.getMessage());
             System.exit(1);
         }
+        
+        DESTINATIONS.withData(XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/destinations.xml")));
         
         // Wait for Client's Thread to start
         Thread main = Thread.currentThread();
@@ -257,13 +264,13 @@ public class PowerGrid {
         try {
             Runtime.getRuntime().removeShutdownHook(terminatorThread);
         } catch (IllegalStateException e) {} // was already shutting down
-        MAPPER.stopMapping();
+        if (MAPPER.isMapping()) MAPPER.stopMapping();
         debugMessage("Mapper stopped");
         theControlPanel.getParent().remove(theControlPanel);
         theControlPanel = null;
         debugMessage("ControlPanel removed");
         taskManagerLoader.stop();
-        taskManagerLoader = taskManagerLoader.copyLoader();
+        taskManagerLoader = taskManagerLoader.copy();
         debugMessage("TaskManager stopped");
         logMessage("PowerGrid stopped");
         isRunning = false;

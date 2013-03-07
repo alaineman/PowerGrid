@@ -7,6 +7,7 @@ import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSInfo;
 import org.powerbot.game.client.RSInteractable;
 import org.powerbot.game.client.RSInteractableLocation;
+import powergrid.model.Copyable;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
 import powergrid.model.world.Wall;
@@ -21,7 +22,7 @@ import powergrid.tasks.Task;
  * <p/>
  * @author Chronio
  */
-public class Mapper {
+public class Mapper implements Copyable<Mapper> {
     
     private volatile boolean stop = true;
     private WorldMap map = null;
@@ -181,7 +182,7 @@ public class Mapper {
         return true;
     }
     
-    public Mapper copy() {
+    @Override public Mapper copy() {
         return new Mapper(client).withMap(map);
     }
     

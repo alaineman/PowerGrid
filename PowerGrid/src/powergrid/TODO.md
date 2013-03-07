@@ -7,15 +7,19 @@ not claimed by anyone (using [NAME]). [DONE] can be placed in front of achieved
 subgoals to indicate progress.
 
 ### PowerGrid maintenance ###
+*Currently working on it: Chronio*
   - Clean up code
     - Revalidate comments and add comments where appropriate
     - Refactor "smelly" code and hard-to-read code
     - Recheck and rewrite JavaDoc
     - Check for dead code and bad weather conditions
-    - Possibly: Checkstyle validate all code
   - Rewrite interact package to new format (using the Factory)
   - Create JUnit tests for classes where appropriate
     - Possibly use Mockito
+
+### PowerGrid issues, bad design and problems ###
+  - powergrid.control.uicontrols package is hard-to-read and does not meet its purpose at all.
+  - XMLToolBox needs to be checked for style errors and needs to be tested in various situations.
 
 ### PowerGrid feature implementations ###
   - Make sure there is/are:

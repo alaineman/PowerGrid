@@ -3,7 +3,8 @@ package powergrid;
 import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import powergrid.control.TaskManager;
-import powergrid.model.Destination;
+import powergrid.model.DestinationMap;
+import powergrid.model.DestinationMap.Destination;
 import powergrid.model.Point;
 import powergrid.tasks.RestTask;
 import powergrid.tasks.TravelNearestTask;
@@ -60,17 +61,12 @@ public class Bot {
     /**
      * Registers a Task that moves to the destination specified in name.
      * <p/>
-     * @param name The target destination (providing correct casing is faster, but not required)
+     * @param name The target destination (providing correct casing is not required)
      * @param priority The priority of this Task
-     * @throws IllegalArgumentException when no Destination exists with that name
+     * @throws IllegalArgumentException when no DestinationMap exists with that name
      */
-    public void travelTo(String name,int priority) {
-        // Look up the given Destination for the provided name
-        Destination dest = Destination.getDestination(name);
-        if (dest == null) 
-            throw new IllegalArgumentException("Undefined Destination: " + name);
-        // travel to the matched destination
-        theTM.assignTask(new TravelTask(dest,priority));
+    public void travelTo(Destination name,int priority) {
+        theTM.assignTask(new TravelTask(name,priority));
     }
     
     /**

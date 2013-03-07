@@ -5,12 +5,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Set;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import powergrid.model.Destination;
+import powergrid.model.DestinationMap;
 import powergrid.model.Point;
 
 /**
@@ -25,10 +26,14 @@ public class TravelPanel extends JPanel {
     private JPanel entries = new JPanel();
     private JScrollPane scrollpane = new JScrollPane(entries);
     
+    private DestinationMap dests = null;
+    
     /**
      * Creates a new TravelPanel instance and sets up the destination list.
      */
-    public TravelPanel() {
+    public TravelPanel(DestinationMap dests) {
+        assert dests != null;
+        this.dests = dests;
         createAndShowGUI();
     }
     
@@ -74,12 +79,11 @@ public class TravelPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=1;
         gbc.insets.top = 2;
-        Destination[] destEntries = Destination.getDestinations();
-        for (Destination e : destEntries) {
-            String dest = e.getName();
-            Point p = e.getPosition();
-            if (p != null && dest.toLowerCase().contains(query)) {
-                entries.add(new DestinationPanel(dest,p),gbc);
+        Set<String> names = dests.destinationNames();
+        for (String name : names) {
+            Point p = dests.getPoint(name);
+            if (p != null && name.toLowerCase().contains(query)) {
+                entries.add(new DestinationPanel(name,p),gbc);
                 gbc.gridy++;
             }
         }

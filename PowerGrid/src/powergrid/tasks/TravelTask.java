@@ -6,7 +6,8 @@ import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Walking;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
-import powergrid.model.Destination;
+import powergrid.model.DestinationMap;
+import powergrid.model.DestinationMap.Destination;
 import powergrid.model.GameObject;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
@@ -32,19 +33,15 @@ public class TravelTask extends StepTask {
      */
     public TravelTask(Point destination, int priority) {
         super(priority);
+        assert destination != null;
         this.destination = destination;
-
-        Destination d = Destination.getDestination(destination);
-        String name = (d==null ? null : d.getName());
-        if (name == null) {
-            name = destination.toString();
-        }
-        setName("Travel to " + name);
+        setName("Travel to " + destination.toString());
     }
 
     public TravelTask(Destination d, int priority) {
         super(priority);
-        this.destination = d.getPosition();
+        assert d != null;
+        this.destination = d.getPos();
         setName("Travel to " + d.getName());
     }
 

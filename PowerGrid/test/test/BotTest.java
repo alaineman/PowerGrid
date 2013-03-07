@@ -12,7 +12,7 @@ import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import powergrid.Bot;
 import powergrid.control.TaskManager;
-import powergrid.model.Destination;
+import powergrid.model.DestinationMap.Destination;
 import powergrid.model.Point;
 import powergrid.tasks.RestTask;
 import powergrid.tasks.Task;
@@ -43,9 +43,9 @@ public class BotTest {
     }
     
     @Test public void testTravelToDestination() {
-        Destination.setCustomDestination("TestDestination", new Point(6,2));
-        bot.travelTo("TestDestination", 0);
-        verify(mockedTaskManager).assignTask(new TravelTask(new Point(6,2)));
+        Destination d = new Destination("TestDestination", new Point(6,2));
+        bot.travelTo(d, 0);
+        verify(mockedTaskManager).assignTask(new TravelTask(d,0));
     }
     
     @Test public void testTravelToPointWithPriority() {

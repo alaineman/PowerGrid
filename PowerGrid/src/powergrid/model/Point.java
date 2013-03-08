@@ -80,12 +80,14 @@ public class Point implements Locatable {
      * This method has no real purpose whatsoever, and is only here so that Point 
      * conforms to the Locatable interface, allowing Points to be used in RSBot methods.
      * <p/>
+     * This method is deprecated in the RSBot API, so it is also deprecated here.
+     * <p/>
      * @return a RegionOffset object set to (0,0,0)
      */
+    @Deprecated
     @Override public RegionOffset getRegionOffset() {
         return null;
     }
-    
     
     /**
      * Returns the result of adding the given point to this Point.

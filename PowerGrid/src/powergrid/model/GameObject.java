@@ -1,5 +1,7 @@
 package powergrid.model;
 
+import java.util.Objects;
+
 /**
  * This class represents an object from the RSbot environment.
  * 
@@ -7,10 +9,8 @@ package powergrid.model;
  * 
  */
 public class GameObject {
-    private int x = 0;
-    private int y = 0;
-    private int z = 0;
     
+    private Point position;
     private int rawNumber = -1;
     
     /**
@@ -21,8 +21,7 @@ public class GameObject {
      * @param rawNumber the raw value from the environment specifying the type
      */
     public GameObject(int x,int y,int rawNumber) {
-        this.x = x;
-        this.y = y;
+        position = new Point(x,y);
         this.rawNumber = rawNumber;
     }
     /**
@@ -34,8 +33,8 @@ public class GameObject {
      * @param rawNumber the raw value from the environment specifying the type
      */
     public GameObject(int x,int y,int z,int rawNumber) {
-        this(x,y,rawNumber);
-        this.z = z;
+        position = new Point(x, y, z);
+        this.rawNumber = rawNumber;
     }
     
     /**
@@ -46,11 +45,8 @@ public class GameObject {
      * @throws IllegalArgumentException when the provided Point is null
      */
     public GameObject(Point p, int rawNumber) {
-        if (p == null)
-            throw new IllegalArgumentException("");
-        x = p.x;
-        y = p.y;
-        z = p.z;
+        assert p != null;
+        position = p;
         this.rawNumber = rawNumber;
     }
     /**
@@ -59,7 +55,7 @@ public class GameObject {
      * @return the position of this GameObject.
      */
     public Point getPosition() {
-        return new Point(x,y,z);
+        return position;
     }
     
     /**
@@ -81,11 +77,8 @@ public class GameObject {
      * @param p the new Position of this Object
      */
     public void setPosition(Point p) {
-        if (p != null) {
-            x = p.x;
-            y = p.y;
-            z = p.z;
-        }
+        assert p != null;
+        position = p;
     }
     
     /**
@@ -107,9 +100,7 @@ public class GameObject {
      */
     @Override public int hashCode() {
         int hash = 3;
-        hash = 47 * hash + this.x;
-        hash = 47 * hash + this.y;
-        hash = 47 * hash + this.z;
+        hash = 47 * hash + Objects.hashCode(position);
         hash = 47 * hash + this.rawNumber;
         return hash;
     }

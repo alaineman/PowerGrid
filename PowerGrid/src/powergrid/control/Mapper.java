@@ -60,7 +60,6 @@ public class Mapper implements Copyable<Mapper> {
     /**
      * Starts the Mapper with the given policy.
      * <p/>
-     * @param policy the policy to use for the Mapper (MAP_CONTINOUSLY or MAP_ONCE)
      * @throws IllegalStateException when the Mapper is already / still running
      */
     public synchronized void startMapping() {

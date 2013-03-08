@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import org.powerbot.Boot;
@@ -56,6 +57,9 @@ public class PowerGrid {
     /** The PowerGrid version. */
     public static final double VERSION = 0.1;
     
+    /** The PowerGrid Logger. */
+    public static final Logger LOGGER = Logger.getLogger("PowerGrid");
+    
     /** The PowerGrid instance. */
     public static final PowerGrid PG = new PowerGrid();
     /** The default TaskManager instance. */
@@ -92,7 +96,7 @@ public class PowerGrid {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
-        System.out.println("Launching RSBot...");
+        System.out.println("Starting PowerGrid");
         boolean dev=false,split=false,eco=false;
         Iterator<String> it = Arrays.asList(args).iterator();
         while (it.hasNext()) {
@@ -100,25 +104,30 @@ public class PowerGrid {
             switch(arg) {
                 case "-dev":
                     dev = true;
+                    System.out.println("    with developer mode");
                     break;
                 case "-splitui":
                 case "-s":
                     split = true;
+                    System.out.println("    with split user interface");
                     break;
                 case "-eco":
                 case "-e":
                     eco = true;
+                    System.out.println("    with eco mode");
                     break;
                 case "-plugins":
                 case "-p":
                     File f = new File(it.next());
-                    if (f.isDirectory())
+                    if (f.isDirectory()) {
                         pluginDirectory = f;
-                    else
-                        logMessage("The provided plugins folder (" + f.getName() + ") is not a valid directory");
+                        System.out.println("    with Plugins directory: " + f.getPath());
+                    } else {
+                        System.out.println("    with invalid Plugins directory: " + f.getPath());
+                    }
                     break;
                 default:
-                    debugMessage("Unknown command-line parameter: " + arg);
+                    debugMessage("    with unknown parameter: " + arg);
             }
         }
         // Load the plugins in the plugin folder
@@ -161,8 +170,6 @@ public class PowerGrid {
         
         // Launch PowerGrid
         PG.launch(dev,split,eco);
-        
-        
     }
     
     public static List<Plugin> getPlugins() {
@@ -176,6 +183,7 @@ public class PowerGrid {
     
     private ControlPanel theControlPanel = null;
     private ScriptLoader taskManagerLoader = null;
+    
     
     private PowerGrid() {}
     
@@ -281,7 +289,7 @@ public class PowerGrid {
      * terminates PowerGrid and launches it again using the same settings.
      * <p/>
      * This does not affect RSBot or any running scripts, but it will clear the TaskQueue
-     * and cause the Mapper to reset to MAP_CONTINOUSLY.
+     * and cause the Mapper to reset to MAP_CONTINUOUSLY.
      * <p/>
      * @return whether the operation was succesful
      */

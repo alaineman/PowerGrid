@@ -2,6 +2,7 @@ package powergrid.model.world.resources;
 
 import powergrid.model.GameObject;
 import powergrid.model.Item;
+import powergrid.model.Point;
 
 /**
  *
@@ -12,7 +13,7 @@ public abstract class AbstractResource extends GameObject {
     private Item[] items;
     
     public AbstractResource(int x, int y, int rawValue, Item... it){
-        super(x,y,rawValue);
+        super(new Point(x,y),rawValue);
         items = new Item[it.length];
         System.arraycopy(it, 0, items, 0, it.length);
     }

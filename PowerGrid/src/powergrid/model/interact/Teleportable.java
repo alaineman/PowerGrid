@@ -4,6 +4,7 @@ import java.util.HashMap;
 import powergrid.model.GameObject;
 import powergrid.model.Item;
 import powergrid.model.OutOfReachException;
+import powergrid.model.Point;
 
 /**
  * Represents a GameObject that can be teleported to.
@@ -15,7 +16,7 @@ public abstract class Teleportable extends GameObject implements ComplexInteract
     public int widgetNum = -1;
     
     public Teleportable(int x,int y,int z,int rawNumber){
-        super(x, y, z, rawNumber);
+        super(new Point(x,y,z), rawNumber);
     }
     
     /**
@@ -27,7 +28,7 @@ public abstract class Teleportable extends GameObject implements ComplexInteract
      * @param widgetNumber the widget number that belongs to this Teleportable 
      */
     public Teleportable(int x,int y,int z,int rawNumber, int widgetNumber){
-        super(x, y, z, rawNumber);
+        super(new Point(x,y,z), rawNumber);
         widgetNum = widgetNumber;
     }
     

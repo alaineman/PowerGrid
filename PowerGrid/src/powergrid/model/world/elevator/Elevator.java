@@ -3,6 +3,7 @@ package powergrid.model.world.elevator;
 import java.util.Arrays;
 import powergrid.model.GameObject;
 import powergrid.model.OutOfReachException;
+import powergrid.model.Point;
 import powergrid.model.interact.Interactable;
 
 /**
@@ -27,7 +28,7 @@ public abstract class Elevator extends GameObject implements Interactable {
      * @param otherPlanes 
      */
     public Elevator(int x,int y,int z,int rawValue,int[] otherPlanes) {
-        super(x,y,z,rawValue);
+        super(new Point(x,y,z),rawValue);
         if (otherPlanes == null) throw new IllegalArgumentException("Null-array for other planes");
         this.otherPlanes = otherPlanes;
         Arrays.sort(this.otherPlanes);

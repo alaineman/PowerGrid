@@ -5,6 +5,7 @@ import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 import powergrid.model.GameObject;
 import powergrid.model.OutOfReachException;
+import powergrid.model.Point;
 import powergrid.model.interact.Interactable;
 
 /**
@@ -48,7 +49,7 @@ public class Door extends GameObject implements Interactable {
      * @param rawValue the raw value from the environment specifying the type
      */
     public Door(int x,int y,int z,int rawValue) {
-        super(x,y,z,rawValue);
+        super(new Point(x,y,z),rawValue);
         if (Arrays.binarySearch(values,rawValue) == -1)
             throw new IllegalArgumentException("value " + rawValue + " does not represent a Door");
     }

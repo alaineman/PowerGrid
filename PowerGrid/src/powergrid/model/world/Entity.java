@@ -4,6 +4,7 @@ import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.wrappers.interactive.NPC;
 import powergrid.model.GameObject;
 import powergrid.model.OutOfReachException;
+import powergrid.model.Point;
 import powergrid.model.interact.Interactable;
 
 /**
@@ -21,7 +22,7 @@ public abstract class Entity extends GameObject implements Interactable {
      * @param rawValue the raw value from the environment specifying the type
      */
     protected Entity(int x,int y,int z,int rawValue) {
-        super(x,y,z,rawValue);
+        super(new Point(x,y,z),rawValue);
     }
     
     /**

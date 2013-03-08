@@ -16,6 +16,9 @@ public class GameObject {
     /**
      * Creates a new GameObject at the given position. the <code>rawNumber</code> 
      * indicates the type of object as provided by the RSBot environment.
+     * <p/>
+     * The z coordinate is taken as 0.
+     * <p/>
      * @param x the x-coordinate of this object
      * @param y the y-coordinate of this object
      * @param rawNumber the raw value from the environment specifying the type
@@ -27,6 +30,7 @@ public class GameObject {
     /**
      * Creates a new GameObject at the given position. the <code>rawNumber</code> 
      * indicates the type of object as provided by the RSBot environment.
+     * <p/>
      * @param x the x-coordinate of this object
      * @param y the y-coordinate of this object
      * @param z the z-coordinate of this object
@@ -40,6 +44,7 @@ public class GameObject {
     /**
      * Creates a new GameObject at the given position. the <code>rawNumber</code> 
      * indicates the type of object as provided by the RSBot environment.
+     * <p/>
      * @param p the position of this GameObject
      * @param rawNumber the raw value from the environment specifying the type
      * @throws IllegalArgumentException when the provided Point is null
@@ -50,9 +55,8 @@ public class GameObject {
         this.rawNumber = rawNumber;
     }
     /**
-     * returns the position of this GameObject. 
-     * The location corresponds to the Tile object it's found on
-     * @return the position of this GameObject.
+     * returns the position of this GameObject.
+     * @return the position of this GameObject
      */
     public Point getPosition() {
         return position;
@@ -60,7 +64,9 @@ public class GameObject {
     
     /**
      * returns the raw number as given by the RSBot environment.
-     * @return the raw number as given by the RSBot environment.
+     * <p/>
+     * It returns a value &lt; 0 when this value is unknown.
+     * @return the raw number as given by the RSBot environment
      */
     public int getRawNumber() {
         return rawNumber;

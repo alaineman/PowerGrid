@@ -1,9 +1,14 @@
 package powergrid.control;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import powergrid.PowerGrid;
+import powergrid.control.listeners.TaskListener;
 import powergrid.tasks.Task;
 
 /**
@@ -26,6 +31,7 @@ public class TaskManager extends ActiveScript {
     
     private PriorityQueue<Task> pendingTasks = new PriorityQueue<>();
     private Task currentTask = null;
+    private HashSet<TaskListener> listeners = new HashSet<>(5);
     
     /**
      * Assigns a Task to the TaskManager.
@@ -35,6 +41,9 @@ public class TaskManager extends ActiveScript {
     public boolean assignTask(Task t) {
         if (pendingTasks.contains(t))
             return false;
+        for (TaskListener l : listeners) {
+            l.taskAdded(t);
+        }
         return pendingTasks.offer(t);
     }
     
@@ -49,6 +58,15 @@ public class TaskManager extends ActiveScript {
     public boolean assignTask(Task t, int priority) {
         t.setPriority(priority);
         return assignTask(t);
+    }
+    
+    public boolean removeTask(Task t) {
+        if (pendingTasks.contains(t)) {
+            for (TaskListener l : listeners) {
+                l.taskRemoved(t);
+            }
+        }
+        return false;
     }
     
     /**
@@ -66,10 +84,17 @@ public class TaskManager extends ActiveScript {
      */
     @Override public int loop() {
         if (tasksPending() > 0) {
-            currentTask = retrieveTask();
+            currentTask = pendingTasks.poll();
             PowerGrid.logMessage("Beginning " + currentTask.getClass().getSimpleName() + " \"" + currentTask.getName() + "\"...");
+            for (TaskListener l : listeners) {
+                l.taskStarted(currentTask);
+            }
             currentTask.execute();
             PowerGrid.logMessage(currentTask.getClass().getSimpleName() + " \"" + currentTask.getName() + "\" has ended.");
+            
+            for (TaskListener l : listeners) {
+                l.taskFinished(currentTask);
+            }
             currentTask = null;
             return 20;
         } else {
@@ -78,10 +103,10 @@ public class TaskManager extends ActiveScript {
     }
 
     /**
-     * Logs a message to the console stating the TaskManager has stopped.
+     * clears all Tasks from the Task queue.
      */
     @Override public void onStop() {
-        PowerGrid.logMessage("TaskManager stopped");
+        clear();
     }
 
     /**
@@ -102,6 +127,9 @@ public class TaskManager extends ActiveScript {
      * @return the next Task in the TaskManager
      */
     public Task retrieveTask() {
+        for (TaskListener l : listeners) {
+            l.taskRemoved(currentTask);
+        }
         return pendingTasks.poll();
     }
     
@@ -124,14 +152,40 @@ public class TaskManager extends ActiveScript {
         return pendingTasks.size();
     }
     
+    public List<Task> getPendingTasks() {
+        ArrayList<Task> tasks = new ArrayList<>(pendingTasks.size());
+        for (Task t : pendingTasks)
+            tasks.add(t);
+        Collections.sort(tasks);
+        return tasks;
+    }
+    
     /**
      * clears the TaskManager's queue and cancels the currently running task, 
      * if any.
      */
     public void clear() {
-        pendingTasks.clear();
+        while (!pendingTasks.isEmpty()) {
+            removeTask(pendingTasks.poll());
+        }
         if (currentTask != null)
             currentTask.cancel();
     }
     
+    /**
+     * Adds a TaskListener to the set of listeners
+     * @param l the TaskListener to add
+     */
+    public void addTaskListener(TaskListener l) {
+        if (!listeners.contains(l))
+            listeners.add(l);
+    }
+    
+    /**
+     * Removes a TaskListener from the set of listeners
+     * @param l the TaskListener to remove
+     */
+    public void removeTaskListener(TaskListener l) {
+        listeners.remove(l);
+    }
 }

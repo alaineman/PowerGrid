@@ -225,12 +225,10 @@ public class ScriptLoader implements Copyable<ScriptLoader> {
                         if (m.getName().equals("start")) {
                             scriptDef = m.getParameterTypes()[1];
                             startMethod = m;
-                            logMessage("ScriptLoader: ScriptDefinition class found and loaded as " + scriptDef.getName(),null);
                             break;
                         }
                     }
                     if (scriptDef == null) {
-                        logMessage("Required ScriptDefinition class not found, aborting",null);
                         isBusy = false;
                         return;
                     }
@@ -238,15 +236,11 @@ public class ScriptLoader implements Copyable<ScriptLoader> {
                 Constructor<?> cons = scriptDef.getDeclaredConstructor(Manifest.class);
                 Object scriptDefinition = cons.newInstance(getManifest());
                 startMethod.invoke(handler, script, scriptDefinition);
-                logMessage("ScriptLoader: " + getName() + " launched",null);
             } catch (NoSuchMethodException     | IllegalAccessException | IllegalArgumentException | 
                      InvocationTargetException | NoClassDefFoundError   | InstantiationException   |
-                     SecurityException e) {
-                logMessage("An error occurred while trying to load script.",e);
-            }
+                     SecurityException e) {}
             hasStarted = true;
         } else {
-            logMessage("ScriptLoader: RSBot doesn't seem to be running", null);
         }
         isBusy = false;
     }
@@ -264,7 +258,6 @@ public class ScriptLoader implements Copyable<ScriptLoader> {
             ScriptHandler handler = Bot.instance().getScriptHandler();
             handler.shutdown();
         }
-        logMessage("ScriptLoader: " + getName() + " stopped",null);
     }
     
     /**
@@ -306,26 +299,5 @@ public class ScriptLoader implements Copyable<ScriptLoader> {
             }
         });
         return play;
-    }
-    
-    /**
-     * Logs a message to the console using <code>System.err</code>. 
-     * <p/>
-     * Also displays a StackTrace when the given Throwable is not null.
-     * @param message the message to log.
-     * @param t the throwable that caused the message, can be null
-     */
-    public static void logMessage(String message, Throwable t) {
-        StringBuilder sb = new StringBuilder(message).append("\n");
-        if (t != null) {
-            sb.append("  caused by: ").append(t.getClass().getSimpleName()).append("\n");
-            for (StackTraceElement e : t.getStackTrace()) {
-                sb.append("    in ")
-                        .append(e.getClassName()).append(": ")
-                        .append(e.getLineNumber()).append(" (")
-                        .append(e.getMethodName()).append(")\n");
-            }
-        }
-        System.err.print(sb.toString());
     }
 }

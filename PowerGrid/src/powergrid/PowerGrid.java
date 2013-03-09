@@ -36,17 +36,13 @@ import powergrid.view.ControlPanel;
  *   <dt>-dev</dt>
  *   <dd>PowerGrid developer mode. Setting this flag logs more detailed messages
  *       to the console.</dd>
- *   <dt>-eco (or -e)</dt>
- *   <dd>Eco-mode. Setting this flag will cause PowerGrid to put more effort into
- *       maintaining a low memory footprint. Might increase performance on low-end
- *       computers.</dd>
  *   <dt>-splitui (or -s)</dt>
  *   <dd>Split PowerGrid's user interface from RSBot window. This means that the
  *       PowerGrid control panel will appear in a separate frame.</dd>
  *   <dt>-plugins (or -p)</dt>
  *   <dd>Specify a custom Plugins directory. For example: 
- *       <code>java -jar PowerGrid.jar -p C:\customPluginDirectory</code> will look 
- *       for plugins in the directory named <code>C:\customPluginDirectory</code>
+ *       <code>java -jar PowerGrid.jar -p someFolder\customPluginDirectory</code> will look 
+ *       for plugins in the directory named <code>someFolder\customPluginDirectory</code>
  *       instead of the default "plugins" directory.</dd>
  * </dl>
  * <p/>
@@ -97,7 +93,7 @@ public class PowerGrid {
      */
     public static void main(String[] args) {
         System.out.println("Starting PowerGrid");
-        boolean dev=false,split=false,eco=false;
+        boolean dev=false,split=false;
         Iterator<String> it = Arrays.asList(args).iterator();
         while (it.hasNext()) {
             String arg = it.next().toLowerCase();
@@ -110,11 +106,6 @@ public class PowerGrid {
                 case "-s":
                     split = true;
                     System.out.println("    with split user interface");
-                    break;
-                case "-eco":
-                case "-e":
-                    eco = true;
-                    System.out.println("    with eco mode");
                     break;
                 case "-plugins":
                 case "-p":
@@ -169,7 +160,7 @@ public class PowerGrid {
         Task.sleep(1200);
         
         // Launch PowerGrid
-        PG.launch(dev,split,eco);
+        PG.launch(dev,split);
     }
     
     public static List<Plugin> getPlugins() {
@@ -179,7 +170,6 @@ public class PowerGrid {
     private boolean isRunning = false;
     private boolean devmode = false; 
     private boolean splitUI = false;
-    private boolean ecoMode = false;
     
     private ControlPanel theControlPanel = null;
     private ScriptLoader taskManagerLoader = null;
@@ -192,13 +182,11 @@ public class PowerGrid {
      * <p/>
      * @param devmode true to enable developer mode, false to disable
      * @param splitUI true to split the user interface in a separate frame
-     * @param ecoMode true to make PowerGrid more light-weight by saving memory
      * @return whether the launch was succesful
      */
-    public boolean launch(boolean devmode, boolean splitUI, boolean ecoMode) {
+    public boolean launch(boolean devmode, boolean splitUI) {
         this.devmode = devmode;
         this.splitUI = splitUI;
-        this.ecoMode = ecoMode;
         return launch();
     }
     
@@ -213,9 +201,8 @@ public class PowerGrid {
         if (isRunning) 
             return false;
         logMessage("starting PowerGrid...");
-        debugMessage("With parameters: Developer mode" 
-                                        + (splitUI ? ", Split user interface":"") 
-                                        + (ecoMode ? ", Eco mode":""));
+        debugMessage("With parameters: Developer mode"
+                + (splitUI ? ", Split user interface":""));
         if (splitUI) {
             ControlPanel.addControlPanel(null, null);
         } else {
@@ -227,10 +214,8 @@ public class PowerGrid {
                     theControlPanel = ControlPanel.addControlPanel(f, "South");
                     f.pack();
                     try {
-                        BufferedImage icon = ImageIO.read(ClassLoader.getSystemResource("powergrid/images/icon_small.png"));
-                        f.setIconImage(icon);
+                        f.setIconImage(ImageIO.read(ClassLoader.getSystemResource("powergrid/images/icon_small.png")));
                         f.setTitle(f.getTitle() + " - Running PowerGrid v" + PowerGrid.VERSION);
-                        PowerGrid.debugMessage("JFrame modification complete");
                     } catch (IOException e) {
                         PowerGrid.logMessage("Error setting image on RSBot JFrame: " + e);
                     }
@@ -240,26 +225,23 @@ public class PowerGrid {
         debugMessage("ControlPanel created");
         
         taskManagerLoader = new ScriptLoader(TM);
-        
-        debugMessage("TaskManager created");
-        
-        BOT.reloadLocalPlayer();
         taskManagerLoader.run();
+        
         MAPPER.withClient(org.powerbot.core.Bot.client());
         MAPPER.startMapping();
         debugMessage("Mapper Started");
         
         Runtime.getRuntime().addShutdownHook(terminatorThread);
         logMessage("PowerGrid started");
-        theControlPanel.setMessage("PowerGrid running...");
+        theControlPanel.setMessage("PowerGrid has started");
         isRunning = true;
         return true;
     }
     
     /**
-     * Terminates PowerGrid, freeing the memory it used and disables core functionality.
+     * Terminates PowerGrid, disabling core functionality.
      * <p/>
-     * PowerGrid can still be used for Pathfinding and such, but be advised that 
+     * PowerGrid can still be used for Pathfinding and such, but be aware that 
      * the Worldmap will not be updated and Tasks will not be executed anymore.
      * <p/>
      * @return whether the termination was succesful
@@ -272,35 +254,35 @@ public class PowerGrid {
         try {
             Runtime.getRuntime().removeShutdownHook(terminatorThread);
         } catch (IllegalStateException e) {} // was already shutting down
-        if (MAPPER.isMapping()) MAPPER.stopMapping();
+        if (MAPPER.isMapping()) 
+            MAPPER.stopMapping();
         debugMessage("Mapper stopped");
+        
         theControlPanel.getParent().remove(theControlPanel);
         theControlPanel = null;
         debugMessage("ControlPanel removed");
+        
         taskManagerLoader.stop();
         taskManagerLoader = taskManagerLoader.copy();
         debugMessage("TaskManager stopped");
+        
+        for (Plugin p : plugins) {
+            p.tearDown();
+        }
+        debugMessage("Plugins finalized");
+        
         logMessage("PowerGrid stopped");
         isRunning = false;
         return true;
     }
-    
-    /**
-     * terminates PowerGrid and launches it again using the same settings.
-     * <p/>
-     * This does not affect RSBot or any running scripts, but it will clear the TaskQueue
-     * and cause the Mapper to reset to MAP_CONTINUOUSLY.
-     * <p/>
-     * @return whether the operation was succesful
-     */
-    public boolean reset() {
-        if (terminate()) {
-            return launch();
-        } else {
-            return false;
-        }
-    }
 
+    /**
+     * Returns whether PowerGrid is started in DevMode.
+     * <p/>
+     * Plugin developers can use this to enable or disable certain options depending
+     * on this setting.
+     * @return whether PowerGrid is running in Developer Mode.
+     */
     public boolean isDevmode() {
         return devmode;
     }
@@ -314,8 +296,8 @@ public class PowerGrid {
     }
     
     /**
-     * Logs a message to the console, followed by a stack trace of the provided 
-     * Throwable if PowerGrid runs in devmode.
+     * Logs a message to the console, followed by a stack trace (max 10 items) of 
+     * the provided Throwable if PowerGrid runs in devmode.
      * <p/>
      * If PowerGrid is not running in devmode, only a line with "caused by 
      * ExceptionClass: Exception message" will be displayed.
@@ -335,7 +317,7 @@ public class PowerGrid {
             for (StackTraceElement e : trace) {
                 System.out.println("    in " + e.getClassName() + ": " + e.getLineNumber() + " (" + e.getMethodName() + ")");
                 elementCount++;
-                if (elementCount > 10) {
+                if (elementCount >= 10) {
                     System.out.println("    (" + (trace.length-10) + " more...)");
                     break;
                 }

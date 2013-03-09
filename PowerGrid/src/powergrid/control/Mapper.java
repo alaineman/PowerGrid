@@ -1,12 +1,16 @@
 package powergrid.control;
 
+import java.util.HashSet;
 import java.util.Objects;
 import org.powerbot.core.Bot;
 import org.powerbot.game.client.Client;
 import org.powerbot.game.client.RSGround;
+import org.powerbot.game.client.RSGroundData;
+import org.powerbot.game.client.RSGroundInfo;
 import org.powerbot.game.client.RSInfo;
 import org.powerbot.game.client.RSInteractable;
 import org.powerbot.game.client.RSInteractableLocation;
+import powergrid.control.listeners.MapperListener;
 import powergrid.model.Copyable;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
@@ -28,6 +32,8 @@ public class Mapper implements Copyable<Mapper> {
     private WorldMap map = null;
     private Client client = null;
     private MapperThread thread = null;
+    
+    private HashSet<MapperListener> listeners = new HashSet<>(5);
 
     public Mapper() {}
     
@@ -64,7 +70,7 @@ public class Mapper implements Copyable<Mapper> {
      */
     public synchronized void startMapping() {
         if (thread != null)
-            throw new IllegalStateException("Mapper is already active");
+             throw new IllegalStateException("Mapper is already active");
         assert invariant();
         stop = false;
         thread = new MapperThread(5000);
@@ -104,38 +110,53 @@ public class Mapper implements Copyable<Mapper> {
             map = new WorldMap();
         }
         RSInfo info = client.getRSGroundInfo();
+        RSGroundInfo ginfo = info.getRSGroundInfo();
         Point basePoint = new Point(
                 info.getBaseInfo().getX(),
                 info.getBaseInfo().getY(),
                 client.getPlane());
+        RSGround[][][] data = null;
+        if (ginfo != null)
+            data = ginfo.getRSGroundArray();
         
-        RSGround[][][] data = info.getRSGroundInfo().getRSGroundArray();
-        assert data != null;
-        
-        for (RSGround[][] row : data) {
-            for (RSGround[] cell : row) {
-                for (RSGround value : cell) {
-                    if (value != null) {
-                        RSInteractableLocation location = ((RSInteractable)value).getData().getLocation();
-                        Point position = new Point(
-                                (int)(location.getX()/512),
-                                (int)(location.getY()/512)
-                                ).add(basePoint);
-                        map.putGround(position, value);
+        if (data != null) {
+            for (RSGround[][] row : data) {
+                for (RSGround[] cell : row) {
+                    for (RSGround value : cell) {
+                        if (value != null) {
+                            RSInteractableLocation location = ((RSInteractable)value).getData().getLocation();
+                            Point position = new Point(
+                                    (int)(location.getX()/512),
+                                    (int)(location.getY()/512)
+                                    ).add(basePoint);
+                            map.putGround(position, value);
+                        }
                     }
                 }
             }
         }
         
-        int[][] colFlags = info.getGroundData()[basePoint.z].getBlocks();
-        assert colFlags != null;
-        
-        for (int y=0;y<colFlags.length;y++) {
-            int[] row = colFlags[y];
-            for (int x=0;x<row.length;x++) {
-                Point position = new Point(x,y).add(basePoint);
-                map.putMask(position, row[x]);
+        int[][] colFlags = null;
+        RSGroundData[] gdatas = info.getGroundData();
+        if (gdatas.length > basePoint.z) {
+            RSGroundData gdata = gdatas[basePoint.z];
+            if (gdata != null) {
+                colFlags = gdata.getBlocks();
             }
+        }
+        
+        if (colFlags != null) {
+            for (int y=0;y<colFlags.length;y++) {
+                int[] row = colFlags[y];
+                for (int x=0;x<row.length;x++) {
+                    Point position = new Point(x,y).add(basePoint);
+                    map.putMask(position, convertToSides(row[x]));
+                }
+            }
+        }
+        
+        for (MapperListener l : listeners) {
+            l.mapUpdated(this);
         }
         
         assert invariant();
@@ -173,7 +194,6 @@ public class Mapper implements Copyable<Mapper> {
     private boolean invariant() {
         // The client must be valid
         if (client == null || client.getRSGroundInfo() == null) return false;
-        if (client.getRSGroundInfo().getRSGroundInfo() == null) return false;
         // We only have a reference to a MapperThread if the MapperThread is actually mapping.
         if (thread != null && !thread.isAlive()) return false;
         if ( (thread == null) != stop ) return false;
@@ -199,6 +219,15 @@ public class Mapper implements Copyable<Mapper> {
         }
     }
 
+    public void addMapperListener(MapperListener l) {
+        if (!listeners.contains(l))
+            listeners.add(l);
+    }
+    
+    public void removeMapperListener(MapperListener l) {
+        listeners.remove(l);
+    }
+    
     @Override public int hashCode() {
         int hash = 3;
         hash = 61 * hash + Objects.hashCode(this.map);

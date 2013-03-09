@@ -8,10 +8,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import powergrid.PowerGrid;
+import powergrid.control.listeners.TaskListener;
+import powergrid.tasks.Task;
 
 /**
  * Control Panel that allows control and overview of PowerGrid functionality.
@@ -68,13 +72,10 @@ public class ControlPanel extends JPanel {
     
     private void setupPanel() {
         setBackground(Color.BLACK);
-        /*showStatus.setBackground(Color.BLACK);
-        runScripts.setBackground(Color.BLACK);
-        showWorldMap.setBackground(Color.BLACK);*/
-        
         messageArea.setForeground(Color.WHITE);
         
-        
+        TaskQueueListener l = new TaskQueueListener();
+        PowerGrid.TM.addTaskListener(l);
         
         showWorldMap.setPreferredSize(buttonSize);
         runScripts.setPreferredSize(buttonSize);
@@ -103,6 +104,8 @@ public class ControlPanel extends JPanel {
         add(messageArea,gbc);
         
         setPreferredSize(new Dimension(buttonSize.width*3+12,buttonSize.height+24));
+        
+        l.taskAdded(null);
     }
     
     public void setMessage(String message) {
@@ -112,5 +115,35 @@ public class ControlPanel extends JPanel {
     
     public String getMessage() {
         return messageArea.getText();
+    }
+    
+    private class TaskQueueListener implements TaskListener {
+        @Override public void taskAdded(Task task) {
+            String queue = "Task Queue: ";
+            List<Task> tasks = PowerGrid.TM.getPendingTasks();
+            if (!tasks.isEmpty()) {
+                for (Task t : tasks) {
+                    queue += "<< " + t.getName();
+                }
+                queue = queue.substring(2);
+            } else {
+                queue += "EMPTY";
+            }
+            setMessage(queue);
+        }
+        @Override public void taskRemoved(Task t) {
+            taskAdded(t);
+        }
+        @Override public void taskStarted(Task t) {
+            taskAdded(t);
+            String queue = getMessage();
+            if (queue.startsWith("Task Queue: ")) {
+                queue = "Task Queue: (Running \"" + PowerGrid.TM.currentTask().getName() + "\") << " + queue.substring(12);
+            }
+            setMessage(queue);
+        }
+        @Override public void taskFinished(Task t) {
+            taskAdded(t);
+        }
     }
 }

@@ -1,5 +1,11 @@
+# Overview of Changes from 8/3 to 16/3 #
+This document shows what the major changes are since march 8th. It mainly shows my view on
+the project and decisions that I made of which I think are good practise to maintain. I hope
+that you agree with me on the following points and that you will also follow them, in order to
+improve the software quality and in the meantime iron out the imperfections from the project.
+                                                           -- Chronio
 
-=== Changes in Mapping and Mapped Data Format === 
+### Changes in Mapping and Mapped Data Format ### 
 
 Map data has become more accurate and complete. It is now possible to maintain references 
 to core RS data by cutting out the middleman (SceneObject). This has as a benefit that 
@@ -21,7 +27,7 @@ information from both. GameObjects are immutable, and as such provide an easy wa
 specific data when desired.
 
 
-=== Changes in JavaDoc Style === 
+### Changes in JavaDoc Style ### 
 
 From now on, package info is documented in a file called "package.html" inside each package.
 This package info is automatically parsed and included in de documentation by the Javadoc 
@@ -32,7 +38,7 @@ who made each part of PowerGrid, so that they can complain to the correct person
 frustration, since nobody can explain a piece of code better than its author).
 
 
-=== Changes in Testing Policy ===
+### Changes in Testing Policy ###
 
 From now on, tests will be written for each class that is testable with a Unit test. For this 
 purpose, JUnit will be used, possibly in combination with Mockito. I am willing to explain Mockito

@@ -2,19 +2,18 @@ package powergrid.tasks;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
-import powergrid.PowerGrid;
 import powergrid.control.TaskManager;
 
 /**
  * This class executes multiple Tasks in sequence.
  * <p/>
  * Tasks can be added to both the begin and the end, so this class can be used 
- * as both a Stack and a Queue.
+ * as both a Stack and a Queue of tasks.
  * <p/>
  * It is possible to execute any number of Tasks in the Deque at once using the 
  * executeXXX methods. These methods will return after the Task has finished.
  * <p/>
- * Tasks can be moved to the central PowerWalk Task Queue using the moveXXXtoQueue methods.
+ * Tasks can be moved to a PowerGrid TaskManager using the moveXXXtoQueue methods.
  * <p/>
  * @author Chronio
  */
@@ -29,6 +28,8 @@ public class TaskDeque {
     
     /**
      * Creates a TaskDeque filled with the given tasks.
+     * <p/>
+     * The tasks are placed in the order the Collection's Iterator provides them.
      * @param tasks the Tasks to add to this TaskDeque
      */
     public TaskDeque(Collection<? extends Task> tasks) {
@@ -91,8 +92,8 @@ public class TaskDeque {
     /**
      * Removes the first n Tasks from the Deque and executes them in order.
      * <p/>
-     * if <code>n &lt; 0</code>, no tasks will be executed. If 
-     * <code>n &gt; size()</code>, all tasks will be executed.
+     * if <code>n &lt;= 0</code>, no tasks will be executed. If 
+     * <code>n &gt;= size()</code>, all tasks will be executed.
      * @param n the number of tasks to execute
      */
     public synchronized void executeN(int n) {
@@ -112,22 +113,21 @@ public class TaskDeque {
     }
     
     /**
-     * removes the first Task from this Deque and adds it to the PowerWalk 
-     * Task Queue.
+     * removes the first Task from this Deque and adds it to the given TaskManager
      */
-    public synchronized void moveFirstToQueue() {
+    public synchronized void moveFirstToQueue(TaskManager tm) {
+        assert tm != null;
         if (theTasks.isEmpty()) return;
         Task t = theTasks.pollFirst();
-        PowerGrid.TM.assignTask(t);
+        tm.assignTask(t);
     }
     
     /**
-     * Removes all Tasks from this Deque and add them all to the PowerWalk Task
-     * Queue.
+     * Removes all Tasks from this Deque and add them all to the given TaskManager
      */
-    public synchronized void moveAllToQueue() {
+    public synchronized void moveAllToQueue(TaskManager tm) {
         while (!theTasks.isEmpty()) {
-            moveFirstToQueue();
+            moveFirstToQueue(tm);
         }
     }
 }

@@ -83,12 +83,12 @@ public abstract class Transportable extends Teleportable {
 
     public String getTraits() {
         try {
-            XMLElement file = XMLParser.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
+            XMLElement file = XMLParser.getXMLTree(ClassLoader.getSystemResource("powergrid/data/specialLocations.xml").openStream());
             XMLElement[] node = XMLParser.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
                 XMLElement transportType = node[0];
-                for (XMLElement vertex : transportType) {
-                    if (Point.fromString(vertex.get("pos")).equals(getPosition())) {
+                for (XMLElement vertex : transportType.childElements()) {
+                    if (new Point(vertex.get("pos")).equals(getPosition())) {
                        return vertex.get("traits");
                     }
                 }
@@ -103,12 +103,12 @@ public abstract class Transportable extends Teleportable {
 
     public int[] getNPCIDs() {
         try {
-            XMLElement file = XMLParser.getXMLTree(ClassLoader.getSystemResource("powerwalk/data/specialLocations.xml").openStream());
+            XMLElement file = XMLParser.getXMLTree(ClassLoader.getSystemResource("powergrid/data/specialLocations.xml").openStream());
             XMLElement[] node = XMLParser.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
                 XMLElement transportType = node[0];
-                for (XMLElement vertex : transportType) {
-                    if (Point.fromString(vertex.get("pos")).equals(getPosition())) {
+                for (XMLElement vertex : transportType.childElements()) {
+                    if (new Point(vertex.get("pos")).equals(getPosition())) {
                         if (vertex.get("target") != null) {
                             String[] npcidString = vertex.get("target").split("|");
                             int[] npcIds = new int[npcidString.length];

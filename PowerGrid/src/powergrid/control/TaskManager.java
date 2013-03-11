@@ -169,7 +169,7 @@ public class TaskManager extends ActiveScript {
      */
     public void clear() {
         while (!pendingTasks.isEmpty()) {
-            removeTask(pendingTasks.poll());
+            removeTask(pendingTasks.peek());
         }
         if (currentTask != null)
             currentTask.cancel();

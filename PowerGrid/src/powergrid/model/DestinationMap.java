@@ -36,9 +36,9 @@ public class DestinationMap implements Copyable<DestinationMap> {
     public DestinationMap withData(XMLElement data) {
         assert data != null;
         if (data.getTag().equals("destinations")) {
-            for (XMLElement dest : data) {
+            for (XMLElement dest : data.childElements()) {
                 String name = dest.get("name");
-                Point pos = Point.fromString(dest.get("pos"));
+                Point pos = new Point(dest.get("pos"));
                 if (name != null && !name.isEmpty() && pos != null) {
                     destinations.put(name.toLowerCase(), pos);
                 }

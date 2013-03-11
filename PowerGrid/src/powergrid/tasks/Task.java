@@ -88,7 +88,7 @@ public abstract class Task implements Comparable<Task> {
      *         and zero when the Priorities are equal.
      */
     @Override public int compareTo(Task t) {
-        return priority-t.getPriority();
+        return getPriority()-t.getPriority();
     }
     
     /**
@@ -177,9 +177,8 @@ public abstract class Task implements Comparable<Task> {
      * This method is effectively the same as calling 
      * <code>org.powerbot.core.script.job.Task.sleep(min,max);</code>
      * <p/>
-     * This method should actually not belong in Task, but seeing as many people 
-     * like to use the Task.sleep() methods, they were implemented here to allow 
-     * for easy access even when having imports for PowerWalk's Task class.
+     * This method should actually not belong in Task, but they were implemented 
+     * here to allow for easy access even when having imports for PowerGrid's Task class.
      * <p/>
      * @param min the minimum waiting time.
      * @param max the maximum waiting time.
@@ -195,9 +194,8 @@ public abstract class Task implements Comparable<Task> {
      * This method is effectively the same as calling 
      * <code>org.powerbot.core.script.job.Task.sleep(time);</code>
      * <p/>
-     * This method should actually not belong in Task, but seeing as many people 
-     * like to use the Task.sleep() methods, they were implemented here to allow 
-     * for easy access even when having imports for PowerWalk's Task class.
+     * This method should actually not belong in Task, but they were implemented 
+     * here to allow for easy access even when having imports for PowerGrid's Task class.
      * <p/>
      * @param time the waiting time
      */

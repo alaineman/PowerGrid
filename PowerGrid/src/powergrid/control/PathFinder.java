@@ -14,7 +14,7 @@ import powergrid.model.world.Wall;
  * environment.
  * <p/>
  * It uses the A* algorithm on the map data collected by the mapper. Therefore,
- * in order for the PathFinder to return the shortest known path, PowerWalk must
+ * in order for the PathFinder to return the shortest known path, PowerGrid must
  * be running and the environment surrounding the start and endpoints must be
  * mapped.
  * <p/>

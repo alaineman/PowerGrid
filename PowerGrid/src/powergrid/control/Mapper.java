@@ -3,6 +3,7 @@ package powergrid.control;
 import java.util.HashSet;
 import java.util.Objects;
 import org.powerbot.core.Bot;
+import static org.powerbot.game.api.wrappers.Tile.Flag.*;
 import org.powerbot.game.client.Client;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSGroundData;
@@ -175,18 +176,18 @@ public class Mapper implements Copyable<Mapper> {
     }
     
     private static int convertToSides(int flag) {
-        if ((flag | 0x20100) == flag)    // Object_Block | Object_Tile flag => Collision (normal walls and such)
+        if ((flag | OBJECT_BLOCK | OBJECT_TILE) == flag)    // Object_Block | Object_Tile flag => Collision (normal walls and such)
             return Wall.BLOCK;
-        if ((flag | 0x40000100) == flag) // Object_Allow_Range | Object_Tile => Collision (fences and such)
+        if ((flag | OBJECT_ALLOW_RANGE | OBJECT_TILE) == flag) // Object_Allow_Range | Object_Tile => Collision (fences and such)
             return Wall.BLOCK;
         int res = 0;
-        if ((flag & (0x800402)) != 0)    // RangedWall_North | Wall_North => North
+        if ((flag & (WALL_ALLOW_RANGE_NORTH | WALL_BLOCK_NORTH)) != 0)    // RangedWall_North | Wall_North => North
             res |= Wall.NORTH;
-        if ((flag & (0x2001008)) != 0)   // RangedWall_East | Wall_East => East
+        if ((flag & (WALL_ALLOW_RANGE_EAST | WALL_BLOCK_EAST)) != 0)   // RangedWall_East | Wall_East => East
             res |= Wall.EAST;
-        if ((flag & (0x8004020)) != 0)   // RangedWall_South | Wall_South => South
+        if ((flag & (WALL_ALLOW_RANGE_SOUTH | WALL_BLOCK_SOUTH)) != 0)   // RangedWall_South | Wall_South => South
             res |= Wall.SOUTH;
-        if ((flag & (0x20010080)) != 0)  // RangedWall_West | Wall_West => West
+        if ((flag & (WALL_ALLOW_RANGE_WEST | WALL_BLOCK_WEST)) != 0)  // RangedWall_West | Wall_West => West
             res |= Wall.WEST;
         return res;
     }

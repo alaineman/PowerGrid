@@ -25,7 +25,7 @@ public class InteractionFactory {
         assert source != null;
         XMLElement data = XMLParser.getXMLTree(source);
         networks.clear();
-        for (XMLElement type : data) {
+        for (XMLElement type : data.childElements()) {
             switch (type.getTag()) {
                 case "serverset":
                     setUpServerClient(type);
@@ -52,7 +52,7 @@ public class InteractionFactory {
         if (clazz == null) return null;
         XMLElement serverNode = null;
         ArrayList<XMLElement> clients = new ArrayList<>(type.childElements().size());
-        for (XMLElement n : type) {
+        for (XMLElement n : type.childElements()) {
             if (n.getTag().equals("server")) {
                 if (serverNode == null) {
                     serverNode = n;
@@ -66,7 +66,7 @@ public class InteractionFactory {
         }
         Transportable server;
         try {
-            Point p = Point.fromString(serverNode.getOrElse("pos", "(0,0)"));
+            Point p = new Point(serverNode.getOrElse("pos", "(0,0)"));
             server = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             return null;
@@ -75,7 +75,7 @@ public class InteractionFactory {
         TreeNetwork network = new TreeNetwork(server);
         
         for (XMLElement n : clients) {
-            Point p = Point.fromString(n.getOrElse("pos", "(0,0)"));
+            Point p = new Point(n.getOrElse("pos", "(0,0)"));
             try {
                 Transportable t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
                 network.add(t);
@@ -110,8 +110,8 @@ public class InteractionFactory {
         Class<? extends Transportable> clazz = getClass(type);
         if (clazz == null) return null;
         PeerNetwork network = new PeerNetwork();
-        for (XMLElement node : type) {
-            Point p = Point.fromString(node.getOrElse("pos", "(0,0)"));
+        for (XMLElement node : type.childElements()) {
+            Point p = new Point(node.getOrElse("pos", "(0,0)"));
             try {
                 Transportable t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
                 network.add(t);

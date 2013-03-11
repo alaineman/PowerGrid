@@ -3,7 +3,7 @@ package powergrid.tasks;
 import org.powerbot.core.script.ActiveScript;
 
 /**
- * Task that runs an ActiveScript instance inside of PowerWalk as if it where running in RSBot.
+ * Task that runs an ActiveScript instance inside of PowerGrid as if it where running in RSBot.
  * <p/>
  * Note that the ActiveScriptTask might not run the ActiveScript instance in the 
  * exact same way, so it cannot be guaranteed that the provided script will perform 
@@ -56,10 +56,12 @@ public class ActiveScriptTask extends StepTask {
     }
 
     /**
-     * run when this Task is started. This method should not be called directly, 
-     * as a TaskRunner or the PowerWalk TaskManager will do this automatically.
+     * Run when this Task is started. 
      * <p/>
-     * In the case of an ActiveScriptTask, the onStart() method of the ActiveScript is called.
+     * This method should not be called directly, as this Task's execute method
+     * does this automatically.
+     * <p/>
+     * This methods calls the onStart() method of the ActiveScript.
      */
     @Override public void start() {
         theScript.onStart();
@@ -96,10 +98,7 @@ public class ActiveScriptTask extends StepTask {
     }
     
     /**
-     * This method is executed each step by a TaskRunner or the PowerWalk TaskManager.
-     * <p/>
-     * In the case of an ActiveScriptTask, it calls the loop() method once and 
-     * then waits the appropriate amount of time.
+     * This method is executed each step in this Task's execute method.
      * <p/>
      * This method should not be called directly.
      */
@@ -117,8 +116,8 @@ public class ActiveScriptTask extends StepTask {
      * <p/>
      * Do not use this method to stop a running Task. Instead, use the cancel() method.
      * <p/>
-     * It is not required to call this method manually, as a TaskRunner or 
-     * the PowerWalk TaskManager will do this automatically.
+     * It is not required to call this method manually, the execute method of this
+     * StepTask will do this automatically.
      */
     @Override public void finish() {
         theScript.onStop();

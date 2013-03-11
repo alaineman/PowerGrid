@@ -2,7 +2,6 @@ package powergrid;
 
 import java.awt.Color;
 import java.awt.Window;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -61,7 +60,7 @@ public class PowerGrid {
     /** The default TaskManager instance. */
     public static final TaskManager TM = new TaskManager();
     /** The default Bot instance. */
-    public static final Bot BOT = new Bot(null,TM);
+    public static final Bot BOT = new Bot(TM);
     /** The default Mapper instance. */
     public static final Mapper MAPPER = new Mapper(false);
     /** The default DestinationMap. */

@@ -44,12 +44,12 @@ public class Lodestone extends Teleportable {
     public static void addLodestone(int dest) {
         
         if (lodestoneTree == null) {
-            InputStream in = ClassLoader.getSystemResourceAsStream("powerwalk/data/lodestones.xml");
+            InputStream in = ClassLoader.getSystemResourceAsStream("powergrid/data/lodestones.xml");
             lodestoneTree = XMLParser.getXMLTree(in);
         }
         XMLElement[] matches = XMLParser.filterNodes(lodestoneTree, "widget", String.valueOf(dest));
         if (matches.length > 0) {
-            Point p = Point.fromString(matches[0].get("pos"));
+            Point p = new Point(matches[0].get("pos"));
             GameObject go = PowerGrid.MAPPER.getWorldMap().getObject(p);
             lodestones.add(new Lodestone(p.x,p.y,p.z,(go == null ? 0 : go.getRawNumber()),dest,matches[0].get("name")));
         }

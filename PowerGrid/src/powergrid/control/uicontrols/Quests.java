@@ -105,13 +105,13 @@ public abstract class Quests {
     }
     
     /**
-     * Reloads the Quest information from the environment. When the PowerWalk 
-     * plug-in is loaded, the Quest data was loaded when PowerWalk started. 
+     * Reloads the Quest information from the environment. When the PowerGrid 
+     * plug-in is loaded, the Quest data was loaded when PowerGrid started. 
      * Otherwise, this method needs to be called before any information on Quests 
      * can be collected.
      * <p />
      * This method must be manually called to reflect changes to the status of 
-     * Quests after PowerWalk is loaded. A feasible way to do this is to assign 
+     * Quests after PowerGrid is loaded. A feasible way to do this is to assign 
      * a Task to the Bot class with the lowest priority. The Bot will then update 
      * the caches automatically when there is nothing else to do.
      * <p />

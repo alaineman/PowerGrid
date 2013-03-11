@@ -27,7 +27,7 @@ public class BotTest {
     public Bot bot;
     
     @Before public void setup() {
-        bot = new Bot(mockedPlayer,mockedTaskManager);
+        bot = new Bot(mockedTaskManager).withPlayer(mockedPlayer);
         
         when(mockedPlayer.getLocation()).thenReturn(new Tile(2,2,0));
         when(mockedPlayer.isMoving()).thenReturn(false);
@@ -87,5 +87,15 @@ public class BotTest {
     @Test public void testGotoNearest() {
         bot.gotoNearest("Varrock", 0);
         verify(mockedTaskManager).assignTask(new TravelNearestTask("Varrock"),0);
+    }
+    
+    @Test public void testGetStateWithoutPlayer() {
+        bot = new Bot(mockedTaskManager);
+        assertEquals(Bot.STATE_UNKNOWN, bot.getState());
+    }
+    
+    @Test public void getPositionWithoutPlayer() {
+        bot = new Bot(mockedTaskManager);
+        assertEquals(new Point(),bot.getPosition());
     }
 }

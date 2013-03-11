@@ -52,7 +52,7 @@ public class TravelNearestTask extends TravelTask {
         XMLElement root = XMLParser.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/specialLocations.xml"));
         // look for the correct type
         XMLElement typeNode = null;
-        for (XMLElement child : root) {
+        for (XMLElement child : root.childElements()) {
             if (child.get("name").equals(type)) {
                 typeNode = child;
                 break;
@@ -71,7 +71,7 @@ public class TravelNearestTask extends TravelTask {
         }
         
         if (traits != null && !traits.isEmpty()) {
-            matches = Arrays.asList(XMLParser.filterNodes(matches, "traits", traits));
+            matches = Arrays.asList(XMLParser.filterNodes(new XMLElement("",null,matches), "traits", traits));
         }
         return matches;
     }
@@ -94,7 +94,7 @@ public class TravelNearestTask extends TravelTask {
         Iterator<XMLElement> it = options.iterator();
         while (it.hasNext() && retries > 0) {
             XMLElement n = it.next();
-            Point dest = Point.fromString(n.get("pos"));
+            Point dest = new Point(n.get("pos"));
             if (dest == null) continue;
             try {
                 List<Point> trial = new PathFinder(from,dest).calculatePath();
@@ -122,8 +122,8 @@ public class TravelNearestTask extends TravelTask {
         }
         
         @Override public int compare(XMLElement one, XMLElement two) {
-            Point pOne = Point.fromString(one.getOrElse("pos", "(0,0)"));
-            Point pTwo = Point.fromString(two.getOrElse("pos", "(0,0)"));
+            Point pOne = new Point(one.getOrElse("pos", "(0,0)"));
+            Point pTwo = new Point(two.getOrElse("pos", "(0,0)"));
             return (int)(pOne.distance(from) - pTwo.distance(from));
         }
         

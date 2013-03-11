@@ -206,9 +206,9 @@ public class MapViewer extends Canvas implements ActionListener {
      * This can be done without RSBot.
      * @param exitOnClose when true, terminates the application when the window is closed
      */
+    //FIXME broken because of changes in Mapper.
     public static void showMapViewerStandAlone(boolean exitOnClose) {
-        String path = System.getProperty("user.home") + "\\Appdata\\Local\\Temp\\PowerWalk\\";
-        File file = new File(path + ""); //TODO link to world map
+        File file = new File("worldmap.xml");
         try (FileInputStream worldMapIn = new FileInputStream(file)) {
             XMLElement worldMap = XMLParser.getXMLTree(worldMapIn);
             //PowerGrid.MAPPER.getWorldMap().fillFromXML(worldMap);

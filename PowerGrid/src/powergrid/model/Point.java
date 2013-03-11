@@ -5,25 +5,26 @@ import org.powerbot.game.api.wrappers.RegionOffset;
 import org.powerbot.game.api.wrappers.Tile;
 
 /**
- * This model class represents a Point in 3D space. 
+ * This model class represents an immutable Point in 3D space. 
  * <p/>
  * It offers many mathematical operations, such as adding / substracting other 
  * Points, multiplication with a scalar, and conversion from/to polar coordinates.
+ * It also offers methods such as normalize, treating Points as vectors in 2D space.
  * <p/>
  * It replaces RSBot's Tile class, yet for compatibility it still offers possibility 
- * to convert from Tile to Point (using the static fromTile(tile) method), and from 
+ * to convert from Tile to Point (using the appropriate constructor), and from 
  * Point to Tile (using the toTile() method).
  * Point also implements RSBot's Locatable interface, allowing Points to be used 
  * in most RSBot methods as-is.
  * <p/>
  * @author Chronio
  */
-public class Point implements Locatable {
-    /** The X-coordinate of this Point */
+public class Point implements Locatable, Copyable<Point> {
+    /** The X-coordinate of this Point. */
     public final int x;
-    /** The Y-coordinate of this Point */
+    /** The Y-coordinate of this Point. */
     public final int y;
-    /** The Z-coordinate of this Point (this was known as the plane in the RSBot environment) */
+    /** The Z-coordinate of this Point (this was known as the plane in the RSBot environment). */
     public final int z;
     
     /**
@@ -42,6 +43,7 @@ public class Point implements Locatable {
     public Point(int x,int y) {
         this(x,y,0);
     }
+    
     /**
      * Creates a new Point with the given coordinates
      * @param x the x-coordinate of the Point
@@ -59,7 +61,48 @@ public class Point implements Locatable {
      * @param p The Position this Point will refer to
      */
     public Point(Point p) {
-        this(p.x,p.y,p.z);
+        x = p.x;
+        y = p.y;
+        z = p.z;
+    }
+    
+    /**
+     * Creates a new Point with the same position as the given Tile.
+     * @param t The Tile this Point will refer to
+     */
+    public Point(Tile t) {
+        x = t.getX();
+        y = t.getY();
+        z = t.getPlane();
+    }
+    
+    /**
+     * Parses a Point from a String.
+     * <p/>
+     * The String must contain one or more integer values, separated by commas.
+     * The values can be surrounded by braces.
+     * <p/>
+     * @param s the String to parse
+     * @throws IllegalArgumentException when the given String is invalid
+     */
+    public Point(String s) {
+        if (s == null || s.isEmpty())
+            throw new IllegalArgumentException("Empty String");
+        try {
+            s = s.replaceAll("[^,0-9]", ""); // filter out all except digits and ","
+            String[] vals = s.split(",");
+            if (vals.length < 2) 
+                throw new IllegalArgumentException("Not enough values: minimal 2 required, found " + vals.length);
+            x = Integer.parseInt(vals[0]);
+            y = Integer.parseInt(vals[1]);
+            if (vals.length > 2) {
+                z = Integer.parseInt(vals[2]);
+            } else {
+                z = 0;
+            }
+        } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Invalid String: " + s, e);
+        }
     }
     
     /**
@@ -126,7 +169,7 @@ public class Point implements Locatable {
     /**
      * returns the angle of the vector denoted by this Point.
      * <p/>
-     * The returned angle is the angle between the vector and the x-axis. 
+     * The returned angle is the angle between the vector and the x-axis in radians. 
      * Positive angles rotate counterclockwise.
      * @return the angle of the vector denoted by this Point.
      */
@@ -136,7 +179,7 @@ public class Point implements Locatable {
     
     /**
      * returns a normalized version of this Point, treating it as a vector in 2D space (the (x,y) plane).
-     * It discards the plane information of Point, the z-coordinate of the resulting Point is 0.
+     * It discards the plane information of the Point, the z-coordinate of the resulting Point is 0.
      * @return the normalized version of this Point
      */
     public Point normalize() {
@@ -202,51 +245,20 @@ public class Point implements Locatable {
     }
     
     /**
-     * Parses a Point from a String that contains one or more values separated by "," and surrounded by braces.
-     * 
-     * @param s the String to parse
-     * @throws NumberFormatException when one or more values could not be parsed
-     * @return the Point denoted by this String
-     */
-    public static Point fromString(String s) {
-        int start = s.indexOf("(")+1;
-        int end   = s.indexOf(")");
-        String[] vals = s.substring(start,end).split(",");
-        int x=0,y=0,z=0;
-        if (vals.length>0) x = Integer.parseInt(vals[0]);
-        if (vals.length>1) y = Integer.parseInt(vals[1]);
-        if (vals.length>2) z = Integer.parseInt(vals[2]);
-        
-        return new Point(x,y,z);
-    }
-    
-    /**
      * Returns a Tile-representative of this Point
      * @return a Tile object indicating the same location as this Point
      */
     public Tile toTile() {
         return new Tile(x,y,z);
     }
-    
+
     /**
-     * Returns a Point-representative of the given Tile
-     * @param t the Tile to create a Point object for.
-     * @return a Point object indicating the same location as the given Tile
+     * Returns a copy of this Point.
+     * <p/>
+     * The resulting Point has the same x, y, and z coordinates.
+     * @return a copy of this Point
      */
-    public static Point fromTile(Tile t) {
-        return new Point(t.getX(),t.getY(),t.getPlane());
+    @Override public Point copy() {
+        return new Point(x,y,z);
     }
-    
-    /**
-     * Creates a new Point from the given Polar coordinates.
-     * @param theta the angle
-     * @param r the length
-     * @return a Point representing the position denoted by the given polar coordinates.
-     */
-    public static Point fromPolar(double theta, double r) {
-        int x = (int)(r * Math.cos(theta));
-        int y = (int)(r * Math.sin(theta));
-        return new Point(x,y);
-    }
-   
 }

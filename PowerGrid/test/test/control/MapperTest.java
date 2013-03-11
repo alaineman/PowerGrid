@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.client.BaseInfo;
 import org.powerbot.game.client.Client;
 import org.powerbot.game.client.RSGround;
@@ -20,6 +21,7 @@ import powergrid.control.Mapper;
 import powergrid.control.Mapper.MapperThread;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
+import powergrid.model.world.Wall;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MapperTest {
@@ -64,8 +66,8 @@ public class MapperTest {
         
         when(mockedRSGroundData.getBlocks()).thenReturn(
                 new int[][]{
-                    {0,1},
-                    {3,4}
+                    {0                        ,Tile.Flag.OBJECT_BLOCK|Tile.Flag.OBJECT_TILE},
+                    {Tile.Flag.WALL_BLOCK_EAST,Tile.Flag.WALL_BLOCK_SOUTH}
                 });
         
         mapper = new Mapper(mockedClient).withMap(mockedMap);
@@ -81,9 +83,9 @@ public class MapperTest {
         verify(mockedMap).putGround(new Point(42,41,1), mockedRSGround);
         
         verify(mockedMap).putMask(new Point(2,4,1), 0);
-        verify(mockedMap).putMask(new Point(3,4,1), 1);
-        verify(mockedMap).putMask(new Point(2,5,1), 3);
-        verify(mockedMap).putMask(new Point(3,5,1), 4);
+        verify(mockedMap).putMask(new Point(3,4,1), Wall.BLOCK);
+        verify(mockedMap).putMask(new Point(2,5,1), Wall.EAST);
+        verify(mockedMap).putMask(new Point(3,5,1), Wall.SOUTH);
     }
     
     @Test public void testEquals() {
@@ -112,8 +114,8 @@ public class MapperTest {
         verify(mockedMap).putGround(new Point(42,41,1), mockedRSGround);
         
         verify(mockedMap).putMask(new Point(2,4,1), 0);
-        verify(mockedMap).putMask(new Point(3,4,1), 1);
-        verify(mockedMap).putMask(new Point(2,5,1), 3);
-        verify(mockedMap).putMask(new Point(3,5,1), 4);
+        verify(mockedMap).putMask(new Point(3,4,1), Wall.BLOCK);
+        verify(mockedMap).putMask(new Point(2,5,1), Wall.EAST);
+        verify(mockedMap).putMask(new Point(3,5,1), Wall.SOUTH);
     }
 }

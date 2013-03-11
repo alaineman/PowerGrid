@@ -176,12 +176,12 @@ public class XMLParser {
      * @param value the value this attribute must have in order to be accepted
      * @return an array of XMLNodes matching the filter
      */
-    public static XMLElement[] filterNodes(Iterable<XMLElement> root,String attribute,String value) {
+    public static XMLElement[] filterNodes(XMLElement root,String attribute,String value) {
         if (attribute == null || root == null || value == null) {
             return null;
         }
         ArrayList<XMLElement> matches = new ArrayList<>();
-        for (XMLElement n : root) {
+        for (XMLElement n : root.childElements()) {
             String val = n.get(attribute);
             if (val != null && value.equals(val))
                 matches.add(n);

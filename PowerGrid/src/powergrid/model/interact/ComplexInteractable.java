@@ -11,7 +11,7 @@ public interface ComplexInteractable extends Interactable {
      * This method checks if all requirements for this Complex Interaction are met.
      * <p>If this method returns true, it cannot be guaranteed that the interact 
      * method will successfully execute the interaction. It merely means all 
-     * requirements for the interaction are met (as far as PowerWalk can observe).</p>
+     * requirements for the interaction are met (as far as PowerGrid can observe).</p>
      * @param method the method of interaction.
      * @return whether the interaction is allowed.
      */

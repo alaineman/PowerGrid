@@ -1,9 +1,7 @@
 package powergrid;
 
-import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import powergrid.control.TaskManager;
-import powergrid.model.DestinationMap;
 import powergrid.model.DestinationMap.Destination;
 import powergrid.model.Point;
 import powergrid.tasks.RestTask;
@@ -14,9 +12,9 @@ import powergrid.tasks.TravelTask;
  * Bot-class representing the Player.
  * The Bot can execute high-level tasks such as "travel to [destination]",
  * "go to nearest [place of interest]", and others. It makes use of the Task 
- * subclasses in the <code>powerwalk.tasks</code> package to achieve these tasks.
+ * subclasses in the <code>powergrid.tasks</code> package to achieve these tasks.
  * <p />
- * The Bot also provides top-level access to PowerWalk's functionality, and can 
+ * The Bot also provides top-level access to PowerGrid's functionality, and can 
  * be used either issue commands, or retrieve information about the Player's 
  * current state.
  * <p />
@@ -25,8 +23,7 @@ import powergrid.tasks.TravelTask;
  */
 public class Bot {
     
-    // The Bot's States
-    /** This State represents any state that is not recognized by PowerWalk. */
+    /** This State represents any state that is not recognized by PowerGrid. */
     public static final int STATE_UNKNOWN = 0;
     /** This State represents the state of the Bot when there are no Tasks. */
     public static final int STATE_IDLE = 1;
@@ -42,20 +39,22 @@ public class Bot {
      * Creates a new Bot that connects to the specified TaskManager.
      * @param tm the TaskManager for this Bot.
      */
-    public Bot(Player thePlayer, TaskManager tm) {
+    public Bot(TaskManager tm) {
         assert tm != null : "Invalid TaskManager in Bot constructor";
         theTM = tm;
-        if (thePlayer != null)
-            rsPlayer = thePlayer;
     }
     
-    public void reloadLocalPlayer() {
-        try {
-            Player rsLocal = Players.getLocal();
-            if (rsLocal != null) {
-                rsPlayer = rsLocal;
-            }
-        } catch (NullPointerException npe) {}
+    /**
+     * Takes the specified Player as the local Player.
+     * <p/>
+     * Invocations of <code>getState()</code> and <code>getPosition()</code> will
+     * use this Player to obtain the required information.
+     * @param p the Player to use a local Player
+     * @return itself for fluency
+     */
+    public Bot withPlayer(Player p) {
+        rsPlayer = p;
+        return this;
     }
     
     /**
@@ -103,7 +102,6 @@ public class Bot {
      * @return an integer specifying the current state of the Bot.
      */
     public int getState() {
-        
         if (rsPlayer == null)
             return STATE_UNKNOWN;
         
@@ -115,14 +113,16 @@ public class Bot {
     }
     
     /**
-     * returns the Player's current Position
+     * returns the Player's current Position.
+     * <p/>
+     * If no Player is available, this method returns a Point at (0,0,0).
      * @return the Player's current Position
      */
     public Point getPosition() {
         if (rsPlayer == null)
             return new Point();
         else
-            return Point.fromTile(rsPlayer.getLocation());
+            return new Point(rsPlayer.getLocation());
     }
     
     /**
@@ -143,5 +143,21 @@ public class Bot {
      */
     public TaskManager getTM() {
         return theTM;
+    }
+    
+    /**
+     * Returns the local RSPlayer, or null if the Player has not been loaded.
+     * @return the local RSPlayer
+     */
+    public Player getPlayer() {
+        return rsPlayer;
+    }
+    
+    /**
+     * Returns whether the local RSPlayer object is loaded.
+     * @return true if the local RSPlayer object is loaded, false otherwise.
+     */
+    public boolean isPlayerSet() {
+        return rsPlayer != null;
     }
 }

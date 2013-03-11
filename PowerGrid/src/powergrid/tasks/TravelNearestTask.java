@@ -7,10 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
-import powergrid.control.XMLToolBox;
+import powergrid.control.XMLParser;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
-import powergrid.model.XMLNode;
+import powergrid.model.XMLElement;
 
 /**
  * Calculates a path to the nearest position matching certain criteria and walks it.
@@ -48,11 +48,11 @@ public class TravelNearestTask extends TravelTask {
     public String getTraits() {
         return traits;
     }
-    public List<XMLNode> getMatching() {
-        XMLNode root = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/specialLocations.xml"));
+    public List<XMLElement> getMatching() {
+        XMLElement root = XMLParser.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/specialLocations.xml"));
         // look for the correct type
-        XMLNode typeNode = null;
-        for (XMLNode child : root) {
+        XMLElement typeNode = null;
+        for (XMLElement child : root) {
             if (child.get("name").equals(type)) {
                 typeNode = child;
                 break;
@@ -63,25 +63,25 @@ public class TravelNearestTask extends TravelTask {
             return null;
         }
         // we now have the correct type, now match target
-        List<XMLNode> matches;
+        List<XMLElement> matches;
         if (target == null || target.isEmpty()) {
-            matches = typeNode.children();
+            matches = typeNode.childElements();
         } else {
-            matches = Arrays.asList(XMLToolBox.filterNodes(typeNode, "target", target));
+            matches = Arrays.asList(XMLParser.filterNodes(typeNode, "target", target));
         }
         
         if (traits != null && !traits.isEmpty()) {
-            matches = Arrays.asList(XMLToolBox.filterNodes(matches, "traits", traits));
+            matches = Arrays.asList(XMLParser.filterNodes(matches, "traits", traits));
         }
         return matches;
     }
     
     @Override public synchronized void start() {
-        List<XMLNode> matches = getMatching();
+        List<XMLElement> matches = getMatching();
         path = calculateNearest(PowerGrid.BOT.getPosition(),matches);
     }
     
-    public static List<Point> calculateNearest(final Point from, List<XMLNode> options) {
+    public static List<Point> calculateNearest(final Point from, List<XMLElement> options) {
         if(options == null) throw new IllegalArgumentException("Invalid Iterable of nodes: null");
         if (from == null) throw new IllegalArgumentException("Invalid supplied origin: null");
         
@@ -91,9 +91,9 @@ public class TravelNearestTask extends TravelTask {
         // ensure that 3 <= retries <= 7, but retries < options.size()
         int retries = Math.min(Math.max(3, Math.min(7, options.size()/6)), options.size());
         long startTime = System.currentTimeMillis();
-        Iterator<XMLNode> it = options.iterator();
+        Iterator<XMLElement> it = options.iterator();
         while (it.hasNext() && retries > 0) {
-            XMLNode n = it.next();
+            XMLElement n = it.next();
             Point dest = Point.fromString(n.get("pos"));
             if (dest == null) continue;
             try {
@@ -115,13 +115,13 @@ public class TravelNearestTask extends TravelTask {
         return shortest;
     }
     
-    private static class PointComparator implements Comparator<XMLNode> {
+    private static class PointComparator implements Comparator<XMLElement> {
         private Point from;
         public PointComparator(Point from) {
             this.from = from;
         }
         
-        @Override public int compare(XMLNode one, XMLNode two) {
+        @Override public int compare(XMLElement one, XMLElement two) {
             Point pOne = Point.fromString(one.getOrElse("pos", "(0,0)"));
             Point pTwo = Point.fromString(two.getOrElse("pos", "(0,0)"));
             return (int)(pOne.distance(from) - pTwo.distance(from));

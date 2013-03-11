@@ -60,20 +60,19 @@ public class TaskManager extends ActiveScript {
         return assignTask(t);
     }
     
+    /**
+     * Removes the given Task from the Task Queue.
+     * @param t the Task to remove
+     * @return true if the Task was in the queue, false otherwise
+     */
     public boolean removeTask(Task t) {
         if (pendingTasks.contains(t)) {
             for (TaskListener l : listeners) {
                 l.taskRemoved(t);
             }
+            return pendingTasks.remove(t);
         }
         return false;
-    }
-    
-    /**
-     * Logs a message to the console stating the TaskManager has started.
-     */
-    @Override public void onStart() {
-        PowerGrid.logMessage("TaskManager started");
     }
     
     /**
@@ -152,6 +151,10 @@ public class TaskManager extends ActiveScript {
         return pendingTasks.size();
     }
     
+    /**
+     * Returns a List of all pending Tasks.
+     * @return a List of all pending Tasks
+     */
     public List<Task> getPendingTasks() {
         ArrayList<Task> tasks = new ArrayList<>(pendingTasks.size());
         for (Task t : pendingTasks)

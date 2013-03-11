@@ -16,7 +16,7 @@ import org.powerbot.Boot;
 import powergrid.control.Mapper;
 import powergrid.control.ScriptLoader;
 import powergrid.control.TaskManager;
-import powergrid.control.XMLToolBox;
+import powergrid.control.XMLParser;
 import powergrid.model.DestinationMap;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
@@ -142,7 +142,7 @@ public class PowerGrid {
             System.exit(1);
         }
         
-        DESTINATIONS.withData(XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/destinations.xml")));
+        DESTINATIONS.withData(XMLParser.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/destinations.xml")));
         
         // Wait for Client's Thread to start
         Thread main = Thread.currentThread();

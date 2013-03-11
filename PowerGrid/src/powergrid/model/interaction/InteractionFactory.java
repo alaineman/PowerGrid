@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import powergrid.PowerGrid;
-import powergrid.control.XMLToolBox;
+import powergrid.control.XMLParser;
 import powergrid.model.Point;
-import powergrid.model.XMLNode;
+import powergrid.model.XMLElement;
 import powergrid.model.interact.Transportable;
 
 /**
@@ -23,9 +23,9 @@ public class InteractionFactory {
     
     public void loadConnections(InputStream source) {
         assert source != null;
-        XMLNode data = XMLToolBox.getXMLTree(source);
+        XMLElement data = XMLParser.getXMLTree(source);
         networks.clear();
-        for (XMLNode type : data) {
+        for (XMLElement type : data) {
             switch (type.getTag()) {
                 case "serverset":
                     setUpServerClient(type);
@@ -47,12 +47,12 @@ public class InteractionFactory {
         return networks.values();
     }
     
-    private TreeNetwork setUpServerClient(XMLNode type) {
+    private TreeNetwork setUpServerClient(XMLElement type) {
         Class<? extends Transportable> clazz = getClass(type);
         if (clazz == null) return null;
-        XMLNode serverNode = null;
-        ArrayList<XMLNode> clients = new ArrayList<>(type.children().size());
-        for (XMLNode n : type) {
+        XMLElement serverNode = null;
+        ArrayList<XMLElement> clients = new ArrayList<>(type.childElements().size());
+        for (XMLElement n : type) {
             if (n.getTag().equals("server")) {
                 if (serverNode == null) {
                     serverNode = n;
@@ -74,7 +74,7 @@ public class InteractionFactory {
         
         TreeNetwork network = new TreeNetwork(server);
         
-        for (XMLNode n : clients) {
+        for (XMLElement n : clients) {
             Point p = Point.fromString(n.getOrElse("pos", "(0,0)"));
             try {
                 Transportable t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
@@ -87,7 +87,7 @@ public class InteractionFactory {
         return network;
     }
     
-    private Class<? extends Transportable> getClass(XMLNode type) {
+    private Class<? extends Transportable> getClass(XMLElement type) {
         assert type != null;
         String packageName = "powergrid.model.interact";
         if (type.get("manifold") != null)
@@ -106,11 +106,11 @@ public class InteractionFactory {
         return null;
     }
     
-    private PeerNetwork setUpPeers(XMLNode type) {
+    private PeerNetwork setUpPeers(XMLElement type) {
         Class<? extends Transportable> clazz = getClass(type);
         if (clazz == null) return null;
         PeerNetwork network = new PeerNetwork();
-        for (XMLNode node : type) {
+        for (XMLElement node : type) {
             Point p = Point.fromString(node.getOrElse("pos", "(0,0)"));
             try {
                 Transportable t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);

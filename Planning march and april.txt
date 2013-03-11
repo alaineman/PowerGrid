@@ -1,5 +1,7 @@
 # PowerGrid planning March and April 2013 #
-This document provides an overview of the planning in the forseeable future and also an outline of the further steps.
+
+This document provides an overview of the planning in the forseeable future and also an outline of the further steps of this project. The first release is planned around the second or third week in may for now, which may or may not be postponed depending on the progress and state of the project. The goal is, to have a working prototype by the end of april, after which some final checking and maintenance can be done before the initial release in may.
+
 
 ### March ###
 This month, the work primarily consists of cleaning up and possibly restructuring of code and classes. There will also be looked into creating more tests (with JUnit and possibly Mockito) to guarantee that everything works as expected. The code will be checked and preconditions will be converted into asserts where suited.
@@ -20,6 +22,7 @@ The new features this month include a Listener platform to monitor RSBot's class
     - Test Transportables (+ InteractionFactory) extensively
     - Create unit tests for Listener platform
 
+
 ### April ###
 This month, most of PowerGrid's features will be finished and perfected. At the end of this month, it is  our goal to produce a working prototype including all basic PowerGrid functions.
 
@@ -29,13 +32,21 @@ Also, we will focus on the GUI for most of this month, such as the PG status win
     - Integration of Transportables in PathFinder
     - Verify that the PathFinder works with Transportables
 - 08/4 - 14/4:
+    - Work on GUI
     - Possibly refactor GameObject subclasses
         - Split multi-purpose classes
         - (Re)move out-of-place classes
         - Merge similar classes
 - 15/4 - 21/4:
+    - Work on GUI
     - Rethink all method names and signatures
     - rename, (re)move, or replace methods, classes and packages where appropriate
+- 22/4 - 28/4:
+    - Work on GUI
+    - Whatever hasn't yet happened and should be done before the release
+- 29/4 - 05/5:
+    - Update documentation and clean up code
+
 
 ### May ###
 At the beginning of this month, it is our goal to have a working prototype that conforms to PowerGrid's main focus. This prototype will, if feasible, be announced in the first week of May and release around the second or third week.
@@ -44,8 +55,8 @@ In the time between the announcement and release, we will promote PowerGrid on t
 
 Should there be any problems, then the release will be postponed, to ensure that any and all problems are solved before the release.
 
-### June ###
 
+### June ###
 This month, we will mainly read and process feedback from the PowerBot community. Any remarks or complaints will be included in PowerGrid, and Pull requests will be critically checked and included or rejected as needed. At the end of this month, a new full release will be published (we have beta builds and release builds, the latter being thouroughly tested, while beta builds are practically every commit).
 
 Should RSBot come with any updates that break PowerGrid functionality, the planning will be adjusted so that a new (and working) version will be released as soon as possible to a) improve our reputation as developers, and b) to prevent our users ("our users", that sure sounds good) from having to wait for a long time.

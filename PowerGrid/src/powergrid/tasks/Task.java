@@ -88,7 +88,7 @@ public abstract class Task implements Comparable<Task> {
      *         and zero when the Priorities are equal.
      */
     @Override public int compareTo(Task t) {
-        return getPriority()-t.getPriority();
+        return t.getPriority()-getPriority();
     }
     
     /**

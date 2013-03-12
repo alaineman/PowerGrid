@@ -3,7 +3,8 @@ This document shows what the major changes are since march 8th. It mainly shows 
 the project and decisions that I made of which I think are good practise to maintain. I hope
 that you agree with me on the following points and that you will also follow them, in order to
 improve the software quality and in the meantime iron out the imperfections from the project.
-                                                           -- Chronio
+
+Chronio
 
 ### Changes in Mapping and Mapped Data Format ### 
 

@@ -9,3 +9,6 @@
 
 # MS Office backup files
 ~$*
+
+# Linux backup files
+*~

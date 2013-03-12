@@ -26,8 +26,8 @@ public class TaskManagerTest {
         
         when(mockedStepTask.getPriority()).thenReturn(0);
         when(mockedTask.getPriority()).thenReturn(3);
-        when(mockedTask.compareTo(mockedStepTask)).thenReturn(3);
-        when(mockedStepTask.compareTo(mockedTask)).thenReturn(-3);
+        when(mockedTask.compareTo(mockedStepTask)).thenReturn(-3);
+        when(mockedStepTask.compareTo(mockedTask)).thenReturn(3);
     }
     
     @Test public void testAssignTask() {
@@ -109,7 +109,7 @@ public class TaskManagerTest {
     @Test public void testGetPendingTasks() {
         tm.assignTask(mockedTask);
         tm.assignTask(mockedStepTask);
-        assertArrayEquals(new Object[] {mockedStepTask,mockedTask}, tm.getPendingTasks().toArray());
+        assertArrayEquals(new Object[] {mockedTask,mockedStepTask}, tm.getPendingTasks().toArray());
     }
     
     @Test public void testGetPendingTasksWithoutTasks() {

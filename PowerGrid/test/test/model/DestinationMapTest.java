@@ -20,6 +20,10 @@ public class DestinationMapTest {
         assertEquals(new Point(2,5),dests.getPoint("Name"));
     }
     
+    @Test public void testGetNonExistingKey() {
+        assertNull(dests.getPoint("name"));
+    }
+    
     @Test public void testOverwriteKey() {
         dests.register("name", new Point(2,4));
         dests.register("name", new Point(5,9));
@@ -56,4 +60,24 @@ public class DestinationMapTest {
         assertFalse(dests.equals(cp));
         assertEquals(dests,dests.copy());
     }
+    
+    @Test public void testGetDifferentCasing() {
+        dests.register("NaMe", new Point(3,4));
+        assertEquals(new Point(3,4), dests.getPoint("nAMe"));
+    }
+    
+    @Test public void testGetName() {
+        dests.register("name", new Point(7,4));
+        assertEquals("name", dests.getName(new Point(7,4)));
+    }
+    
+    @Test public void testRegisterNameAsNull() {
+        assertNull(dests.register(null, new Point(3,6)));
+        assertEquals("Point(3,6)",dests.getName(new Point(3,6)));
+    }
+    
+    @Test public void testGetNull() {
+        assertNull(dests.getName(null));
+    }
+
 }

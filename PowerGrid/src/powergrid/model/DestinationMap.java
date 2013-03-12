@@ -21,7 +21,7 @@ public class DestinationMap implements Copyable<DestinationMap> {
     /**
      * Parses the XML data in the given XML node and adds the Destination data in it.
      * <p/>
-     * The data is expexted to be of the form
+     * The data is expected to be of the form
      * <pre>
      * &lt;destinations&gt;
      *   &lt;dest name="someName" pos="(x,y,z)" /&gt;
@@ -81,17 +81,21 @@ public class DestinationMap implements Copyable<DestinationMap> {
      * <p/>
      * If the Point has no matching name, the String "Point(x,y,z)" is returned,
      * where x, y, and z are replaced with the coordinates of the Point parameter.
+     * <p/>
+     * When the Point parameter is null, this method returns null.
+     * <p/>
      * @param pos the Point to look up the name for
      * @return the matching destination's name for the given Point, or a 
      *         String-representation when no name exists.
      */
     public String getName(Point pos) {
-        assert pos != null;
-        for (Entry<String,Point> e : destinations.entrySet()) {
-            if (pos.equals(e.getValue()))
-                return e.getKey();
-        }
-        return "Point" + pos.toString();
+        if (pos != null) {
+            for (Entry<String,Point> e : destinations.entrySet()) {
+                if (pos.equals(e.getValue()))
+                    return e.getKey();
+            }
+            return "Point" + pos.toString();
+        } else return null;
     }
     
     /**
@@ -100,7 +104,10 @@ public class DestinationMap implements Copyable<DestinationMap> {
      * @return the Point associated with the given name, or null if the name is not in this DestinationMap
      */
     public Point getPoint(String name) {
-        return destinations.get(name.toLowerCase());
+        if (name != null && !name.isEmpty())
+            return destinations.get(name.toLowerCase());
+        else
+            return null;
     }
     
     /**
@@ -115,14 +122,20 @@ public class DestinationMap implements Copyable<DestinationMap> {
     /**
      * Registers a new destination name, or overwrites an existing one.
      * <p/>
+     * When either the name or point is null, this method does nothing and returns
+     * null.
+     * <p/>
      * @param name the name for the destination. It should not be empty
      * @param point the Point the name links to.
      * @return the Point previously referenced by the given name, or null if the name
      *         was not in this DestinationMap
      */
     public Point register(String name, Point point) {
-        assert name != null && !name.isEmpty() && point != null;
-        return destinations.put(name.toLowerCase(), point);
+        if (name != null && !name.isEmpty() && point != null) {
+            return destinations.put(name.toLowerCase(), point);
+        } else {
+            return null;
+        }
     }
     
     /**

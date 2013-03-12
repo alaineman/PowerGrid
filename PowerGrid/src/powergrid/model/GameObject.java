@@ -1,6 +1,7 @@
 package powergrid.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSObject;
@@ -57,7 +58,7 @@ public class GameObject {
         if (ground == null)
             return -1;
         /* Sorry for the messy syntax, but this basically polls each object type
-         * in order until a non-null value is found. This is still cleaner 
+         * in order until a non-null value is found. This is a bit cleaner 
          * than having 6 return statements (and most likely faster, too).
          */
         RSObject obj;
@@ -128,6 +129,23 @@ public class GameObject {
     }
     
     /**
+     * Returns the raw value of a boundary on this Tile, if any.
+     * <p/>
+     * If there are multiple boundary values for this Tile, the first one is returned.
+     * <p/>
+     * When no boundaries are on this Tile, -1 is returned.
+     * @return the raw value of a boundary on this Tile, or -1 is no boundary exists.
+     */
+    public int getBoundary() {
+        RSObject o = ground.getBoundary1();
+        if (o == null)
+            o = ground.getBoundary2();
+        if (o == null)
+            return -1;
+        return o.getId();
+    }
+    
+    /**
      * Returns the hash code of this GameObject
      * @return the hash code of this GameObject
      */
@@ -154,7 +172,7 @@ public class GameObject {
     @Override public boolean equals(Object other) {
         if (other instanceof GameObject) {
             GameObject that = (GameObject)other;
-            return this.getPosition().equals(that.getPosition()) && this.getRawNumber() == that.getRawNumber();
+            return this.getPosition().equals(that.getPosition()) && Arrays.equals(this.rawValues(), that.rawValues());
         }
         return false;
     }

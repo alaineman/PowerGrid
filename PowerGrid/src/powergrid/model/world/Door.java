@@ -22,7 +22,6 @@ public class Door extends GameObject implements Interactable {
          *   First column: open.
          *   Second column: closed.
          *   Each row forms a pair (same door, different states).
-         *   Pairs that behave different are marked with [X]
          */
         15535,15536, // Varrock "private" buildings, normal homes and such. Also: Cooks' guild
         16777,16776, // Lunar house front door
@@ -121,9 +120,8 @@ public class Door extends GameObject implements Interactable {
     /**
      * returns whether this door is opened.
      * @return true if this door is opened, false if it is not.
-     * @deprecated 
      */
-    public boolean isOpen() {
+    @Deprecated public boolean isOpen() {
         return (-1 != Arrays.binarySearch(openDoors, getRawNumber()));
     }
 }

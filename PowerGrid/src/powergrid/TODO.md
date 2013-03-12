@@ -32,6 +32,7 @@ the way they should.
   - XMLToolBox needs to be checked for style errors and needs to be tested in various situations.
   - Redesign MapViewer, since many things in there are broken due to changes elsewhere
   - Check and actually DO all "TODO" and "FIXME" action items.
+  - Why is Door.isOpen() deprecated? Move stateIsOpen() -> isOpen(). It has the same signature.
 
 ### PowerGrid feature implementations ###
 Think about solutions for potential problems and implement these following 

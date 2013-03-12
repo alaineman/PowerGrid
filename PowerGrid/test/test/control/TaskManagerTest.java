@@ -127,4 +127,33 @@ public class TaskManagerTest {
         tm.clear();
         assertEquals(0, tm.tasksPending());
     }
+    
+    @Test public void testListenerAssignTask() {
+        tm.addTaskListener(mockedListener);
+        tm.assignTask(mockedTask);
+        verify(mockedListener).taskAdded(mockedTask);
+    }
+    
+    @Test public void testListenerRemoveTask() {
+        tm.addTaskListener(mockedListener);
+        tm.assignTask(mockedTask);
+        tm.removeTask(mockedTask);
+        verify(mockedListener).taskRemoved(mockedTask);
+    }
+    
+    @Test public void testListenerTaskRun() {
+        tm.addTaskListener(mockedListener);
+        tm.assignTask(mockedTask);
+        tm.loop();
+        verify(mockedListener).taskStarted(mockedTask);
+        verify(mockedListener).taskFinished(mockedTask);
+    }
+    
+    @Test public void testRemoveListener() {
+        tm.addTaskListener(mockedListener);
+        tm.assignTask(mockedTask);
+        tm.removeTaskListener(mockedListener);
+        tm.removeTask(mockedTask);
+        verify(mockedListener,never()).taskRemoved(mockedTask);
+    }
 }

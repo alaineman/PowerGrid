@@ -24,7 +24,7 @@ public class GameObject {
      * @param rawNumber the raw value from the environment specifying the type
      * @throws IllegalArgumentException when the provided Point is null
      */
-    public GameObject(Point p, int rawNumber) {
+    @Deprecated public GameObject(Point p, int rawNumber) {
         assert p != null;
         position = p;
         this.rawNumber = rawNumber;
@@ -128,6 +128,10 @@ public class GameObject {
         return false;
     }
     
+    public boolean containsWall(int type) {
+        return (type & collFlag) != 0;
+    }
+    
     /**
      * Returns the raw value of a boundary on this Tile, if any.
      * <p/>
@@ -152,7 +156,7 @@ public class GameObject {
     @Override public int hashCode() {
         int hash = 3;
         hash = 47 * hash + Objects.hashCode(position);
-        hash = 47 * hash + this.rawNumber;
+        hash = 47 * hash + Objects.hashCode(objects());
         return hash;
     }
     

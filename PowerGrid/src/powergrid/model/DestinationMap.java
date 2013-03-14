@@ -33,13 +33,13 @@ public class DestinationMap implements Copyable<DestinationMap> {
      * @param data the XML-data representing the destinations
      * @return itself for fluency
      */
-    public DestinationMap withData(XMLElement data) {
+    public DestinationMap withData(XMLNode data) {
         assert data != null;
         if (data.getTag().equals("destinations")) {
-            for (XMLElement dest : data.childElements()) {
+            for (XMLNode dest : data) {
                 String name = dest.get("name");
                 Point pos = new Point(dest.get("pos"));
-                if (name != null && !name.isEmpty() && pos != null) {
+                if (name != null && !name.isEmpty()) {
                     destinations.put(name.toLowerCase(), pos);
                 }
             }

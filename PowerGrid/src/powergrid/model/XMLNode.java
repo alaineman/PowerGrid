@@ -3,6 +3,7 @@ package powergrid.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -13,9 +14,9 @@ import java.util.Objects;
 public class XMLNode implements Iterable<XMLNode> {
     private String tag;
     private HashMap<String,String> attributes;
-    private ArrayList<XMLNode> children;
+    private List<XMLNode> children;
 
-    public XMLNode(String tag, HashMap<String, String> attributes, ArrayList<XMLNode> childs) {
+    public XMLNode(String tag, HashMap<String, String> attributes, List<XMLNode> childs) {
         this.tag = tag;
         this.attributes = attributes;
         this.children = childs;

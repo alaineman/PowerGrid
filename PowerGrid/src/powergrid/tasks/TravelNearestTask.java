@@ -7,10 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
-import powergrid.control.XMLParser;
+import powergrid.control.XMLToolBox;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
-import powergrid.model.XMLElement;
+import powergrid.model.XMLNode;
 
 /**
  * Calculates a path to the nearest position matching certain criteria and walks it.
@@ -48,11 +48,11 @@ public class TravelNearestTask extends TravelTask {
     public String getTraits() {
         return traits;
     }
-    public List<XMLElement> getMatching() {
-        XMLElement root = XMLParser.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/specialLocations.xml"));
+    public List<XMLNode> getMatching() {
+        XMLNode root = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/specialLocations.xml"));
         // look for the correct type
-        XMLElement typeNode = null;
-        for (XMLElement child : root.childElements()) {
+        XMLNode typeNode = null;
+        for (XMLNode child : root) {
             if (child.get("name").equals(type)) {
                 typeNode = child;
                 break;
@@ -63,25 +63,25 @@ public class TravelNearestTask extends TravelTask {
             return null;
         }
         // we now have the correct type, now match target
-        List<XMLElement> matches;
+        List<XMLNode> matches;
         if (target == null || target.isEmpty()) {
-            matches = typeNode.childElements();
+            matches = typeNode.children();
         } else {
-            matches = Arrays.asList(XMLParser.filterNodes(typeNode, "target", target));
+            matches = Arrays.asList(XMLToolBox.filterNodes(typeNode, "target", target));
         }
         
         if (traits != null && !traits.isEmpty()) {
-            matches = Arrays.asList(XMLParser.filterNodes(new XMLElement("",null,matches), "traits", traits));
+            matches = Arrays.asList(XMLToolBox.filterNodes(new XMLNode("",null,matches), "traits", traits));
         }
         return matches;
     }
     
     @Override public synchronized void start() {
-        List<XMLElement> matches = getMatching();
+        List<XMLNode> matches = getMatching();
         path = calculateNearest(PowerGrid.BOT.getPosition(),matches);
     }
     
-    public static List<Point> calculateNearest(final Point from, List<XMLElement> options) {
+    public static List<Point> calculateNearest(final Point from, List<XMLNode> options) {
         if(options == null) throw new IllegalArgumentException("Invalid Iterable of nodes: null");
         if (from == null) throw new IllegalArgumentException("Invalid supplied origin: null");
         
@@ -91,11 +91,10 @@ public class TravelNearestTask extends TravelTask {
         // ensure that 3 <= retries <= 7, but retries < options.size()
         int retries = Math.min(Math.max(3, Math.min(7, options.size()/6)), options.size());
         long startTime = System.currentTimeMillis();
-        Iterator<XMLElement> it = options.iterator();
+        Iterator<XMLNode> it = options.iterator();
         while (it.hasNext() && retries > 0) {
-            XMLElement n = it.next();
+            XMLNode n = it.next();
             Point dest = new Point(n.get("pos"));
-            if (dest == null) continue;
             try {
                 List<Point> trial = new PathFinder(from,dest).calculatePath();
                 if (shortest == null || shortest.size() > trial.size()) {
@@ -115,13 +114,13 @@ public class TravelNearestTask extends TravelTask {
         return shortest;
     }
     
-    private static class PointComparator implements Comparator<XMLElement> {
+    private static class PointComparator implements Comparator<XMLNode> {
         private Point from;
         public PointComparator(Point from) {
             this.from = from;
         }
         
-        @Override public int compare(XMLElement one, XMLElement two) {
+        @Override public int compare(XMLNode one, XMLNode two) {
             Point pOne = new Point(one.getOrElse("pos", "(0,0)"));
             Point pTwo = new Point(two.getOrElse("pos", "(0,0)"));
             return (int)(pOne.distance(from) - pTwo.distance(from));

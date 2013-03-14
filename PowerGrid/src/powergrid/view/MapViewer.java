@@ -13,11 +13,11 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powergrid.PowerGrid;
-import powergrid.control.XMLParser;
+import powergrid.control.XMLToolBox;
 import powergrid.model.GameObject;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
-import powergrid.model.XMLElement;
+import powergrid.model.XMLNode;
 import powergrid.model.interact.Interactable;
 import powergrid.model.world.Wall;
 import powergrid.tasks.TravelTask;
@@ -210,7 +210,7 @@ public class MapViewer extends Canvas implements ActionListener {
     public static void showMapViewerStandAlone(boolean exitOnClose) {
         File file = new File("worldmap.xml");
         try (FileInputStream worldMapIn = new FileInputStream(file)) {
-            XMLElement worldMap = XMLParser.getXMLTree(worldMapIn);
+            XMLNode worldMap = XMLToolBox.getXMLTree(worldMapIn);
             //PowerGrid.MAPPER.getWorldMap().fillFromXML(worldMap);
             System.out.println("The World Map was loaded");
         } catch (IOException e) {

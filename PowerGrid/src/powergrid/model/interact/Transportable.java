@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.NoSuchElementException;
-import powergrid.control.XMLParser;
+import powergrid.control.XMLToolBox;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
-import powergrid.model.XMLElement;
+import powergrid.model.XMLNode;
 
 /**
  * Represents a GameObject that allows a transport to another Transportable.
@@ -83,11 +83,11 @@ public abstract class Transportable extends Teleportable {
 
     public String getTraits() {
         try {
-            XMLElement file = XMLParser.getXMLTree(ClassLoader.getSystemResource("powergrid/data/specialLocations.xml").openStream());
-            XMLElement[] node = XMLParser.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
+            XMLNode file = XMLToolBox.getXMLTree(ClassLoader.getSystemResource("powergrid/data/specialLocations.xml").openStream());
+            XMLNode[] node = XMLToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
-                XMLElement transportType = node[0];
-                for (XMLElement vertex : transportType.childElements()) {
+                XMLNode transportType = node[0];
+                for (XMLNode vertex : transportType) {
                     if (new Point(vertex.get("pos")).equals(getPosition())) {
                        return vertex.get("traits");
                     }
@@ -103,11 +103,11 @@ public abstract class Transportable extends Teleportable {
 
     public int[] getNPCIDs() {
         try {
-            XMLElement file = XMLParser.getXMLTree(ClassLoader.getSystemResource("powergrid/data/specialLocations.xml").openStream());
-            XMLElement[] node = XMLParser.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
+            XMLNode file = XMLToolBox.getXMLTree(ClassLoader.getSystemResource("powergrid/data/specialLocations.xml").openStream());
+            XMLNode[] node = XMLToolBox.filterNodes(file, "name", getClass().getSimpleName()); // of andere naam
             if (node.length > 0) {
-                XMLElement transportType = node[0];
-                for (XMLElement vertex : transportType.childElements()) {
+                XMLNode transportType = node[0];
+                for (XMLNode vertex : transportType) {
                     if (new Point(vertex.get("pos")).equals(getPosition())) {
                         if (vertex.get("target") != null) {
                             String[] npcidString = vertex.get("target").split("|");

@@ -1,35 +1,70 @@
 package powergrid.model;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Objects;
 import org.powerbot.game.client.RSGround;
 
 /**
- * Custom extension of a HashMap designed for Mapping purposes, where data 
- * safety is ensured by copying incoming Point-objects and checking for null-values.
+ * This class represents a World Map containing data in the Runescape world.
  * <p/>
- * It is also possible to extract GameObjects by calling the <code>getObject</code>
- * method.
- * 
+ * It uses a HashMap to map the various Points to GameObjects, where data 
+ * safety is ensured by checking for null-values.
+ * <p/>
  * @author Chronio 
  */
 public class WorldMap {
     
     private HashMap<Point,GameObject> data;
     
+    /**
+     * Creates a new WorldMap with an initial capacity of 150.
+     */
     public WorldMap() {
         this(150);
     }
     
+    /**
+     * Creates a new WorldMap with the given capacity.
+     * <p/>
+     * When the capacity is less than or equal to 0, the default capacity of 
+     * 150 is used.
+     * <p/>
+     * @param capacity the initial capacity of the WorldMap
+     */
     public WorldMap(int capacity) {
+        if (capacity <= 0) {
+            capacity = 150;
+        }
         data = new HashMap<>(capacity);
     }
 
+    /**
+     * Stores the given RSGround and mask at the given Position.
+     * @param point the Position to store
+     * @param ground the RSGround object at this position
+     * @param mask the collision mask of this Position
+     */
     public void put(Point point, RSGround ground, int mask) {
         if (point != null) {
             data.put(point, new GameObject(point,ground,mask));
         }
     }
     
+    /**
+     * Returns the amount of GameObjects stored in this WorldMap.
+     * <p/>
+     * @return the amount of GameObjects stored in this WorldMap.
+     */
+    public int size() {
+        return data.size();
+    }
+    
+    /**
+     * Stores the given RSGround at the given position
+     * @param p the Position to store
+     * @param ground the RSGround object at this position
+     */
     public void putGround(Point p, RSGround ground) {
         int mask = 0;
         GameObject go = data.get(p);
@@ -38,6 +73,11 @@ public class WorldMap {
         put(p, ground, mask);
     }
     
+    /**
+     * Stores the given collision mask at the given position.
+     * @param p the position to store
+     * @param mask the collision mask at this position
+     */
     public void putMask(Point p, int mask) {
         RSGround ground = null;
         GameObject go = data.get(p);
@@ -46,11 +86,46 @@ public class WorldMap {
         put(p, ground, mask);
     }
     
+    /**
+     * Returns whether there is a boundary (specified by mask) at the given
+     * position.
+     * @param p the position to check
+     * @param mask the collision mask to check
+     * @return true if the given position contains the boundary specified by 
+     *         mask, false otherwise.
+     */
     public boolean isBoundary(Point p, int mask) {
         return (get(p).getCollisionFlag() & mask) != 0;
     }
     
+    /**
+     * Returns the GameObject at the specified position.
+     * @param p the position
+     * @return the GameObject at the given position
+     */
     public GameObject get(Point p) {
         return data.get(p);
+    }
+
+    @Override public int hashCode() {
+        return 13 + 5 * Objects.hashCode(data);
+    }
+    
+    @Override public boolean equals(Object other) {
+        if (other instanceof WorldMap) {
+            WorldMap that = (WorldMap) other;
+            if (this.size() != that.size()) {
+                return false;
+            }
+            for (Entry<Point,GameObject> e : data.entrySet()) {
+                GameObject mine = e.getValue();
+                GameObject theirs = that.get(e.getKey());
+                if (theirs == null || !mine.equals(theirs)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -4,7 +4,7 @@ import org.powerbot.game.client.RSItem;
 import org.powerbot.game.client.RSItemDef;
 
 /**
- * Class that represents an Item in the RSBot environment
+ * Class that represents an Item in the RSBot environment.
  * @author Chronio
  */
 public class Item {
@@ -13,7 +13,7 @@ public class Item {
     private RSItemDef itemDef;
     
     /**
-     * creates an Item object that represents the given RSbot Item 
+     * Creates an Item object that represents the given RSbot Item 
      * @param rsItem the Item object as given by the RSBot environment.
      */
     public Item(RSItem rsItem,RSItemDef rsItemDef) {
@@ -46,7 +46,8 @@ public class Item {
     }
     
     /**
-     * returns how many instances of this Item's type are represented by this Item object
+     * returns how many instances of this Item's type are represented by this 
+     * Item object.
      * @return the amount of instances this Item represents
      */
     public int getStackSize() {
@@ -75,5 +76,50 @@ public class Item {
      */
     public String[] getActions() {
         return itemDef.getActions();
+    }
+
+    @Override public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + item.getId();
+        hash = 97 * hash + item.getStackSize();
+        hash = 97 * hash + itemDef.getID();
+        return hash;
+    }
+    
+    /**
+     * Returns whether this Item is equal to another Object.
+     * <p/>
+     * This method returns true if and only if the following is true:
+     * <ul>
+     *  <li>other is also an Item object</li>
+     *  <li>the other Item's RSItem is equal to this Item's RSItem</li>
+     *  <li>the other Item's RSItemDef is equals to this Item's RSItemDef</li>
+     * </ul>
+     * This method returns false otherwise.
+     * <p/>
+     * @param other the Object to compare with
+     * @return whether this Item is equal to the given Object
+     */
+    @Override public boolean equals(Object other) {
+        if (other instanceof Item) {
+            Item that = (Item) other;
+            RSItem myItem = this.getRSItem();
+            RSItem theirItem = that.getRSItem();
+            RSItemDef myDef = this.getRSItemDef();
+            RSItemDef theirDef = that.getRSItemDef();
+            return (myItem.getId() == theirItem.getId() &&
+                    myItem.getStackSize() == theirItem.getStackSize() &&
+                    myDef.getID() == theirDef.getID());
+        }
+        return false;
+    }
+    
+    /**
+     * Returns a String representing this Item, containing the RSItem's id and 
+     * the stack size.
+     * @return a String representing this Item.
+     */
+    @Override public String toString() {
+        return "Item(" + item.getId() + "," + item.getStackSize() + ")";
     }
 }

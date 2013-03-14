@@ -1,8 +1,8 @@
 package powergrid.model;
 
 /**
- * An Exception that is thrown when an action involves 
- * moving towards an unreachable or non-existing destination.
+ * An Exception that is thrown when an action involves moving towards an 
+ * unreachable or non-existing destination.
  * @author Chronio
  */
 public class OutOfReachException extends Exception {
@@ -36,7 +36,7 @@ public class OutOfReachException extends Exception {
         super(message);
     }
     /**
-     * Creates a new generic OutOfReachException
+     * Creates a new generic OutOfReachException.
      */
     public OutOfReachException() {
         super();
@@ -48,21 +48,27 @@ public class OutOfReachException extends Exception {
      * @return the destination that was out of reach
      */
     public Point getDestination() {
-        if (outofreach==null) return null;
-        else return new Point(outofreach);
+        return outofreach;
     }
 
     /**
      * Returns the message passed along with this OutOfReachException, if it was set, followed 
      * by the destination that could not be reached, if it was set.
+     * <p/>
+     * If a message was not set, the message "Could not travel to Point: 
+     * &lt;destination&gt;" is returned, where &lt;destination&gt; is replaced 
+     * with the Point given by getDestination();
      * @return the message describing the cause of the OutOfReachException
      */
     @Override public String getMessage() {
         String msg = super.getMessage();
-        if (msg == null || msg.isEmpty()) 
-            msg = "Could not travel to Point: " + outofreach;
-        else if (outofreach != null)
-            msg += " (original destination: " + outofreach + ")";
+        Point p = getDestination();
+        if (p == null)
+            return msg;
+        else if ((msg == null || msg.isEmpty())) 
+            msg = "Could not travel to Point: " + p;
+        else
+            msg += " (original destination: " + p + ")";
         return msg;
     }
 }

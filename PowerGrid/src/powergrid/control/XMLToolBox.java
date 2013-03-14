@@ -2,97 +2,19 @@ package powergrid.control;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import java.util.List;
+import org.powerbot.game.api.methods.Environment;
 import powergrid.PowerGrid;
-import powergrid.model.XMLElement;
 import powergrid.model.XMLNode;
-import powergrid.model.XMLText;
 
 /**
- * ToolBox that provides methods to read and parse XML files.
+ * Utility class providing methods for handling XML files
  * @author Chronio
  */
-public class XMLParser {
-    
-    private File source;
-    private XMLElement tree;
-    
-    /**
-     * Create a new XMLParser for creating an XMLTree from the given File.
-     * @param source the File to read from
-     */
-    public XMLParser(File source) {
-        this.source = source;
-    }
-
-    /**
-     * Returns the File that this XMLParser reads from.
-     * @return the File that this XMLParser reads from
-     */
-    public File getSource() {
-        return source;
-    }
-
-    /**
-     * Returns the parsed XML tree.
-     * @return the parsed XML tree
-     */
-    public XMLElement getTree() {
-        if (tree == null) {
-            return parse();
-        } else {
-            return tree;
-        }
-    }
-    
-    /**
-     * Parses the given File to an XMLElement
-     * @return 
-     */
-    private XMLElement parse() {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(source);
-            document.getDocumentElement().normalize();
-            
-            tree = parseNode(document);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            
-        }
-        return tree;
-    }
-    
-    private XMLElement parseNode(Node n) {
-        HashMap<String,String> atts = null;
-        ArrayList<XMLNode> children = null;
-        if (n.hasAttributes()) {
-            NamedNodeMap map = n.getAttributes();
-            atts = new HashMap<>((int)(1.5*map.getLength()));
-            for (int i=0; i<map.getLength(); i++) {
-                Node node = map.item(i);
-                atts.put(node.getNodeName(), node.getNodeValue());
-            }
-        }
-        String text = n.getTextContent();
-        if (text != null && !text.isEmpty()) 
-            children.add(new XMLText(text));
-        if (n.hasChildNodes()) {
-            NodeList nodes = n.getChildNodes();
-            for (int i=0; i<nodes.getLength(); i++) {
-                children.add(parseNode(nodes.item(i)));
-            }
-        }
-        return new XMLElement(n.getNodeName(),atts,children);
-    }
+public class XMLToolBox {
+    private XMLToolBox() {}
     
     /**
      * Returns a HashMap containing the attributes and their values from a valid XML-String
@@ -152,7 +74,7 @@ public class XMLParser {
      * @return the XMLTree given by the InputStream, or null when the InputStream 
      *         could not be read.
      */
-    public static XMLElement getXMLTree(InputStream in) {
+    public static XMLNode getXMLTree(InputStream in) {
         if (in == null) 
             return null;
         ArrayList<String> lines = new ArrayList<>();
@@ -167,39 +89,72 @@ public class XMLParser {
         }
     }
     
-    
-    
     /**
-     * Searches the given XMLElement for direct childElements that have the given attribute set to the given value.
-     * @param root the root XMLElement
+     * Searches the given XMLNode for direct children that have the given attribute set to the given value.
+     * @param root the root XMLNode
      * @param attribute the attribute to look for
      * @param value the value this attribute must have in order to be accepted
      * @return an array of XMLNodes matching the filter
      */
-    public static XMLElement[] filterNodes(XMLElement root,String attribute,String value) {
+    public static XMLNode[] filterNodes(Iterable<XMLNode> root,String attribute,String value) {
         if (attribute == null || root == null || value == null) {
             return null;
         }
-        ArrayList<XMLElement> matches = new ArrayList<>();
-        for (XMLElement n : root.childElements()) {
+        ArrayList<XMLNode> matches = new ArrayList<>();
+        for (XMLNode n : root) {
             String val = n.get(attribute);
             if (val != null && value.equals(val))
                 matches.add(n);
         }
-        return matches.toArray(new XMLElement[0]);
+        return matches.toArray(new XMLNode[0]);
     }
     
+    public static XMLNode[] filterNodesRecursive(Iterable<XMLNode> root, String attribute,String value) {
+        ArrayList<XMLNode> matches = new ArrayList<>(Arrays.asList(filterNodes(root, attribute, value)));
+        for (XMLNode n : root) {
+            matches.addAll(Arrays.asList(filterNodesRecursive(n, attribute, value)));
+        }
+        return matches.toArray(new XMLNode[0]);
+    }
+    
+    /**
+     * Binary searches the given List of XMLNodes for the required attribute-value pair.
+     * <p/>
+     * This method requires the List to be sorted on the provided attribute name. 
+     * @param list the List to binary search in
+     * @param att the attribute by which the list is sorted
+     * @param value the value for the given attribute to search for
+     * @return the XMLNode with the correct attribute-value pair
+     */
+    public static XMLNode binarySearch(List<XMLNode> list, String att, String value) {
+        int start=0,end=list.size();
+        
+        while (start < end) {
+            int mid = (start+end) / 2;
+            XMLNode midNode = list.get(mid);
+            int cmp = midNode.getOrElse(att, "").compareTo(value);
+            if (cmp == 0) // We found it, return found XMLNode
+                return midNode;
+            
+            if (cmp > 0) { // We're too high, skip all higher
+                end = mid;
+            } else { // We're too low, skip all lower
+                start = mid;
+            }
+        }
+        return null;
+    }
     /**
      * Creates an XML Tree from the given list of lines, where every String element represents one XML Tag
      * @param lines a List of XML Strings
      * @return an XML tree created from the list of XML Strings
      */
-    public static XMLElement getXMLTree(ArrayList<String> lines) {
+    public static XMLNode getXMLTree(ArrayList<String> lines) {
         return getXMLTree(lines,0);
     }
     
     private static int lineIndex = 0;
-    private static XMLElement getXMLTree(ArrayList<String> lines, int start) {
+    private static XMLNode getXMLTree(ArrayList<String> lines, int start) {
         try {
             lineIndex = start;
         
@@ -213,7 +168,7 @@ public class XMLParser {
         }
         if (root.isEmpty() ||                                 // ignore empty lines
            (root.contains("<?") && root.contains("?>")) ||    // ignore <?xml ... ?> tag
-           (root.contains("<!")))                             // ignore <! ... > tags (DTD and comments)
+           (root.contains("<!")))                             // ignore <! ... > tags (DTD and comments
             return getXMLTree(lines,start+1);
         
         HashMap<String,String> attributes = getAttributes(root);
@@ -226,7 +181,7 @@ public class XMLParser {
                 if (current.contains("</" + tag + ">")) {
                     break;
                 }
-                XMLElement n = getXMLTree(lines,lineIndex);
+                XMLNode n = getXMLTree(lines,lineIndex);
                 if (n != null) {
                     children.add(n);
                 }
@@ -234,10 +189,30 @@ public class XMLParser {
         } else {
             children = null;
         }
-        return new XMLElement(tag,attributes,children);
+        return new XMLNode(tag,attributes,children);
         } catch (Exception e) {
             PowerGrid.logMessage("Error while parsing XML tree");
             return null;
+        }
+    }
+    
+    public static boolean writeToFile(Object o, String file) {
+        String text = String.valueOf(o);
+        try {
+            String fullpath = Environment.getStorageDirectory().toString() + "\\" + file;
+            
+            File target = new File(fullpath);
+            if (!target.exists()) {
+                target.createNewFile();
+                PowerGrid.logMessage("New File created at " + target.getAbsolutePath());
+            }
+            try (FileWriter w = new FileWriter(target)) {
+                w.write(text);
+            }
+            return true;
+        } catch (IOException e) {
+            PowerGrid.logMessage("Error writing to file");
+            return false;
         }
     }
 }

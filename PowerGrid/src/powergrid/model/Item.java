@@ -1,19 +1,24 @@
 package powergrid.model;
 
+import org.powerbot.game.client.RSItem;
+import org.powerbot.game.client.RSItemDef;
+
 /**
  * Class that represents an Item in the RSBot environment
  * @author Chronio
  */
 public class Item {
     
-    private org.powerbot.game.api.wrappers.node.Item theItem;
+    private RSItem item;
+    private RSItemDef itemDef;
     
     /**
      * creates an Item object that represents the given RSbot Item 
      * @param rsItem the Item object as given by the RSBot environment.
      */
-    public Item(org.powerbot.game.api.wrappers.node.Item rsItem) {
-        theItem = rsItem;
+    public Item(RSItem rsItem,RSItemDef rsItemDef) {
+        item = rsItem;
+        itemDef = rsItemDef;
     }
     
     /**
@@ -21,7 +26,7 @@ public class Item {
      * @return the name of the Item
      */
     public String getName() {
-        return theItem.getName();
+        return itemDef.getName();
     }
     
     /**
@@ -29,23 +34,15 @@ public class Item {
      * @return the unique id for this item
      */
     public int getId() {
-        return theItem.getId();
-    }
-    
-    /**
-     * returns the raw value indicating the item's type
-     * @return the raw value indicating the item's type
-     */
-    public int getRawValue() {
-        return theItem.getDefinition().getId();
+        return item.getId();
     }
     
     /**
      * returns the RSBot item this Item represents
      * @return the RSBot item this Item represents
      */
-    public org.powerbot.game.api.wrappers.node.Item getRSItem() {
-        return theItem;
+    public RSItem getRSItem() {
+        return item;
     }
     
     /**
@@ -53,6 +50,30 @@ public class Item {
      * @return the amount of instances this Item represents
      */
     public int getStackSize() {
-        return theItem.getStackSize();
+        return item.getStackSize();
+    }
+    
+    /**
+     * Returns the RSItemDef object corresponding to this Item type.
+     * @return the RSItemDef object corresponding to this Item type
+     */
+    public RSItemDef getRSItemDef() {
+        return itemDef;
+    }
+    
+    /**
+     * Returns whether this Item is a member's Item.
+     * @return true if this Item is a member's Item, false otherwise
+     */
+    public boolean isMemberItem() {
+        return itemDef.isMembersObject();
+    }
+    
+    /**
+     * Returns a String array of the actions available to this item.
+     * @return a String array of the actions available to this item
+     */
+    public String[] getActions() {
+        return itemDef.getActions();
     }
 }

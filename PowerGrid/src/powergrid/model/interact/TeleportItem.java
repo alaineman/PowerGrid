@@ -1,6 +1,8 @@
 package powergrid.model.interact;
 
 import java.util.ArrayList;
+import org.powerbot.game.client.RSItem;
+import org.powerbot.game.client.RSItemDef;
 import powergrid.model.Item;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
@@ -9,7 +11,7 @@ import powergrid.model.Point;
  * Represents an Item that can be used to teleport to one or more locations
  * @author Alaineman
  */
-public abstract class TeleportItem extends Item {
+public abstract class TeleportItem extends Item { 
     
     protected ArrayList<Destination> destinations = new ArrayList<>();
     
@@ -24,8 +26,8 @@ public abstract class TeleportItem extends Item {
      * @param rsItem the Item-object to base this TeleportItem on.
      * @param teleportCommand the command used to use the teleport
      */
-    public TeleportItem(org.powerbot.game.api.wrappers.node.Item rsItem, String teleportCommand){
-        super(rsItem); 
+    public TeleportItem(RSItem rsItem, RSItemDef itemDef, String teleportCommand){
+        super(rsItem,itemDef); 
         values.add(rsItem.getId());
         this.teleportCommand = teleportCommand;
     }
@@ -79,7 +81,7 @@ public abstract class TeleportItem extends Item {
      * <p>subclasses of this class should override this inner class to provide a
      * detailed version of the Item's destination(s)</p>
      */
-    protected static abstract class Destination extends Teleportable{
+    protected static abstract class Destination extends Teleportable{ 
         
         /**
          * Sets the location for this <code>Destination</code>

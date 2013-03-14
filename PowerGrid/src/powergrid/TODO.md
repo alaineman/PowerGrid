@@ -28,11 +28,18 @@ the way they should.
     - create a more general representation of the RS user interface.
     - possibly refer to API for implementation details in lower-level RSBot code.
       - This reduces the chance of code-breaking changes from RSBot
-      - This is generally faster (RSBot API is highly inefficient)
+      - This is generally faster (RSBot API is highly inefficient in places)
   - XMLToolBox needs to be checked for style errors and needs to be tested in various situations.
   - Redesign MapViewer, since many things in there are broken due to changes elsewhere
   - Check and actually DO all "TODO" and "FIXME" action items.
   - Why is Door.isOpen() deprecated? Move stateIsOpen() -> isOpen(). It has the same signature.
+  - Move interact methods to Interactor class -> itemInteractor.interact(Item,"Use");
+    - Better design, more dynamic.
+    - Can define various subclasses of interactors for various purposes
+    - Use a dynamic environment by supplying the Client to the Interactor.
+      - This is easier and cleaner than supplying it to each Item
+      - Easy testing using Mockito
+  - Refactor TeleportItem completely, it's now not efficiently made.
 
 ### PowerGrid feature implementations ###
 Think about solutions for potential problems and implement these following 

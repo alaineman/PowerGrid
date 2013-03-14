@@ -42,9 +42,9 @@ public class GameObjectTest {
     }
     
     @Test public void testRawValuesEmpty() {
-        when(mockedGround.getBoundary1()).thenReturn(null);
+        when(mockedGround.getBoundary2()).thenReturn(null);
         when(mockedGround.getWallDecoration2()).thenReturn(null);
-        assertArrayEquals(new int[]{0},go.rawValues());
+        assertArrayEquals(new int[0],go.rawValues());
     }
     
     @Test public void testContainsRawValueTrue() {
@@ -60,7 +60,7 @@ public class GameObjectTest {
     }
     
     @Test public void testGetNonExistingBoundary() {
-        when(mockedGround.getBoundary1()).thenReturn(null);
+        when(mockedGround.getBoundary2()).thenReturn(null);
         assertEquals(-1,go.getBoundary());
     }
     

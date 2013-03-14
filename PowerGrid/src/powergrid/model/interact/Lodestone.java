@@ -50,7 +50,7 @@ public class Lodestone extends Teleportable {
         XMLElement[] matches = XMLParser.filterNodes(lodestoneTree, "widget", String.valueOf(dest));
         if (matches.length > 0) {
             Point p = new Point(matches[0].get("pos"));
-            GameObject go = PowerGrid.MAPPER.getWorldMap().getObject(p);
+            GameObject go = PowerGrid.MAPPER.getWorldMap().get(p);
             lodestones.add(new Lodestone(p.x,p.y,p.z,(go == null ? 0 : go.getBoundary()),dest,matches[0].get("name")));
         }
     }

@@ -180,7 +180,7 @@ public class TravelTask extends StepTask {
                 }
             } else {
                 //attempt walkTo anyways, insert teleportable / transportable usage
-                GameObject obj = PowerGrid.MAPPER.getWorldMap().getObject(p);
+                GameObject obj = PowerGrid.MAPPER.getWorldMap().get(p);
                 if (obj instanceof Transportable) {
                     Transportable trans = (Transportable) obj;
                     try {

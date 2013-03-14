@@ -23,6 +23,7 @@ public class GameObject {
      * @param p the position of this GameObject
      * @param rawNumber the raw value from the environment specifying the type
      * @throws IllegalArgumentException when the provided Point is null
+     * @deprecated Use GameObject(Point,RSGround,int) instead
      */
     @Deprecated public GameObject(Point p, int rawNumber) {
         assert p != null;
@@ -31,7 +32,7 @@ public class GameObject {
     }
     
     public GameObject(Point p, RSGround g, int collFlag) {
-        assert p != null && g != null;
+        assert p != null;
         position = p;
         ground = g;
         this.collFlag = collFlag;
@@ -69,6 +70,14 @@ public class GameObject {
                         if ((obj = ground.getWallDecoration2()) == null)
                             return -1; // There are no objects on this position
         return obj.getId();
+    }
+    
+    /**
+     * Returns the RSGround object linked to this GameObject.
+     * @return the RSGround object at the position of this GameObject
+     */
+    public RSGround getRSGround() {
+        return ground;
     }
     
     /**
@@ -128,6 +137,11 @@ public class GameObject {
         return false;
     }
     
+    /**
+     * Returns whether this GameObject contains the given Wall type.
+     * @param type the type of Wall
+     * @return whether this GameObject contains the given Wall type.
+     */
     public boolean containsWall(int type) {
         return (type & collFlag) != 0;
     }
@@ -166,7 +180,7 @@ public class GameObject {
      * <ul>
      *   <li>other is an instance of GameObject</li>
      *   <li>other is at the same position as given by the method <code>getPosition()</code></li>
-     *   <li>other has the same raw type, as given by the method <code>getRawNumber()</code></li>
+     *   <li>other has the same raw values, as given by the method <code>rawValues()</code></li>
      * </ul>
      * This method returns false otherwise.
      * </p>
@@ -176,7 +190,8 @@ public class GameObject {
     @Override public boolean equals(Object other) {
         if (other instanceof GameObject) {
             GameObject that = (GameObject)other;
-            return this.getPosition().equals(that.getPosition()) && Arrays.equals(this.rawValues(), that.rawValues());
+            return this.getPosition().equals(that.getPosition()) 
+                    && Arrays.equals(this.rawValues(), that.rawValues());
         }
         return false;
     }

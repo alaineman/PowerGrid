@@ -2,7 +2,6 @@ package powergrid.model;
 
 import java.util.HashMap;
 import org.powerbot.game.client.RSGround;
-import powergrid.model.WorldMap.Field;
 
 /**
  * Custom extension of a HashMap designed for Mapping purposes, where data 
@@ -15,7 +14,7 @@ import powergrid.model.WorldMap.Field;
  */
 public class WorldMap {
     
-    private HashMap<Point,Field> data;
+    private HashMap<Point,GameObject> data;
     
     public WorldMap() {
         this(150);
@@ -27,66 +26,31 @@ public class WorldMap {
 
     public void put(Point point, RSGround ground, int mask) {
         if (point != null) {
-            data.put(point, new Field(ground,mask));
+            data.put(point, new GameObject(point,ground,mask));
         }
     }
     
     public void putGround(Point p, RSGround ground) {
         int mask = 0;
-        Field f = data.get(p);
-        if (f != null) 
-            mask = f.mask();
+        GameObject go = data.get(p);
+        if (go != null) 
+            mask = go.getCollisionFlag();
         put(p, ground, mask);
     }
     
     public void putMask(Point p, int mask) {
         RSGround ground = null;
-        Field f = data.get(p);
-        if (f != null)
-            ground = f.ground();
+        GameObject go = data.get(p);
+        if (go != null)
+            ground = go.getRSGround();
         put(p, ground, mask);
     }
     
     public boolean isBoundary(Point p, int mask) {
-        return (getMask(p) & mask) != 0;
+        return (get(p).getCollisionFlag() & mask) != 0;
     }
     
-    public int getMask(Point p) {
-        Field f = data.get(p);
-        if (f == null) return 0;
-        return f.mask();
-    }
-    
-    public Field getField(Point p) {
+    public GameObject get(Point p) {
         return data.get(p);
-    }
-    
-    public RSGround getGround(Point p) {
-        Field f = data.get(p);
-        if (f == null) return null;
-        return f.ground();
-    }
-    
-    public GameObject getObject(Point p) {
-        Field f = data.get(p);
-        if (f == null || f.ground() == null) 
-            return null;
-        // ... 
-        return null;
-    }
-    
-    public static class Field {
-        private RSGround ground;
-        private int mask;
-        public Field (RSGround ground, int mask) {
-            this.ground = ground;
-            this.mask = mask;
-        }
-        public RSGround ground() {
-            return ground;
-        }
-        public int mask() {
-            return mask;
-        }
     }
 }

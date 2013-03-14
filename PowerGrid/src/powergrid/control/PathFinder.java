@@ -239,7 +239,7 @@ public class PathFinder implements Copyable<PathFinder> {
             new Point(base.x - 1, base.y, base.z)
         };
         for (Point p : edges) {
-            if (theMap.getMask(p) == 0) {
+            if (theMap.get(p).getCollisionFlag() == 0) {
                 points.add(p);
             } else if (!theMap.isBoundary(p,getDirection(p, base))) {
                 points.add(p);

@@ -40,6 +40,14 @@ public class WorldMap {
     }
 
     /**
+     * Stores the given GameObject in this WorldMap
+     * @param object the GameObject to store
+     */
+    public void put(GameObject object) {
+        data.put(object.getPosition(),object);
+    }
+    
+    /**
      * Stores the given RSGround and mask at the given Position.
      * @param point the Position to store
      * @param ground the RSGround object at this position

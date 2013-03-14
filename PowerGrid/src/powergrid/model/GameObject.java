@@ -191,7 +191,8 @@ public class GameObject {
         if (other instanceof GameObject) {
             GameObject that = (GameObject)other;
             return this.getPosition().equals(that.getPosition()) 
-                    && Arrays.equals(this.rawValues(), that.rawValues());
+                    && Arrays.equals(this.rawValues(), that.rawValues())
+                    && this.getCollisionFlag() == that.getCollisionFlag();
         }
         return false;
     }

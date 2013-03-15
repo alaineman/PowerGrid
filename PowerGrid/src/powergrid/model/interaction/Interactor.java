@@ -4,15 +4,49 @@
  */
 package powergrid.model.interaction;
 
+import java.util.Objects;
+import org.powerbot.game.client.Client;
+import powergrid.model.OutOfReachException;
+import powergrid.model.WorldMap;
+
 /**
- * Interface that defines methods for a class that can interact with a certain
+ * Abstract class that defines methods that allows interaction with a certain
  * kind of object.
  * <p/>
- * The 
  * @param T The type of object the Interactor handles
  * @author Chronio
  */
-public interface Interactor<T> {
+public abstract class Interactor<T> {
+    
+    private Client client = null;
+    private WorldMap map = null;
+    
+    /**
+     * Creates a new Interactor, which uses the specified Client
+     * @param theClient the Runescape client this Interactor connects to
+     * @param map the WorldMap on which this Interactor works
+     */
+    public Interactor(Client theClient, WorldMap map) {
+        this.client = theClient;
+        this.map = map;
+    }
+    
+    /**
+     * Returns the client that this Interactor is connected to
+     * @return the client
+     */
+    public Client getClient() {
+        return client;
+    }
+
+    /**
+     * Returns the WorldMap instance associated with this Interactor.
+     * @return the WorldMap instance associated with this Interactor
+     */
+    public WorldMap getMap() {
+        return map;
+    }
+    
     /**
      * Returns an array containing the actions this Interactor can perform on
      * the given object.
@@ -23,7 +57,7 @@ public interface Interactor<T> {
      * @param elem the element to check the actions for
      * @return an array containing the 
      */
-    public String[] getActions(T elem);
+    public abstract Object[] getOptions(T elem);
     
     /**
      * Interacts with the element using the default action.
@@ -34,16 +68,18 @@ public interface Interactor<T> {
      * <p/>
      * @param elem the element to interact with
      * @return whether the interaction was successful
+     * @throws OutOfReachException when the element cannot be reached
      */
-    public boolean interact(T elem);
+    public abstract boolean interact(T elem) throws OutOfReachException;
     
     /**
-     * Interacts with the element using the given action.
+     * Interacts with the element using the given option.
      * @param elem the element to interact with
-     * @param method the method of interaction
+     * @param option the option that goes with the interaction
      * @return whether the interaction was successful
+     * @throws OutOfReachException when the element cannot be reached
      */
-    public boolean interact(T elem, String method);
+    public abstract boolean interact(T elem, Object option) throws OutOfReachException;
     
     /**
      * Returns an array of all classes this Interactor can handle.
@@ -53,7 +89,7 @@ public interface Interactor<T> {
      * type.
      * @return 
      */
-    public Class<?>[] getTypes();
+    public abstract Class<?>[] getTypes();
     
     /**
      * Returns whether this Interactor should be preferred over another.
@@ -76,5 +112,30 @@ public interface Interactor<T> {
      * @return whether this Interactor is more suited to handling the given 
      *         object's interactions.
      */
-    public boolean isMoreFavorableThan(Interactor i, T elem);
+    public abstract boolean isMoreFavorableThan(Interactor i, T elem);
+    
+    @Override public boolean equals(Object other) {
+        if (other instanceof Interactor) {
+            Interactor that = (Interactor) other;
+            Class<?>[] theirTypes = that.getTypes();
+            Class<?>[] myTypes = this.getTypes();
+            if (theirTypes.length != myTypes.length) {
+                return false;
+            }
+            for (Class<?> myc : getTypes()) {
+                Class<?> match = null;
+                for (Class<?> theirc : theirTypes) {
+                    if (Objects.equals(myc, theirc)) {
+                        match = theirc;
+                        break;
+                    }
+                }
+                if (match == null) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 }

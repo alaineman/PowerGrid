@@ -62,7 +62,7 @@ public class PowerGrid {
     /** The default Bot instance. */
     public static final Bot BOT = new Bot(TM);
     /** The default Mapper instance. */
-    public static final Mapper MAPPER = new Mapper(false);
+    public static final Mapper MAPPER = new Mapper();
     /** The default DestinationMap. */
     public static final DestinationMap DESTINATIONS = new DestinationMap();
     

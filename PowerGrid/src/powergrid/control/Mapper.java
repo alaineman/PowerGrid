@@ -38,14 +38,6 @@ public class Mapper implements Copyable<Mapper> {
 
     public Mapper() {}
     
-    public Mapper(boolean useDefaultClient) {
-        if (useDefaultClient) {
-            assert Bot.instantiated();
-            client = Bot.client();
-            assert invariant();
-        }
-    }
-    
     public Mapper(Client client) {
         assert client != null;
         this.client = client;
@@ -125,7 +117,9 @@ public class Mapper implements Copyable<Mapper> {
                 for (RSGround[] cell : row) {
                     for (RSGround value : cell) {
                         if (value != null) {
-                            RSInteractableLocation location = ((RSInteractable)value).getData().getLocation();
+                            RSInteractableLocation location = 
+                                    ((RSInteractable) value).getData()
+                                    .getLocation();
                             Point position = new Point(
                                     (int)(location.getX()/512),
                                     (int)(location.getY()/512)
@@ -176,28 +170,26 @@ public class Mapper implements Copyable<Mapper> {
     }
     
     private static int convertToSides(int flag) {
-        if ((flag | OBJECT_BLOCK | OBJECT_TILE) == flag)    // Object_Block | Object_Tile flag => Collision (normal walls and such)
+        if ((flag | OBJECT_BLOCK | OBJECT_TILE) == flag)
             return Wall.BLOCK;
-        if ((flag | OBJECT_ALLOW_RANGE | OBJECT_TILE) == flag) // Object_Allow_Range | Object_Tile => Collision (fences and such)
+        if ((flag | OBJECT_ALLOW_RANGE | OBJECT_TILE) == flag) 
             return Wall.BLOCK;
         int res = 0;
-        if ((flag & (WALL_ALLOW_RANGE_NORTH | WALL_BLOCK_NORTH)) != 0)    // RangedWall_North | Wall_North => North
+        if ((flag & (WALL_ALLOW_RANGE_NORTH | WALL_BLOCK_NORTH)) != 0)
             res |= Wall.NORTH;
-        if ((flag & (WALL_ALLOW_RANGE_EAST | WALL_BLOCK_EAST)) != 0)   // RangedWall_East | Wall_East => East
+        if ((flag & (WALL_ALLOW_RANGE_EAST | WALL_BLOCK_EAST)) != 0)
             res |= Wall.EAST;
-        if ((flag & (WALL_ALLOW_RANGE_SOUTH | WALL_BLOCK_SOUTH)) != 0)   // RangedWall_South | Wall_South => South
+        if ((flag & (WALL_ALLOW_RANGE_SOUTH | WALL_BLOCK_SOUTH)) != 0)
             res |= Wall.SOUTH;
-        if ((flag & (WALL_ALLOW_RANGE_WEST | WALL_BLOCK_WEST)) != 0)  // RangedWall_West | Wall_West => West
+        if ((flag & (WALL_ALLOW_RANGE_WEST | WALL_BLOCK_WEST)) != 0)
             res |= Wall.WEST;
         return res;
     }
     
-    private boolean invariant() {
-        // The client must be valid
-        if (client == null || client.getRSGroundInfo() == null) return false;
+    protected boolean invariant() {
         // We only have a reference to a MapperThread if the MapperThread is actually mapping.
         if (thread != null && !thread.isAlive()) return false;
-        if ( (thread == null) != stop ) return false;
+        if ((thread == null) != stop) return false;
         
         return true;
     }

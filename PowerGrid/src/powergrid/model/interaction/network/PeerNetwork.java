@@ -1,5 +1,6 @@
-package powergrid.model.interaction;
+package powergrid.model.interaction.network;
 
+import powergrid.model.interaction.network.TransportNetwork;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

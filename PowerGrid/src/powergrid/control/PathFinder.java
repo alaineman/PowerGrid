@@ -3,7 +3,7 @@ package powergrid.control;
 import java.util.*;
 import powergrid.PowerGrid;
 import powergrid.model.Copyable;
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
@@ -240,7 +240,7 @@ public class PathFinder implements Copyable<PathFinder> {
             new Point(base.x - 1, base.y, base.z)
         };
         for (Point p : edges) {
-            GameObject go = theMap.get(p);
+            GameTile go = theMap.get(p);
             if (go == null || go.getCollisionFlag() == 0) {
                 points.add(p);
             } else if (!theMap.isBoundary(p,getDirection(p, base))) {

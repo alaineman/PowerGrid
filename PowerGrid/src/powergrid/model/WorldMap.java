@@ -15,7 +15,7 @@ import org.powerbot.game.client.RSGround;
  */
 public class WorldMap {
     
-    private HashMap<Point,GameObject> data;
+    private HashMap<Point,GameTile> data;
     
     /**
      * Creates a new WorldMap with an initial capacity of 150.
@@ -40,10 +40,10 @@ public class WorldMap {
     }
 
     /**
-     * Stores the given GameObject in this WorldMap
-     * @param object the GameObject to store
+     * Stores the given GameTile in this WorldMap
+     * @param object the GameTile to store
      */
-    public void put(GameObject object) {
+    public void put(GameTile object) {
         data.put(object.getPosition(),object);
     }
     
@@ -55,7 +55,7 @@ public class WorldMap {
      */
     public void put(Point point, RSGround ground, int mask) {
         if (point != null) {
-            data.put(point, new GameObject(point,ground,mask));
+            data.put(point, new GameTile(point,ground,mask));
         }
     }
     
@@ -75,7 +75,7 @@ public class WorldMap {
      */
     public void putGround(Point p, RSGround ground) {
         int mask = 0;
-        GameObject go = data.get(p);
+        GameTile go = data.get(p);
         if (go != null) 
             mask = go.getCollisionFlag();
         put(p, ground, mask);
@@ -88,7 +88,7 @@ public class WorldMap {
      */
     public void putMask(Point p, int mask) {
         RSGround ground = null;
-        GameObject go = data.get(p);
+        GameTile go = data.get(p);
         if (go != null)
             ground = go.getRSGround();
         put(p, ground, mask);
@@ -107,11 +107,11 @@ public class WorldMap {
     }
     
     /**
-     * Returns the GameObject at the specified position.
+     * Returns the GameTile at the specified position.
      * @param p the position
-     * @return the GameObject at the given position
+     * @return the GameTile at the given position
      */
-    public GameObject get(Point p) {
+    public GameTile get(Point p) {
         return data.get(p);
     }
 
@@ -125,9 +125,9 @@ public class WorldMap {
             if (this.size() != that.size()) {
                 return false;
             }
-            for (Entry<Point,GameObject> e : data.entrySet()) {
-                GameObject mine = e.getValue();
-                GameObject theirs = that.get(e.getKey());
+            for (Entry<Point,GameTile> e : data.entrySet()) {
+                GameTile mine = e.getValue();
+                GameTile theirs = that.get(e.getKey());
                 if (theirs == null || !mine.equals(theirs)) {
                     return false;
                 }

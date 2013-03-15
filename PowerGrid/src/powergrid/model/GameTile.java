@@ -7,31 +7,38 @@ import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSObject;
 
 /**
- * This class represents an object from the RSbot environment.
+ * This class represents a Tile in the Runescape world.
  * @author Chronio
  */
-public class GameObject {
+public class GameTile {
     private Point position;
     private int rawNumber = -1;
     private int collFlag = 0;
     private RSGround ground = null;
     
     /**
-     * Creates a new GameObject at the given position. the <code>rawNumber</code> 
-     * indicates the type of object as provided by the RSBot environment.
+     * Creates a new GameTile at the given position. the <code>rawNumber</code> 
+     * indicates the type of object on this Tile as provided by the RSBot 
+     * environment.
      * <p/>
-     * @param p the position of this GameObject
+     * @param p the position of this GameTile
      * @param rawNumber the raw value from the environment specifying the type
      * @throws IllegalArgumentException when the provided Point is null
-     * @deprecated Use GameObject(Point,RSGround,int) instead
+     * @deprecated Use GameTile(Point,RSGround,int) instead
      */
-    @Deprecated public GameObject(Point p, int rawNumber) {
+    @Deprecated public GameTile(Point p, int rawNumber) {
         assert p != null;
         position = p;
         this.rawNumber = rawNumber;
     }
     
-    public GameObject(Point p, RSGround g, int collFlag) {
+    /**
+     * Creates a new GameTile with the given information.
+     * @param p the position of this GameTile
+     * @param g the RSGround object with the contents of this GameTile
+     * @param collFlag the collision flag of this Tile
+     */
+    public GameTile(Point p, RSGround g, int collFlag) {
         assert p != null;
         position = p;
         ground = g;
@@ -39,8 +46,8 @@ public class GameObject {
     }
     
     /**
-     * returns the position of this GameObject.
-     * @return the position of this GameObject
+     * returns the position of this GameTile.
+     * @return the position of this GameTile
      */
     public Point getPosition() {
         return position;
@@ -49,39 +56,30 @@ public class GameObject {
     /**
      * Returns a raw number as given by the RSBot environment.
      * <p/>
-     * <strong>Deprecated: use <code>containsRawNumber(int)</code> and/or 
-     * <code>rawValues()</code> instead.</strong>
-     * <p/>
-     * It returns a value &lt; 0 when there are no objects at this position.
+     * It returns -1 when there are no objects at this position.
      * @return the raw number as given by the RSBot environment
+     * @deprecated use <code>containsRawNumber(int)</code> or 
+     *             <code>objects()</code> instead.
      */
     @Deprecated public int getRawNumber() {
-        if (ground == null)
+        RSObject[] objects = objects();
+        if (objects.length > 0) {
+            return objects[0].getId();
+        } else {
             return -1;
-        /* Sorry for the messy syntax, but this basically polls each object type
-         * in order until a non-null value is found. This is a bit cleaner 
-         * than having 6 return statements (and most likely faster, too).
-         */
-        RSObject obj;
-        if ((obj = ground.getBoundary1()) == null)
-            if ((obj = ground.getBoundary2()) == null)
-                if ((obj = ground.getFloorDecoration()) == null)
-                    if ((obj = ground.getWallDecoration1()) == null)
-                        if ((obj = ground.getWallDecoration2()) == null)
-                            return -1; // There are no objects on this position
-        return obj.getId();
+        }
     }
     
     /**
-     * Returns the RSGround object linked to this GameObject.
-     * @return the RSGround object at the position of this GameObject
+     * Returns the RSGround object linked to this GameTile.
+     * @return the RSGround object at the position of this GameTile
      */
     public RSGround getRSGround() {
         return ground;
     }
     
     /**
-     * Returns an array containing the RSObjects on this GameObject
+     * Returns an array containing the RSObjects on this GameTile
      * @return an array containing the RSObjects
      */
     public RSObject[] objects() {
@@ -103,15 +101,15 @@ public class GameObject {
     }
     
     /**
-     * Returns the collision flag for this GameObject
-     * @return this GameObject's collision flag
+     * Returns the collision flag for this GameTile
+     * @return this GameTile's collision flag
      */
     public int getCollisionFlag() {
         return collFlag;
     }
     
     /**
-     * Returns an array containing the raw values of the RSObjects on this GameObject.
+     * Returns an array containing the raw values of the RSObjects on this GameTile.
      * @return an array containing the raw values of the RSObjects
      */
     public int[] rawValues() {
@@ -126,9 +124,9 @@ public class GameObject {
     }
     
     /**
-     * Returns whether this GameObject contains an RSObject with the specified value as ID.
+     * Returns whether this GameTile contains an RSObject with the specified value as ID.
      * @param value the value to check
-     * @return true if this GameObject contains an RSObject with the specified value, false otherwise
+     * @return true if this GameTile contains an RSObject with the specified value, false otherwise
      */
     public boolean containsRawValue(int value) {
         for (int i : rawValues()) {
@@ -138,9 +136,9 @@ public class GameObject {
     }
     
     /**
-     * Returns whether this GameObject contains the given Wall type.
+     * Returns whether this GameTile contains the given Wall type.
      * @param type the type of Wall
-     * @return whether this GameObject contains the given Wall type.
+     * @return whether this GameTile contains the given Wall type.
      */
     public boolean containsWall(int type) {
         return (type & collFlag) != 0;
@@ -164,8 +162,8 @@ public class GameObject {
     }
     
     /**
-     * Returns the hash code of this GameObject
-     * @return the hash code of this GameObject
+     * Returns the hash code of this GameTile
+     * @return the hash code of this GameTile
      */
     @Override public int hashCode() {
         int hash = 3;
@@ -178,7 +176,7 @@ public class GameObject {
      * Returns whether or not this object is equal to <code>other</code>.
      * <p>More specifically, this method returns true if and only if:
      * <ul>
-     *   <li>other is an instance of GameObject</li>
+     *   <li>other is an instance of GameTile</li>
      *   <li>other is at the same position as given by the method <code>getPosition()</code></li>
      *   <li>other has the same raw values, as given by the method <code>rawValues()</code></li>
      * </ul>
@@ -188,8 +186,8 @@ public class GameObject {
      * @return true if and only if this object is equal to other
      */
     @Override public boolean equals(Object other) {
-        if (other instanceof GameObject) {
-            GameObject that = (GameObject)other;
+        if (other instanceof GameTile) {
+            GameTile that = (GameTile)other;
             return this.getPosition().equals(that.getPosition()) 
                     && Arrays.equals(this.rawValues(), that.rawValues())
                     && this.getCollisionFlag() == that.getCollisionFlag();
@@ -198,17 +196,17 @@ public class GameObject {
     }
 
     /**
-     * Returns a String-representation of this GameObject containing the position 
+     * Returns a String-representation of this GameTile containing the position 
      * and raw values.
      * <p/>
-     * @return a String-representation of this GameObject
+     * @return a String-representation of this GameTile
      */
     @Override public String toString() {
-        String lead = "GameObject@" + position + "[";
+        String lead = "GameTile@" + position + "(" + collFlag + ",{";
         String objects = "";
         for (RSObject o : objects()) {
             objects += "," + o.getId();
         }
-        return lead + objects.substring(1) + "]";
+        return lead + objects.substring(1) + "})";
     }
 }

@@ -9,20 +9,20 @@ import static org.mockito.Mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSObject;
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.Point;
 import powergrid.model.world.Wall;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GameObjectTest {
-    public GameObject go;
+    public GameTile go;
     
     @Mock public RSGround mockedGround;
     @Mock public RSObject mockedBoundary;
     @Mock public RSObject mockedDecoration;
     
     @Before public void setup() {
-        go = new GameObject(new Point(3,4),mockedGround,Wall.EAST | Wall.NORTH);
+        go = new GameTile(new Point(3,4),mockedGround,Wall.EAST | Wall.NORTH);
         when(mockedGround.getBoundary1()).thenReturn(null);
         when(mockedGround.getBoundary2()).thenReturn(mockedBoundary);
         when(mockedGround.getFloorDecoration()).thenReturn(null);
@@ -69,7 +69,7 @@ public class GameObjectTest {
     }
     
     @Test public void testEqualsOtherFalse() {
-        assertFalse(go.equals(new GameObject(new Point(6,4),mockedGround,0)));
+        assertFalse(go.equals(new GameTile(new Point(6,4),mockedGround,0)));
     }
     
     @Test public void testContainsWallTrue() {

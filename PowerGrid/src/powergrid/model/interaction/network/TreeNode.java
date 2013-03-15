@@ -1,4 +1,4 @@
-package powergrid.model.interaction;
+package powergrid.model.interaction.network;
 
 import java.util.ArrayList;
 import java.util.HashSet;

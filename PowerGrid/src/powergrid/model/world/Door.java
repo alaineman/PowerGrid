@@ -3,7 +3,7 @@ package powergrid.model.world;
 import java.util.Arrays;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.wrappers.node.SceneObject;
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.interact.Interactable;
@@ -15,7 +15,7 @@ import powergrid.model.interact.Interactable;
  * and always require an interact() command to pass through.</p>
  * @author Chronio
  */
-public class Door extends GameObject implements Interactable {
+public class Door extends GameTile implements Interactable {
     /** Raw values that represent doors in the RSBot environment */
     public static final int[] values = {
         /* Appears to be:

@@ -1,17 +1,17 @@
 package powergrid.model.world.elevator;
 
 import java.util.Arrays;
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.interact.Interactable;
 
 /**
- * Represents a GameObject that can be used to move from one plane to another.
+ * Represents a GameTile that can be used to move from one plane to another.
  * @author Chronio
  * @author Alaineman
  */
-public abstract class Elevator extends GameObject implements Interactable {
+public abstract class Elevator extends GameTile implements Interactable {
     /** Specifies movement upward */
     public static final int UP = 1;
     /** Specifies movement downward */

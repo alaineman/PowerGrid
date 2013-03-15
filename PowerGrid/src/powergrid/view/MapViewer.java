@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import powergrid.PowerGrid;
 import powergrid.control.XMLToolBox;
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
 import powergrid.model.XMLNode;
@@ -140,7 +140,7 @@ public class MapViewer extends Canvas implements ActionListener {
         if (g == null) return;
         for (int x=r.x;x<r.x+r.width;x++) {
             for (int y=r.y;y<r.y+r.height;y++) {
-                GameObject go = theMap.get(new Point(x,y));
+                GameTile go = theMap.get(new Point(x,y));
                 Rectangle area = new Rectangle(scale*(x-r.x),scale*(r.height-(y-r.y)),scale,scale); // the rectangle we draw in
                 
                 if (go == null)

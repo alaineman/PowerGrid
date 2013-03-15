@@ -1,17 +1,17 @@
 package powergrid.model.interact;
 
 import java.util.HashMap;
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.Item;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 
 /**
- * Represents a GameObject that can be teleported to.
+ * Represents a GameTile that can be teleported to.
  * @author Chronio
  * @author Alaineman
  */
-public abstract class Teleportable extends GameObject implements ComplexInteractable {
+public abstract class Teleportable extends GameTile implements ComplexInteractable {
     
     public int widgetNum = -1;
     

@@ -8,7 +8,7 @@ import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
 import powergrid.model.DestinationMap;
 import powergrid.model.DestinationMap.Destination;
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.interact.Lodestone;
@@ -180,7 +180,7 @@ public class TravelTask extends StepTask {
                 }
             } else {
                 //attempt walkTo anyways, insert teleportable / transportable usage
-                GameObject obj = PowerGrid.MAPPER.getWorldMap().get(p);
+                GameTile obj = PowerGrid.MAPPER.getWorldMap().get(p);
                 if (obj instanceof Transportable) {
                     Transportable trans = (Transportable) obj;
                     try {

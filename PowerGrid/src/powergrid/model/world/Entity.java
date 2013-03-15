@@ -2,7 +2,7 @@ package powergrid.model.world;
 
 import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.wrappers.interactive.NPC;
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.interact.Interactable;
@@ -11,7 +11,7 @@ import powergrid.model.interact.Interactable;
  * Class representing mobile objects from the RSBot environment
  * @author Chronio
  */
-public abstract class Entity extends GameObject implements Interactable {
+public abstract class Entity extends GameTile implements Interactable {
         
     /**
      * Creates a new Entity at the given position. the <code>rawNumber</code> 

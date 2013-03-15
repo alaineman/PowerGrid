@@ -1,5 +1,8 @@
 package powergrid.model.interaction;
 
+import powergrid.model.interaction.network.PeerNetwork;
+import powergrid.model.interaction.network.TransportNetwork;
+import powergrid.model.interaction.network.TreeNetwork;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

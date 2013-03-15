@@ -1,6 +1,6 @@
 package powergrid.model.world.resources;
 
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.Item;
 import powergrid.model.Point;
 
@@ -8,7 +8,7 @@ import powergrid.model.Point;
  *
  * @author Alaineman
  */
-public abstract class AbstractResource extends GameObject {
+public abstract class AbstractResource extends GameTile {
         
     private Item[] items;
     

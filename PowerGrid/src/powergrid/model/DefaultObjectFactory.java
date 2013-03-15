@@ -5,20 +5,20 @@ import org.powerbot.game.client.RSGround;
 /**
  * Default factory class for GameObjects.
  * <p/>
- * This class can be subclassed to provide factories for GameObject subclasses.
+ * This class can be subclassed to provide factories for GameTile subclasses.
  * <p/>
  * @author Chronio
  */
 public class DefaultObjectFactory {
     
     /**
-     * Returns whether this factory can create a GameObject with the specified 
+     * Returns whether this factory can create a GameTile with the specified 
      * Point, RSGround, and collision flag.
      * <p/>
      * This method returns true by default.
      * <p/>
-     * @param p the Point this GameObject is on
-     * @param g the RSGround object for the Tile the GameObject is on
+     * @param p the Point this GameTile is on
+     * @param g the RSGround object for the Tile the GameTile is on
      * @param c the Collision flag for the Tile
      * @return true
      */
@@ -27,13 +27,13 @@ public class DefaultObjectFactory {
     }
     
     /**
-     * Creates and returns a new GameObject from the given information
-     * @param p the Point the GameObject is on
+     * Creates and returns a new GameTile from the given information
+     * @param p the Point the GameTile is on
      * @param g the RSGround object corresponding to the Point
      * @param c the collision flag on that Point
-     * @return a GameObject constructed from the given data
+     * @return a GameTile constructed from the given data
      */
-    public GameObject create(Point p, RSGround g, int c) {
-        return new GameObject(p,g,c);
+    public GameTile create(Point p, RSGround g, int c) {
+        return new GameTile(p,g,c);
     }
 }

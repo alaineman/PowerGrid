@@ -13,7 +13,7 @@ import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powergrid.PowerGrid;
 import powergrid.control.XMLToolBox;
 import powergrid.control.uicontrols.WidgetManager;
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.XMLNode;
@@ -50,7 +50,7 @@ public class Lodestone extends Teleportable {
         XMLNode[] matches = XMLToolBox.filterNodes(lodestoneTree, "widget", String.valueOf(dest));
         if (matches.length > 0) {
             Point p = new Point(matches[0].get("pos"));
-            GameObject go = PowerGrid.MAPPER.getWorldMap().get(p);
+            GameTile go = PowerGrid.MAPPER.getWorldMap().get(p);
             lodestones.add(new Lodestone(p.x,p.y,p.z,(go == null ? 0 : go.getBoundary()),dest,matches[0].get("name")));
         }
     }

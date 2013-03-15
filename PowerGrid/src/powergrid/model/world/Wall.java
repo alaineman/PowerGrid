@@ -1,13 +1,13 @@
 package powergrid.model.world;
 
-import powergrid.model.GameObject;
+import powergrid.model.GameTile;
 import powergrid.model.Point;
 
 /**
  * Class representing all sorts of walls in the RSBot environment
  * @author Chronio
  */
-public class Wall extends GameObject {
+public class Wall extends GameTile {
     
     public static final int[] values = {
         

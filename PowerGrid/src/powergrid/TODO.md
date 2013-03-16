@@ -14,8 +14,7 @@ easier, or just generally better.
     - Revalidate comments and add comments where appropriate
     - Refactor "smelly" code and hard-to-read code
     - Recheck and rewrite JavaDoc
-    - Check for dead code and bad weather conditions (asserts)
-  - Rewrite interact package to new format (using the Factory)
+  - Rewrite interact package to new format (using Factory and Interactor)
   - Create JUnit tests for classes
     - Use Mockito where it is useful
 
@@ -24,22 +23,19 @@ Think about solutions to the following parts in PowerGrid that didn't work out
 the way they should.
 
 *Jobs*
-  - powergrid.control.uicontrols package is hard-to-read and does not meet its purpose at all.
+  - powergrid.control.uicontrols package is hard-to-read and does not quite meet its purpose.
     - create a more general representation of the RS user interface.
-    - possibly refer to API for implementation details in lower-level RSBot code.
-      - This reduces the chance of code-breaking changes from RSBot
-      - This is generally faster (RSBot API is highly inefficient in places)
+      --> implemented as RSInteractor class
   - XMLToolBox needs to be checked for style errors and needs to be tested in various situations.
   - Redesign MapViewer, since many things in there are broken due to changes elsewhere
   - Check and actually DO all "TODO" and "FIXME" action items.
-  - Why is Door.isOpen() deprecated? Move stateIsOpen() -> isOpen(). It has the same signature.
+  - Why is Door.isOpen() deprecated? Move stateIsOpen() -> isOpen(). 
+    - It has the same signature.
+    - isOpen() can be used instead of stateIsOpen().
   - Move interact methods to Interactor class -> itemInteractor.interact(Item,"Use");
-    - Better design, more dynamic.
-    - Can define various subclasses of interactors for various purposes
-    - Use a dynamic environment by supplying the Client to the Interactor.
-      - This is easier and cleaner than supplying it to each Item
-      - Easy testing using Mockito
+    --> implemented as Interactor class and its subclasses
   - Refactor TeleportItem completely, it's now not efficiently made.
+    --> function taken over by a to be created Interactor subclass
 
 ### PowerGrid feature implementations ###
 Think about solutions for potential problems and implement these following 
@@ -47,16 +43,15 @@ principles of good software design.
 
 *Jobs*
   - Make sure there is/are:
-    - Working interactions using handle method (also ensure that the InteractionHandler can load them)
     - a Fully working GUI 
-      - Plugin/Script loading options
       - PowerGrid status display with Task Queue controls (order, add, remove, ...)
     - Working dynamic path finding 
       - with interaction checking for all interaction types
+      - use InteractionManager class (to be created for this purpose)
     - Maintainable API for Plugin developers
-      - using asserts
+      - using asserts where appropriate
       - update / create JavaDoc continuously to match specifications
     - Listener classes and a monitor class for various RSBot states and settings.
       - Allows for passive waiting
       - Easier than wait-in-loop and also more light-weight
-      - prevents additional Threads that wait in loops
+      - prevents additional Threads that wait in loops for specific events

@@ -25,13 +25,28 @@ public class Minecart extends Transportable {
     public Minecart(int x,int y,int z,int rawNumber, Collection<? extends Minecart> dests) {
         super(x, y, z, rawNumber, dests);
     }
+    
+    @Override public Minecart[] getDestinations() {
+        return (Minecart[]) super.getDestinations();
+    }
 
     @Override
     protected void handle(Transportable dest) throws OutOfReachException {
-        Minecart current = (Minecart) dest;
+        Minecart current = null;
+        for (Minecart m : getDestinations()) {
+            if (m.equals(dest)) {
+                current = m;
+                break;
+            }
+        }
+        if (current == null) {
+            throw new OutOfReachException(dest.getPosition(),
+                    "This Transportable cannot be reached from this Minecart");
+        }
         SceneObject cart = SceneEntities.getNearest(values);
         if (cart == null || !cart.isOnScreen()) {
-            throw new OutOfReachException(dest.getPosition(), "No cart nearby.");
+            throw new OutOfReachException(dest.getPosition(), 
+                    "No cart nearby.");
         }
         cart.click(true);
         if (dest.getDestinations().length > 1) {

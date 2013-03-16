@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package powergrid.model.interaction;
 
 import java.util.Objects;
-import org.powerbot.game.client.Client;
+import java.util.Set;
+import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.OutOfReachException;
 import powergrid.model.WorldMap;
 
@@ -18,25 +15,17 @@ import powergrid.model.WorldMap;
  */
 public abstract class Interactor<T> {
     
-    private Client client = null;
     private WorldMap map = null;
+    private RSInteractor interactor = null;
     
     /**
      * Creates a new Interactor, which uses the specified Client
      * @param theClient the Runescape client this Interactor connects to
      * @param map the WorldMap on which this Interactor works
      */
-    public Interactor(Client theClient, WorldMap map) {
-        this.client = theClient;
+    public Interactor(WorldMap map, RSInteractor i) {
         this.map = map;
-    }
-    
-    /**
-     * Returns the client that this Interactor is connected to
-     * @return the client
-     */
-    public Client getClient() {
-        return client;
+        this.interactor = i;
     }
 
     /**
@@ -45,6 +34,15 @@ public abstract class Interactor<T> {
      */
     public WorldMap getMap() {
         return map;
+    }
+    
+    /**
+     * Returns the RSInteractor that is used for interaction with the Runescape
+     * GUI.
+     * @return the RSInteractor instance
+     */
+    public RSInteractor getInteractor() {
+        return interactor;
     }
     
     /**
@@ -89,7 +87,7 @@ public abstract class Interactor<T> {
      * type.
      * @return 
      */
-    public abstract Class<?>[] getTypes();
+    public abstract Set<Class<?>> getTypes();
     
     /**
      * Returns whether this Interactor should be preferred over another.
@@ -114,27 +112,28 @@ public abstract class Interactor<T> {
      */
     public abstract boolean isMoreFavorableThan(Interactor i, T elem);
     
+    @Override public int hashCode() {
+        return 5 + 3 * Objects.hashCode(getTypes());
+    }
+    
+    /**
+     * Checks whether this Interactor is equal to another Object.
+     * <p/>
+     * This method returns true if each of the following is true:
+     * <ul>
+     *   <li>the Object is an Interactor instance</li>
+     *   <li>the Set of accepted classes contains the exact same elements for 
+     *       both this Interactor and the other Interactor</li>
+     * </ul>
+     * @param other the Object to check equality with
+     * @return whether this Interactor is equal to the given Object
+     */
     @Override public boolean equals(Object other) {
         if (other instanceof Interactor) {
             Interactor that = (Interactor) other;
-            Class<?>[] theirTypes = that.getTypes();
-            Class<?>[] myTypes = this.getTypes();
-            if (theirTypes.length != myTypes.length) {
-                return false;
-            }
-            for (Class<?> myc : getTypes()) {
-                Class<?> match = null;
-                for (Class<?> theirc : theirTypes) {
-                    if (Objects.equals(myc, theirc)) {
-                        match = theirc;
-                        break;
-                    }
-                }
-                if (match == null) {
-                    return false;
-                }
-            }
-            return true;
+            Set<Class<?>> mine = this.getTypes();
+            Set<Class<?>> theirs = that.getTypes();
+            return mine.equals(theirs);
         }
         return false;
     }

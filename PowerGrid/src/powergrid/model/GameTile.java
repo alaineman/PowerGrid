@@ -3,6 +3,9 @@ package powergrid.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import org.powerbot.game.api.wrappers.Locatable;
+import org.powerbot.game.api.wrappers.RegionOffset;
+import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSObject;
 
@@ -10,7 +13,7 @@ import org.powerbot.game.client.RSObject;
  * This class represents a Tile in the Runescape world.
  * @author Chronio
  */
-public class GameTile {
+public class GameTile implements Locatable {
     private Point position;
     private int rawNumber = -1;
     private int collFlag = 0;
@@ -208,5 +211,14 @@ public class GameTile {
             objects += "," + o.getId();
         }
         return lead + objects.substring(1) + "})";
+    }
+
+    @Deprecated
+    @Override public RegionOffset getRegionOffset() {
+        return getPosition().getRegionOffset();
+    }
+
+    @Override public Tile getLocation() {
+        return getPosition().getLocation();
     }
 }

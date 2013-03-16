@@ -16,6 +16,7 @@ import powergrid.control.Mapper;
 import powergrid.control.ScriptLoader;
 import powergrid.control.TaskManager;
 import powergrid.control.XMLToolBox;
+import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.DestinationMap;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
@@ -65,6 +66,8 @@ public class PowerGrid {
     public static final Mapper MAPPER = new Mapper();
     /** The default DestinationMap. */
     public static final DestinationMap DESTINATIONS = new DestinationMap();
+    /** The default RSInteractor. */
+    public static final RSInteractor INTERACTOR = new RSInteractor();
     
     
     /** The plugin directory, default is "plugins". */

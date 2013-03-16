@@ -8,6 +8,7 @@ import org.powerbot.game.api.wrappers.RegionOffset;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSObject;
+import powergrid.model.rsbot.RSGroundImpl;
 
 /**
  * This class represents a Tile in the Runescape world.
@@ -15,7 +16,6 @@ import org.powerbot.game.client.RSObject;
  */
 public class GameTile implements Locatable, Copyable<GameTile> {
     private Point position;
-    private int rawNumber = -1;
     private int collFlag = 0;
     private RSGround ground = null;
     
@@ -32,7 +32,7 @@ public class GameTile implements Locatable, Copyable<GameTile> {
     @Deprecated public GameTile(Point p, int rawNumber) {
         assert p != null;
         position = p;
-        this.rawNumber = rawNumber;
+        ground = new RSGroundImpl(rawNumber);
     }
     
     /**
@@ -43,6 +43,9 @@ public class GameTile implements Locatable, Copyable<GameTile> {
      */
     public GameTile(Point p, RSGround g, int collFlag) {
         assert p != null;
+        if (g == null) {
+            g = new RSGroundImpl();
+        }
         position = p;
         ground = g;
         this.collFlag = collFlag;
@@ -86,8 +89,6 @@ public class GameTile implements Locatable, Copyable<GameTile> {
      * @return an array containing the RSObjects
      */
     public RSObject[] objects() {
-        if (ground == null) 
-            return new RSObject[0];
         ArrayList<RSObject> objects = new ArrayList<>(5);
         RSObject obj;
         if ((obj = ground.getBoundary1()) != null)
@@ -116,8 +117,6 @@ public class GameTile implements Locatable, Copyable<GameTile> {
      * @return an array containing the raw values of the RSObjects
      */
     public int[] rawValues() {
-        if (getRSGround() == null) 
-            return new int[] {getRawNumber()};
         RSObject[] rsos = objects();
         int[] vals = new int[rsos.length];
         for (int i = 0; i < rsos.length; i++) {

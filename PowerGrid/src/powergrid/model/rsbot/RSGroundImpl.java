@@ -15,6 +15,8 @@ public class RSGroundImpl implements RSGround {
     private RSObject bound1,bound2,wall1,wall2,floor;
     private RSItemPile items;
 
+    public RSGroundImpl() {}
+    
     public RSGroundImpl(int rawvalue) {
         bound1 = new RSObjectImpl(rawvalue,null);
     }

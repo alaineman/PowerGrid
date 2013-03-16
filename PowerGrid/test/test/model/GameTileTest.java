@@ -14,7 +14,7 @@ import powergrid.model.Point;
 import powergrid.model.world.Wall;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GameObjectTest {
+public class GameTileTest {
     public GameTile go;
     
     @Mock public RSGround mockedGround;

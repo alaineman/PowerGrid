@@ -13,7 +13,7 @@ import org.powerbot.game.client.RSObject;
  * This class represents a Tile in the Runescape world.
  * @author Chronio
  */
-public class GameTile implements Locatable {
+public class GameTile implements Locatable, Copyable<GameTile> {
     private Point position;
     private int rawNumber = -1;
     private int collFlag = 0;
@@ -116,8 +116,8 @@ public class GameTile implements Locatable {
      * @return an array containing the raw values of the RSObjects
      */
     public int[] rawValues() {
-        if (ground == null) 
-            return new int[] {rawNumber};
+        if (getRSGround() == null) 
+            return new int[] {getRawNumber()};
         RSObject[] rsos = objects();
         int[] vals = new int[rsos.length];
         for (int i = 0; i < rsos.length; i++) {
@@ -144,7 +144,7 @@ public class GameTile implements Locatable {
      * @return whether this GameTile contains the given Wall type.
      */
     public boolean containsWall(int type) {
-        return (type & collFlag) != 0;
+        return (type & getCollisionFlag()) != 0;
     }
     
     /**
@@ -156,9 +156,9 @@ public class GameTile implements Locatable {
      * @return the raw value of a boundary on this Tile, or -1 is no boundary exists.
      */
     public int getBoundary() {
-        RSObject o = ground.getBoundary1();
+        RSObject o = getRSGround().getBoundary1();
         if (o == null)
-            o = ground.getBoundary2();
+            o = getRSGround().getBoundary2();
         if (o == null)
             return -1;
         return o.getId();
@@ -205,7 +205,8 @@ public class GameTile implements Locatable {
      * @return a String-representation of this GameTile
      */
     @Override public String toString() {
-        String lead = "GameTile@" + position + "(" + collFlag + ",{";
+        String lead = "GameTile@" + getPosition() + "(" + 
+                getCollisionFlag() + ",{";
         String objects = "";
         for (RSObject o : objects()) {
             objects += "," + o.getId();
@@ -220,5 +221,9 @@ public class GameTile implements Locatable {
 
     @Override public Tile getLocation() {
         return getPosition().getLocation();
+    }
+
+    @Override public GameTile copy() {
+        return new GameTile(getPosition(),getRSGround(),getCollisionFlag());
     }
 }

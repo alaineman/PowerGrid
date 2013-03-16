@@ -1,5 +1,6 @@
 package powergrid.model.interaction;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import powergrid.control.uicontrols.RSInteractor;
@@ -10,10 +11,9 @@ import powergrid.model.WorldMap;
  * Abstract class that defines methods that allows interaction with a certain
  * kind of object.
  * <p/>
- * @param T The type of object the Interactor handles
  * @author Chronio
  */
-public abstract class Interactor<T> {
+public abstract class Interactor {
     
     private WorldMap map = null;
     private RSInteractor interactor = null;
@@ -55,7 +55,7 @@ public abstract class Interactor<T> {
      * @param elem the element to check the actions for
      * @return an array containing the 
      */
-    public abstract Set<? extends Object> getOptions(T elem);
+    public abstract Set<?> getOptions(Object elem);
     
     /**
      * Interacts with the element using the default action.
@@ -68,7 +68,15 @@ public abstract class Interactor<T> {
      * @return whether the interaction was successful
      * @throws OutOfReachException when the element cannot be reached
      */
-    public abstract boolean interact(T elem) throws OutOfReachException;
+    public boolean interact(Object elem) throws OutOfReachException {
+        Set<?> options = getOptions(elem);
+        if (options.isEmpty()) {
+            return false;
+        } else {
+            Iterator it = options.iterator();
+            return interact(elem,it.next());
+        }
+    };
     
     /**
      * Interacts with the element using the given option.
@@ -77,7 +85,7 @@ public abstract class Interactor<T> {
      * @return whether the interaction was successful
      * @throws OutOfReachException when the element cannot be reached
      */
-    public abstract boolean interact(T elem, Object option) throws OutOfReachException;
+    public abstract boolean interact(Object elem, Object option) throws OutOfReachException;
     
     /**
      * Returns an array of all classes this Interactor can handle.
@@ -110,7 +118,7 @@ public abstract class Interactor<T> {
      * @return whether this Interactor is more suited to handling the given 
      *         object's interactions.
      */
-    public abstract boolean isMoreFavorableThan(Interactor i, T elem);
+    public abstract boolean isMoreFavorableThan(Interactor i, Object elem);
     
     @Override public int hashCode() {
         return 5 + 3 * Objects.hashCode(getTypes());

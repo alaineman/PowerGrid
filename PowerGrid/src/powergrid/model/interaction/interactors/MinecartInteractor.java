@@ -1,7 +1,6 @@
 package powergrid.model.interaction.interactors;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -15,6 +14,7 @@ import powergrid.model.WorldMap;
 import powergrid.model.world.transportation.Minecart;
 import powergrid.model.interaction.Interactor;
 import powergrid.model.interaction.TransportTile;
+import powergrid.model.interaction.network.TransportNetwork;
 import powergrid.tasks.Task;
 
 /**
@@ -22,7 +22,7 @@ import powergrid.tasks.Task;
  * <p/>
  * @author Chronio
  */
-public class MinecartInteractor extends Interactor<Minecart> {
+public class MinecartInteractor extends Interactor {
 
     /**
      * Creates a new MinecartInteractor that uses the specified information to
@@ -36,10 +36,19 @@ public class MinecartInteractor extends Interactor<Minecart> {
         super(map,interactor);
     }
     
-    @Override public Set<Minecart> getOptions(Minecart elem) {
-        if (elem == null) {
+    private Minecart verify(Object o) {
+        if (o instanceof Minecart) {
+            return (Minecart) o;
+        } else {
+            throw new IllegalArgumentException("Invalid object type");
+        }
+    }
+    
+    @Override public Set<Minecart> getOptions(Object o) {
+        if (o == null) {
             return new HashSet<>(2);
         } else {
+            Minecart elem = verify(o);
             Set<TransportTile> elems = elem.getNetwork().getElements();
             HashSet<Minecart> res = new HashSet<>((int)(1.5*elems.size()));
             for (TransportTile t : elems) {
@@ -51,26 +60,14 @@ public class MinecartInteractor extends Interactor<Minecart> {
         }
     }
 
-    @Override public boolean interact(Minecart elem) 
+    @Override public boolean interact(Object o, Object destination) 
             throws OutOfReachException {
-        Set<Minecart> dests = getOptions(elem);
-        Iterator<Minecart> i = dests.iterator();
-        if (i.hasNext()) {
-            return travel(elem,i.next());
-        } else {
-            return false;
-        }
-    }
-
-    @Override public boolean interact(Minecart elem, Object destination) 
-            throws OutOfReachException {
-        if (destination == null || !(destination instanceof Minecart)) {
-            return false;
-        }
-        Minecart dest = (Minecart) destination;
-        Set<TransportTile> dests = elem.getNetwork().getElements();
+        Minecart elem = verify(o);
+        Minecart dest = verify(destination);
+        TransportNetwork nw = elem.getNetwork();
+        Set<TransportTile> dests = nw.getElements();
         for (TransportTile t : dests) {
-            if (t.equals(dest) && travel(elem,dest)) {
+            if (t.equals(dest) && travelPath(elem,nw.findPath(elem, t))) {
                 return true;
             }
         }
@@ -83,19 +80,19 @@ public class MinecartInteractor extends Interactor<Minecart> {
         return res;
     }
 
-    @Override public boolean isMoreFavorableThan(Interactor i, Minecart elem) {
+    @Override public boolean isMoreFavorableThan(Interactor i, Object o) {
         return false;
     }
     
-    private boolean travelPath(Minecart start, List<Minecart> path) {
+    private boolean travelPath(Minecart start, List<TransportTile> path) {
         if (path.isEmpty()) {
             return true;
         }
-        ListIterator<Minecart> li = path.listIterator();
+        ListIterator<TransportTile> li = path.listIterator();
         Minecart current = start;
         Minecart next;
         while (li.hasNext()) {
-            next = li.next();
+            next = verify(li.next());
             travel(current,next);
             current = next;
         }

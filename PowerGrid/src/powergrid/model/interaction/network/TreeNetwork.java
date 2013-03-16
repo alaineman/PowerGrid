@@ -3,10 +3,11 @@ package powergrid.model.interaction.network;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import powergrid.model.interact.Transportable;
+import java.util.Set;
+import powergrid.model.interaction.TransportTile;
 
 /**
- * This class represents a network of Transportables where the Transportables 
+ * This class represents a network of Transport Tiles where the Tiles 
  * and the links between them act as a tree.
  * <p/>
  * This network type is preferred when the layout is like a tree, since the 
@@ -16,13 +17,13 @@ import powergrid.model.interact.Transportable;
  */
 public class TreeNetwork implements TransportNetwork {
 
-    private TreeNode<Transportable> root = null;
+    private TreeNode<TransportTile> root = null;
     
     /**
      * Creates a new TreeNetwork with the given element as root.
      * @param rootElement the root of the TreeNetwork
      */
-    public TreeNetwork(Transportable rootElement) {
+    public TreeNetwork(TransportTile rootElement) {
         root = new TreeNode<>(rootElement);
     }
     
@@ -33,14 +34,14 @@ public class TreeNetwork implements TransportNetwork {
      * This possibly overwrites an existing parent-child relation, since 
      * TreeNodes can only have one parent.
      * <p/>
-     * @param parent the parent Transportable
-     * @param child the child Transportable
+     * @param parent the parent TransportTile
+     * @param child the child TransportTile
      * @return whether the operation was succesful.
      */
-    public boolean makeConnection(Transportable parent, Transportable child) {
-        TreeNode<Transportable> pNode = root.find(parent);
+    public boolean makeConnection(TransportTile parent, TransportTile child) {
+        TreeNode<TransportTile> pNode = root.find(parent);
         if (pNode != null) {
-            TreeNode<Transportable> cNode = root.find(child);
+            TreeNode<TransportTile> cNode = root.find(child);
             if (cNode == null) cNode = new TreeNode(child);
             pNode.addChild(cNode);
             return true;
@@ -52,7 +53,7 @@ public class TreeNetwork implements TransportNetwork {
      * Returns the root TreeNode of this TreeNetwork
      * @return this TreeNetwork's root
      */
-    public TreeNode<Transportable> getRoot() {
+    public TreeNode<TransportTile> getRoot() {
         return root;
     }
     
@@ -61,17 +62,17 @@ public class TreeNetwork implements TransportNetwork {
      * @param element the element to find
      * @return whether the Tree contains the given element.
      */
-    @Override public boolean contains(Transportable element) {
+    @Override public boolean contains(TransportTile element) {
         return root.contains(element);
     }
 
     /**
-     * Adds the given Transportable to this TreeNode's root if and only if the 
-     * Tree did not yet contain the given Transportable
+     * Adds the given TransportTile to this TreeNode's root if and only if the 
+     * Tree did not yet contain the given TransportTile
      * @param element the element to add
      * @return whether the element was created and added to the root.
      */
-    @Override public boolean add(Transportable element) {
+    @Override public boolean add(TransportTile element) {
         if (root.find(element) != null) return false;
         else return (root.add(element) != null);
     }
@@ -81,8 +82,8 @@ public class TreeNetwork implements TransportNetwork {
      * @param element the element to remove
      * @return true if the operation was succesful
      */
-    @Override public boolean remove(Transportable element) {
-        TreeNode<Transportable> node = root.find(element);
+    @Override public boolean remove(TransportTile element) {
+        TreeNode<TransportTile> node = root.find(element);
         if (node == null || !node.hasParent()) 
             return false;
         return node.getParent().removeChild(node);
@@ -106,15 +107,15 @@ public class TreeNetwork implements TransportNetwork {
      * @param destination the end point
      * @return the path through the tree between source and destination
      */
-    @Override public List<Transportable> findPath(Transportable source, Transportable destination) {
-        TreeNode<Transportable> sNode = root.find(source);
-        TreeNode<Transportable> dNode = root.find(destination);
+    @Override public List<TransportTile> findPath(TransportTile source, TransportTile destination) {
+        TreeNode<TransportTile> sNode = root.find(source);
+        TreeNode<TransportTile> dNode = root.find(destination);
         if (sNode == null || dNode == null) return null;
-        List<TreeNode<Transportable>> sList = sNode.parents();
-        List<TreeNode<Transportable>> dList = dNode.parents();
+        List<TreeNode<TransportTile>> sList = sNode.parents();
+        List<TreeNode<TransportTile>> dList = dNode.parents();
         int dSize = dList.size();
         int sSize = sList.size();
-        TreeNode<Transportable> commonNode = root;
+        TreeNode<TransportTile> commonNode = root;
         for (int i=1;i<=Math.min(sSize, dSize);i++) {
             if (dList.get(dSize-i).equals(sList.get(sSize-i))) {
                 commonNode = dList.get(dSize-i);
@@ -127,12 +128,15 @@ public class TreeNetwork implements TransportNetwork {
         sList.add(commonNode);
         Collections.reverse(dList);
         sList.addAll(dList);
-        ArrayList<Transportable> result = new ArrayList<>(sList.size());
-        for (TreeNode<Transportable> tn : sList) {
+        ArrayList<TransportTile> result = new ArrayList<>(sList.size());
+        for (TreeNode<TransportTile> tn : sList) {
             result.add(tn.element());
         }
         result.add(destination);
         return result;
     }
     
+    @Override public Set<TransportTile> getElements() {
+        return null;
+    }
 }

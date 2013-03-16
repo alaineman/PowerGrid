@@ -12,7 +12,6 @@ import powergrid.PowerGrid;
 import powergrid.control.XMLToolBox;
 import powergrid.model.Point;
 import powergrid.model.XMLNode;
-import powergrid.model.interact.Transportable;
 
 /**
  * This class deals with setting up the interaction handlers and teleport 
@@ -51,7 +50,7 @@ public class InteractionFactory {
     }
     
     private TreeNetwork setUpServerClient(XMLNode type) {
-        Class<? extends Transportable> clazz = getClass(type);
+        Class<? extends TransportTile> clazz = getClass(type);
         if (clazz == null) return null;
         XMLNode serverNode = null;
         ArrayList<XMLNode> clients = new ArrayList<>(type.children().size());
@@ -67,9 +66,14 @@ public class InteractionFactory {
                 clients.add(n);
             }
         }
-        Transportable server;
+        TransportTile server;
         try {
-            Point p = new Point(serverNode.getOrElse("pos", "(0,0)"));
+            Point p;
+            if (serverNode == null) {
+                p = new Point();
+            } else {
+                p = new Point(serverNode.getOrElse("pos", "(0,0)"));
+            }
             server = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             return null;
@@ -80,7 +84,7 @@ public class InteractionFactory {
         for (XMLNode n : clients) {
             Point p = new Point(n.getOrElse("pos", "(0,0)"));
             try {
-                Transportable t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
+                TransportTile t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
                 network.add(t);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 PowerGrid.logMessage("Could not instantiate transportable at " + p,e);
@@ -90,7 +94,7 @@ public class InteractionFactory {
         return network;
     }
     
-    private Class<? extends Transportable> getClass(XMLNode type) {
+    private Class<? extends TransportTile> getClass(XMLNode type) {
         assert type != null;
         String packageName = "powergrid.model.interact";
         if (type.get("manifold") != null)
@@ -99,8 +103,8 @@ public class InteractionFactory {
         String name = packageName + "." + className;
         try {
             Class<?> clazz = Class.forName(name);
-            if (Transportable.class.isAssignableFrom(clazz)) {
-                return clazz.asSubclass(Transportable.class);
+            if (TransportTile.class.isAssignableFrom(clazz)) {
+                return clazz.asSubclass(TransportTile.class);
             }
         } catch (ClassNotFoundException e) {
             PowerGrid.logMessage("The specified interaction type is not recognized: \"" + name + "\"", e);
@@ -110,13 +114,13 @@ public class InteractionFactory {
     }
     
     private PeerNetwork setUpPeers(XMLNode type) {
-        Class<? extends Transportable> clazz = getClass(type);
+        Class<? extends TransportTile> clazz = getClass(type);
         if (clazz == null) return null;
         PeerNetwork network = new PeerNetwork();
         for (XMLNode node : type) {
             Point p = new Point(node.getOrElse("pos", "(0,0)"));
             try {
-                Transportable t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
+                TransportTile t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
                 network.add(t);
             } catch (InvocationTargetException | InstantiationException | 
                     IllegalAccessException | NoSuchMethodException e) {

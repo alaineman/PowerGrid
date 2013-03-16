@@ -11,7 +11,7 @@ import powergrid.model.OutOfReachException;
 import powergrid.model.interact.Transportable;
 
 /**
- *
+ * 
  * @author Alaineman
  */
 public class Minecart extends Transportable {

@@ -55,7 +55,7 @@ public abstract class Interactor<T> {
      * @param elem the element to check the actions for
      * @return an array containing the 
      */
-    public abstract Object[] getOptions(T elem);
+    public abstract Set<? extends Object> getOptions(T elem);
     
     /**
      * Interacts with the element using the default action.
@@ -136,5 +136,18 @@ public abstract class Interactor<T> {
             return mine.equals(theirs);
         }
         return false;
+    }
+    
+    @Override public String toString() {
+        String lead = getClass().getSimpleName() + "(";
+        Set<Class<?>> types = getTypes();
+        if (types.isEmpty()) {
+            return lead + "empty)";
+        }
+        String classes = "";
+        for (Class c : types) {
+            classes += "," + c.getSimpleName();
+        }
+        return lead + classes.substring(1) + ")";
     }
 }

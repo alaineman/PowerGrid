@@ -1,10 +1,10 @@
 package powergrid.model.interaction.network;
 
-import powergrid.model.interaction.network.TransportNetwork;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import powergrid.model.interact.Transportable;
+import java.util.Set;
+import powergrid.model.interaction.TransportTile;
 
 /**
  * This TransportNetwork represents a network in which all elements are interconnected.
@@ -21,7 +21,7 @@ import powergrid.model.interact.Transportable;
  */
 public class PeerNetwork implements TransportNetwork {
 
-    private HashSet<Transportable> elements;
+    private HashSet<TransportTile> elements;
     
     /**
      * Creates a new PeerNetwork with a initial capacity of 16.
@@ -42,7 +42,7 @@ public class PeerNetwork implements TransportNetwork {
      * @param element the element to look up
      * @return true if this PeerNetwork contains the given element, false otherwise.
      */
-    @Override public boolean contains(Transportable element) {
+    @Override public boolean contains(TransportTile element) {
         return elements.contains(element);
     }
 
@@ -51,7 +51,7 @@ public class PeerNetwork implements TransportNetwork {
      * @param element the element to add
      * @return true if the PeerNetwork did not yet contain this element and has now been added.
      */
-    @Override public boolean add(Transportable element) {
+    @Override public boolean add(TransportTile element) {
         if (elements.contains(element))
             return false;
         return elements.add(element);
@@ -62,7 +62,7 @@ public class PeerNetwork implements TransportNetwork {
      * @param element the element to remove
      * @return true if the PeerNetwork contained the element and it has now been removed, false otherwise
      */
-    @Override public boolean remove(Transportable element) {
+    @Override public boolean remove(TransportTile element) {
         return elements.remove(element);
     }
 
@@ -81,12 +81,16 @@ public class PeerNetwork implements TransportNetwork {
      * @param destination the destination Transportable
      * @return the path from source to destination, or null if no path exists.
      */
-    @Override public List<Transportable> findPath(Transportable source, Transportable destination) {
+    @Override public List<TransportTile> findPath(TransportTile source, TransportTile destination) {
         if (elements.contains(source) && elements.contains(destination)) {
-            List<Transportable> list = new ArrayList<>(1);
+            List<TransportTile> list = new ArrayList<>(1);
             list.add(destination);
             return list;
         } else 
             return null;
+    }
+    
+    @Override public Set<TransportTile> getElements() {
+        return new HashSet<>(elements);
     }
 }

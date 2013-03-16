@@ -1,6 +1,7 @@
 package powergrid.model.interaction.interactors;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.interactive.Player;
@@ -9,15 +10,14 @@ import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.OutOfReachException;
 import powergrid.model.WorldMap;
-import powergrid.model.interact.Transportable;
-import powergrid.model.interact.handlers.manifold.Minecart;
+import powergrid.model.world.transportation.Minecart;
 import powergrid.model.interaction.Interactor;
+import powergrid.model.interaction.TransportTile;
 import powergrid.tasks.Task;
 
 /**
  * Interactor for Minecarts.
  * <p/>
- * 
  * @author Chronio
  */
 public class MinecartInteractor extends Interactor<Minecart> {
@@ -34,19 +34,27 @@ public class MinecartInteractor extends Interactor<Minecart> {
         super(map,interactor);
     }
     
-    @Override public Transportable[] getOptions(Minecart elem) {
+    @Override public Set<Minecart> getOptions(Minecart elem) {
         if (elem == null) {
-            return new Transportable[0];
+            return new HashSet<>(2);
         } else {
-            return elem.getDestinations();
+            Set<TransportTile> elems = elem.getNetwork().getElements();
+            HashSet<Minecart> res = new HashSet<>((int)(1.5*elems.size()));
+            for (TransportTile t : elems) {
+                if (t instanceof Minecart) {
+                    res.add((Minecart) t);
+                }
+            }
+            return res;
         }
     }
 
     @Override public boolean interact(Minecart elem) 
             throws OutOfReachException {
-        Transportable[] dests = getOptions(elem);
-        if (dests.length > 0 && dests[0] instanceof Minecart) {
-            return travel(elem, (Minecart) dests[0]);
+        Set<Minecart> dests = getOptions(elem);
+        Iterator<Minecart> i = dests.iterator();
+        if (i.hasNext()) {
+            return travel(elem,i.next());
         } else {
             return false;
         }
@@ -58,8 +66,8 @@ public class MinecartInteractor extends Interactor<Minecart> {
             return false;
         }
         Minecart dest = (Minecart) destination;
-        Transportable[] dests = elem.getDestinations();
-        for (Transportable t : dests) {
+        Set<TransportTile> dests = elem.getNetwork().getElements();
+        for (TransportTile t : dests) {
             if (t.equals(dest) && travel(elem,dest)) {
                 return true;
             }
@@ -78,28 +86,26 @@ public class MinecartInteractor extends Interactor<Minecart> {
     }
     
     private boolean travel(Minecart start, Minecart goal) {
-        int widgetNum = goal.getWidgetNumber();
-        if (widgetNum == -1) {
-            return false;
+        int widgetNum = -1; //TODO getWidgetNum()
+        if (widgetNum != -1) {
+            RSInteractor i = getInteractor();
+            Tile startTile = start.getPosition().toTile();
+            if (startTile.isOnScreen()) {
+                i.click(start);
+                Widget w = i.getWidget(889);
+                long startTime = System.currentTimeMillis();
+                while (System.currentTimeMillis() >= startTime+4000 && !w.validate()) {
+                    Task.sleep(15,35);
+                }
+                if (i.getWidget(889).validate()) {
+                    WidgetChild wc = w.getChild(widgetNum);
+                    i.click(wc);
+                    waitForComplete();
+                    return true;
+                }
+            }
         }
-        RSInteractor i = getInteractor();
-        Tile startTile = start.getPosition().toTile();
-        if (!startTile.isOnScreen()) {
-            return false;
-        }
-        i.click(start);
-        Widget w = i.getWidget(889);
-        long startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() >= startTime+4000 && !w.validate()) {
-            Task.sleep(15,35);
-        }
-        if (!i.getWidget(889).validate()) {
-            return false;
-        }
-        WidgetChild wc = w.getChild(widgetNum);
-        i.click(wc);
-        waitForComplete();
-        return true;
+        return false;
     }
     
     private void waitForComplete() {

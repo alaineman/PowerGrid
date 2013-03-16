@@ -1,10 +1,10 @@
-package powergrid.model.interaction.network;
+package powergrid.model.network;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import powergrid.model.interaction.TransportTile;
+import powergrid.model.TransportTile;
 
 /**
  * This class represents a network of Transport Tiles where the Tiles 

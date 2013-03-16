@@ -1,4 +1,4 @@
-package powergrid.model.interaction;
+package powergrid.control.interaction;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -114,11 +114,11 @@ public abstract class Interactor {
      * equal and the one chosen to perform the interaction is undefined.
      * <p/>
      * @param i the other Interactor
-     * @param elem the object for which 
-     * @return whether this Interactor is more suited to handling the given 
-     *         object's interactions.
+     * @param c the Class for which to check
+     * @return whether this Interactor is more suited to handling interactions 
+     *         for the given class.
      */
-    public abstract boolean isMoreFavorableThan(Interactor i, Object elem);
+    public abstract boolean isMoreFavorableThan(Interactor i, Class<?> c);
     
     @Override public int hashCode() {
         return 5 + 3 * Objects.hashCode(getTypes());

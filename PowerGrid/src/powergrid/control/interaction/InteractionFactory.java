@@ -1,8 +1,9 @@
-package powergrid.model.interaction;
+package powergrid.control.interaction;
 
-import powergrid.model.interaction.network.PeerNetwork;
-import powergrid.model.interaction.network.TransportNetwork;
-import powergrid.model.interaction.network.TreeNetwork;
+import powergrid.model.TransportTile;
+import powergrid.model.network.PeerNetwork;
+import powergrid.model.network.TransportNetwork;
+import powergrid.model.network.TreeNetwork;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

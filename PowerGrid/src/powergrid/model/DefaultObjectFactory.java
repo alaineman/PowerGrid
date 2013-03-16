@@ -5,7 +5,7 @@ import org.powerbot.game.client.RSGround;
 /**
  * Default factory class for GameObjects.
  * <p/>
- * This class can be subclassed to provide factories for GameTile subclasses.
+ * This class can be extended to provide factories for GameTile subclasses.
  * <p/>
  * @author Chronio
  */

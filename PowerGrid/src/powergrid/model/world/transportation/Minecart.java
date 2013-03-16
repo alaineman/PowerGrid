@@ -2,7 +2,7 @@ package powergrid.model.world.transportation;
 
 import org.powerbot.game.client.RSGround;
 import powergrid.model.Point;
-import powergrid.model.interaction.TransportTile;
+import powergrid.model.TransportTile;
 
 /**
  * Represents a Minecart Tile in the Runescape environment.

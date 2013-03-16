@@ -1,9 +1,9 @@
-package powergrid.model.interaction;
+package powergrid.model;
 
 import org.powerbot.game.client.RSGround;
 import powergrid.model.GameTile;
 import powergrid.model.Point;
-import powergrid.model.interaction.network.TransportNetwork;
+import powergrid.model.network.TransportNetwork;
 
 /**
  * Represents a GameTile that contains an object that can be used as 

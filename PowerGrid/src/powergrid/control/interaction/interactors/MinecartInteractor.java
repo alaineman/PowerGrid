@@ -1,4 +1,4 @@
-package powergrid.model.interaction.interactors;
+package powergrid.control.interaction.interactors;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,9 +12,9 @@ import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.OutOfReachException;
 import powergrid.model.WorldMap;
 import powergrid.model.world.transportation.Minecart;
-import powergrid.model.interaction.Interactor;
-import powergrid.model.interaction.TransportTile;
-import powergrid.model.interaction.network.TransportNetwork;
+import powergrid.control.interaction.Interactor;
+import powergrid.model.TransportTile;
+import powergrid.model.network.TransportNetwork;
 import powergrid.tasks.Task;
 
 /**
@@ -80,7 +80,7 @@ public class MinecartInteractor extends Interactor {
         return res;
     }
 
-    @Override public boolean isMoreFavorableThan(Interactor i, Object o) {
+    @Override public boolean isMoreFavorableThan(Interactor i, Class<?> o) {
         return false;
     }
     

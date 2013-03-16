@@ -12,6 +12,8 @@
             </test-roots>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>Interactor</word>
+            <word>Interactors</word>
             <word>Minecart</word>
             <word>scripters</word>
         </spellchecker-wordlist>

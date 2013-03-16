@@ -39,13 +39,13 @@ public class BotTest {
     @Test public void testTravelToPoint() {
         Point p = new Point(6,8);
         bot.travelTo(p, 0);
-        verify(mockedTaskManager).assignTask(new TravelTask(p,0));
+        verify(mockedTaskManager).assignTask(new TravelTask(p,Task.MEDIUM));
     }
     
     @Test public void testTravelToDestination() {
         Destination d = new Destination("TestDestination", new Point(6,2));
-        bot.travelTo(d, 0);
-        verify(mockedTaskManager).assignTask(new TravelTask(d,0));
+        bot.travelTo(d, 500);
+        verify(mockedTaskManager).assignTask(new TravelTask(d,500));
     }
     
     @Test public void testTravelToPointWithPriority() {
@@ -57,8 +57,8 @@ public class BotTest {
     }
     
     @Test public void testAssignRestTask() {
-        bot.rest(3, true);
-        verify(mockedTaskManager).assignTask(new RestTask(3,true));
+        bot.rest(300, true);
+        verify(mockedTaskManager).assignTask(new RestTask(300,true));
     }
     
     @Test public void testGetStateUnknown() {

@@ -16,7 +16,18 @@ package powergrid.tasks;
  * @author Chronio
  */
 public abstract class Task implements Comparable<Task> {
-    private int priority = 0;
+    
+    public static final int URGENT = 900;
+    public static final int HIGHEST = 800;
+    public static final int HIGHER = 700;
+    public static final int HIGH = 600;
+    public static final int MEDIUM = 500;
+    public static final int LOW = 400;
+    public static final int LOWER = 300;
+    public static final int LOWEST = 200;
+    public static final int BACKGROUND = 100;
+    
+    private int priority = 500;
     private String name = "Generic Task";
     
     /**
@@ -36,7 +47,7 @@ public abstract class Task implements Comparable<Task> {
      * @param name the name of the Task
      */
     public Task(String name) {
-        this(0,name);
+        this(MEDIUM,name);
     }
     
     /**

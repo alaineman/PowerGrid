@@ -20,6 +20,7 @@ import powergrid.model.WorldMap;
 import powergrid.model.XMLNode;
 import powergrid.model.interact.Interactable;
 import powergrid.model.world.Wall;
+import powergrid.tasks.Task;
 import powergrid.tasks.TravelTask;
 
 /**
@@ -246,7 +247,7 @@ public class MapViewer extends Canvas implements ActionListener {
                     p.y += r.y;
                     Point dest = new Point(p.x,p.y);
                     PowerGrid.TM.clear();
-                    PowerGrid.TM.assignTask(new TravelTask(dest,0));
+                    PowerGrid.TM.assignTask(new TravelTask(dest,Task.MEDIUM));
                 }
             }
         });

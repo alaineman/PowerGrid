@@ -13,6 +13,7 @@ import powergrid.control.interaction.InteractionController;
 import powergrid.control.interaction.Interactor;
 import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
+import powergrid.model.Point;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InteractionControllerTest {
@@ -84,5 +85,12 @@ public class InteractionControllerTest {
     @Test public void testNoInteractor() throws OutOfReachException {
         assertNull(ic.findInteractor(Object.class));
         assertFalse(ic.interact(new Object()));
+    }
+    
+    @Test public void testInteractWithSubclass() throws OutOfReachException {
+        ic.addInteractor(mockedInteractor);
+        Point p = new Point();
+        assertTrue(ic.interact(p));
+        verify(mockedInteractor).interact(p);
     }
 }

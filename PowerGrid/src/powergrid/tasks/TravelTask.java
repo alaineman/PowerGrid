@@ -52,11 +52,11 @@ public class TravelTask extends StepTask {
      * @param destination the point this TravelTask travels to
      */
     public TravelTask(Point destination) {
-        this(destination, 0);
+        this(destination, MEDIUM);
     }
 
     public TravelTask() {
-        super(0);
+        super(MEDIUM);
     }
 
     public synchronized void setDestination(Point dest) {

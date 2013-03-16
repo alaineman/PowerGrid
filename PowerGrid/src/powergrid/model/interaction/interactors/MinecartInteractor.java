@@ -2,6 +2,8 @@ package powergrid.model.interaction.interactors;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.interactive.Player;
@@ -83,6 +85,21 @@ public class MinecartInteractor extends Interactor<Minecart> {
 
     @Override public boolean isMoreFavorableThan(Interactor i, Minecart elem) {
         return false;
+    }
+    
+    private boolean travelPath(Minecart start, List<Minecart> path) {
+        if (path.isEmpty()) {
+            return true;
+        }
+        ListIterator<Minecart> li = path.listIterator();
+        Minecart current = start;
+        Minecart next;
+        while (li.hasNext()) {
+            next = li.next();
+            travel(current,next);
+            current = next;
+        }
+        return true;
     }
     
     private boolean travel(Minecart start, Minecart goal) {

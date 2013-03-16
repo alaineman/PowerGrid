@@ -40,22 +40,21 @@ public class InteractionController {
         }
         boolean used = false;
         for (Class c : i.getTypes()) {
-            if (!c.equals(Object.class)) {
-                Interactor original = types.get(c);
-                if (original == null) {
-                    // update when no Interactor exists yet
+            Interactor original = types.get(c);
+            if (original == null) {
+                // update when no Interactor exists yet
+                used = true;
+                types.put(c,i);
+            } else {
+                boolean preferOld = original.isMoreFavorableThan(i, c);
+                boolean preferNew = i.isMoreFavorableThan(original, c);
+                // update when prefer new, or don't care
+                if ((!preferOld && preferNew) || (preferOld == preferNew)) {
                     used = true;
-                    types.put(c,i);
-                } else {
-                    boolean preferOld = original.isMoreFavorableThan(i, c);
-                    boolean preferNew = i.isMoreFavorableThan(original, c);
-                    // update when prefer new, or don't care
-                    if ((!preferOld && preferNew) || (preferOld == preferNew)) {
-                        used = true;
-                        types.put(c, i);
-                    }
+                    types.put(c, i);
                 }
             }
+            
         }
         return used;
     }
@@ -113,13 +112,13 @@ public class InteractionController {
                 }
             }
             c = c.getSuperclass();
-            do {
+            while (c != null) {
                 in = types.get(c);
                 if (in != null) {
                     return in;
                 }
                 c = c.getSuperclass();
-            } while (c != null);
+            }
         } else {
             return in;
         }

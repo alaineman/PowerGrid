@@ -1,5 +1,0 @@
-1. animation
-2. message
-3. tile transportation (advanced)
-4. hp control.
-5. behavior response (extremely advanced)

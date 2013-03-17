@@ -24,6 +24,10 @@ public class InteractionFactory {
     
     private HashMap<String,TransportNetwork> networks = new HashMap<>();
     
+    /**
+     * Loads Transportation data from the given InputStream.
+     * @param source the InputStream to load from.
+     */
     public void loadConnections(InputStream source) {
         assert source != null;
         XMLNode data = XMLToolBox.getXMLTree(source);
@@ -40,16 +44,31 @@ public class InteractionFactory {
         }
     }
     
+    /**
+     * Returns the TransportNetwork for the given Transportation type.
+     * @param type the Transportation type
+     * @return the TransportNetwork for the Transportation type, or null if it 
+     *         does not exist.
+     */
     public TransportNetwork getInteractions(String type) {
         TransportNetwork nw = networks.get(type);
         if (nw != null) return nw;
         else throw new IllegalArgumentException("Unknown transport type: " + type);
     }
     
+    /**
+     * Returns a Collection containing all loaded TransportNetworks.
+     * @return a Collection containing all loaded TransportNetworks
+     */
     public Collection<TransportNetwork> getLoadedNetworks() {
         return networks.values();
     }
     
+    /**
+     * Sets up a TransportNetwork shaped like a Tree.
+     * @param type the XMLNode defining the Tree's connections
+     * @return the TransportNetwork represented by the given XMLNode.
+     */
     private TreeNetwork setUpServerClient(XMLNode type) {
         Class<? extends TransportTile> clazz = getClass(type);
         if (clazz == null) return null;
@@ -95,6 +114,11 @@ public class InteractionFactory {
         return network;
     }
     
+    /**
+     * Returns the Class Object belonging to the XMLNode's contents.
+     * @param type the XMLNode to look up the Class Object for.
+     * @return the Class Object that the XMLNode references, if any.
+     */
     private Class<? extends TransportTile> getClass(XMLNode type) {
         assert type != null;
         String packageName = "powergrid.model.interact";
@@ -114,6 +138,11 @@ public class InteractionFactory {
         return null;
     }
     
+    /**
+     * Creates and returns a PeerNetwork from the given XMLNode.
+     * @param type the XMLNode acting as the source
+     * @return the PeerNetwork defined by the XMLNode
+     */
     private PeerNetwork setUpPeers(XMLNode type) {
         Class<? extends TransportTile> clazz = getClass(type);
         if (clazz == null) return null;

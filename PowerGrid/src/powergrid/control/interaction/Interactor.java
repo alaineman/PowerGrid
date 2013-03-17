@@ -52,8 +52,13 @@ public abstract class Interactor {
      * This does not have to be equal to the possible actions in the Runescape
      * environment, it simply means this Interactor can handle the operation.
      * <p/>
+     * This method may throw an IllegalArgumentException when the provided 
+     * Object is not supported.
+     * <p/>
      * @param elem the element to check the actions for
-     * @return an array containing the 
+     * @return an array containing the options for the provided Object
+     * @throws IllegalArgumentException when the Interactor does not provide
+     *                                  support for the provided Object.
      */
     public abstract Set<?> getOptions(Object elem);
     

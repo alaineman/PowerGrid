@@ -12,9 +12,12 @@
             </test-roots>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>InteractionController</word>
+            <word>InteractionFactory</word>
             <word>Interactor</word>
             <word>Interactors</word>
             <word>Minecart</word>
+            <word>Runescape</word>
             <word>scripters</word>
         </spellchecker-wordlist>
     </configuration>

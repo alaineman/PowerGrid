@@ -36,32 +36,59 @@ public class MinecartInteractor extends Interactor {
         super(map,interactor);
     }
     
+    /**
+     * Verifies that the provided Object is a Minecart Object and automatically
+     * casts it to Minecart.
+     * <p/>
+     * An IllegalArgumentException is thrown when the provided Object is no
+     * Minecart.
+     * @param o the Object to verify and cast
+     * @return the provided Object, cast to Minecart
+     * @throws IllegalArgumentException when the Object is no Minecart
+     */
     private Minecart verify(Object o) {
         if (o instanceof Minecart) {
             return (Minecart) o;
         } else {
-            throw new IllegalArgumentException("Invalid object type");
+            throw new IllegalArgumentException(
+                    "Invalid object type: not a Minecart instance");
         }
     }
     
+    /**
+     * Returns the a Set of the elements in the given Object's TransportNetwork,
+     * if the provided Object is a Minecart instance.
+     * <p/>
+     * If the provided Object is not a Minecart instance, this method throws an
+     * IllegalArgumentException.
+     * <p/>
+     * @param o the Object to look up the options for
+     * @return the Set of available options for the provided Object
+     */
     @Override public Set<Minecart> getOptions(Object o) {
-        if (o == null) {
-            return new HashSet<>(2);
-        } else {
-            Minecart elem = verify(o);
-            Set<TransportTile> elems = elem.getNetwork().getElements();
-            HashSet<Minecart> res = new HashSet<>((int)(1.5*elems.size()));
-            for (TransportTile t : elems) {
-                if (t instanceof Minecart) {
-                    res.add((Minecart) t);
-                }
+        Minecart elem = verify(o);
+        Set<TransportTile> elems = elem.getNetwork().getElements();
+        HashSet<Minecart> res = new HashSet<>((int)(1.5*elems.size()));
+        for (TransportTile t : elems) {
+            if (t instanceof Minecart) {
+                res.add((Minecart) t);
             }
-            return res;
         }
+        return res;
     }
 
-    @Override public boolean interact(Object o, Object destination) 
-            throws OutOfReachException {
+    /**
+     * Interacts with the Minecart to travel to the provided destination.
+     * <p/>
+     * When the destination is not on the same network, this method returns 
+     * false. Otherwise, a path is calculated using the findPath method of the 
+     * Object's TransportNetwork. Then, that path is executed step by step.
+     * @param o the Object to interact with
+     * @param destination the destination of the Minecart transportation.
+     * @return true if the operation was successful, or false if the interaction
+     *         failed.
+     */
+    @Override public boolean interact(Object o, Object destination) {
         Minecart elem = verify(o);
         Minecart dest = verify(destination);
         TransportNetwork nw = elem.getNetwork();
@@ -74,12 +101,26 @@ public class MinecartInteractor extends Interactor {
         return false;
     }
 
+    /**
+     * Returns a Set containing the Minecart class object.
+     * @return a Set containing the Minecart class object
+     */
     @Override public Set<Class<?>> getTypes() {
         HashSet<Class<?>> res = new HashSet<>(3);
         res.add(Minecart.class);
         return res;
     }
 
+    /**
+     * Returns if this Interactor is more favorable than the provided 
+     * Interactor to handle Objects of the given Class.
+     * <p/>
+     * This method returns false to allow other Interactors to take over the 
+     * responsibility to handle Minecart Objects.
+     * @param i the Interactor to compare with
+     * @param o the Object Class to compare for
+     * @return false
+     */
     @Override public boolean isMoreFavorableThan(Interactor i, Class<?> o) {
         return false;
     }

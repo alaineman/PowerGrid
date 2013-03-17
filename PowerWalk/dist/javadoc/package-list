@@ -1,0 +1,12 @@
+powerwalk
+powerwalk.control
+powerwalk.control.noticeboard
+powerwalk.model
+powerwalk.model.interact
+powerwalk.model.interact.handlers
+powerwalk.model.interact.handlers.manifold
+powerwalk.model.world
+powerwalk.model.world.resources
+powerwalk.tasks
+powerwalk.view
+test

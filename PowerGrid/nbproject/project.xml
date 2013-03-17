@@ -17,8 +17,11 @@
             <word>Interactor</word>
             <word>Interactors</word>
             <word>Minecart</word>
+            <word>RSBot</word>
+            <word>RSInteractor</word>
             <word>Runescape</word>
             <word>scripters</word>
+            <word>UI</word>
         </spellchecker-wordlist>
     </configuration>
 </project>

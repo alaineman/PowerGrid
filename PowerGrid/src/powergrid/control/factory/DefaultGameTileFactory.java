@@ -1,15 +1,20 @@
-package powergrid.model;
+package powergrid.control.factory;
 
 import org.powerbot.game.client.RSGround;
+import powergrid.model.GameTile;
+import powergrid.model.Point;
 
 /**
  * Default factory class for GameObjects.
  * <p/>
  * This class can be extended to provide factories for GameTile subclasses.
+ * Please do be aware that, since the accept method might be invoked often, that 
+ * subclasses that override this method (which they should), make the method 
+ * return the correct result as soon as possible to avoid delay in the Mapping.
  * <p/>
  * @author Chronio
  */
-public class DefaultObjectFactory {
+public class DefaultGameTileFactory {
     
     /**
      * Returns whether this factory can create a GameTile with the specified 
@@ -34,6 +39,10 @@ public class DefaultObjectFactory {
      * @return a GameTile constructed from the given data
      */
     public GameTile create(Point p, RSGround g, int c) {
-        return new GameTile(p,g,c);
+        if (accept(p,g,c)) {
+            return new GameTile(p,g,c);
+        } else {
+            return null;
+        }
     }
 }

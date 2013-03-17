@@ -23,11 +23,21 @@ public class RSInteractor {
     private Client client = null;
     private WorldMap map = null;
     
+    /**
+     * Sets the Client to be used in this RSInteractor.
+     * @param c the Client to use
+     * @return itself for fluency
+     */
     public RSInteractor useClient(Client c) {
         client = c;
         return this;
     }
     
+    /**
+     * Sets the WorldMap to be used in this RSInteractor.
+     * @param m the WorldMap to use
+     * @return itself for fluency
+     */
     public RSInteractor useWorldMap(WorldMap m) {
         map = m;
         return this;
@@ -49,32 +59,59 @@ public class RSInteractor {
         return map;
     }
     
+    /**
+     * Returns the RSBot widget with the given number.
+     * @param num the widget number
+     * @return the RSBot widget with the specified number
+     * @throws IllegalArgumentException when num &lt; 0
+     */
     public Widget getWidget(int num) {
         if (num < 0) {
             throw new IllegalArgumentException("widget value < 0");
         }
-        return null;
+        // yes, it appears to work this way... Can you believe it?
+        return new Widget(num); // TODO cache someplace fast yet compact
     }
     
+    /**
+     * Returns the WidgetChild with the specified id, from the Widget with the 
+     * specified id
+     * @param widget the Widget id
+     * @param widgetChild the WidgetChild id
+     * @return the WidgetChild with the specified id.
+     * @throws IllegalArgumentException when either parameter &lt; 0
+     */
     public WidgetChild getWidgetChild(int widget, int widgetChild) {
-        if (widget < 0 || widgetChild < 0) {
-            throw new IllegalArgumentException("widget value < 0");
+        if (widgetChild < 0) {
+            throw new IllegalArgumentException("widgetchild value < 0");
         }
-        Widget w = getWidget(widget);
-        if (w == null) {
-            return null;
-        } else {
-            return w.getChild(widgetChild);
-        }
+        return getWidget(widget).getChild(widgetChild);
     }
     
+    /**
+     * Left-clicks the given ViewportEntity.
+     * @param object the ViewportEntity to click
+     * @return whether the operation was successful
+     */
     public boolean click(ViewportEntity object) {
         return click(object,true);
     }
+    
+    /**
+     * Left-clicks the given Locatable Object.
+     * @param object the Locatable Object to click
+     * @return whether the operation was successful
+     */
     public boolean click(Locatable object) {
         return click(object.getLocation(),true);
     }
     
+    /**
+     * Clicks the given ViewportEntity.
+     * @param object the ViewportObject to click
+     * @param left true to left-click, false to right-click
+     * @return whether the operation was successful
+     */
     public boolean click(ViewportEntity object, final boolean left) {
         return Mouse.apply(object,new Filter<java.awt.Point>(){
             @Override public boolean accept(java.awt.Point p) {
@@ -84,17 +121,38 @@ public class RSInteractor {
         });
     }
     
+    /**
+     * Right-clicks the given ViewportEntity.
+     * @param object the ViewportEntity to click
+     * @return whether the operation was successful
+     */
     public boolean clickRight(ViewportEntity object) {
         return click(object,false);
     }
+    
+    /**
+     * Right-clicks the given Locatable Object.
+     * @param object the Locatable Object to click
+     * @return whether the operation was successful
+     */
     public boolean clickRight(Locatable object) {
         return click(object.getLocation(),false);
     }
     
+    /**
+     * Returns the currently logged in Player in the Runescape environment
+     * @return the local Player
+     */
     public Player getLocalPlayer() {
         return new Player(getClient().getMyRSPlayer());
     }
     
+    /**
+     * Retrieves the GameTile at the specified Point from the WorldMap.
+     * 
+     * @param p the position of the GameTile to retrieve
+     * @return the GameTile at position p, or null if no GameTile exists there.
+     */
     public GameTile getTile(Point p) {
         WorldMap theMap = getMap();
         if (theMap == null) {

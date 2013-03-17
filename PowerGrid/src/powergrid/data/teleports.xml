@@ -30,7 +30,6 @@
         <client pos="(1,1)" />
         <client pos="(2,0)" />
     </serverset>
-    <!-- TODO add more and correct positions -->
     <treeset type="SomeTreeTypeInteraction" manifold="manifold">
         <node pos="(0,2)">
             <node pos="(0,3)">

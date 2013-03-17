@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import powergrid.PowerGrid;
-import powergrid.control.listeners.TaskListener;
+import powergrid.control.listener.TaskListener;
 import powergrid.tasks.Task;
 
 /**

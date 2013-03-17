@@ -3,6 +3,7 @@ package powergrid.model.world.transportation;
 import org.powerbot.game.client.RSGround;
 import powergrid.model.Point;
 import powergrid.model.TransportTile;
+import powergrid.model.network.TreeNetwork;
 
 /**
  * Represents a Minecart Tile in the Runescape environment.
@@ -18,5 +19,9 @@ public class Minecart extends TransportTile {
      */
     public Minecart(Point pos, RSGround ground, int flag) {
         super(pos,ground,flag);
+    }
+    
+    @Override public TreeNetwork getNetwork() {
+        return (TreeNetwork) super.getNetwork();
     }
 }

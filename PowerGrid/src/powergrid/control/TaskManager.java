@@ -8,7 +8,7 @@ import java.util.PriorityQueue;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import powergrid.PowerGrid;
-import powergrid.control.listeners.TaskListener;
+import powergrid.control.listener.TaskListener;
 import powergrid.tasks.Task;
 
 /**

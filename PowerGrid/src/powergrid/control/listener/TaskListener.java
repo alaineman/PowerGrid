@@ -1,4 +1,4 @@
-package powergrid.control.listeners;
+package powergrid.control.listener;
 
 import powergrid.tasks.Task;
 

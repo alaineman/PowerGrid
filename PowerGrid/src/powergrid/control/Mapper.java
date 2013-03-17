@@ -11,7 +11,7 @@ import org.powerbot.game.client.RSGroundInfo;
 import org.powerbot.game.client.RSInfo;
 import org.powerbot.game.client.RSInteractable;
 import org.powerbot.game.client.RSInteractableLocation;
-import powergrid.control.listeners.MapperListener;
+import powergrid.control.listener.MapperListener;
 import powergrid.model.Copyable;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;

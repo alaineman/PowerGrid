@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import powergrid.control.TaskManager;
-import powergrid.control.listeners.TaskListener;
+import powergrid.control.listener.TaskListener;
 import powergrid.tasks.StepTask;
 import powergrid.tasks.Task;
 

@@ -20,7 +20,7 @@ public abstract class Interactor {
     
     /**
      * Creates a new Interactor, which uses the specified Client
-     * @param theClient the Runescape client this Interactor connects to
+     * @param i the RSInteractor this Interactor connects to
      * @param map the WorldMap on which this Interactor works
      */
     public Interactor(WorldMap map, RSInteractor i) {
@@ -112,10 +112,10 @@ public abstract class Interactor {
      * This method should check compatibility carefully, and not simply return 
      * true.
      * <p/>
-     * The InteractionManager wil consider this Interactor to be more suited to
+     * The InteractionManager will consider this Interactor to be more suited to
      * handling the interaction when this method returns true, and the other 
-     * interactor's <code>isMoreFavorableThan</code> method returns false.
-     * When both interactors give the same answer, they will be considered 
+     * Interactor's <code>isMoreFavorableThan</code> method returns false.
+     * When both Interactors give the same answer, they will be considered 
      * equal and the one chosen to perform the interaction is undefined.
      * <p/>
      * @param i the other Interactor

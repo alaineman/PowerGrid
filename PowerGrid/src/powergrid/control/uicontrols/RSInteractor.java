@@ -96,10 +96,11 @@ public class RSInteractor {
     }
     
     public GameTile getTile(Point p) {
-        if (map == null) {
+        WorldMap theMap = getMap();
+        if (theMap == null) {
             return null;
         } else {
-            return map.get(p);
+            return theMap.get(p);
         }
     }
 }

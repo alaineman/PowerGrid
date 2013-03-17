@@ -1,6 +1,7 @@
-package powergrid.control.interaction.interactors;
+package powergrid.control.interaction.interactor;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -9,12 +10,11 @@ import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powergrid.control.uicontrols.RSInteractor;
-import powergrid.model.OutOfReachException;
 import powergrid.model.WorldMap;
 import powergrid.model.world.transportation.Minecart;
 import powergrid.control.interaction.Interactor;
 import powergrid.model.TransportTile;
-import powergrid.model.network.TransportNetwork;
+import powergrid.model.network.TreeNetwork;
 import powergrid.tasks.Task;
 
 /**
@@ -46,7 +46,7 @@ public class MinecartInteractor extends Interactor {
      * @return the provided Object, cast to Minecart
      * @throws IllegalArgumentException when the Object is no Minecart
      */
-    private Minecart verify(Object o) {
+    public Minecart verify(Object o) {
         if (o instanceof Minecart) {
             return (Minecart) o;
         } else {
@@ -70,13 +70,23 @@ public class MinecartInteractor extends Interactor {
         Set<TransportTile> elems = elem.getNetwork().getElements();
         HashSet<Minecart> res = new HashSet<>((int)(1.5*elems.size()));
         for (TransportTile t : elems) {
-            if (t instanceof Minecart) {
+            if (t instanceof Minecart && !t.equals(o)) {
                 res.add((Minecart) t);
             }
         }
         return res;
     }
 
+    @Override public boolean interact(Object o) {
+        Set<Minecart> options = getOptions(o);
+        Iterator it = options.iterator();
+        if (it.hasNext()) {
+            return interact(o,it.next());
+        } else {
+            return false;
+        }
+    }
+    
     /**
      * Interacts with the Minecart to travel to the provided destination.
      * <p/>
@@ -91,7 +101,7 @@ public class MinecartInteractor extends Interactor {
     @Override public boolean interact(Object o, Object destination) {
         Minecart elem = verify(o);
         Minecart dest = verify(destination);
-        TransportNetwork nw = elem.getNetwork();
+        TreeNetwork nw = elem.getNetwork();
         Set<TransportTile> dests = nw.getElements();
         for (TransportTile t : dests) {
             if (t.equals(dest) && travelPath(elem,nw.findPath(elem, t))) {
@@ -141,7 +151,7 @@ public class MinecartInteractor extends Interactor {
     }
     
     private boolean travel(Minecart start, Minecart goal) {
-        int widgetNum = -1; //TODO getWidgetNum()
+        int widgetNum = 0; //TODO getWidgetNum()
         if (widgetNum != -1) {
             RSInteractor i = getInteractor();
             Tile startTile = start.getPosition().toTile();

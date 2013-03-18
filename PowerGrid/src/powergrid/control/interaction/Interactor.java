@@ -93,37 +93,68 @@ public abstract class Interactor {
     public abstract boolean interact(Object elem, Object option) throws OutOfReachException;
     
     /**
-     * Returns an array of all classes this Interactor can handle.
+     * Returns a set of the classes this Interactor can handle.
      * <p/>
-     * When including a class in this method's result array, the Interactor 
+     * When including a class in this method's result set, the Interactor 
      * must make sure that it accepts at least one interaction method for that 
      * type.
-     * @return 
+     * @return a set containing the Classes this Interactor can handle.
      */
     public abstract Set<Class<?>> getTypes();
     
     /**
      * Returns whether this Interactor should be preferred over another.
      * <p/>
-     * The InteractionManager will take the result call of this method into 
+     * The InteractionController will take the result of this method into 
      * account when selecting the most appropriate Interactor for a certain 
-     * object.
+     * object class.
      * <p/>
-     * This method should check compatibility carefully, and not simply return 
-     * true.
-     * <p/>
-     * The InteractionManager will consider this Interactor to be more suited to
-     * handling the interaction when this method returns true, and the other 
-     * Interactor's <code>isMoreFavorableThan</code> method returns false.
-     * When both Interactors give the same answer, they will be considered 
-     * equal and the one chosen to perform the interaction is undefined.
+     * The default implementation checks compatibility based on the most 
+     * specific matching class. However, interfaces are not taken account for. 
+     * Therefore, when result set of the getTypes method of an Interactor 
+     * subclass contains an interface class object, that Interactor should 
+     * override this method to provide suitable support for checking 
+     * compatibility.
      * <p/>
      * @param i the other Interactor
      * @param c the Class for which to check
      * @return whether this Interactor is more suited to handling interactions 
      *         for the given class.
      */
-    public abstract boolean isMoreFavorableThan(Interactor i, Class<?> c);
+    public boolean isMoreFavorableThan(Interactor i, Class<?> c) {
+        if (i == null) {
+            return true;
+        } else if (c == null) {
+            return false;
+        }
+        Set<Class<?>> myTypes = getTypes();
+        Set<Class<?>> hisTypes = i.getTypes();
+        Class<?> myClass = null, hisClass = null;
+        // Select the most appropriate class from my classes
+        for (Class clazz : myTypes) {
+            if (clazz.isAssignableFrom(c)) {
+                if (myClass == null || myClass.isAssignableFrom(clazz)) {
+                    myClass = clazz;
+                }
+            }
+        }
+        // Select the most appriopriate class from his classes
+        for (Class clazz : hisTypes) {
+            if (clazz.isAssignableFrom(c)) {
+                if (hisClass == null || hisClass.isAssignableFrom(clazz)) {
+                    hisClass = clazz;
+                }
+            }
+        }
+        // Compare results
+        if (myClass == null) {
+            return false;
+        } else if (hisClass == null) {
+            return true;
+        } else {
+            return hisClass.isAssignableFrom(myClass);
+        }
+    }
     
     @Override public int hashCode() {
         return 5 + 3 * Objects.hashCode(getTypes());

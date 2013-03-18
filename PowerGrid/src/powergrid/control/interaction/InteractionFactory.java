@@ -20,6 +20,7 @@ import powergrid.model.XMLNode;
  * <p/>
  * @author Chronio
  */
+//FIXME update so that it matches new Iteraction and Factory systems.
 public class InteractionFactory {
     
     private HashMap<String,TransportNetwork> networks = new HashMap<>();
@@ -149,7 +150,7 @@ public class InteractionFactory {
         PeerNetwork network = new PeerNetwork();
         for (XMLNode node : type) {
             Point p = new Point(node.getOrElse("pos", "(0,0)"));
-            try {
+            try { 
                 TransportTile t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
                 network.add(t);
             } catch (InvocationTargetException | InstantiationException | 

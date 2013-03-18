@@ -1,5 +1,6 @@
 package powergrid.control.uicontrols;
 
+import java.util.HashMap;
 import org.powerbot.game.api.methods.input.Mouse;
 import org.powerbot.game.api.util.Filter;
 import org.powerbot.game.api.wrappers.Locatable;
@@ -22,6 +23,7 @@ public class RSInteractor {
     
     private Client client = null;
     private WorldMap map = null;
+    private HashMap<Integer, Widget> loadedWidgets = new HashMap(8,7/8f);
     
     /**
      * Sets the Client to be used in this RSInteractor.
@@ -65,12 +67,16 @@ public class RSInteractor {
      * @return the RSBot widget with the specified number
      * @throws IllegalArgumentException when num &lt; 0
      */
-    public Widget getWidget(int num) {
+    public synchronized Widget getWidget(int num) {
         if (num < 0) {
             throw new IllegalArgumentException("widget value < 0");
         }
-        // yes, it appears to work this way... Can you believe it?
-        return new Widget(num); // TODO cache someplace fast yet compact
+        Widget w = loadedWidgets.get(num);
+        if (w == null) {
+            w = new Widget(num);
+            loadedWidgets.put(num, w);
+        }
+        return w;
     }
     
     /**
@@ -81,7 +87,7 @@ public class RSInteractor {
      * @return the WidgetChild with the specified id.
      * @throws IllegalArgumentException when either parameter &lt; 0
      */
-    public WidgetChild getWidgetChild(int widget, int widgetChild) {
+    public synchronized WidgetChild getWidgetChild(int widget, int widgetChild) {
         if (widgetChild < 0) {
             throw new IllegalArgumentException("widgetchild value < 0");
         }

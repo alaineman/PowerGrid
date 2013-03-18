@@ -78,6 +78,19 @@ public class InteractionController {
         }
     }
     
+    /**
+     * Interacts with the provided Object using the given option.
+     * <p/>
+     * The InteractionController automatically selects the appropriate
+     * Interactor based on the provided Object's class.
+     * <p/>
+     * The option will be passed on to the selected Interactor
+     * <p/>
+     * @param o the Object to interact with
+     * @param option the option to use
+     * @return whether the interaction was successful
+     * @throws OutOfReachException when the Object could not be reached
+     */
     public boolean interact(Object o, Object option) 
             throws OutOfReachException {
         Interactor i = findInteractor(o.getClass());

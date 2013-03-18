@@ -125,14 +125,24 @@ public class MinecartInteractor extends Interactor {
      * Returns if this Interactor is more favorable than the provided 
      * Interactor to handle Objects of the given Class.
      * <p/>
-     * This method returns false to allow other Interactors to take over the 
-     * responsibility to handle Minecart Objects.
+     * This method returns true if and only if the given Interactor provides no
+     * support for the exact class, and the class is the Minecart class or a 
+     * Minecart subclass.
+     * <p/>
      * @param i the Interactor to compare with
-     * @param o the Object Class to compare for
-     * @return false
+     * @param c the Object Class to compare for
+     * @return true if this Interactor is more favorable to handle the given 
+     *         Class than the given Interactor, false otherwise.
      */
-    @Override public boolean isMoreFavorableThan(Interactor i, Class<?> o) {
-        return false;
+    @Override public boolean isMoreFavorableThan(Interactor i, Class<?> c) {
+        if (Minecart.class.isAssignableFrom(c)) {
+            if (!Minecart.class.equals(c) || i.getTypes().contains(c)) {
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
     
     private boolean travelPath(Minecart start, List<TransportTile> path) {

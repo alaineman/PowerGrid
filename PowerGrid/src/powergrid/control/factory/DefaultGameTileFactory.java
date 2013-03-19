@@ -12,9 +12,11 @@ import powergrid.model.Point;
  * subclasses that override this method (which they should), make the method 
  * return the correct result as soon as possible to avoid delay in the Mapping.
  * <p/>
+ * Note: this class has a natural ordering that is inconsistent with equals
+ * <p/>
  * @author Chronio
  */
-public class DefaultGameTileFactory {
+public class DefaultGameTileFactory implements TypeFactory {
     
     /**
      * Returns whether this factory can create a GameTile with the specified 
@@ -27,6 +29,7 @@ public class DefaultGameTileFactory {
      * @param c the Collision flag for the Tile
      * @return true
      */
+    @Override
     public boolean accept(Point p, RSGround g, int c) {
         return true;
     }
@@ -38,11 +41,24 @@ public class DefaultGameTileFactory {
      * @param c the collision flag on that Point
      * @return a GameTile constructed from the given data
      */
+    @Override
     public GameTile create(Point p, RSGround g, int c) {
         if (accept(p,g,c)) {
             return new GameTile(p,g,c);
         } else {
             return null;
+        }
+    }
+    
+    @Override public int compareTo(TypeFactory other) {
+        return -1;
+    }
+    
+    @Override public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        } else {
+            return this.getClass().equals(other.getClass());
         }
     }
 }

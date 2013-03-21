@@ -1,5 +1,4 @@
-
-package powergrid.model.world.resources;
+package powergrid.model.world.resource;
 
 import powergrid.model.Item;
 
@@ -7,16 +6,16 @@ import powergrid.model.Item;
  *
  * @author Alaineman
  */
-public class Tree extends AbstractResource {
+public class Ore extends AbstractResource {
     
-    public Tree(int x, int y, int rawValue, Item... it) {
+    public Ore(int x, int y, int rawValue, Item... it) {
         super(x, y, rawValue, it);
     }
 
     @Override
     public void gather() {
         if (canGather()) {
-            //get id and interact "chop"
+            // interact(); << Why is a Resource tile not Interactable? I must disagree!
         }
     }
 
@@ -27,8 +26,7 @@ public class Tree extends AbstractResource {
 
     @Override
     public boolean canGather() {
-        if (isAvailable()) return true;
-        return false;
+        return isAvailable();
     }
     
 }

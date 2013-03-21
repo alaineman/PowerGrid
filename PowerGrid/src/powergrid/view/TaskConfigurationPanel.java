@@ -1,7 +1,7 @@
 package powergrid.view;
 
 import javax.swing.JPanel;
-import powergrid.tasks.Configurable;
+import powergrid.task.Configurable;
 
 /**
  * This abstract class is meant as a supertype for the configuration panel of Tasks.

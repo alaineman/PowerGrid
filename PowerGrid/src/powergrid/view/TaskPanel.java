@@ -21,8 +21,8 @@ import javax.swing.border.LineBorder;
 import powergrid.PowerGrid;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
-import powergrid.tasks.Configurable;
-import powergrid.tasks.Task;
+import powergrid.task.Configurable;
+import powergrid.task.Task;
 
 /**
  * This Panel shows all available tasks of each Loaded Plugin.

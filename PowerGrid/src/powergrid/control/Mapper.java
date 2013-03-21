@@ -16,7 +16,7 @@ import powergrid.model.Copyable;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
 import powergrid.model.world.Wall;
-import powergrid.tasks.Task;
+import powergrid.task.Task;
 
 /**
  * This class collects data from the RSBot environment and stores it in its Grid-object.

@@ -1,4 +1,4 @@
-package powergrid.tasks;
+package powergrid.task;
 
 /**
  * Represents a Task that can be split in a number of similar tasks.

@@ -1,4 +1,4 @@
-package powergrid.tasks;
+package powergrid.task;
 
 import powergrid.view.TaskConfigurationPanel;
 

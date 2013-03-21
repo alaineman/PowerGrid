@@ -14,10 +14,10 @@ import powergrid.Bot;
 import powergrid.control.TaskManager;
 import powergrid.model.DestinationMap.Destination;
 import powergrid.model.Point;
-import powergrid.tasks.RestTask;
-import powergrid.tasks.Task;
-import powergrid.tasks.TravelNearestTask;
-import powergrid.tasks.TravelTask;
+import powergrid.task.RestTask;
+import powergrid.task.Task;
+import powergrid.task.TravelNearestTask;
+import powergrid.task.TravelTask;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BotTest {

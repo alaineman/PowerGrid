@@ -4,9 +4,9 @@ import org.powerbot.game.api.wrappers.interactive.Player;
 import powergrid.control.TaskManager;
 import powergrid.model.DestinationMap.Destination;
 import powergrid.model.Point;
-import powergrid.tasks.RestTask;
-import powergrid.tasks.TravelNearestTask;
-import powergrid.tasks.TravelTask;
+import powergrid.task.RestTask;
+import powergrid.task.TravelNearestTask;
+import powergrid.task.TravelTask;
 
 /**
  * Bot-class representing the Player.

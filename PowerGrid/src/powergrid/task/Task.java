@@ -1,4 +1,4 @@
-package powergrid.tasks;
+package powergrid.task;
 
 /**
  * Task Class that is used to queue tasks for the Bot to execute.

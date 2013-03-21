@@ -7,7 +7,7 @@ import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.api.wrappers.interactive.NPC;
 import powergrid.model.OutOfReachException;
 import powergrid.model.interact.Transportable;
-import powergrid.tasks.Task;
+import powergrid.task.Task;
 
 /**
  *

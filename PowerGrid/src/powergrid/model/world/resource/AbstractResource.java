@@ -1,4 +1,4 @@
-package powergrid.model.world.resources;
+package powergrid.model.world.resource;
 
 import powergrid.model.GameTile;
 import powergrid.model.Item;

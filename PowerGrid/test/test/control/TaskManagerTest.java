@@ -9,8 +9,8 @@ import static org.mockito.Mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import powergrid.control.TaskManager;
 import powergrid.control.listener.TaskListener;
-import powergrid.tasks.StepTask;
-import powergrid.tasks.Task;
+import powergrid.task.StepTask;
+import powergrid.task.Task;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaskManagerTest {

@@ -9,8 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import powergrid.PowerGrid;
-import powergrid.tasks.Configurable;
-import powergrid.tasks.Task;
+import powergrid.task.Configurable;
+import powergrid.task.Task;
 
 /**
  * Frame that holds the run and cancel buttons along with the Task's Configuration panel.

@@ -47,11 +47,11 @@ public class EntranaBoat extends Transportable {
     protected void waitForCompletion(Transportable dest) {
         Timer map = new Timer(6000);
         while (map.isRunning() && !Widgets.get(299).validate()) {
-            powergrid.tasks.Task.sleep(200, 300);
+            powergrid.task.Task.sleep(200, 300);
         }
         map.reset();
         while (map.isRunning() && Widgets.get(299).validate()) {
-            powergrid.tasks.Task.sleep(500, 1000);
+            powergrid.task.Task.sleep(500, 1000);
         }
     }
 

@@ -27,7 +27,7 @@ public class TileFactory {
      * @return true if and only if the factory was added, false otherwise.
      */
     public boolean addFactory(TypeFactory f) {
-        if (factories.contains(f)) {
+        if (f == null || factories.contains(f)) {
             return false;
         } else {
             factories.add(f);
@@ -48,6 +48,7 @@ public class TileFactory {
      * @return the factory that was removed, or null if no factory was removed.
      */
     public TypeFactory removeFactory(TypeFactory f) {
+        assert f != null;
         for (TypeFactory tf : factories) {
             if (tf.equals(f)) {
                 factories.remove(tf);
@@ -70,6 +71,7 @@ public class TileFactory {
      * @return the factory best matching the given information.
      */
     public TypeFactory getFactory(Point p, RSGround g, int c) {
+        assert p != null && g != null;
         ListIterator<TypeFactory> li = factories.listIterator(factories.size());
         /* Collections.sort sorts the Factories ascending. Since we want to 
          * check the highest scoring factory first, we iterate over the List in
@@ -98,6 +100,10 @@ public class TileFactory {
      */
     public GameTile instantiate(Point p, RSGround g, int c) {
         TypeFactory theFactory = getFactory(p,g,c);
-        return theFactory.create(p, g, c);
+        if (theFactory == null) {
+            return null;
+        } else { 
+            return theFactory.create(p, g, c);
+        }
     }
 }

@@ -1,9 +1,12 @@
 package powergrid.plugins;
 
+import powergrid.task.TravelNearestTask;
+import powergrid.task.Task;
+import powergrid.task.RestTask;
+import powergrid.task.TravelTask;
 import java.util.ArrayList;
 import java.util.Collection;
 import powergrid.PowerGrid;
-import powergrid.tasks.*;
 
 /**
  * This class acts as the container for the PowerGrid publicly accessible tasks.

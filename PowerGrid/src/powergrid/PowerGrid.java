@@ -22,7 +22,7 @@ import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
 import powergrid.plugins.PluginLoader;
 import powergrid.plugins.PowerGridPlugin;
-import powergrid.tasks.Task;
+import powergrid.task.Task;
 import powergrid.view.ControlPanel;
 
 /**

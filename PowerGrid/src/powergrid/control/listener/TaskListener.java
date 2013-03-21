@@ -1,6 +1,6 @@
 package powergrid.control.listener;
 
-import powergrid.tasks.Task;
+import powergrid.task.Task;
 
 /**
  * Listener for the TaskManager class for when the status of the Task queue 

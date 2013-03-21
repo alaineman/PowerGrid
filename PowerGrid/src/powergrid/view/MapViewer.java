@@ -20,8 +20,8 @@ import powergrid.model.WorldMap;
 import powergrid.model.XMLNode;
 import powergrid.model.interact.Interactable;
 import powergrid.model.world.Wall;
-import powergrid.tasks.Task;
-import powergrid.tasks.TravelTask;
+import powergrid.task.Task;
+import powergrid.task.TravelTask;
 
 /**
  * Canvas that the WorldMap is printed on to show the mapped areas in the Grid.

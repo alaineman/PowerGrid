@@ -1,4 +1,4 @@
-package powergrid.tasks;
+package powergrid.task;
 
 import java.awt.Dimension;
 import java.awt.Image;

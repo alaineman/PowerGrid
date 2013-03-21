@@ -1,4 +1,4 @@
-package powergrid.tasks;
+package powergrid.task;
 
 import java.util.ArrayDeque;
 import java.util.Collection;

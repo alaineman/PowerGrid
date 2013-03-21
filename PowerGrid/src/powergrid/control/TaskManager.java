@@ -9,7 +9,7 @@ import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import powergrid.PowerGrid;
 import powergrid.control.listener.TaskListener;
-import powergrid.tasks.Task;
+import powergrid.task.Task;
 
 /**
  * Task Manager class for the entire plug-in.

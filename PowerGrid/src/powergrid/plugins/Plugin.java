@@ -1,7 +1,7 @@
 package powergrid.plugins;
 
 import java.util.Collection;
-import powergrid.tasks.Task;
+import powergrid.task.Task;
 
 /**
  * Standard interface for PowerGrid plugins. 

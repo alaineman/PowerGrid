@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import powergrid.PowerGrid;
 import powergrid.control.listener.TaskListener;
-import powergrid.tasks.Task;
+import powergrid.task.Task;
 
 /**
  * Control Panel that allows control and overview of PowerGrid functionality.

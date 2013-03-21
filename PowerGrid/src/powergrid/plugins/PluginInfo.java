@@ -1,5 +1,6 @@
 package powergrid.plugins;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -19,6 +20,7 @@ import java.lang.annotation.RetentionPolicy;
  * <p/>
  * @author Chronio
  */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PluginInfo {
     /** The name of the Plugin. This is preferrably a unique name. 

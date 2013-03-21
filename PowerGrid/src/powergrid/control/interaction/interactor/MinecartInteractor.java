@@ -15,7 +15,7 @@ import powergrid.model.world.transportation.Minecart;
 import powergrid.control.interaction.Interactor;
 import powergrid.model.TransportTile;
 import powergrid.model.network.TreeNetwork;
-import powergrid.tasks.Task;
+import powergrid.task.Task;
 
 /**
  * Interactor for Minecarts.

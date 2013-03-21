@@ -4,10 +4,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.powerbot.game.api.wrappers.Locatable;
-import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.ViewportEntity;
 import powergrid.control.uicontrols.RSInteractor;
-import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.WorldMap;
 

@@ -9,12 +9,12 @@ import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
-import powergrid.control.uicontrols.RSInteractor;
-import powergrid.model.WorldMap;
-import powergrid.model.world.transportation.Minecart;
 import powergrid.control.interaction.Interactor;
+import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.TransportTile;
+import powergrid.model.WorldMap;
 import powergrid.model.network.TreeNetwork;
+import powergrid.model.world.transportation.Minecart;
 import powergrid.task.Task;
 
 /**
@@ -170,7 +170,7 @@ public class MinecartInteractor extends Interactor {
                 Widget w = i.getWidget(889);
                 long startTime = System.currentTimeMillis();
                 while (System.currentTimeMillis() >= startTime+4000 && !w.validate()) {
-                    Task.sleep(15,35);
+                    Task.sleep(50,100);
                 }
                 if (i.getWidget(889).validate()) {
                     WidgetChild wc = w.getChild(widgetNum);

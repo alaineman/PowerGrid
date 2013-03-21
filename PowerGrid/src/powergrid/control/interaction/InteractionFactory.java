@@ -1,9 +1,5 @@
 package powergrid.control.interaction;
 
-import powergrid.model.TransportTile;
-import powergrid.model.network.PeerNetwork;
-import powergrid.model.network.TransportNetwork;
-import powergrid.model.network.TreeNetwork;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -12,7 +8,11 @@ import java.util.HashMap;
 import powergrid.PowerGrid;
 import powergrid.control.XMLToolBox;
 import powergrid.model.Point;
+import powergrid.model.TransportTile;
 import powergrid.model.XMLNode;
+import powergrid.model.network.PeerNetwork;
+import powergrid.model.network.TransportNetwork;
+import powergrid.model.network.TreeNetwork;
 
 /**
  * This class deals with setting up the interaction handlers and teleport 

@@ -11,6 +11,9 @@ import powergrid.model.network.TransportNetwork;
  */
 public class FairyRing extends TransportTile {
 
+    /** The length of a FairyRing code. */
+    public static final int CODE_LENGTH = 4;
+    
     private String code;
     
     public FairyRing(Point pos, RSGround ground, int colFlag) {
@@ -22,8 +25,8 @@ public class FairyRing extends TransportTile {
     }
 
     public void setCode(String code) {
-        assert code != null && code.length() == 4;
-        this.code = code;
+        assert code != null && code.length() == CODE_LENGTH;
+        this.code = code.toUpperCase();
     }
     
     @Override

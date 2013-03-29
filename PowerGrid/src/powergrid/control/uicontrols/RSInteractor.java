@@ -1,9 +1,12 @@
 package powergrid.control.uicontrols;
 
+import java.awt.Canvas;
 import java.util.HashMap;
+import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.input.Mouse;
 import org.powerbot.game.api.util.Filter;
 import org.powerbot.game.api.wrappers.Locatable;
+import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.ViewportEntity;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.Widget;
@@ -17,9 +20,20 @@ import powergrid.model.WorldMap;
  * This class deals with interactions with the Runescape GUI, such as retrieving
  * and interacting with widgets.
  * <p/>
+ * This class also contains constants that define the widget numbers of various 
+ * commonly used widgets for easy access.
+ * <p/>
  * @author Chronio
  */
 public class RSInteractor {
+    
+    /** The minimum waiting time for wait operations. */
+    public static final int DEFAULT_MIN_WAIT = 50;
+    /** The maximum waiting time for wait operations. */
+    public static final int DEFAULT_MAX_WAIT = 100;
+    
+    /** The Widget on which the FairyRing destination is chosen. */
+    public static final int FAIRYRING_PANEL = 735;
     
     private Client client = null;
     private WorldMap map = null;
@@ -62,6 +76,103 @@ public class RSInteractor {
     }
     
     /**
+     * Waits and returns after the object is visible, or the timeout has been 
+     * reached.
+     * <p/>
+     * This method checks with intervals between <code>DEFAULT_MIN_WAIT</code>
+     * and <code>DEFAULT_MAX_WAIT</code>.
+     * @param object the object to wait for.
+     * @param timeout the maximum amount of time to wait, in milliseconds.
+     * @return true if the entity became visible within the timelimit, false if
+     *         the timelimit was reached and the entity was not yet visible.
+     * @throws UnsupportedOperationException when the provided object is not
+     *                                       supported.
+     */
+    public boolean waitForVisible(Object object, int timeout) {
+        return waitForVisible(object, timeout, DEFAULT_MIN_WAIT, 
+                DEFAULT_MAX_WAIT);
+    }
+    
+    /**
+     * Waits and returns after the entity is visible, or the timeout has been 
+     * reached.
+     * <p/>
+     * This method is a shorthand for the following piece of code:
+     * <code><pre>
+     * Timer timer = new Timer(timeout);
+     * while (timer.isRunning() && !object.validate()) {
+     *     Task.sleep(minTime,maxTime);
+     * }
+     * </pre></code>
+     * The main difference here is that the method to check for the object's 
+     * validation is performed using <code>isVisible(object)</code> and 
+     * therefore highly dynamic.
+     * @param object the entity to wait for.
+     * @param timeout the maximum amount of time to wait, in milliseconds.
+     * @param minTime the minimum interval between checks
+     * @param maxTime the maximum interval between checks
+     * @return true if the entity became visible within the timelimit, false if
+     *         the timelimit was reached and the entity was not yet visible.
+     * @throws UnsupportedOperationException when the provided object is not
+     *                                       supported.
+     */
+    public boolean waitForVisible(Object object, int timeout, 
+            int minTime, int maxTime) {
+        
+        long destTime = System.currentTimeMillis() + timeout;
+        while (System.currentTimeMillis() < destTime) {
+            if (isVisible(object)) {
+                return true;
+            } else {
+                Task.sleep(minTime, maxTime);
+            }
+        }
+        return isVisible(object);
+    }
+    
+    /**
+     * Tries to decide if the specified object is visible on the screen.
+     * <p/>
+     * The correct checking method is performed based on the provided object's 
+     * type. If the object is not supported, an UnsupportedOperationException 
+     * is thrown.
+     * <p/>
+     * @param object the object to check
+     * @return whether the object is visible on the screen
+     * @throws UnsupportedOperationException when the provided object is not
+     *                                       supported.
+     */
+    public boolean isVisible(Object object) {
+        if (object instanceof ViewportEntity) {
+            return ((ViewportEntity) object).validate();
+        }
+        if (object instanceof Widget) {
+            return ((Widget) object).validate();
+        }
+        if (object instanceof Locatable) {
+            Tile tile = ((Locatable) object).getLocation();
+            for (int xOff = 0; xOff <= 1; xOff++) {
+                for (int yOff = 0; yOff <= 1; yOff++) {
+                    if (!isOnScreen(tile.getPoint(xOff, yOff, 0))) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        if (object instanceof java.awt.Point) {
+            return isOnScreen((java.awt.Point) object);
+        }
+        throw new UnsupportedOperationException("Unsupported object");
+    }
+    
+    public boolean isOnScreen(java.awt.Point p) {
+        Canvas c = getClient().getCanvas();
+        return p.x >= 0 && p.y >= 0 && p.x < c.getWidth() 
+                && p.y < c.getHeight();
+    }
+    
+    /**
      * Returns the RSBot widget with the given number.
      * @param num the widget number
      * @return the RSBot widget with the specified number
@@ -87,7 +198,8 @@ public class RSInteractor {
      * @return the WidgetChild with the specified id.
      * @throws IllegalArgumentException when either parameter &lt; 0
      */
-    public synchronized WidgetChild getWidgetChild(int widget, int widgetChild) {
+    public synchronized WidgetChild getWidgetChild(int widget, 
+            int widgetChild) {
         if (widgetChild < 0) {
             throw new IllegalArgumentException("widgetchild value < 0");
         }
@@ -101,6 +213,41 @@ public class RSInteractor {
      */
     public boolean click(ViewportEntity object) {
         return click(object,true);
+    }
+    
+    /**
+     * Waits until the provided animations have passed.
+     * @param timeout the maximum wait time
+     * @param animIds the animations to wait for
+     * @return true if all animations have finished, false when the time limit
+     *         was reached before all animations ended
+     */
+    public boolean waitForAnimations(long timeout, int... animIds) {
+        Player p = getLocalPlayer();
+        long endTime = System.currentTimeMillis() + timeout;
+        for (int animId : animIds) {
+            // wait until the animation starts
+            while (System.currentTimeMillis() < endTime) {
+                if (p.getAnimation() == animId) {
+                    break;
+                } else {
+                    Task.sleep(DEFAULT_MIN_WAIT, DEFAULT_MAX_WAIT);
+                }
+            }
+            // wait until the animation finishes
+            while (System.currentTimeMillis() < endTime) {
+                if (p.getAnimation() != animId) {
+                    break;
+                } else {
+                    Task.sleep(DEFAULT_MIN_WAIT, DEFAULT_MAX_WAIT);
+                }
+            }
+            // exit when time limit passed
+            if (System.currentTimeMillis() > endTime) {
+                return false;
+            }
+        }
+        return true;
     }
     
     /**

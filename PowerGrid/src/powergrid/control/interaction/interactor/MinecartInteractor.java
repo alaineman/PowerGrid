@@ -168,11 +168,7 @@ public class MinecartInteractor extends Interactor {
             if (startTile.isOnScreen()) {
                 i.click(start);
                 Widget w = i.getWidget(889);
-                long startTime = System.currentTimeMillis();
-                while (System.currentTimeMillis() >= startTime+4000 && !w.validate()) {
-                    Task.sleep(50,100);
-                }
-                if (i.getWidget(889).validate()) {
+                if (getInteractor().waitForVisible(w, 4000)) {
                     WidgetChild wc = w.getChild(widgetNum);
                     i.click(wc);
                     waitForComplete();

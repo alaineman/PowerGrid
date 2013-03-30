@@ -24,8 +24,8 @@ public class TravelNearestTaskTest {
     
     @Test public void testGetters() {
         assertEquals("Test getType()","WaterSource", t.getType());
-        assertEquals("Test getTarget()","", t.getTarget());
-        assertEquals("Test getTraits()","", t.getTraits());
+        assertEquals("Test getTarget()",null, t.getTarget());
+        assertEquals("Test getTraits()",null, t.getTraits());
     }
     
     @Test public void testMatchingOnMismatch() {
@@ -41,8 +41,9 @@ public class TravelNearestTaskTest {
     @Test public void testMatchingOnMismatchWithTargetFilter() {
         TravelNearestTask t2 = new TravelNearestTask("WaterSource", "Fountain");
         List<XMLNode> matches = t2.getMatching();
-        for (XMLNode match : matches)
+        for (XMLNode match : matches) {
             assertEquals("Fountain", match.get("target"));
+        }
         assertEquals(5, matches.size());
     }
     

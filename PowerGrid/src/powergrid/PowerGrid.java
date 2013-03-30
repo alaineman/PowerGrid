@@ -8,20 +8,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import org.powerbot.Boot;
+import org.powerbot.game.client.Client;
 import powergrid.control.Mapper;
 import powergrid.control.ScriptLoader;
 import powergrid.control.TaskManager;
-import powergrid.control.XMLToolBox;
+import powergrid.control.interaction.InteractionController;
 import powergrid.control.uicontrols.RSInteractor;
-import powergrid.model.DestinationMap;
+import powergrid.model.WorldMap;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
 import powergrid.plugins.PluginLoader;
-import powergrid.plugins.PowerGridPlugin;
 import powergrid.task.Task;
 import powergrid.view.ControlPanel;
 
@@ -50,6 +51,9 @@ import powergrid.view.ControlPanel;
  */
 public class PowerGrid {
     
+    /** The name of PowerGrid. */
+    public static final String NAME = "PowerGrid";
+    
     /** The PowerGrid version. */
     public static final double VERSION = 0.1;
     
@@ -57,34 +61,28 @@ public class PowerGrid {
     public static final Logger LOGGER = Logger.getLogger("PowerGrid");
     
     /** The PowerGrid instance. */
-    public static final PowerGrid PG = new PowerGrid();
+    public static PowerGrid PG = null;
     /** The default TaskManager instance. */
     public static final TaskManager TM = new TaskManager();
-    /** The default Bot instance. */
-    public static final Bot BOT = new Bot(TM);
     /** The default Mapper instance. */
     public static final Mapper MAPPER = new Mapper();
-    /** The default DestinationMap. */
-    public static final DestinationMap DESTINATIONS = new DestinationMap();
-    /** The default RSInteractor. */
-    public static final RSInteractor INTERACTOR = new RSInteractor();
     
     
     /** The plugin directory, default is "plugins". */
     public static File pluginDirectory = new File("plugins");
     
-    /** Thread that shut down PowerGrid in case of RSBot shutdown. 
+    /** Thread that shuts down PowerGrid in case of RSBot shutdown. 
      * <p/>
      * Ensures that everything is cleaned up and terminated gracefully. 
      */
-    private static Thread terminatorThread = new Thread("Terminator") {
+    private static Thread terminatorThread = new Thread("PowerGrid-Terminator") {
         @Override public void run() {
             if (!PG.terminate())
                 System.err.println("WARNING: PowerGrid termination failed");
         }
     };
     
-    private static Plugin[] plugins = null;
+    private static List<Plugin> plugin = null;
     
     /**
      * Main method of PowerGrid. 
@@ -94,46 +92,6 @@ public class PowerGrid {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
-        System.out.println("Starting PowerGrid");
-        boolean dev=false,split=false;
-        Iterator<String> it = Arrays.asList(args).iterator();
-        while (it.hasNext()) {
-            String arg = it.next().toLowerCase();
-            switch(arg) {
-                case "-dev":
-                    dev = true;
-                    System.out.println("    with developer mode");
-                    break;
-                case "-splitui":
-                case "-s":
-                    split = true;
-                    System.out.println("    with split user interface");
-                    break;
-                case "-plugins":
-                case "-p":
-                    File f = new File(it.next());
-                    if (f.isDirectory()) {
-                        pluginDirectory = f;
-                        System.out.println("    with Plugins directory: " + f.getPath());
-                    } else {
-                        System.out.println("    with invalid Plugins directory: " + f.getPath());
-                    }
-                    break;
-                default:
-                    debugMessage("    with unknown parameter: " + arg);
-            }
-        }
-        // Load the plugins in the plugin folder
-        PluginLoader pl = new PluginLoader(pluginDirectory);
-        plugins = pl.getLoadedPlugins();
-        plugins = Arrays.copyOf(plugins, plugins.length+1);
-        plugins[plugins.length-1] = new PowerGridPlugin();
-        for (Plugin plugin : plugins) {
-            String pluginName = plugin.getClass().getAnnotation(PluginInfo.class).name();
-            plugin.setUp();
-            logMessage("Plugin \"" + pluginName + "\" loaded");
-        }
-        logMessage("Total " + plugins.length + " Plugins loaded");
         
         // launch RSBot
         try {
@@ -144,7 +102,18 @@ public class PowerGrid {
             System.exit(1);
         }
         
-        DESTINATIONS.withData(XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/destinations.xml")));
+        Iterator<String> it = Arrays.asList(args).iterator();
+        while (it.hasNext()) {
+            String arg = it.next();
+            if (arg.equals("-p") || arg.equals("-plugins")) {
+                if (it.hasNext()) {
+                    File pluginDir = new File(it.next());
+                    if (pluginDir.isDirectory()) {
+                        pluginDirectory = pluginDir;
+                    }
+                }
+            }
+        }
         
         // Wait for Client's Thread to start
         Thread main = Thread.currentThread();
@@ -161,12 +130,75 @@ public class PowerGrid {
         }
         Task.sleep(1200);
         
+        PG = new PowerGrid(org.powerbot.core.Bot.client());
+        PG.loadPlugins(pluginDirectory);
+        
+        
+        for (Plugin p : plugin) {
+            String pluginName = p.getClass().getAnnotation(PluginInfo.class).name();
+            p.setUp();
+            logMessage("Plugin \"" + pluginName + "\" loaded");
+        }
+        logMessage("Total " + plugin.size() + " Plugins loaded");
+        
+    }
+    
+    private static void startPowerGrid(String[] args) {
+        System.out.println("Starting PowerGrid");
+        boolean dev=false,split=false;
+        Iterator<String> it = Arrays.asList(args).iterator();
+        while (it.hasNext()) {
+            String arg = it.next().toLowerCase();
+            switch(arg) {
+                case "-dev":
+                    dev = true;
+                    System.out.println("    with developer mode");
+                    break;
+                case "-splitui":
+                case "-s":
+                    split = true;
+                    System.out.println("    with split user interface");
+            }
+        }
+        
         // Launch PowerGrid
         PG.launch(dev,split);
     }
     
-    public static List<Plugin> getPlugins() {
-        return Collections.unmodifiableList(Arrays.asList(plugins));
+    /**
+     * Returns an unmodifiable List containing the loaded Plugins.
+     * @return an unmodifiable List containing the loaded Plugins.
+     */
+    public List<Plugin> getPlugins() {
+        return Collections.unmodifiableList(plugin);
+    }
+    
+    /**
+     * Loads the specified Plugin.
+     * @param p the Plugin to load.
+     */
+    public void loadPlugin(Plugin p) {
+        assert p != null : "Null value for Plugin";
+        p.setUp();
+        plugin.add(p);
+    }
+    
+    /**
+     * unloads the specified Plugin
+     * @param p the Plugin to unload
+     * @return true if the plugin list changed as a result of this call, false 
+     *         otherwise.
+     */
+    public boolean removePlugin(Plugin p) {
+        assert p != null : "Null value for Plugin";
+        int index = plugin.indexOf(p);
+        if (index < 0) {
+            return false;
+        } else {
+            plugin.remove(index);
+            p.tearDown();
+            return true;
+        }
     }
     
     private boolean isRunning = false;
@@ -174,19 +206,93 @@ public class PowerGrid {
     private boolean splitUI = false;
     
     private ControlPanel theControlPanel = null;
-    private ScriptLoader taskManagerLoader = null;
     
+    private List<Plugin> plugins;
     
-    private PowerGrid() {}
+    private Client client;
+    private InteractionController iController;
+    private Mapper mapper;
+    private RSInteractor rsInteractor;
+    private TaskManager taskManager;
+    private Bot bot;
+    private ScriptLoader taskManagerLoader;
+    
+    private PowerGrid(Client c) {
+        assert c != null;
+        client = c;
+        iController = new InteractionController();
+        mapper = new Mapper().withClient(client);
+        taskManager = new TaskManager();
+        bot = new Bot(taskManager);
+        taskManagerLoader = new ScriptLoader(taskManager);
+    }
+    
+    /**
+     * Loads Plugins from the specified directory.
+     * @param directory the directory from which to load.
+     */
+    public void loadPlugins(File directory) {
+        assert directory != null && directory.isDirectory();
+        PluginLoader pl = new PluginLoader(directory);
+        List<Plugin> ps = Arrays.asList(pl.getLoadedPlugins());
+        if (plugins == null) {
+            plugins = ps;
+        } else {
+            plugins.addAll(ps);
+        }
+        for (Plugin p : ps) {
+            /* try to setUp each Plugin instance or discard upon Exception.
+             * This way it is certain that PowerGrid will not crash because of 
+             * loading a failing Plugin.
+             */
+            try {
+                p.setUp();
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Failed to load Plugin " 
+                        + p.getClass().getAnnotation(PluginInfo.class).name(),
+                        e);
+                plugins.remove(p);
+            }
+        }
+    }
+    
+    public Client client() {
+        return client;
+    }
+    
+    public InteractionController interactionController() {
+        return iController;
+    }
+    
+    public Mapper mapper() {
+        return mapper;
+    }
+    
+    public RSInteractor rsInteractor() {
+        return rsInteractor;
+    }
+    
+    public TaskManager taskManager() {
+        return taskManager;
+    }
+    
+    public WorldMap worldmap() {
+        return mapper().getWorldMap();
+    }
+    
+    public Bot bot() {
+        return bot;
+    }
     
     /**
      * Launches PowerGrid with the given settings.
      * <p/>
      * @param devmode true to enable developer mode, false to disable
      * @param splitUI true to split the user interface in a separate frame
-     * @return whether the launch was succesful
+     * @return whether the launch was successful
      */
     public boolean launch(boolean devmode, boolean splitUI) {
+        assert plugins != null;
         this.devmode = devmode;
         this.splitUI = splitUI;
         return launch();
@@ -197,9 +303,10 @@ public class PowerGrid {
      * <p/>
      * After launching PowerGrid, the Mapper will automatically start mapping and
      * Tasks will be executed from the Task queue.
-     * @return whether the launch was succesful
+     * @return whether the launch was successful
      */
     public boolean launch() {
+        assert plugins != null;
         if (isRunning) 
             return false;
         logMessage("starting PowerGrid...");
@@ -229,8 +336,8 @@ public class PowerGrid {
         taskManagerLoader = new ScriptLoader(TM);
         taskManagerLoader.run();
         
-        MAPPER.withClient(org.powerbot.core.Bot.client());
-        MAPPER.startMapping();
+        mapper().withClient(org.powerbot.core.Bot.client());
+        mapper().startMapping();
         debugMessage("Mapper Started");
         
         Runtime.getRuntime().addShutdownHook(terminatorThread);
@@ -268,7 +375,7 @@ public class PowerGrid {
         taskManagerLoader = taskManagerLoader.copy();
         debugMessage("TaskManager stopped");
         
-        for (Plugin p : plugins) {
+        for (Plugin p : plugin) {
             p.tearDown();
         }
         debugMessage("Plugins finalized");

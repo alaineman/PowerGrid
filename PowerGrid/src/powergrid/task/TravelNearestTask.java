@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
 import powergrid.control.XMLToolBox;
@@ -13,30 +14,48 @@ import powergrid.model.Point;
 import powergrid.model.XMLNode;
 
 /**
- * Calculates a path to the nearest position matching certain criteria and walks it.
+ * Calculates a path to the nearest position matching certain criteria and 
+ * walks it.
  * <p/>
  * 
  * @author Chronio
  */
 public class TravelNearestTask extends TravelTask {
     
-    private String type = "";
-    private String target = "";
-    private String traits = "";
+    private String type = null;
+    private String target = null;
+    private String traits = null;
     
     public TravelNearestTask(String type, String target, String traits) {
-        if (type != null)
-            this.type = type;
-        if (target != null)
-            this.target = target;
-        if (traits != null)
-            this.traits = traits;
+        assert type != null;
+        this.type = type;
+        this.target = target;
+        this.traits = traits;
     }
     public TravelNearestTask(String type, String target) {
-        this(type,target,"");
+        assert type != null;
+        this.type = type;
+        this.target = target;
     }
     public TravelNearestTask(String type) {
-        this(type,"","");
+        assert type != null;
+        this.type = type;
+    }
+    public TravelNearestTask() {}
+    
+    public void setType(String type) {
+        assert type != null && this.type == null;
+        this.type = type;
+    }
+    
+    public void setTarget(String target) {
+        assert target != null && this.target == null;
+        this.target = target;
+    }
+    
+    public void setTraits(String traits) {
+        assert traits != null && this.traits == null;
+        this.traits = traits;
     }
     
     public String getType() {
@@ -48,7 +67,13 @@ public class TravelNearestTask extends TravelTask {
     public String getTraits() {
         return traits;
     }
+    
+    public boolean hasValidSettings() {
+        return type != null && !type.isEmpty();
+    }
+    
     public List<XMLNode> getMatching() {
+        assert hasValidSettings();
         XMLNode root = XMLToolBox.getXMLTree(ClassLoader.getSystemResourceAsStream("powergrid/data/specialLocations.xml"));
         // look for the correct type
         XMLNode typeNode = null;
@@ -78,7 +103,7 @@ public class TravelNearestTask extends TravelTask {
     
     @Override public synchronized void start() {
         List<XMLNode> matches = getMatching();
-        path = calculateNearest(PowerGrid.BOT.getPosition(),matches);
+        path = calculateNearest(PowerGrid.PG.bot().getPosition(),matches);
     }
     
     public static List<Point> calculateNearest(final Point from, List<XMLNode> options) {
@@ -128,12 +153,21 @@ public class TravelNearestTask extends TravelTask {
         
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.type);
+        hash = 83 * hash + Objects.hashCode(this.target);
+        hash = 83 * hash + Objects.hashCode(this.traits);
+        return hash;
+    }
+
     @Override public boolean equals(Object other) {
         if (other instanceof TravelNearestTask) {
             TravelNearestTask that = (TravelNearestTask)other;
-            if (!this.getTarget().equals(that.getTarget())) return false;
-            if (!this.getTraits().equals(that.getTraits())) return false;
-            if (!this.getType().equals(that.getType())) return false;
+            if (!Objects.equals(this.getTarget(),that.getTarget())) return false;
+            if (!Objects.equals(this.getTraits(),that.getTraits())) return false;
+            if (!Objects.equals(this.getType(), that.getType())) return false;
             
             return true;
         }

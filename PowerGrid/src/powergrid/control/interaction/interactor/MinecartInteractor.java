@@ -18,7 +18,7 @@ import powergrid.model.world.transportation.Minecart;
 import powergrid.task.Task;
 
 /**
- * Interactor for Minecarts.
+ * Interactor for Minecart instances.
  * <p/>
  * @author Chronio
  */
@@ -27,7 +27,6 @@ public class MinecartInteractor extends Interactor {
     /**
      * Creates a new MinecartInteractor that uses the specified information to
      * perform interactions with Minecart objects.
-     * @param c the Client
      * @param map the WorldMap instance
      * @param interactor the RSInteractor object that allows interaction with 
      *                   the Runescape environment
@@ -77,6 +76,7 @@ public class MinecartInteractor extends Interactor {
         return res;
     }
 
+    
     @Override public boolean interact(Object o) {
         Set<Minecart> options = getOptions(o);
         Iterator it = options.iterator();
@@ -144,6 +144,7 @@ public class MinecartInteractor extends Interactor {
             return false;
         }
     }
+    
     
     private boolean travelPath(Minecart start, List<TransportTile> path) {
         if (path.isEmpty()) {

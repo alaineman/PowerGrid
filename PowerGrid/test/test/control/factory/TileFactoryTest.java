@@ -26,7 +26,7 @@ public class TileFactoryTest {
         
         when(mockedSimpleFactory.accept(any(Point.class), any(RSGround.class), 
                 anyInt())).thenReturn(true);
-        when(mockedFancyFactory.accept(new Point(2,2), any(RSGround.class), 
+        when(mockedFancyFactory.accept(eq(new Point(2,2)), any(RSGround.class), 
                 anyInt())).thenReturn(true);
         when(mockedSimpleFactory.compareTo(mockedFancyFactory)).thenReturn(-1);
         when(mockedFancyFactory.compareTo(mockedSimpleFactory)).thenReturn(1);

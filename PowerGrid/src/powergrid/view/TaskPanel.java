@@ -77,7 +77,7 @@ public class TaskPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        for (Plugin p : PowerGrid.getPlugins()) {
+        for (Plugin p : PowerGrid.PG.getPlugins()) {
             for (Class<? extends Task> c : p.getPublicTasks()) {
                 entries.add(new TaskEntry(p.getClass().getAnnotation(PluginInfo.class).name(),c),gbc);
                 gbc.gridy++;

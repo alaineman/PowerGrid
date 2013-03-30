@@ -55,7 +55,7 @@ public class DestinationPanel extends JPanel {
             setBackground(Color.WHITE);
             go.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
-                    PowerGrid.BOT.travelTo(destination, 0);
+                    PowerGrid.PG.bot().travelTo(destination, 0);
                 }
             });
         }

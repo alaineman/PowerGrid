@@ -40,12 +40,12 @@ public class MinecartInteractorTest extends AbstractInteractorTest {
         when(mockedDestination.getNetwork()).thenReturn(mockedNetwork);
         when(mockedNetwork.findPath(mockedMinecart, mockedDestination))
                 .thenReturn(Arrays.asList(new TransportTile[]{mockedDestination}));
-        when(mockedNetwork.getElements()).thenReturn(new HashSet(Arrays.asList(
+        when(mockedNetwork.getElements()).thenReturn(new HashSet<>(Arrays.asList(
                 new TransportTile[]{mockedMinecart,mockedDestination})));
         when(mockedMinecart.getPosition()).thenReturn(mockedPoint);
         when(mockedPoint.toTile()).thenReturn(mockedTile);
         when(mockedTile.isOnScreen()).thenReturn(true);
-        
+        when(getRSInteractor().waitForVisible(any(), anyInt())).thenReturn(true);
         when(getRSInteractor().getWidget(889)).thenReturn(mockedWidget);
         when(mockedWidget.validate()).thenReturn(true);
         when(mockedWidget.getChild(anyInt())).thenReturn(mockedWidgetChild);

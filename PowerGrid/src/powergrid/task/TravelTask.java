@@ -2,11 +2,12 @@ package powergrid.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Walking;
+import powergrid.Bot;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
-import powergrid.model.DestinationMap;
 import powergrid.model.DestinationMap.Destination;
 import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
@@ -60,12 +61,14 @@ public class TravelTask extends StepTask {
     }
 
     public synchronized void setDestination(Point dest) {
+        assert dest != null && destination == null;
         destination = dest;
     }
 
     /**
-     * Calculates a path and checks preconditions for this TravelTask. The Task
-     * is immediately canceled when
+     * Calculates a path and checks preconditions for this TravelTask. 
+     * <p/>
+     * The Task is immediately canceled when 
      * <code>getDestination() == null</code>, or when the PathFinder class has
      * found no path to the given destination.
      */
@@ -75,8 +78,9 @@ public class TravelTask extends StepTask {
         if (destination == null) {
             cancel();
         } else {
+            Bot bot = PowerGrid.PG.bot();
             try {
-                path = PathFinder.findPath(PowerGrid.BOT.getPosition(), destination);
+                path = PathFinder.findPath(bot.getPosition(), destination);
                 if (PowerGrid.PG.isDevmode()) {
                     StringBuilder sb = new StringBuilder("Composed path:\n");
                     for (Point p : path) {
@@ -98,7 +102,7 @@ public class TravelTask extends StepTask {
                 }
             } catch (OutOfReachException e) {
                 path = new ArrayList<>(1);
-                path.add(PowerGrid.BOT.getPosition());
+                path.add(bot.getPosition());
                 PowerGrid.logMessage("No path found to " + destination + ", task was canceled");
                 cancel();
             }
@@ -107,13 +111,15 @@ public class TravelTask extends StepTask {
 
     /**
      * Attempts to move to the next Point in the path, or waits if no action is
-     * required. <p /> When the Player has more then 20 stamina left, but the
-     * Player's run mode is set to false, Run mode is automatically enabled.
+     * required.
+     * <p/>
+     * When the Player has more then 20 stamina left, but the Player's run mode
+     * is set to false, Run mode is automatically enabled.
      */
     @Override
     public synchronized void step() {
         setStepsLeft(path.size() - target);
-        Point playerPos = PowerGrid.BOT.getPosition();
+        Point playerPos = PowerGrid.PG.bot().getPosition();
         // check the distance to our next point.
         double distToTarget = playerPos.distance(path.get(target));
 
@@ -164,7 +170,7 @@ public class TravelTask extends StepTask {
 
     // walks to the given tile and possibly executes the appropriate action
     private void walkToTile(Point p) {
-        Point playerPos = PowerGrid.BOT.getPosition();
+        Point playerPos = PowerGrid.PG.bot().getPosition();
         if (playerPos.distance(p) > PathFinder.maxDist) {
             Lodestone l = Lodestone.getLodestone(p);
             if (l != null) {
@@ -195,6 +201,13 @@ public class TravelTask extends StepTask {
         } else {
             Walking.walk(p);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + Objects.hashCode(this.destination);
+        return hash;
     }
 
     @Override public boolean equals(Object other) {

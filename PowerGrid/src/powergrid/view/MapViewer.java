@@ -181,7 +181,7 @@ public class MapViewer extends Canvas implements ActionListener {
         }
         // try to draw the player, if any exists
         try {
-            Point p = PowerGrid.BOT.getPosition();
+            Point p = PowerGrid.PG.bot().getPosition();
             if (p.x > r.x && p.x < r.x+r.width &&
                 p.y > r.x && p.y < r.y+r.height) {
                 g.setColor(current.get("player"));

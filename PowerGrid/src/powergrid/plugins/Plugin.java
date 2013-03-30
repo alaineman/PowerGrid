@@ -1,45 +1,42 @@
 package powergrid.plugins;
 
 import java.util.Collection;
+import powergrid.PowerGrid;
 import powergrid.task.Task;
 
 /**
- * Standard interface for PowerGrid plugins. 
+ * Interface for PowerGrid plugins. 
  * <p/>
  * Classes that implement this interface can be loaded and run in PowerGrid.
  * <p/>
- * Important to note, is the setUp() method. This method is executed as soon as 
- * PowerGrid finds the plugin, which is even before RSBot starts. As such, it is 
- * possible to execute code that would otherwise be prohibited by RSBot's 
- * SecurityManager.
+ * A plugin can hook custom classes into PowerGrid in the setUp method, which 
+ * is executed as soon as the Plugin is loaded in PowerGrid. Similarly, these 
+ * classes should be unloaded again in the tearDown method, which is called 
+ * when PowerGrid unloads the Plugin. 
  * <p/>
  * @author Chronio
  */
 public interface Plugin {
+    
+    /**
+     * This method is executed when the Plugin is loaded.
+     * <p/>
+     * It serves to provide the PowerGrid instance to the plugin, so that it 
+     * can be used to hook custom classes into the framework.
+     * @param pg the PowerGrid instance.
+     */
+    public void withPowerGrid(PowerGrid pg);
+    
     /**
      * This method is executed when the plugin is loaded.
      * <p/>
      * PowerGrid loads available plugins at startup. Therefore, to prevent long 
      * startup times, try to execute only small amounts of code here.
-     * <p/>
-     * Code executed in this method is not restricted by RSBot's SecurityManager.
-     * Also, since this method is executed before RSBot loads, some RSBot classes 
-     * and methods might not work as expected.
      */
     public void setUp();
     
     /**
-     * This method is executed when RSBot has loaded.
-     * <p/>
-     * This guarantees that RSBot classes are correctly initialized, but it also means 
-     * that code executed in this method is restricted by RSBot's SecurityManager.
-     * <p/>
-     */
-    public void onLoad();
-    
-    /**
-     * This method is executed by PowerGrid after the setUp() and onLoad() methods 
-     * have been called.
+     * Returns a List of the public Task classes that 
      * <p/>
      * PowerGrid expects a Collection of Tasks that should be provided to the end-user
      * as runnable tasks.
@@ -47,14 +44,24 @@ public interface Plugin {
      */
     public Collection<Class<? extends Task>> getPublicTasks();
     
+    /**
+     * Creates an instance of the provided Class type.
+     * <p/>
+     * This method may throw an UnsupportedOperationException when the provided
+     * Class cannot be instantiated by this Plugin.
+     * <p/>
+     * @param clazz the Class Object to instantiate
+     * @return an instance of the provided class type
+     * @throws UnsupportedOperationException when the provided Class cannot be 
+     *                                       instantiated by this Plugin.
+     */
+    public Task instantiate(Class<? extends Task> clazz); 
     
     /**
-     * This method is called when PowerGrid unloads and RSBot shuts down.
+     * This method is called when the Plugin is unloaded from PowerGrid.
      * <p/>
      * This is also the last chance for the plugin to save data, close streams 
      * and sockets, or clean up any other Objects that need proper finalization.
-     * <p/>
-     * Code executed in this method is restricted by RSBot's SecurityManager
      */
     public void tearDown();
 }

@@ -76,11 +76,12 @@ public class RestTask extends StepTask implements Configurable {
      * achieved.
      */
     @Override public void start() {
+        Bot bot = PowerGrid.PG.bot();
         for (int attempt=0;attempt<5;attempt++) {
-            if (PowerGrid.BOT.getState() == Bot.STATE_RESTING) break;
+            if (bot.getState() == Bot.STATE_RESTING) break;
             Widgets.get(750, 5).interact("Rest");
         }
-        if (PowerGrid.BOT.getState() != Bot.STATE_RESTING) {
+        if (bot.getState() != Bot.STATE_RESTING) {
             cancel();
             PowerGrid.logMessage("RestTask: Resting Failed");
         }
@@ -103,7 +104,7 @@ public class RestTask extends StepTask implements Configurable {
                 cancel();
                 PowerGrid.logMessage("RestTask: Target Energy (" + targetEnergy + ") achieved, RestTask completed");
             }
-            if (PowerGrid.BOT.getState() != Bot.STATE_RESTING) {
+            if (PowerGrid.PG.bot().getState() != Bot.STATE_RESTING) {
                 // re-run the start method to start resting
                 PowerGrid.logMessage("Currently not resting, restarting RestTask");
                 start();

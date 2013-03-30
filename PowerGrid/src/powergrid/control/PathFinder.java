@@ -63,7 +63,7 @@ public class PathFinder implements Copyable<PathFinder> {
      * @throws IllegalArgumentException when the given endpoint is null.
      */
     public static List<Point> findPath(Point end) throws OutOfReachException {
-        return new PathFinder(PowerGrid.BOT.getPosition(), end).calculatePath();
+        return new PathFinder(PowerGrid.PG.bot().getPosition(), end).calculatePath();
     }
     /**
      * The maximum distance between two Points in the result Path.

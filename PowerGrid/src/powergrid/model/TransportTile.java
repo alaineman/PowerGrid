@@ -1,6 +1,7 @@
 package powergrid.model;
 
 import org.powerbot.game.client.RSGround;
+import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TransportNetwork;
 
 /**
@@ -10,7 +11,7 @@ import powergrid.model.network.TransportNetwork;
  * 
  * @author Chronio
  */
-public class TransportTile extends GameTile {
+public class TransportTile extends GameTile implements NetworkElement {
     
     private TransportNetwork network = null;
     
@@ -29,6 +30,7 @@ public class TransportTile extends GameTile {
      * @param nw the network to add this TransportTile to
      * @return itself for fluency
      */
+    @Override
     public TransportTile withNetwork(TransportNetwork nw) {
         network = nw;
         return this;
@@ -41,6 +43,7 @@ public class TransportTile extends GameTile {
      * @return the TransportNetwork this TransportTile is a part of, or null if
      *         this TransportTile is not a part of a network
      */
+    @Override 
     public TransportNetwork getNetwork() {
         return network;
     }

@@ -1,8 +1,10 @@
 package powergrid.model.network;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class represents a Node in a Tree. 
@@ -10,6 +12,7 @@ import java.util.List;
  * It features multiple search and contains methods, as well as basic add and 
  * remove operations.
  * <p/>
+ * @param <T> The element type of this TreeNode
  * @author Chronio
  */
 public class TreeNode<T> {
@@ -62,7 +65,7 @@ public class TreeNode<T> {
      * @return the old parent.
      */
     private TreeNode<T> setParent(TreeNode<T> node) {
-        TreeNode p = parent;
+        TreeNode<T> p = parent;
         parent = node;
         return p;
     }
@@ -133,7 +136,7 @@ public class TreeNode<T> {
      * @return the created TreeNode
      */
     public TreeNode<T> add(T element) {
-        TreeNode node = new TreeNode(element);
+        TreeNode<T> node = new TreeNode<>(element);
         addChild(node);
         return node;
     }
@@ -148,7 +151,8 @@ public class TreeNode<T> {
     public boolean addChild(TreeNode<T> node) {
         if (node == null) return false;
         if (parents().contains(node))
-            throw new IllegalArgumentException("This will create a loop of parents.");
+            throw new IllegalArgumentException(
+                    "This will create a loop of parents.");
         if (node.hasParent()) 
             node.getParent().removeChild(node);
         node.setParent(this);
@@ -196,7 +200,8 @@ public class TreeNode<T> {
     /**
      * Removes the specified Node from this TreeNode
      * @param node the TreeNode to remove
-     * @return whether this TreeNode contained the given node as a child and it is succedfully removed.
+     * @return whether this TreeNode contained the given node as a child and it
+     *         is successfully removed.
      */
     public boolean removeChild(TreeNode<T> node) {
         if (children.contains(node)) {
@@ -210,7 +215,24 @@ public class TreeNode<T> {
      * Returns a Set of TreeNodes that are the direct children of this TreeNode.
      * @return the Set of children in this TreeNode.
      */
-    public HashSet<TreeNode<T>> children() {
+    public Set<TreeNode<T>> children() {
         return new HashSet<>(children);
+    }
+    
+    /**
+     * @return a Set containing all TreeNodes in the subtree with this Node as 
+     *         root.
+     */
+    public Set<TreeNode<T>> allChildren() {
+        if (children.isEmpty()) {
+            return Collections.singleton(this);
+        } else {
+            HashSet<TreeNode<T>> descendants = new HashSet<>(2*children.size());
+            descendants.add(this);
+            for (TreeNode<T> child : children) {
+                descendants.addAll(child.allChildren());
+            }
+            return descendants;
+        }
     }
 }

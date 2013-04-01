@@ -2,7 +2,6 @@ package powergrid.model.network;
 
 import java.util.List;
 import java.util.Set;
-import powergrid.model.TransportTile;
 
 /**
  * This interface represents a network of Transport Tiles. 
@@ -18,19 +17,19 @@ public interface TransportNetwork {
      * @param element the element to check
      * @return whether this network contains the given element
      */
-    public boolean contains(TransportTile element);
+    public boolean contains(NetworkElement element);
     /**
      * Adds the given element to this network.
      * @param element the element to add.
      * @return true if the element was successfully added, false otherwise
      */
-    public boolean add(TransportTile element);
+    public boolean add(NetworkElement element);
     /**
      * removes the given element from this network.
      * @param element the element to remove.
      * @return true if this network contained the element and it was successfully removed, false otherwise
      */
-    public boolean remove(TransportTile element);
+    public boolean remove(NetworkElement element);
     /**
      * returns the amount of elements in this network
      * @return the amount of elements in this network
@@ -43,12 +42,12 @@ public interface TransportNetwork {
      * @param destination the endpoint
      * @return a shortest path to the destination.
      */
-    public List<TransportTile> findPath(TransportTile source, TransportTile destination);
+    public List<NetworkElement> findPath(NetworkElement source, NetworkElement destination);
     
     /**
      * Returns a Set containing the elements in this network.
      * @return a Set containing the elements in this network
      */
-    public Set<TransportTile> getElements();
+    public Set<NetworkElement> getElements();
     
 }

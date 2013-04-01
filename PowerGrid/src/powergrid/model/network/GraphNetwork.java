@@ -6,7 +6,6 @@ package powergrid.model.network;
 
 import java.util.List;
 import java.util.Set;
-import powergrid.model.TransportTile;
 
 /**
  *
@@ -14,38 +13,39 @@ import powergrid.model.TransportTile;
  */
 public class GraphNetwork implements TransportNetwork {
 
-    @Override
-    public boolean contains(TransportTile element) {
+    public Set<? extends NetworkElement> getAdjacentTiles(NetworkElement tile) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean add(TransportTile element) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean contains(NetworkElement element) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean remove(TransportTile element) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean add(NetworkElement element) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean remove(NetworkElement element) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int size() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<TransportTile> findPath(TransportTile source, TransportTile destination) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<NetworkElement> findPath(NetworkElement source,
+            NetworkElement destination) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Set<TransportTile> getElements() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    public Set<TransportTile> getAdjacentTiles(TransportTile tile) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Set<NetworkElement> getElements() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

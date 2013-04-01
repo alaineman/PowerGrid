@@ -12,7 +12,9 @@ import static powergrid.control.uicontrols.RSInteractor.FAIRYRING_PANEL;
 import powergrid.model.OutOfReachException;
 import powergrid.model.TransportTile;
 import powergrid.model.WorldMap;
-import powergrid.model.world.transportation.FairyRing;
+import powergrid.model.network.TreeNetwork;
+import powergrid.model.network.TreeNode;
+import powergrid.model.world.transportation.Fairyring;
 
 /**
  * Interacts with Fairy Rings.
@@ -74,25 +76,26 @@ public class FairyringInteractor extends Interactor {
      * Returns a list of all ringcodes that can be travelled to from the given 
      * Object.
      * <p/>
-     * @param elem the FairyRing to check
+     * @param elem the Fairyring to check
      * @return a Set containing the codes of the FairyRings that can be reached
-     *         from the given FairyRing, or the empty set if the provided 
-     *         Object is not a FairyRing instance.
+     *         from the given Fairyring, or the empty set if the provided 
+     *         Object is not a Fairyring instance.
      */
     @Override
     public Set<String> getOptions(Object elem) {
-        if (elem instanceof FairyRing) {
-            FairyRing ring = (FairyRing) elem;
-            String startCode = ring.getCode();
+        if (elem instanceof Fairyring) {
+            Fairyring ring = (Fairyring) elem;
             HashSet<String> res = new HashSet<>();
-            for (TransportTile tt: ring.getNetwork().getElements()) {
-                if (tt instanceof FairyRing) {
-                    String destCode = ((FairyRing) tt).getCode();
-                    if (!destCode.equals(startCode)) {
-                        res.add(destCode);
-                    }
-                }
-            }
+            TreeNetwork tn = ring.getNetwork();
+            Fairyring root = (Fairyring) tn.getRoot().element();
+            if(root.equals(elem)){
+                for(TreeNode<TransportTile> node : tn.getRoot().children()){
+                    Fairyring fring = (Fairyring) node.element();
+                    res.add(fring.getCode());
+                }                
+            } else {
+                res.add(root.getCode());
+            }            
             return res;
         } else {
             return Collections.emptySet();
@@ -100,28 +103,28 @@ public class FairyringInteractor extends Interactor {
     }
 
     /**
-     * Interacts with the specified FairyRing to teleport to the specified 
+     * Interacts with the specified Fairyring to teleport to the specified 
      * destination.
      * <p/>
-     * @param elem the FairyRing to interact with
-     * @param option the FairyRing to teleport to
+     * @param elem the Fairyring to interact with
+     * @param option the Fairyring to teleport to
      * @return true if the interaction succeeded, false otherwise
-     * @throws OutOfReachException when the FairyRing could not be reached
+     * @throws OutOfReachException when the Fairyring could not be reached
      */
     @Override
     public boolean interact(Object elem, Object option) 
             throws OutOfReachException {
-        FairyRing start = null;
-        FairyRing dest = null;
+        Fairyring start = null;
+        Fairyring dest = null;
         String code = null;
         
-        if (elem instanceof FairyRing) {
-            start = (FairyRing) elem;
+        if (elem instanceof Fairyring) {
+            start = (Fairyring) elem;
             if (option instanceof String) {
                 code = (String) option;
                 dest = lookupDestination(code, start);
-            } else if (option instanceof FairyRing) {
-                dest = (FairyRing) option;
+            } else if (option instanceof Fairyring) {
+                dest = (Fairyring) option;
                 code = dest.getCode();
             }
         }
@@ -146,24 +149,24 @@ public class FairyringInteractor extends Interactor {
     }
     
     /**
-     * Finds the FairyRing instance that matches the given code.
+     * Finds the Fairyring instance that matches the given code.
      * <p/>
      * @param code the code to look for
-     * @param start the start FairyRing
-     * @return the FairyRing instance with the provided code
-     * @throws OutOfReachException when no such FairyRing exists
+     * @param start the start Fairyring
+     * @return the Fairyring instance with the provided code
+     * @throws OutOfReachException when no such Fairyring exists
      * @throws IllegalArgumentException when the provided code is not valid
      */
-    private FairyRing lookupDestination(String code, FairyRing start) 
+    private Fairyring lookupDestination(String code, Fairyring start) 
             throws OutOfReachException {
         code = code.toUpperCase();
-        if (code.length() != FairyRing.CODE_LENGTH) {
+        if (code.length() != Fairyring.CODE_LENGTH) {
             throw new IllegalArgumentException("Invalid code length");
         }
-        FairyRing destination = null;
+        Fairyring destination = null;
         for (TransportTile tile : start.getNetwork().getElements()) {
-            if (tile instanceof FairyRing) {
-                FairyRing ring = (FairyRing) tile;
+            if (tile instanceof Fairyring) {
+                Fairyring ring = (Fairyring) tile;
                 if (ring.getCode().equals(code)) {
                     destination = ring;
                     break;
@@ -210,12 +213,12 @@ public class FairyringInteractor extends Interactor {
     }
     /**
      * Returns the set of types supported by this Interactor.
-     * @return a set containing only the FairyRing.class object.
+     * @return a set containing only the Fairyring.class object.
      */
     @Override
     public Set<Class<?>> getTypes() {
         HashSet<Class<?>> set = new HashSet<>(2);
-        set.add(FairyRing.class);
+        set.add(Fairyring.class);
         return set;
     }
     

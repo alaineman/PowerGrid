@@ -37,7 +37,7 @@ public class RSInteractor {
     
     private Client client = null;
     private WorldMap map = null;
-    private HashMap<Integer, Widget> loadedWidgets = new HashMap(8,7/8f);
+    private HashMap<Integer, Widget> loadedWidgets = new HashMap<>(8,7/8f);
     
     /**
      * Sets the Client to be used in this RSInteractor.

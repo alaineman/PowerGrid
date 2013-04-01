@@ -12,7 +12,7 @@ import powergrid.model.OutOfReachException;
 import powergrid.model.WorldMap;
 import powergrid.model.network.GraphNetwork;
 import powergrid.model.network.TransportNetwork;
-import powergrid.model.world.transportation.Magiccarpet;
+import powergrid.model.world.transportation.CarpetMerchant;
 
 /**
  *
@@ -26,8 +26,8 @@ public class MagiccarpetInteractor extends Interactor {
 
     @Override
     public Set<?> getOptions(Object elem) {
-        if(elem instanceof Magiccarpet){
-            Magiccarpet mc = (Magiccarpet) elem;
+        if(elem instanceof CarpetMerchant){
+            CarpetMerchant mc = (CarpetMerchant) elem;
             GraphNetwork tn = mc.getNetwork();
             return tn.getAdjacentTiles(mc);
         } else {
@@ -42,7 +42,7 @@ public class MagiccarpetInteractor extends Interactor {
 
     @Override
     public Set<Class<?>> getTypes() {
-        return (Set<Class<?>>) Collections.singleton((Class<?>) Magiccarpet.class); 
+        return (Set<Class<?>>) Collections.singleton((Class<?>) CarpetMerchant.class); 
     }
     
 }

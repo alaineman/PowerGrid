@@ -14,11 +14,11 @@ import powergrid.model.network.TransportNetwork;
  *
  * @author Vincent W
  */
-public class Magiccarpet extends TransportTile {
+public class CarpetMerchant extends TransportTile {
     
     private String name;
     
-    public Magiccarpet(Point pos, RSGround ground, int colFlag) {
+    public CarpetMerchant(Point pos, RSGround ground, int colFlag) {
         super(pos, ground, colFlag);
     }
     
@@ -28,7 +28,7 @@ public class Magiccarpet extends TransportTile {
     }
     
     @Override
-    public Magiccarpet withNetwork(TransportNetwork nw) {
+    public CarpetMerchant withNetwork(TransportNetwork nw) {
         if(nw instanceof GraphNetwork){
         super.withNetwork(nw);
         return this;

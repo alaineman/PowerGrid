@@ -60,14 +60,17 @@ public abstract class StepTask extends Task {
      * @throws IllegalStateException when this Task has already finished running
      */
     @Override public synchronized void execute() {
-        if (numSteps != 0) {
-            if (numSteps > 0) numSteps--;
+        while (hasMoreSteps()) {
             step();
-        } else throw new IllegalStateException("StepTask has already finished");
+            if (!isOnLoop()) {
+                numSteps--;
+            }
+        }
     }
     
     /**
-     * returns the number of times this Task still has to execute, or Integer.MAX_VALUE when this Task is set to loop.
+     * returns the number of times this Task still has to execute, or 
+     * Integer.MAX_VALUE when this Task is set to loop.
      * @return the number of times this Task still has to execute
      */
     public int stepsLeft() {

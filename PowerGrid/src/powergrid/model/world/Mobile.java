@@ -11,66 +11,121 @@ import org.powerbot.game.client.RSMessageData;
 import org.powerbot.game.client.RSNPC;
 import powergrid.model.Point;
 
-public class Person {
+/**
+ * Represents a mobile entity in the Runescape World.
+ * @author Chronio
+ */
+public class Mobile {
+    
     private RSNPC rsnpc;
     private Point position;
     
-    public Person(RSNPC rsnpc){
+    /**
+     * Creates a Mobile object with the specified RSNPC object.
+     * @param rsnpc the RSNPC object this Mobile represents.
+     */
+    public Mobile(RSNPC rsnpc){
         assert rsnpc != null;
         this.rsnpc = rsnpc;
     }
 
+    /**
+     * @return the linked RSNPC Object.
+     */
     public RSNPC getRSNPC() {
         return rsnpc;
     }   
 
+    /**
+     * @return the last known position of this Mobile.
+     */
     public Point getPosition() {
         return position;
     }
 
+    /**
+     * Updates the position of this Mobile.
+     * @param position the new position
+     */
     public void setPosition(Point position) {
         assert position != null;
         this.position = position;
     }
     
+    /**
+     * @return the ID of this Mobile.
+     */
     public int getID() {
         return getRSNPC().getRSNPCDef().getID();
     }
     
+    /**
+     * @return the level of this Mobile.
+     */
     public int getLevel() {
         return getRSNPC().getRSNPCDef().getLevel();
     }
     
+    /**
+     * @return the name of this Mobile
+     */
     public String getName() {
         return getRSNPC().getRSNPCDef().getName();
     }
     
+    /**
+     * @return an array containing the actions of this Mobile.
+     */
     public String[] getActions() {
         return getRSNPC().getRSNPCDef().getActions();
     }
     
+    /**
+     * @return the integer specifying the prayer icon of this Mobile
+     */
     public int getPrayerIcon() {
         return getRSNPC().getRSNPCDef().getPrayerIcon();
     }
     
+    /**
+     * @return the actual movement speed of this Mobile
+     */
     public int getMoveSpeed() {
         return getRSNPC().isMoving();
     }
     
+    /**
+     * @return whether this Mobile is moving (<code>getMoveSpeed() != 0</code>)
+     */
     public boolean isMoving() {
         return getMoveSpeed() != 0;
     }
     
+    /**
+     * @return the integer specifying the animation of this Mobile
+     */
     public int getAnimation() {
         RSAnimator anim = getRSNPC().getAnimation();
         return (anim == null ? -1 : anim.getSequence().getID());
     }
     
+    /**
+     * @return the message of this Mobile.
+     */
     public String getMessage() {
         RSMessageData mData = getRSNPC().getMessageData();
         return (mData == null ? null : mData.getMessage());
     }
     
+    /**
+     * Collects the CombatStatusData objects from the underlying RSNPC object.
+     * <p/>
+     * This data has to be parsed from an internal LinkedList and is therefore 
+     * considerably slow.
+     * <p/>
+     * @return an array with the CombatStatusData objects from the underlying
+     *         RSNPC object.
+     */
     public CombatStatusData[] getCombatStatusData() {
         LinkedList list = getRSNPC().getCombatStatusList();
         if (list == null) {
@@ -92,6 +147,17 @@ public class Person {
         return res.toArray(new CombatStatusData[res.size()]);
     }
     
+    /**
+     * Collects the amount of health this Mobile has.
+     * <p/>
+     * This method collects the required data using the 
+     * <code>getCombatStatusData()</code>, meaning that repetitive calls of 
+     * this method may lead to performance issues. Try to prevent calling this 
+     * method too often unless the value is expected to have changed.
+     * <p/>
+     * @return the current amount of health of this Mobile in the range 0 to 1,
+     *         or 1 if the health could not be determined.
+     */
     public double getHealth() {
         CombatStatusData[] cStatus = getCombatStatusData();
         if (cStatus != null && cStatus.length > 1) {
@@ -103,6 +169,17 @@ public class Person {
         return 1d;
     }
     
+    /**
+     * Collects the amount of adrenaline this Mobile has.
+     * <p/>
+     * This method collects the required data using the 
+     * <code>getCombatStatusData()</code>, meaning that repetitive calls of 
+     * this method may lead to performance issues. Try to prevent calling this 
+     * method too often unless the value is expected to have changed.
+     * <p/>
+     * @return the current amount of adrenaline of this Mobile in the range 0 
+     *         to 1, or 0 if the adrenaline could not be determined.
+     */
     public double getAdrenaline() {
         CombatStatusData[] cStatus = getCombatStatusData();
         if (cStatus != null && cStatus.length > 0) {
@@ -116,8 +193,8 @@ public class Person {
     
     @Override 
     public boolean equals(Object other) {
-        if (other instanceof Person) {
-            Person that = (Person) other;
+        if (other instanceof Mobile) {
+            Mobile that = (Mobile) other;
             return this.getPosition().equals(that.getPosition()) &&
                     Objects.equals(this.getRSNPC(), that.getRSNPC());
         }
@@ -132,7 +209,8 @@ public class Person {
         return hash;
     }
     
-    @Override public String toString() {
+    @Override 
+    public String toString() {
         StringBuilder sb = new StringBuilder("Person: ");
         sb.append(getName()).append(" (Level ").append(getLevel()).append(")");
         return sb.toString();

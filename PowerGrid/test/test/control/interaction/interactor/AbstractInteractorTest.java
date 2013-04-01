@@ -37,7 +37,7 @@ public class AbstractInteractorTest {
         when(mockedRSInteractor.clickRight(any(ViewportEntity.class))).thenReturn(true);
         
         when(mockedRSInteractor.getClient()).thenReturn(mockedClient);
-        when(mockedRSInteractor.getLocalPlayer()).thenReturn(mockedPlayer);
+        when(mockedRSInteractor.getLocalPBPlayer()).thenReturn(mockedPlayer);
         when(mockedRSInteractor.getMap()).thenReturn(mockedWorldMap);
         when(mockedRSInteractor.getTile(any(Point.class))).then(CALLS_REAL_METHODS);
         when(mockedRSInteractor.getWidget(anyInt())).thenReturn(null);
@@ -80,7 +80,7 @@ public class AbstractInteractorTest {
      * Tests if the RSInteractable Mock returns the correct mocks.
      */
     @Test public void testInitialSetup() {
-        assertEquals(getPlayer(),getRSInteractor().getLocalPlayer());
+        assertEquals(getPlayer(),getRSInteractor().getLocalPBPlayer());
         assertEquals(getWorldMap(),getRSInteractor().getMap());
         assertEquals(getClient(),getRSInteractor().getClient());
     }

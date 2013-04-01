@@ -2,9 +2,9 @@ package powergrid.control;
 
 import java.util.HashSet;
 import java.util.Objects;
-import org.powerbot.core.Bot;
 import static org.powerbot.game.api.wrappers.Tile.Flag.*;
 import org.powerbot.game.client.Client;
+import org.powerbot.game.client.HashTable;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSGroundData;
 import org.powerbot.game.client.RSGroundInfo;
@@ -53,6 +53,7 @@ public class Mapper implements Copyable<Mapper> {
     public Mapper withClient(Client client) {
         assert this.client == null && client != null;
         this.client = client;
+        assert invariant();
         return this;
     }
     
@@ -103,6 +104,8 @@ public class Mapper implements Copyable<Mapper> {
             map = new WorldMap();
         }
         RSInfo info = client.getRSGroundInfo();
+        HashTable loaders = info.getRSObjectDefLoaders().getCache().getTable();
+        
         RSGroundInfo ginfo = info.getRSGroundInfo();
         Point basePoint = new Point(
                 info.getBaseInfo().getX(),
@@ -186,7 +189,7 @@ public class Mapper implements Copyable<Mapper> {
         return res;
     }
     
-    protected boolean invariant() {
+    private boolean invariant() {
         // We only have a reference to a MapperThread if the MapperThread is actually mapping.
         if (thread != null && !thread.isAlive()) return false;
         if ((thread == null) != stop) return false;

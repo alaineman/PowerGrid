@@ -2,38 +2,41 @@ package powergrid.model.world;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import org.powerbot.game.api.wrappers.Locatable;
+import org.powerbot.game.api.wrappers.RegionOffset;
+import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.client.CombatStatus;
 import org.powerbot.game.client.CombatStatusData;
 import org.powerbot.game.client.LinkedList;
 import org.powerbot.game.client.LinkedListNode;
 import org.powerbot.game.client.RSAnimator;
+import org.powerbot.game.client.RSCharacter;
 import org.powerbot.game.client.RSMessageData;
-import org.powerbot.game.client.RSNPC;
 import powergrid.model.Point;
 
 /**
  * Represents a mobile entity in the Runescape World.
  * @author Chronio
  */
-public class Mobile {
+public abstract class Mobile implements Locatable {
     
-    private RSNPC rsnpc;
+    private RSCharacter rscharacter;
     private Point position;
     
     /**
-     * Creates a Mobile object with the specified RSNPC object.
-     * @param rsnpc the RSNPC object this Mobile represents.
+     * Creates a Mobile object with the specified RSCharacter object.
+     * @param rscharacter the RSCharacter object this Mobile represents.
      */
-    public Mobile(RSNPC rsnpc){
-        assert rsnpc != null;
-        this.rsnpc = rsnpc;
+    public Mobile(RSCharacter rscharacter){
+        assert rscharacter != null;
+        this.rscharacter = rscharacter;
     }
 
     /**
-     * @return the linked RSNPC Object.
+     * @return the linked RSCharacter Object.
      */
-    public RSNPC getRSNPC() {
-        return rsnpc;
+    public RSCharacter getRSCharacter() {
+        return rscharacter;
     }   
 
     /**
@@ -55,43 +58,33 @@ public class Mobile {
     /**
      * @return the ID of this Mobile.
      */
-    public int getID() {
-        return getRSNPC().getRSNPCDef().getID();
-    }
+    public abstract int getID();
     
     /**
      * @return the level of this Mobile.
      */
-    public int getLevel() {
-        return getRSNPC().getRSNPCDef().getLevel();
-    }
+    public abstract int getLevel();
     
     /**
      * @return the name of this Mobile
      */
-    public String getName() {
-        return getRSNPC().getRSNPCDef().getName();
-    }
+    public abstract String getName();
     
     /**
      * @return an array containing the actions of this Mobile.
      */
-    public String[] getActions() {
-        return getRSNPC().getRSNPCDef().getActions();
-    }
+    public abstract String[] getActions();
     
     /**
      * @return the integer specifying the prayer icon of this Mobile
      */
-    public int getPrayerIcon() {
-        return getRSNPC().getRSNPCDef().getPrayerIcon();
-    }
+    public abstract int getPrayerIcon();
     
     /**
      * @return the actual movement speed of this Mobile
      */
     public int getMoveSpeed() {
-        return getRSNPC().isMoving();
+        return getRSCharacter().isMoving();
     }
     
     /**
@@ -105,7 +98,7 @@ public class Mobile {
      * @return the integer specifying the animation of this Mobile
      */
     public int getAnimation() {
-        RSAnimator anim = getRSNPC().getAnimation();
+        RSAnimator anim = getRSCharacter().getAnimation();
         return (anim == null ? -1 : anim.getSequence().getID());
     }
     
@@ -113,21 +106,21 @@ public class Mobile {
      * @return the message of this Mobile.
      */
     public String getMessage() {
-        RSMessageData mData = getRSNPC().getMessageData();
+        RSMessageData mData = getRSCharacter().getMessageData();
         return (mData == null ? null : mData.getMessage());
     }
     
     /**
-     * Collects the CombatStatusData objects from the underlying RSNPC object.
+     * Collects the CombatStatusData objects from the underlying RSCharacter object.
      * <p/>
      * This data has to be parsed from an internal LinkedList and is therefore 
      * considerably slow.
      * <p/>
      * @return an array with the CombatStatusData objects from the underlying
-     *         RSNPC object.
+     *         RSCharacter object.
      */
     public CombatStatusData[] getCombatStatusData() {
-        LinkedList list = getRSNPC().getCombatStatusList();
+        LinkedList list = getRSCharacter().getCombatStatusList();
         if (list == null) {
             return null;
         }
@@ -196,7 +189,7 @@ public class Mobile {
         if (other instanceof Mobile) {
             Mobile that = (Mobile) other;
             return this.getPosition().equals(that.getPosition()) &&
-                    Objects.equals(this.getRSNPC(), that.getRSNPC());
+                    Objects.equals(this.getRSCharacter(), that.getRSCharacter());
         }
         return false;
     }
@@ -204,7 +197,7 @@ public class Mobile {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.rsnpc);
+        hash = 67 * hash + Objects.hashCode(this.rscharacter);
         hash = 67 * hash + Objects.hashCode(this.position);
         return hash;
     }
@@ -214,5 +207,16 @@ public class Mobile {
         StringBuilder sb = new StringBuilder("Person: ");
         sb.append(getName()).append(" (Level ").append(getLevel()).append(")");
         return sb.toString();
+    }
+
+    @Override
+    @Deprecated
+    public RegionOffset getRegionOffset() {
+        return getPosition().getRegionOffset();
+    }
+
+    @Override
+    public Tile getLocation() {
+        return getPosition().getLocation();
     }
 }

@@ -1,8 +1,6 @@
 package powergrid.model.world.transportation;
 
-import org.powerbot.game.client.RSGround;
-import powergrid.model.Point;
-import powergrid.model.TransportTile;
+import org.powerbot.game.client.RSNPC;
 import powergrid.model.network.GraphNetwork;
 import powergrid.model.network.TransportNetwork;
 
@@ -14,12 +12,12 @@ import powergrid.model.network.TransportNetwork;
  * @author Alaineman
  * @author Chronio
  */
-public class CarpetMerchant extends TransportTile {
+public class CarpetMerchant extends TransportGuide {
     
-    private String name;
-    
-    public CarpetMerchant(Point pos, RSGround ground, int colFlag) {
-        super(pos, ground, colFlag);
+    private String positionName;
+
+    public CarpetMerchant(RSNPC rsnpc) {
+        super(rsnpc);
     }
     
     @Override 
@@ -37,13 +35,11 @@ public class CarpetMerchant extends TransportTile {
         }
     }
 
-    public String getName() {
-        return name;
+    public String getPositionName() {
+        return positionName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPositionName(String name) {
+        this.positionName = name;
     }
-    
-    
 }

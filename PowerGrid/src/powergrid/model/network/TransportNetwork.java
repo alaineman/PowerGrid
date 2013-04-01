@@ -2,6 +2,7 @@ package powergrid.model.network;
 
 import java.util.List;
 import java.util.Set;
+import powergrid.model.OutOfReachException;
 
 /**
  * This interface represents a network of Transport Tiles. 
@@ -41,8 +42,10 @@ public interface TransportNetwork {
      * @param source the starting point
      * @param destination the endpoint
      * @return a shortest path to the destination.
+     * @throws OutOfReachException when there is no path between source and destination.
      */
-    public List<NetworkElement> findPath(NetworkElement source, NetworkElement destination);
+    public List<NetworkElement> findPath(NetworkElement source, 
+            NetworkElement destination) throws OutOfReachException;
     
     /**
      * Returns a Set containing the elements in this network.

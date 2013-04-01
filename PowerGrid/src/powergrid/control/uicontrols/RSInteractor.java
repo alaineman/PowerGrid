@@ -3,18 +3,20 @@ package powergrid.control.uicontrols;
 import java.awt.Canvas;
 import java.util.HashMap;
 import org.powerbot.core.script.job.Task;
+import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.input.Mouse;
+import org.powerbot.game.api.methods.node.Menu;
 import org.powerbot.game.api.util.Filter;
 import org.powerbot.game.api.wrappers.Locatable;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.ViewportEntity;
-import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import org.powerbot.game.client.Client;
 import powergrid.model.GameTile;
 import powergrid.model.Point;
 import powergrid.model.WorldMap;
+import powergrid.model.world.Player;
 
 /**
  * This class deals with interactions with the Runescape GUI, such as retrieving
@@ -32,12 +34,20 @@ public class RSInteractor {
     /** The maximum waiting time for wait operations. */
     public static final int DEFAULT_MAX_WAIT = 100;
     
+    public static final int DEFAULT_MIN_CONTINUEWAIT = 400;
+    
+    public static final int DEFAULT_MAX_CONTINUEWAIT = 700;
+    
     /** The Widget on which the FairyRing destination is chosen. */
     public static final int FAIRYRING_PANEL = 735;
+    /** The Widget on which the MagicCarpet destination is chosen. */
+    public static final int MAGICCARPET_PANEL = 1188;
     
     private Client client = null;
     private WorldMap map = null;
     private HashMap<Integer, Widget> loadedWidgets = new HashMap<>(8,7/8f);
+    
+    private Player localPlayer;
     
     /**
      * Sets the Client to be used in this RSInteractor.
@@ -128,6 +138,19 @@ public class RSInteractor {
             }
         }
         return isVisible(object);
+    }
+    
+    public void clickContinue() {
+        clickContinue(DEFAULT_MIN_CONTINUEWAIT, DEFAULT_MAX_CONTINUEWAIT);
+    }
+    
+    public void clickContinue(int min, int max) {
+        WidgetChild cont = Widgets.getContinue();
+        while (cont != null) {
+            click(cont);
+            Task.sleep(min,max);
+            cont = Widgets.getContinue();
+        }
     }
     
     /**
@@ -259,6 +282,10 @@ public class RSInteractor {
         return click(object.getLocation(),true);
     }
     
+    public boolean click(Locatable object, String option) {
+        return click((ViewportEntity) object.getLocation(), option);
+    }
+    
     /**
      * Clicks the given ViewportEntity.
      * @param object the ViewportObject to click
@@ -270,6 +297,14 @@ public class RSInteractor {
             @Override public boolean accept(java.awt.Point p) {
                 Mouse.click(left);
                 return true;
+            }
+        });
+    }
+    
+    public boolean click(ViewportEntity object, final String option) {
+        return Mouse.apply(object, new Filter<java.awt.Point>() {
+            @Override public boolean accept(java.awt.Point p) {
+                return Menu.select(option);
             }
         });
     }
@@ -295,9 +330,18 @@ public class RSInteractor {
     /**
      * Returns the currently logged in Player in the Runescape environment
      * @return the local Player
+     * @deprecated replaced with getLocalPlayer()
      */
+    @Deprecated
+    public org.powerbot.game.api.wrappers.interactive.Player getLocalPBPlayer() {
+        return new org.powerbot.game.api.wrappers.interactive.Player(getClient().getMyRSPlayer());
+    }
+    
     public Player getLocalPlayer() {
-        return new Player(getClient().getMyRSPlayer());
+        if (localPlayer == null) {
+            localPlayer = new Player(getClient().getMyRSPlayer());
+        }
+        return localPlayer;
     }
     
     /**

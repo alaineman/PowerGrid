@@ -181,7 +181,7 @@ public class MinecartInteractor extends Interactor {
     }
     
     private void waitForComplete() {
-        Player local = getInteractor().getLocalPlayer();
+        Player local = getInteractor().getLocalPBPlayer();
         long endTime = System.currentTimeMillis() + 6000;
         while (System.currentTimeMillis() < endTime) {
             if (local.getAnimation() == 2148) {

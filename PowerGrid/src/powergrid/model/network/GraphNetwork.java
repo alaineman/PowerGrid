@@ -4,8 +4,10 @@
  */
 package powergrid.model.network;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import powergrid.model.OutOfReachException;
 
 /**
  *
@@ -13,6 +15,8 @@ import java.util.Set;
  */
 public class GraphNetwork implements TransportNetwork {
 
+    private HashMap<NetworkElement, Set<Edge>> nodes;
+    
     public Set<? extends NetworkElement> getAdjacentTiles(NetworkElement tile) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -39,7 +43,7 @@ public class GraphNetwork implements TransportNetwork {
 
     @Override
     public List<NetworkElement> findPath(NetworkElement source,
-            NetworkElement destination) {
+            NetworkElement destination) throws OutOfReachException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

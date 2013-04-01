@@ -9,7 +9,7 @@ import powergrid.control.Mapper;
 public interface MapperListener {
     /**
      * Called every time the Mapper updates the WorldMap.
-     * @param map the Mapper instance caused the event
+     * @param mapper the Mapper instance caused the event
      */
     public void mapUpdated(Mapper mapper);
 }

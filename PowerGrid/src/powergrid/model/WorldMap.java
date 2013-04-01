@@ -15,13 +15,15 @@ import org.powerbot.game.client.RSGround;
  */
 public class WorldMap {
     
+    public static final int DEFAULT_SIZE = 150;
+    
     private HashMap<Point,GameTile> data;
     
     /**
      * Creates a new WorldMap with an initial capacity of 150.
      */
     public WorldMap() {
-        this(150);
+        this(DEFAULT_SIZE);
     }
     
     /**
@@ -34,7 +36,7 @@ public class WorldMap {
      */
     public WorldMap(int capacity) {
         if (capacity <= 0) {
-            capacity = 150;
+            capacity = DEFAULT_SIZE;
         }
         data = new HashMap<>(capacity);
     }

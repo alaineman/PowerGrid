@@ -11,8 +11,8 @@ import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powergrid.control.interaction.Interactor;
 import powergrid.control.uicontrols.RSInteractor;
-import powergrid.model.TransportTile;
 import powergrid.model.WorldMap;
+import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TreeNetwork;
 import powergrid.model.world.transportation.Minecart;
 import powergrid.task.Task;
@@ -66,9 +66,9 @@ public class MinecartInteractor extends Interactor {
      */
     @Override public Set<Minecart> getOptions(Object o) {
         Minecart elem = verify(o);
-        Set<TransportTile> elems = elem.getNetwork().getElements();
+        Set<NetworkElement> elems = elem.getNetwork().getElements();
         HashSet<Minecart> res = new HashSet<>((int)(1.5*elems.size()));
-        for (TransportTile t : elems) {
+        for (NetworkElement t : elems) {
             if (t instanceof Minecart && !t.equals(o)) {
                 res.add((Minecart) t);
             }
@@ -102,8 +102,8 @@ public class MinecartInteractor extends Interactor {
         Minecart elem = verify(o);
         Minecart dest = verify(destination);
         TreeNetwork nw = elem.getNetwork();
-        Set<TransportTile> dests = nw.getElements();
-        for (TransportTile t : dests) {
+        Set<NetworkElement> dests = nw.getElements();
+        for (NetworkElement t : dests) {
             if (t.equals(dest) && travelPath(elem,nw.findPath(elem, t))) {
                 return true;
             }
@@ -146,11 +146,11 @@ public class MinecartInteractor extends Interactor {
     }
     
     
-    private boolean travelPath(Minecart start, List<TransportTile> path) {
+    private boolean travelPath(Minecart start, List<NetworkElement> path) {
         if (path.isEmpty()) {
             return true;
         }
-        ListIterator<TransportTile> li = path.listIterator();
+        ListIterator<NetworkElement> li = path.listIterator();
         Minecart current = start;
         Minecart next;
         while (li.hasNext()) {

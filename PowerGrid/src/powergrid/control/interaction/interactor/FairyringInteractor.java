@@ -10,8 +10,8 @@ import powergrid.control.interaction.Interactor;
 import powergrid.control.uicontrols.RSInteractor;
 import static powergrid.control.uicontrols.RSInteractor.FAIRYRING_PANEL;
 import powergrid.model.OutOfReachException;
-import powergrid.model.TransportTile;
 import powergrid.model.WorldMap;
+import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TreeNetwork;
 import powergrid.model.network.TreeNode;
 import powergrid.model.world.transportation.Fairyring;
@@ -89,7 +89,7 @@ public class FairyringInteractor extends Interactor {
             TreeNetwork tn = ring.getNetwork();
             Fairyring root = (Fairyring) tn.getRoot().element();
             if(root.equals(elem)){
-                for(TreeNode<TransportTile> node : tn.getRoot().children()){
+                for(TreeNode<NetworkElement> node : tn.getRoot().children()){
                     Fairyring fring = (Fairyring) node.element();
                     res.add(fring.getCode());
                 }                
@@ -164,7 +164,7 @@ public class FairyringInteractor extends Interactor {
             throw new IllegalArgumentException("Invalid code length");
         }
         Fairyring destination = null;
-        for (TransportTile tile : start.getNetwork().getElements()) {
+        for (NetworkElement tile : start.getNetwork().getElements()) {
             if (tile instanceof Fairyring) {
                 Fairyring ring = (Fairyring) tile;
                 if (ring.getCode().equals(code)) {

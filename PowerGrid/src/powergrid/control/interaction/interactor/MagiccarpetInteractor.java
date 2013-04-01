@@ -35,13 +35,16 @@ public class MagiccarpetInteractor extends Interactor {
     }
 
     @Override
-    public boolean interact(Object elem, Object option) throws OutOfReachException {
+    public boolean interact(Object elem, Object option) 
+            throws OutOfReachException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
+    @SuppressWarnings("unchecked") // The cast is allowed
     public Set<Class<?>> getTypes() {
-        return (Set<Class<?>>) Collections.singleton((Class<?>) CarpetMerchant.class); 
+        return (Set<Class<?>>) Collections.singleton(
+                (Class<?>) CarpetMerchant.class); 
     }
     
 }

@@ -15,7 +15,7 @@ import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powergrid.control.interaction.interactor.MinecartInteractor;
 import powergrid.model.Point;
-import powergrid.model.TransportTile;
+import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TreeNetwork;
 import powergrid.model.world.transportation.Minecart;
 
@@ -39,9 +39,9 @@ public class MinecartInteractorTest extends AbstractInteractorTest {
         when(mockedMinecart.getNetwork()).thenReturn(mockedNetwork);
         when(mockedDestination.getNetwork()).thenReturn(mockedNetwork);
         when(mockedNetwork.findPath(mockedMinecart, mockedDestination))
-                .thenReturn(Arrays.asList(new TransportTile[]{mockedDestination}));
+                .thenReturn(Arrays.asList(new NetworkElement[]{mockedDestination}));
         when(mockedNetwork.getElements()).thenReturn(new HashSet<>(Arrays.asList(
-                new TransportTile[]{mockedMinecart,mockedDestination})));
+                new NetworkElement[]{mockedMinecart,mockedDestination})));
         when(mockedMinecart.getPosition()).thenReturn(mockedPoint);
         when(mockedPoint.toTile()).thenReturn(mockedTile);
         when(mockedTile.isOnScreen()).thenReturn(true);

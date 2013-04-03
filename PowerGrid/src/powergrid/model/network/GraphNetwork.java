@@ -40,7 +40,8 @@ public class GraphNetwork implements TransportNetwork {
 
     @Override
     public boolean add(NetworkElement element) {
-        if (nodes.containsKey(element)) {
+        
+        if (contains(element)) {
             return false;
         } else {
             nodes.put(element, new HashSet<Edge>(4));

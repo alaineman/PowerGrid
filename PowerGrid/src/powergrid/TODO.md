@@ -17,3 +17,5 @@
 - GUI for TaskManager and PG settings
 
 - Add test classes and javadoc, and clean up classes
+
+- Fix the 2 failing tests

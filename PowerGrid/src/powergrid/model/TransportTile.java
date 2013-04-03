@@ -1,5 +1,6 @@
 package powergrid.model;
 
+import java.util.Objects;
 import org.powerbot.game.client.RSGround;
 import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TransportNetwork;
@@ -14,6 +15,14 @@ import powergrid.model.network.TransportNetwork;
 public class TransportTile extends GameTile implements NetworkElement {
     
     private TransportNetwork network = null;
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + super.hashCode();
+        hash = 97 * hash + Objects.hashCode(this.network);
+        return hash;
+    }    
     
     /**
      * Creates a new TransportTile with the given information.

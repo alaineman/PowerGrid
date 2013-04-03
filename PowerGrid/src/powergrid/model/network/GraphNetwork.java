@@ -35,12 +35,12 @@ public class GraphNetwork implements TransportNetwork {
 
     @Override
     public boolean contains(NetworkElement element) {
-        return nodes.containsKey(element);
+        boolean result = nodes.containsKey(element);
+        return result;
     }
 
     @Override
     public boolean add(NetworkElement element) {
-        
         if (contains(element)) {
             return false;
         } else {

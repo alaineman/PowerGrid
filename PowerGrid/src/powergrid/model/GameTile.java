@@ -177,6 +177,9 @@ public class GameTile implements Locatable, Copyable {
         for (RSObject o : objects()) {
             objects += "," + o.getId();
         }
+        if (objects.isEmpty()) {
+            return lead + "})";
+        }
         return lead + objects.substring(1) + "})";
     }
 

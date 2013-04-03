@@ -1,10 +1,13 @@
 
 package powergrid.control.listener;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import powergrid.control.uicontrols.RSInteractor;
-import powergrid.model.world.Player;
+import powergrid.model.Point;
 
 /**
  * Class that monitors various parameters and settings in Runescape. 
@@ -20,9 +23,9 @@ public class RSMonitor implements Runnable {
     private RSInteractor interactor;
     
     private Set<HealthListener> healthListeners = new HashSet<>(6);
+    private Map<AreaListener, Boolean> areaListeners = new HashMap<>(6);
     
     private double health = 1;
-    private Player localPlayer;
     
     /**
      * Creates a new RSMonitor.
@@ -41,20 +44,15 @@ public class RSMonitor implements Runnable {
     }
     
     /**
-     * @return the local player cached in this object.
-     */
-    public Player getLocalPlayer() {
-        return localPlayer;
-    }
-    
-    /**
      * Checks all values once and calls the appropriate listeners.
      */
     @Override
     public synchronized void run() {
-        localPlayer = getInteractor().getLocalPlayer();
         if (!healthListeners.isEmpty()) {
             checkHealth();
+        }
+        if (!areaListeners.isEmpty()) {
+            
         }
     }
     
@@ -63,7 +61,7 @@ public class RSMonitor implements Runnable {
      * required.
      */
     public synchronized void checkHealth() {
-        double newHealth = getLocalPlayer().getHealth();
+        double newHealth = getInteractor().getLocalPlayer().getHealth();
         if (newHealth > health) {
             for (HealthListener l : healthListeners) {
                 l.healthAdded(newHealth, newHealth - health);
@@ -81,5 +79,19 @@ public class RSMonitor implements Runnable {
         health = newHealth;
     }
     
-    
+    public synchronized void checkArea() {
+        Point pos = getInteractor().getLocalPlayer().getPosition();
+        for (Entry<AreaListener, Boolean> e : areaListeners.entrySet()) {
+            AreaListener a = e.getKey();
+            if (e.getValue()) {
+                if (pos.distance(a.centerPoint()) > a.radius()) {
+                    a.areaLeft(getInteractor());
+                }
+            } else {
+                if (pos.distance(a.centerPoint()) <= a.radius()) {
+                    a.areaLeft(getInteractor());
+                }
+            }
+        }
+    }
 }

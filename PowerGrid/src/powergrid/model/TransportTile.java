@@ -14,15 +14,7 @@ import powergrid.model.network.TransportNetwork;
  */
 public class TransportTile extends GameTile implements NetworkElement {
     
-    private TransportNetwork network = null;
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + super.hashCode();
-        hash = 97 * hash + Objects.hashCode(this.network);
-        return hash;
-    }    
+    private TransportNetwork network = null; 
     
     /**
      * Creates a new TransportTile with the given information.
@@ -56,4 +48,12 @@ public class TransportTile extends GameTile implements NetworkElement {
     public TransportNetwork getNetwork() {
         return network;
     }
+    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + super.hashCode();
+        hash = 97 * hash + Objects.hashCode(this.network);
+        return hash;
+    }   
 }

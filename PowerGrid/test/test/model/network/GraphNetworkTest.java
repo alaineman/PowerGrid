@@ -22,35 +22,31 @@ import powergrid.model.network.NetworkElement;
 public class GraphNetworkTest {
     
     public GraphNetwork graph;
-    
+    public NetworkElement elem;
     
     @Before public void setup() {
         graph = new GraphNetwork();
+        elem = new TransportTile(new Point(), null, 2);
     }
     
-    @Ignore
-    @Test public void testGetAdjacentElements(){
-        
-    }
-    
-    //Test fails
     @Test public void testAddSingleElement(){
-        NetworkElement e1 = new TransportTile(new Point(), null, 2);
-        graph.add(e1);
-        assertTrue(graph.contains(e1));
+        assertTrue(graph.add(elem));
+    }
+    
+    @Test public void testContainsSingleElement() {
+        graph.add(elem);
+        assertTrue(graph.contains(elem));
     }
     
     @Test public void testSizeNonEmptyGraph(){
-        NetworkElement e1 = new TransportTile(new Point(), null, 2);
-        graph.add(e1);
+        graph.add(elem);
         assertEquals(1, graph.size());
     }
     
     //Test fails
     @Test public void testRemoveSingleExistingElement(){
-        NetworkElement e1 = new TransportTile(new Point(), null, 2);
-        graph.add(e1);
-        assertTrue(graph.remove(e1));
+        graph.add(elem);
+        assertTrue(graph.remove(elem));
     }
     
     @Test public void testSizeEmptyGraph(){
@@ -58,27 +54,24 @@ public class GraphNetworkTest {
     }
     
     @Test public void testRemoveSingleNonExistingElement(){
-        NetworkElement e1 = new TransportTile(new Point(), null, 2);
-        graph.add(e1);
-        NetworkElement e2 = new TransportTile(new Point(1,4), null, 3);
-        assertFalse(graph.remove(e2));
+        graph.add(elem);
+        NetworkElement other = new TransportTile(new Point(1,4), null, 3);
+        assertFalse(graph.remove(other));
     }
     
     @Test (expected = OutOfReachException.class) 
     public void testFindPathNonConnectedNonEmptyGraph() throws OutOfReachException {
-        NetworkElement e1 = new TransportTile(new Point(), null, 2);
-        NetworkElement e2 = new TransportTile(new Point(3,3), null, 1);
-        graph.add(e1);
-        graph.add(e2);
-        graph.findPath(e1, e2);
+        NetworkElement other = new TransportTile(new Point(3,3), null, 1);
+        graph.add(elem);
+        graph.add(other);
+        graph.findPath(elem, other);
     }
     
     //TODO: test findPath() for a connected non empty graph   
     
     @Test public void testGetElementsNonEmptyGraph(){
-        NetworkElement e1 = new TransportTile(new Point(), null, 2);
-        graph.add(e1);      
-        assertEquals(Collections.singleton(e1), graph.getElements());
+        graph.add(elem);      
+        assertEquals(Collections.singleton(elem), graph.getElements());
     }
     
     @Test public void testGetElementsEmptyGraph(){

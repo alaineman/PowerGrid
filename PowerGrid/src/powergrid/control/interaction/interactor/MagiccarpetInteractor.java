@@ -34,7 +34,7 @@ public class MagiccarpetInteractor extends Interactor {
         if(elem instanceof CarpetMerchant){
             CarpetMerchant mc = (CarpetMerchant) elem;
             GraphNetwork tn = mc.getNetwork();
-            return tn.getAdjacentTiles(mc);
+            return tn.getAdjacentElements(mc);
         } else {
             return Collections.emptySet();
         }

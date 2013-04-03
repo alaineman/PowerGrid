@@ -22,6 +22,7 @@ public class RSGroundImpl implements RSGround {
     }
     
     public RSGroundImpl(RSGround base) {
+        assert base != null;
         anim = base.getRSAnimableList();
         bound1 = base.getBoundary1();
         bound2 = base.getBoundary2();

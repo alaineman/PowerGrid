@@ -2,6 +2,7 @@ package powergrid.model.world;
 
 import powergrid.model.GameTile;
 import powergrid.model.Point;
+import powergrid.model.rsbot.RSGroundImpl;
 
 /**
  * Class representing all sorts of walls in the RSBot environment
@@ -61,7 +62,7 @@ public class Wall extends GameTile {
      * @param type the wall type, specified as a bitwise OR between the Wall.NORTH, Wall.SOUTH, Wall.WEST, and WALL.EAST values
      */
     public Wall(Point p,int rawValue, int type) {
-        super (p,rawValue);
+        super (p, new RSGroundImpl(rawValue), -1);
         this.type = type;
     }
     

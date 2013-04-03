@@ -5,6 +5,7 @@ import powergrid.model.GameTile;
 import powergrid.model.Item;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
+import powergrid.model.rsbot.RSGroundImpl;
 
 /**
  * Represents a GameTile that can be teleported to.
@@ -16,7 +17,7 @@ public abstract class Teleportable extends GameTile implements ComplexInteractab
     public int widgetNum = -1;
     
     public Teleportable(int x,int y,int z,int rawNumber){
-        super(new Point(x,y,z), rawNumber);
+        super(new Point(x,y,z), new RSGroundImpl(rawNumber), -1);
     }
     
     /**
@@ -28,7 +29,7 @@ public abstract class Teleportable extends GameTile implements ComplexInteractab
      * @param widgetNumber the widget number that belongs to this Teleportable 
      */
     public Teleportable(int x,int y,int z,int rawNumber, int widgetNumber){
-        super(new Point(x,y,z), rawNumber);
+        super(new Point(x,y,z), new RSGroundImpl(rawNumber), -1);
         widgetNum = widgetNumber;
     }
     

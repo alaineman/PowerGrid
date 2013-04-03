@@ -1,16 +1,16 @@
 package powergrid.model.world;
 
-import org.powerbot.game.api.methods.interactive.NPCs;
-import org.powerbot.game.api.wrappers.interactive.NPC;
 import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.interact.Interactable;
+import powergrid.model.rsbot.RSGroundImpl;
 
 /**
  * Class representing mobile objects from the RSBot environment
  * @author Chronio
  */
+@Deprecated
 public abstract class Entity extends GameTile implements Interactable {
         
     /**
@@ -22,7 +22,7 @@ public abstract class Entity extends GameTile implements Interactable {
      * @param rawValue the raw value from the environment specifying the type
      */
     protected Entity(int x,int y,int z,int rawValue) {
-        super(new Point(x,y,z),rawValue);
+        super(new Point(x,y,z), new RSGroundImpl(rawValue), -1);
     }
     
     /**
@@ -32,14 +32,8 @@ public abstract class Entity extends GameTile implements Interactable {
      *                                       or when the interaction could not be completed
      */
     @Override public void interact() throws OutOfReachException {
-        NPC theNpc = NPCs.getNearest(getRawNumber());
-        if (theNpc == null)
-            throw new OutOfReachException(getPosition(),"No " + getClass().getSimpleName() + " like this nearby");
-        String[] actions = theNpc.getActions();
-        if (actions.length == 0)
-            throw new UnsupportedOperationException("This " + getClass().getSimpleName() + " has no interactions");
-        if (!theNpc.interact(actions[0]))
-            throw new UnsupportedOperationException("The action failed");
+        throw new UnsupportedOperationException(
+                "The action failed");
     }
     
     /**
@@ -49,11 +43,8 @@ public abstract class Entity extends GameTile implements Interactable {
      * @throws UnsupportedOperationException when the provided method cannot be used for this Entity
      */
     @Override public void interact(String method) throws OutOfReachException {
-        NPC theNpc = NPCs.getNearest(getRawNumber());
-        if (theNpc == null)
-            throw new OutOfReachException(getPosition(),"No Person like this nearby");
-        if (!theNpc.interact(method))
-            throw new UnsupportedOperationException("The interact could not be performed.");
+        throw new UnsupportedOperationException(
+                "The interact could not be performed.");
     }
     
     /**
@@ -62,9 +53,6 @@ public abstract class Entity extends GameTile implements Interactable {
      * @return the available actions for this Entity.
      */
     public String[] getInteractMethods() {
-        NPC theNPC = NPCs.getNearest(getRawNumber());
-        if (theNPC == null)
-            return new String[0];
-        return theNPC.getActions();
+        return new String[0];
     }
 }

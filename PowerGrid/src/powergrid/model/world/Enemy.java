@@ -1,7 +1,5 @@
 package powergrid.model.world;
 
-import org.powerbot.game.api.methods.interactive.NPCs;
-import org.powerbot.game.api.wrappers.interactive.NPC;
 import powergrid.model.OutOfReachException;
 
 /**
@@ -9,6 +7,7 @@ import powergrid.model.OutOfReachException;
  * purpose is to attack or be attacked.
  * @author Chronio
  */
+@Deprecated
 public class Enemy extends Entity {
 
     public static final int[] values = new int[] {};
@@ -24,14 +23,6 @@ public class Enemy extends Entity {
      * @throws OutOfReachException when the target is not nearby
      */
     public void attack() throws OutOfReachException {
-        NPC enemy = NPCs.getNearest(getRawNumber());
-        if (enemy == null) 
-            throw new OutOfReachException(getPosition(),"The target is not close enough");
-        for (String action : enemy.getActions()) {
-            if (action.equalsIgnoreCase("attack"))
-                if (!enemy.interact(action))
-                    throw new UnsupportedOperationException("The action failed");
-        }
-        throw new UnsupportedOperationException("This Enemy has no attack method");
+        throw new UnsupportedOperationException();
     }
 }

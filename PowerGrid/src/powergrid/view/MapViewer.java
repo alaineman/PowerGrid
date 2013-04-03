@@ -141,24 +141,23 @@ public class MapViewer extends Canvas implements ActionListener {
         if (g == null) return;
         for (int x=r.x;x<r.x+r.width;x++) {
             for (int y=r.y;y<r.y+r.height;y++) {
-                GameTile go = theMap.get(new Point(x,y));
+                GameTile tile = theMap.get(new Point(x,y));
                 Rectangle area = new Rectangle(scale*(x-r.x),scale*(r.height-(y-r.y)),scale,scale); // the rectangle we draw in
                 
-                if (go == null)
+                if (tile == null)
                     g.setColor(current.get("empty"));
-                else if (go instanceof Interactable)
+                else if (tile instanceof Interactable)
                     g.setColor(current.get("interaction"));
-                else if (go.getRawNumber() == -5 || go.getRawNumber() == 85)
+                else if (tile.getCollisionFlag() == Wall.BLOCK 
+                        && tile.getBoundary() == -1)
                     g.setColor(current.get("water"));
-                else if (go.getRawNumber() == -3)
-                    g.setColor(current.get("fence"));
-                else if (go instanceof Wall)
+                else if (tile instanceof Wall)
                     g.setColor(current.get("wall"));
                 else
                     g.setColor(current.get("background"));
                 
-                if (go instanceof Wall && scale != 1 && g.getColor().equals(current.get("wall"))) {
-                    Wall w = (Wall)go;
+                if (tile instanceof Wall && scale > 1 && g.getColor().equals(current.get("wall"))) {
+                    Wall w = (Wall)tile;
                     if (w.isType(Wall.BLOCK))
                         g.fillRect(area.x, area.y, scale, scale);
                     else {

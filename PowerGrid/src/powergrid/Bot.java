@@ -49,7 +49,7 @@ public class Bot {
      * <p/>
      * Invocations of <code>getState()</code> and <code>getPosition()</code> will
      * use this Player to obtain the required information.
-     * @param p the Player to use a local Player
+     * @param p the Player to use as local Player
      * @return itself for fluency
      */
     public Bot withPlayer(Player p) {

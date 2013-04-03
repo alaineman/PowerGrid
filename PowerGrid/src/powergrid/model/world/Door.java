@@ -7,6 +7,7 @@ import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.interact.Interactable;
+import powergrid.model.rsbot.RSGroundImpl;
 
 /**
  * Class representing a Door in the RSBot environment. 
@@ -48,7 +49,7 @@ public class Door extends GameTile implements Interactable {
      * @param rawValue the raw value from the environment specifying the type
      */
     public Door(int x,int y,int z,int rawValue) {
-        super(new Point(x,y,z),rawValue);
+        super(new Point(x,y,z), new RSGroundImpl(rawValue), -1);
         if (Arrays.binarySearch(values,rawValue) == -1)
             throw new IllegalArgumentException("value " + rawValue + " does not represent a Door");
     }
@@ -115,13 +116,5 @@ public class Door extends GameTile implements Interactable {
     public boolean stateIsOpen() {
         SceneObject d = SceneEntities.getAt(getPosition());
         return d.interact("open");
-    }
-    
-    /**
-     * returns whether this door is opened.
-     * @return true if this door is opened, false if it is not.
-     */
-    @Deprecated public boolean isOpen() {
-        return (-1 != Arrays.binarySearch(openDoors, getRawNumber()));
     }
 }

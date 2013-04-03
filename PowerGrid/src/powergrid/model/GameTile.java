@@ -20,22 +20,6 @@ public class GameTile implements Locatable, Copyable<GameTile> {
     private RSGround ground = null;
     
     /**
-     * Creates a new GameTile at the given position. the <code>rawNumber</code> 
-     * indicates the type of object on this Tile as provided by the RSBot 
-     * environment.
-     * <p/>
-     * @param p the position of this GameTile
-     * @param rawNumber the raw value from the environment specifying the type
-     * @throws IllegalArgumentException when the provided Point is null
-     * @deprecated Use GameTile(Point,RSGround,int) instead
-     */
-    @Deprecated public GameTile(Point p, int rawNumber) {
-        assert p != null;
-        position = p;
-        ground = new RSGroundImpl(rawNumber);
-    }
-    
-    /**
      * Creates a new GameTile with the given information.
      * @param p the position of this GameTile
      * @param g the RSGround object with the contents of this GameTile
@@ -57,23 +41,6 @@ public class GameTile implements Locatable, Copyable<GameTile> {
      */
     public Point getPosition() {
         return position;
-    }
-    
-    /**
-     * Returns a raw number as given by the RSBot environment.
-     * <p/>
-     * It returns -1 when there are no objects at this position.
-     * @return the raw number as given by the RSBot environment
-     * @deprecated use <code>containsRawNumber(int)</code> or 
-     *             <code>objects()</code> instead.
-     */
-    @Deprecated public int getRawNumber() {
-        RSObject[] objects = objects();
-        if (objects.length > 0) {
-            return objects[0].getId();
-        } else {
-            return -1;
-        }
     }
     
     /**
@@ -222,7 +189,15 @@ public class GameTile implements Locatable, Copyable<GameTile> {
         return getPosition().getLocation();
     }
 
+    /**
+     * Creates a copy of this GameObject, making sure that any underlying 
+     * modifiable resources are also copied.
+     * <p/>
+     * The underlying RSGround instance in the copy is an RSGroundImpl object.
+     * <p/>
+     * @return a copy of this GameTile
+     */
     @Override public GameTile copy() {
-        return new GameTile(getPosition(),getRSGround(),getCollisionFlag());
+        return new GameTile(getPosition(),new RSGroundImpl(getRSGround()),getCollisionFlag());
     }
 }

@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import static org.powerbot.game.api.wrappers.Tile.Flag.*;
 import org.powerbot.game.client.Client;
-import org.powerbot.game.client.HashTable;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSGroundData;
 import org.powerbot.game.client.RSGroundInfo;
@@ -104,7 +103,6 @@ public class Mapper implements Copyable<Mapper> {
             map = new WorldMap();
         }
         RSInfo info = client.getRSGroundInfo();
-        HashTable loaders = info.getRSObjectDefLoaders().getCache().getTable();
         
         RSGroundInfo ginfo = info.getRSGroundInfo();
         Point basePoint = new Point(

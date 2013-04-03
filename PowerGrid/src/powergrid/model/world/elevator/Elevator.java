@@ -5,6 +5,7 @@ import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.interact.Interactable;
+import powergrid.model.rsbot.RSGroundImpl;
 
 /**
  * Represents a GameTile that can be used to move from one plane to another.
@@ -28,7 +29,7 @@ public abstract class Elevator extends GameTile implements Interactable {
      * @param otherPlanes 
      */
     public Elevator(int x,int y,int z,int rawValue,int[] otherPlanes) {
-        super(new Point(x,y,z),rawValue);
+        super(new Point(x,y,z), new RSGroundImpl(rawValue), -1);
         if (otherPlanes == null) throw new IllegalArgumentException("Null-array for other planes");
         this.otherPlanes = otherPlanes;
         Arrays.sort(this.otherPlanes);

@@ -15,6 +15,7 @@ import org.powerbot.game.client.RSGround;
  */
 public class WorldMap {
     
+    /** The default size for a WorldMap instance. */
     public static final int DEFAULT_SIZE = 150;
     
     private HashMap<Point,GameTile> data;

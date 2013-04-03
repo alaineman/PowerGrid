@@ -82,7 +82,7 @@ import powergrid.model.Copyable;
  * <p/>
  * @author Chronio
  */
-public class ScriptLoader implements Copyable<ScriptLoader> {
+public class ScriptLoader implements Copyable {
     
     private ActiveScript script = null;
     

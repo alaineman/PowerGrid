@@ -26,7 +26,7 @@ import powergrid.model.world.Wall;
  * @author Alaineman
  * @author Chronio
  */
-public class PathFinder implements Copyable<PathFinder> {
+public class PathFinder implements Copyable {
 
     /**
      * Finds a path between the given start and end using the A* algorithm.

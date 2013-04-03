@@ -26,7 +26,7 @@ import powergrid.task.Task;
  * <p/>
  * @author Chronio
  */
-public class Mapper implements Copyable<Mapper> {
+public class Mapper implements Copyable {
     
     private volatile boolean stop = true;
     private WorldMap map = null;
@@ -163,6 +163,9 @@ public class Mapper implements Copyable<Mapper> {
      * @return the Grid that the Mapper maps to
      */
     public WorldMap getWorldMap() {
+        if (map == null) {
+            map = new WorldMap();
+        }
         return map;
     }
     
@@ -188,7 +191,8 @@ public class Mapper implements Copyable<Mapper> {
     }
     
     private boolean invariant() {
-        // We only have a reference to a MapperThread if the MapperThread is actually mapping.
+        // We only have a reference to a MapperThread if the MapperThread 
+        // is actually mapping.
         if (thread != null && !thread.isAlive()) return false;
         if ((thread == null) != stop) return false;
         

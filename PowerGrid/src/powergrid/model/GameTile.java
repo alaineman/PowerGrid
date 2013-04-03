@@ -14,7 +14,7 @@ import powergrid.model.rsbot.RSGroundImpl;
  * This class represents a Tile in the Runescape world.
  * @author Chronio
  */
-public class GameTile implements Locatable, Copyable<GameTile> {
+public class GameTile implements Locatable, Copyable {
     private Point position;
     private int collFlag = 0;
     private RSGround ground = null;

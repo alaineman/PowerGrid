@@ -1,6 +1,8 @@
 ## TODO items ##
 
 - Place RSObjectDefLoaders in Mapper and pass along with RSGround objects.
+    -> Created DefinitionCache class for this purpose, which maintains the 
+       definitions for easy access.
 - Create Interactors and corresponding model classes
 - Create and hook listeners for RSMonitor
 - implement Player methods

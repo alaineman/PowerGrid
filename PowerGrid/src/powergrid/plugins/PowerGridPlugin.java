@@ -62,20 +62,23 @@ public class PowerGridPlugin implements Plugin {
     }
     
     @Override
-    public Task instantiate(Class<? extends Task> clazz) {
+    public <T extends Task> T instantiate(Class<T> clazz) {
         if (RestTask.class.isAssignableFrom(clazz)) {
-            return new RestTask();
+            return (T) new RestTask();
         }
         if (TravelNearestTask.class.isAssignableFrom(clazz)) {
-            return new TravelNearestTask();
+            return (T) new TravelNearestTask();
         }
         if (TravelTask.class.isAssignableFrom(clazz)) {
-            return new TravelTask();
+            return (T) new TravelTask();
         }
         throw new UnsupportedOperationException("Unsupported Class type");
     }
     
-    @Override public void tearDown() {}
+    @Override public void tearDown() {
+        InteractionController ic = pg.interactionController();
+        
+    }
 
     
 }

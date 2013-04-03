@@ -20,12 +20,12 @@ import org.powerbot.game.api.wrappers.Tile;
  * <p/>
  * @author Chronio
  */
-public class Point implements Locatable, Copyable<Point> {
+public class Point implements Locatable, Copyable {
     /** The X-coordinate of this Point. */
     public final int x;
     /** The Y-coordinate of this Point. */
     public final int y;
-    /** The Z-coordinate of this Point (this was known as the plane in the 
+    /** The Z-coordinate of this Point (known as the plane in the 
      * RSBot environment). 
      */
     public final int z;
@@ -269,8 +269,6 @@ public class Point implements Locatable, Copyable<Point> {
     }
     
     /**
-     * Returns a Tile-representative of this Point.
-     * 
      * @return a Tile object indicating the same location as this Point
      */
     public Tile toTile() {

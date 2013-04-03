@@ -14,7 +14,7 @@ import java.util.Set;
  * <p/>
  * @author Chronio
  */
-public class DestinationMap implements Copyable<DestinationMap> {
+public class DestinationMap implements Copyable {
     
     private HashMap<String,Point> destinations = new HashMap<>();
     

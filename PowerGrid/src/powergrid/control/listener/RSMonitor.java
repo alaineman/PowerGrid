@@ -7,7 +7,12 @@ import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.world.Player;
 
 /**
- *
+ * Class that monitors various parameters and settings in Runescape. 
+ * <p/>
+ * It works by continuously polling information from the Runescape environment.
+ * It then calls the appropriate methods of the Listeners registered in the 
+ * Monitor.
+ * <p/>
  * @author Chronio
  */
 public class RSMonitor implements Runnable {
@@ -19,26 +24,45 @@ public class RSMonitor implements Runnable {
     private double health = 1;
     private Player localPlayer;
     
-    public RSMonitor(RSInteractor client) {
-        assert client != null;
-        this.interactor = client;
+    /**
+     * Creates a new RSMonitor.
+     * @param interactor the RSInteractor this Monitor should use
+     */
+    public RSMonitor(RSInteractor interactor) {
+        assert interactor != null;
+        this.interactor = interactor;
     }
 
+    /**
+     * @return the RSInteractor instance this RSMonitor uses.
+     */
     public RSInteractor getInteractor() {
         return interactor;
     }
     
+    /**
+     * @return the local player cached in this object.
+     */
     public Player getLocalPlayer() {
         return localPlayer;
     }
     
+    /**
+     * Checks all values once and calls the appropriate listeners.
+     */
     @Override
-    public void run() {
+    public synchronized void run() {
         localPlayer = getInteractor().getLocalPlayer();
-        checkHealth();
+        if (!healthListeners.isEmpty()) {
+            checkHealth();
+        }
     }
     
-    public void checkHealth() {
+    /**
+     * Checks the player's health and calls the appropriate listeners when 
+     * required.
+     */
+    public synchronized void checkHealth() {
         double newHealth = getLocalPlayer().getHealth();
         if (newHealth > health) {
             for (HealthListener l : healthListeners) {
@@ -54,6 +78,7 @@ public class RSMonitor implements Runnable {
                 }
             }
         }
+        health = newHealth;
     }
     
     

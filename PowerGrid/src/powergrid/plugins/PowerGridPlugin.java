@@ -1,10 +1,6 @@
 package powergrid.plugins;
 
-import powergrid.task.TravelNearestTask;
-import powergrid.task.Task;
-import powergrid.task.RestTask;
-import powergrid.task.TravelTask;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import powergrid.PowerGrid;
 import powergrid.control.interaction.InteractionController;
@@ -12,6 +8,10 @@ import powergrid.control.interaction.interactor.FairyringInteractor;
 import powergrid.control.interaction.interactor.MinecartInteractor;
 import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.WorldMap;
+import powergrid.task.RestTask;
+import powergrid.task.Task;
+import powergrid.task.TravelNearestTask;
+import powergrid.task.TravelTask;
 
 /**
  * This class acts as the container for the PowerGrid publicly accessible tasks.
@@ -42,6 +42,8 @@ public class PowerGridPlugin implements Plugin {
     
     @Override public void withPowerGrid(PowerGrid pg) {
         this.pg = pg;
+        interactor = pg.rsInteractor();
+        worldmap = pg.worldmap();
     }
     
     /**
@@ -53,12 +55,12 @@ public class PowerGridPlugin implements Plugin {
         ic.addInteractor(new FairyringInteractor(worldmap,interactor));
     }
     
-    @Override public Collection<Class<? extends Task>> getPublicTasks() {
-        ArrayList<Class<? extends Task>> tasks = new ArrayList<>();
-        tasks.add(RestTask.class);
-        tasks.add(TravelNearestTask.class);
-        tasks.add(TravelTask.class);
-        return tasks;
+    @Override public Collection<Class> getPublicTasks() {
+        return Arrays.asList(new Class[] {
+            RestTask.class,
+            TravelNearestTask.class,
+            TravelTask.class
+        });
     }
     
     @Override

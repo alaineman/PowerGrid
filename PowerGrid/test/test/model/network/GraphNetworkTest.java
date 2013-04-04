@@ -1,13 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package test.model.network;
 
 import java.util.Collections;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
@@ -16,7 +11,7 @@ import powergrid.model.network.GraphNetwork;
 import powergrid.model.network.NetworkElement;
 
 /**
- *
+ * Test class that tests functionality of the GraphNetwork class.
  * @author Vincent W
  */
 public class GraphNetworkTest {
@@ -33,6 +28,11 @@ public class GraphNetworkTest {
         assertTrue(graph.add(elem));
     }
     
+    @Test public void testAddSetsElementsNetwork() {
+        graph.add(elem);
+        assertEquals(graph, elem.getNetwork());
+    }
+    
     @Test public void testContainsSingleElement() {
         graph.add(elem);
         assertTrue(graph.contains(elem));
@@ -43,7 +43,6 @@ public class GraphNetworkTest {
         assertEquals(1, graph.size());
     }
     
-    //Test fails
     @Test public void testRemoveSingleExistingElement(){
         graph.add(elem);
         assertTrue(graph.remove(elem));

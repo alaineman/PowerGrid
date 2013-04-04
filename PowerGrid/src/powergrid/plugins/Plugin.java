@@ -43,7 +43,7 @@ public interface Plugin {
      * @return a Collection of the tasks that PowerGrid is allowed to provide 
      *         to the user. This Collection should not be null
      */
-    public Collection<Class<? extends Task>> getPublicTasks();
+    public Collection<Class> getPublicTasks();
     
     /**
      * Creates a Task instance of the provided Class type.

@@ -24,6 +24,44 @@ public class GraphNetwork implements TransportNetwork {
         nodes = new HashMap<>();
     }
     
+    public boolean makeDirectedConnection(NetworkElement from, 
+            NetworkElement to, int weight) {
+        if (from != null && to != null) {
+            boolean elemAdded = false;
+            if (!nodes.containsKey(from)) {
+                add(from);
+                elemAdded = true;
+            }
+            if (!nodes.containsKey(to)) {
+                add(to);
+                elemAdded = true;
+            }
+            if (elemAdded || !connectionExists(from, to)) {
+                Set<Edge> edges = nodes.get(from);
+                edges.add(new Edge(to,weight));
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean makeUndirectedConnection(NetworkElement e1, 
+            NetworkElement e2, int weight) {
+        return makeDirectedConnection(e1, e2, weight)
+                && makeDirectedConnection(e2, e1, weight);
+    }
+    
+    public boolean connectionExists(NetworkElement from, NetworkElement to) {
+        if (nodes.containsKey(from) && nodes.containsKey(to)) {
+            for (Edge e : nodes.get(from)) {
+                if (e.getTo().equals(to)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     public Set<? extends NetworkElement> getAdjacentElements(NetworkElement tile) {
         Set<Edge> elems = nodes.get(tile);
         HashSet<NetworkElement> res = new HashSet<>(elems.size() * 8/7, 7/8f);
@@ -45,6 +83,7 @@ public class GraphNetwork implements TransportNetwork {
             return false;
         } else {
             nodes.put(element, new HashSet<Edge>(4));
+            element.withNetwork(this);
             return true;
         }
     }

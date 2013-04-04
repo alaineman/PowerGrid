@@ -137,7 +137,7 @@ public class GameTile implements Locatable, Copyable {
     @Override public int hashCode() {
         int hash = 3;
         hash = 47 * hash + Objects.hashCode(position);
-        hash = 47 * hash + Objects.hashCode(objects());
+        hash = 47 * hash + Arrays.hashCode(rawValues());
         return hash;
     }
     
@@ -171,16 +171,16 @@ public class GameTile implements Locatable, Copyable {
      * @return a String-representation of this GameTile
      */
     @Override public String toString() {
-        String lead = "GameTile@" + getPosition() + "(" + 
-                getCollisionFlag() + ",{";
+        String lead = getClass().getSimpleName() + "@" + getPosition() + " (" + 
+                getCollisionFlag() + ", {";
         String objects = "";
         for (RSObject o : objects()) {
-            objects += "," + o.getId();
+            objects += ", " + o.getId();
         }
         if (objects.isEmpty()) {
             return lead + "})";
         }
-        return lead + objects.substring(1) + "})";
+        return lead + objects.substring(2) + "})";
     }
 
     @Deprecated

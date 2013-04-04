@@ -1,6 +1,7 @@
 package powergrid.control.interaction;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import powergrid.model.OutOfReachException;
 
 /**
@@ -23,6 +24,24 @@ import powergrid.model.OutOfReachException;
  */
 public class InteractionController {
     private HashMap<Class<?>,Interactor> types = new HashMap<>();
+    private Interactor defaultInteractor = null;
+    
+    /**
+     * Sets the default Interactor that is used when no other Interactor is 
+     * available. 
+     * <p/>
+     * The provided Interactor should be able to handle as many types as 
+     * possible.
+     * <p/>
+     * @param i the default Interactor to use.
+     */
+    public void useDefault(Interactor i) {
+        defaultInteractor = i;
+    }
+    
+    public Interactor getDefault() {
+        return defaultInteractor;
+    }
     
     /**
      * Adds an Interactor to the InteractionController. 
@@ -30,6 +49,7 @@ public class InteractionController {
      * The InteractionController will match this Iterator against other 
      * Iterators that cover the same classes, to decide which Interactor to
      * use.
+     * <p/>
      * @param i the Interactor to add
      * @return true if the Interactor was added and is used for at least one 
      *         class, false otherwise.
@@ -60,6 +80,24 @@ public class InteractionController {
     }
     
     /**
+     * Removes the provided Interactor from all it's connected classes.
+     * <p/>
+     * Note that this sets the Interactor for the  
+     * @param i
+     * @return 
+     */
+    public boolean removeInteractor(Interactor i) {
+        int oldSize = types.size();
+        Iterator<Interactor> it = types.values().iterator();
+        while (it.hasNext()) {
+            if (it.next().equals(i)) {
+                it.remove();
+            }
+        }
+        return oldSize != types.size();
+    }
+    
+    /**
      * Interacts with the provided Object.
      * <p/>
      * The InteractionController automatically selects the appropriate
@@ -72,10 +110,12 @@ public class InteractionController {
     public boolean interact(Object o) throws OutOfReachException {
         Interactor i = findInteractor(o.getClass());
         if (i == null) {
-            return false;
-        } else {
-            return i.interact(o);
+            i = getDefault();
+            if (i == null) {
+                return false;
+            }
         }
+        return i.interact(o);
     }
     
     /**
@@ -95,10 +135,12 @@ public class InteractionController {
             throws OutOfReachException {
         Interactor i = findInteractor(o.getClass());
         if (i == null) {
-            return false;
-        } else {
-            return i.interact(o,option);
+            i = getDefault();
+            if (i == null) {
+                return false;
+            }
         }
+        return i.interact(o, option);
     }
     
     /**

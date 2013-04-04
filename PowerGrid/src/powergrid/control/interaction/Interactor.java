@@ -11,6 +11,11 @@ import powergrid.model.WorldMap;
  * Abstract class that defines methods that allows interaction with a certain
  * kind of object.
  * <p/>
+ * An Interactor is an Object that can handle interactions with certain Object 
+ * types.
+ * <p/>
+ * They are used throughout PowerGrid to interact with Objects in the Runescape
+ * environment.
  * @author Chronio
  */
 public abstract class Interactor {

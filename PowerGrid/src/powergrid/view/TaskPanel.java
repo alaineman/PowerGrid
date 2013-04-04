@@ -6,11 +6,14 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +33,8 @@ import powergrid.task.Task;
  */
 public class TaskPanel extends JPanel {
     
+    public static final int ICON_SIZE = 32;
+    
     private static TaskPanel theTaskPanel = null;
     private static JFrame taskFrame = null;
     
@@ -40,9 +45,10 @@ public class TaskPanel extends JPanel {
         if (taskFrame == null) {
             taskFrame = new JFrame("PowerGrid - Tasks");
             try {
-                taskFrame.setIconImage(ImageIO.read(ClassLoader.getSystemResource("powergrid/images/icon_small.png")));
+                taskFrame.setIconImage(
+                        ImageIO.read(ClassLoader.getSystemResource(
+                        ControlPanel.ICON_PATH)));
             } catch (IOException e) {
-                PowerGrid.logMessage("Could not set Icon Image to Task Frame",e);
             }
             taskFrame.setLayout(new BorderLayout());
             taskFrame.add(theTaskPanel,"Center");
@@ -53,6 +59,7 @@ public class TaskPanel extends JPanel {
         }
         taskFrame.setVisible(true);
         
+        // ensure the JFrame is brought to the front.
         taskFrame.setAlwaysOnTop(true);
         taskFrame.setAlwaysOnTop(false);
         
@@ -77,9 +84,21 @@ public class TaskPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        
+        ImageIcon defaultIcon = new ImageIcon(new ImageIcon(
+                ClassLoader.getSystemResource(Plugin.DEFAULT_PLUGIN_ICON))
+                .getImage().getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH));
         for (Plugin p : PowerGrid.PG.getPlugins()) {
+            String name = p.getClass().getAnnotation(PluginInfo.class).name();
+            ImageIcon icon = p.getPluginIcon();
+            if (icon == null) {
+                icon = defaultIcon;
+            } else {
+                icon = new ImageIcon(icon.getImage()
+                        .getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH));
+            }
             for (Class<? extends Task> c : p.getPublicTasks()) {
-                entries.add(new TaskEntry(p.getClass().getAnnotation(PluginInfo.class).name(),c),gbc);
+                entries.add(new TaskEntry(icon, name, c), gbc);
                 gbc.gridy++;
             }
         }
@@ -89,28 +108,33 @@ public class TaskPanel extends JPanel {
         add(entries,"Center");
     }
     
-    public static class TaskEntry extends JPanel {
+    public class TaskEntry extends JPanel {
+        private Icon icon = null;
         private String pluginName = "Unknown Plugin";
         private Class<? extends Task> task = null;
         
-        public TaskEntry(String pluginName, Class<? extends Task> t) {
-            super(new BorderLayout());
+        public TaskEntry(Icon icon, String pluginName, Class<? extends Task> t) {
+            super(new BorderLayout(4, 0));
             if (t == null)
                 throw new IllegalArgumentException("Null-value for Task");
             System.out.println("Task " + t.getName() + " loaded.");
             task = t;
+            this.icon = icon;
             if (pluginName != null)
                 this.pluginName = pluginName;
             setupPanel();
         }
         
         private void setupPanel() {
+            JLabel iconLabel = new JLabel(icon);
             JLabel name = new JLabel(task.getSimpleName() + "  (" + pluginName + ")");
             JButton run = new JButton("run");
+            iconLabel.setPreferredSize(new Dimension(ICON_SIZE, ICON_SIZE));
             run.setPreferredSize(new Dimension(60,24));
-            setPreferredSize(new Dimension(240,32));
-            add(name,"Center");
-            add(run,"East");
+            setPreferredSize(new Dimension(240, Math.max(32, ICON_SIZE)));
+            add(iconLabel, "West");
+            add(name, "Center");
+            add(run, "East");
             
             setBorder(new LineBorder(Color.BLACK));
             setBackground(Color.WHITE);

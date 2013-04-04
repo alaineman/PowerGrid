@@ -1,17 +1,17 @@
 package powergrid;
 
-import java.awt.Color;
 import java.awt.Window;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import org.powerbot.Boot;
 import org.powerbot.game.client.Client;
@@ -24,6 +24,7 @@ import powergrid.model.WorldMap;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
 import powergrid.plugins.PluginLoader;
+import powergrid.plugins.PowerGridPlugin;
 import powergrid.task.Task;
 import powergrid.view.ControlPanel;
 
@@ -76,14 +77,13 @@ public class PowerGrid {
      * <p/>
      * Ensures that everything is cleaned up and terminated gracefully. 
      */
-    private static Thread terminatorThread = new Thread("PowerGrid-Terminator") {
+    private static Thread terminatorThread 
+            = new Thread("PowerGrid-Terminator") {
         @Override public void run() {
             if (!PG.terminate())
                 System.err.println("WARNING: PowerGrid termination failed");
         }
     };
-    
-    private static List<Plugin> plugin = null;
     
     /**
      * Main method of PowerGrid. 
@@ -93,13 +93,17 @@ public class PowerGrid {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new PGFormatter());
+        LOGGER.setUseParentHandlers(false);
+        LOGGER.addHandler(handler);
         
         // launch RSBot
         try {
             Boot.main(new String[0]);
-            logMessage("RSBot started");
+            LOGGER.info("RSBot started.");
         } catch (Exception e) {
-            logMessage("RSBot failed to start because of a " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "RSBot failed to start.", e);
             System.exit(1);
         }
         
@@ -111,43 +115,50 @@ public class PowerGrid {
                     File pluginDir = new File(it.next());
                     if (pluginDir.isDirectory()) {
                         pluginDirectory = pluginDir;
+                        LOGGER.info("Custom plugin directory set at " 
+                                + pluginDir.getPath());
                     }
                 }
             }
         }
         
         // Wait for Client's Thread to start
+        waitForClient();
+        
+        PG = new PowerGrid(org.powerbot.core.Bot.client());
+        // Load the default PowerGridPlugin and any custom Plugins.
+        PG.loadPlugin(new PowerGridPlugin());
+        PG.loadPlugins(pluginDirectory);
+        LOGGER.info("Plugins loaded. Starting PowerGrid...");
+        if (PG.launch(true, false)) {
+            LOGGER.info("PowerGrid started and running");
+        } else {
+            LOGGER.severe("PowerGrid failed to start, shutting down");
+            System.exit(1);
+        }
+    }
+    
+    /**
+     * Waits for the RSBot client to start, and returns after that.
+     */
+    private static void waitForClient() {
         Thread main = Thread.currentThread();
         ThreadGroup mainGroup = main.getThreadGroup();
         ThreadGroup[] groups = new ThreadGroup[1];
         while (true) {
+            // find all ThreadGroups directly in the main ThreadGroup
             mainGroup.enumerate(groups, false);
             if (groups[0] != null && 
                     org.powerbot.core.Bot.instantiated() &&
                     org.powerbot.core.Bot.client() != null) {
+                // RSBot's ThreadGroup is active and the bot is instantiated.
                 break;
             }
             Task.sleep(50);
         }
+        // Give the GUI time to properly initialize before continuing.
         Task.sleep(1200);
-        
-        PG = new PowerGrid(org.powerbot.core.Bot.client());
-        PG.loadPlugins(pluginDirectory);
-        
-        
-        for (Plugin p : plugin) {
-            String pluginName = p.getClass().getAnnotation(PluginInfo.class).name();
-            try {
-                p.setUp();
-                logMessage("Plugin \"" + pluginName + "\" loaded");
-            } catch (Exception e) {
-                logMessage("Plugin " + pluginName + " failed to load", e);
-            }
-        }
-        logMessage("Total " + plugin.size() + " Plugins loaded");
-        
     }
-    
     
     private boolean isRunning = false;
     private boolean devmode = false; 
@@ -165,8 +176,9 @@ public class PowerGrid {
     private Bot bot;
     private ScriptLoader taskManagerLoader;
     
-    private PowerGrid(Client c) {
+    public PowerGrid(Client c) {
         assert c != null;
+        plugins = new ArrayList<>();
         client = c;
         iController = new InteractionController();
         mapper = new Mapper().withClient(client);
@@ -197,6 +209,7 @@ public class PowerGrid {
              */
             String name = p.getClass().getAnnotation(PluginInfo.class).name();
             try {
+                p.withPowerGrid(this);
                 p.setUp();
                 LOGGER.info("Plugin loaded: " + name);
             } catch (Exception e) {
@@ -211,7 +224,7 @@ public class PowerGrid {
      * @return an unmodifiable List containing the loaded Plugins.
      */
     public List<Plugin> getPlugins() {
-        return Collections.unmodifiableList(plugin);
+        return Collections.unmodifiableList(plugins);
     }
     
     
@@ -222,8 +235,9 @@ public class PowerGrid {
     public void loadPlugin(Plugin p) {
         assert p != null : "Null value for Plugin";
         String name = p.getClass().getAnnotation(PluginInfo.class).name();
-        plugin.add(p);
+        plugins.add(p);
         try {
+            p.withPowerGrid(this);
             p.setUp();
             LOGGER.info("Plugin loaded: " + name);
         } catch (Exception e) {
@@ -240,11 +254,11 @@ public class PowerGrid {
      */
     public boolean removePlugin(Plugin p) {
         assert p != null : "Null value for Plugin";
-        int index = plugin.indexOf(p);
+        int index = plugins.indexOf(p);
         if (index < 0) {
             return false;
         } else {
-            plugin.remove(index);
+            plugins.remove(index);
             p.tearDown();
             return true;
         }
@@ -313,31 +327,15 @@ public class PowerGrid {
             ControlPanel.addControlPanel(null, null);
         } else {
             PowerGrid.debugMessage("Modifying RSBot JFrame...");
-            for (Window w : Window.getWindows()) {
-                if (w instanceof JFrame) {
-                    JFrame f = (JFrame)w;
-                    f.setBackground(Color.BLACK);
-                    theControlPanel = ControlPanel.addControlPanel(f, "South");
-                    f.pack();
-                    try {
-                        f.setIconImage(ImageIO.read(ClassLoader
-                                .getSystemResource(
-                                    "powergrid/images/icon_small.png")));
-                        f.setTitle(f.getTitle() + " - Running PowerGrid v" + 
-                                PowerGrid.VERSION);
-                    } catch (IOException e) {
-                        PowerGrid.logMessage(
-                                "Error setting image on RSBot JFrame: " + e);
-                    }
-                }
+            Window[] ws = Window.getWindows();
+            if (ws.length > 0 && ws[0] instanceof JFrame) {
+                theControlPanel = ControlPanel.addControlPanel(ws[0], "South");
             }
         }
         debugMessage("ControlPanel created");
         
-        taskManagerLoader = new ScriptLoader(TM);
         taskManagerLoader.run();
         
-        mapper().withClient(org.powerbot.core.Bot.client());
         mapper().startMapping();
         debugMessage("Mapper Started");
         
@@ -345,6 +343,7 @@ public class PowerGrid {
         logMessage("PowerGrid started");
         theControlPanel.setMessage("PowerGrid has started");
         isRunning = true;
+        
         return true;
     }
     
@@ -376,7 +375,7 @@ public class PowerGrid {
         taskManagerLoader = taskManagerLoader.copy();
         debugMessage("TaskManager stopped");
         
-        for (Plugin p : plugin) {
+        for (Plugin p : plugins) {
             p.tearDown();
         }
         debugMessage("Plugins finalized");
@@ -452,6 +451,24 @@ public class PowerGrid {
     public static void debugMessage(String message, Throwable cause) {
         if (PG.isDevmode()) {
             logMessage("<debug> " + message, cause);
+        }
+    }
+    
+    public static class PGFormatter extends Formatter {
+        @Override
+        public String format(LogRecord record) {
+            StringBuilder sb = new StringBuilder("[")
+                    .append(record.getLoggerName())
+                    .append(": ").append(record.getLevel()).append("] ")
+                    .append(record.getMessage());
+            Throwable thrown = record.getThrown();
+            while (thrown != null) {
+                sb.append("\n  caused by: ")
+                        .append(thrown.getClass().getSimpleName())
+                        .append("\n    ").append(thrown.getMessage());
+                thrown = thrown.getCause();
+            }
+            return sb.append("\n").toString();
         }
     }
 }

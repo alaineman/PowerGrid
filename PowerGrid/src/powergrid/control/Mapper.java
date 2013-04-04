@@ -40,7 +40,7 @@ public class Mapper implements Copyable {
     public Mapper(Client client) {
         assert client != null;
         this.client = client;
-        assert invariant();
+        //assert invariant();
     }
     
     public Mapper withMap(WorldMap map) {
@@ -52,19 +52,21 @@ public class Mapper implements Copyable {
     public Mapper withClient(Client client) {
         assert this.client == null && client != null;
         this.client = client;
-        assert invariant();
+        //assert invariant();
         return this;
     }
     
     /**
-     * Starts the Mapper with the given policy.
+     * Starts the Mapper.
      * <p/>
-     * @throws IllegalStateException when the Mapper is already / still running
+     * @throws IllegalStateException when the Mapper is running, or no client 
+     *                               has been defined
      */
     public synchronized void startMapping() {
         if (thread != null)
              throw new IllegalStateException("Mapper is already active");
-        assert invariant();
+        if (client == null) 
+            throw new IllegalStateException("Undefined Client");
         stop = false;
         thread = new MapperThread(5000);
         thread.start();
@@ -84,7 +86,7 @@ public class Mapper implements Copyable {
             throw new IllegalStateException("Mapper is not running");
         stop = true;
         thread = null;
-        assert invariant();
+        //assert invariant();
     }
     
     public void mapOneRound() {
@@ -98,9 +100,12 @@ public class Mapper implements Copyable {
     }
 
     private synchronized void mapOnce() {
-        assert invariant();
+        //assert invariant();
         if (map == null) {
             map = new WorldMap();
+        }
+        if (client == null) {
+            throw new IllegalStateException("Undefined Client");
         }
         RSInfo info = client.getRSGroundInfo();
         
@@ -155,7 +160,7 @@ public class Mapper implements Copyable {
             l.mapUpdated(this);
         }
         
-        assert invariant();
+        //assert invariant();
     }
     
     /**

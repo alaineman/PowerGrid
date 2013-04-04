@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import powergrid.PowerGrid;
 
 /**
@@ -132,7 +133,10 @@ public class PluginLoader {
             if (p.isAnnotationPresent(PluginInfo.class)) {
                 PluginInfo info = p.getAnnotation(PluginInfo.class);
                 if (info.requiredVersion() > PowerGrid.VERSION) {
-                    System.out.println("[PluginLoader] " + info.name() + " needs PowerGrid v" + info.requiredVersion() + " or higher to work. Please update PowerGrid");
+                    PowerGrid.LOGGER.log(Level.WARNING, "Plugin \"" 
+                            + info.name() + "\" needs PowerGrid v" + 
+                            info.requiredVersion() + 
+                            " or higher to work. Please update PowerGrid");
                     continue;
                 }
             }

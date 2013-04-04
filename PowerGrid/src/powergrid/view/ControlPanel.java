@@ -8,7 +8,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,6 +30,11 @@ import powergrid.task.Task;
 public class ControlPanel extends JPanel {
     
     /**
+     * The path to the file that will be used as icon.
+     */
+    public static final String ICON_PATH = "powergrid/images/icon_small.png";
+    
+    /**
      * Creates a new ControlPanel and adds it to the given JFrame.
      * <p/>
      * An option can be given that will be used as the option parameter in the 
@@ -43,16 +50,26 @@ public class ControlPanel extends JPanel {
     public static ControlPanel addControlPanel(Container target, Object addOption) {
         ControlPanel cp = new ControlPanel();
         if (target == null) {
-            JFrame f = new JFrame("PowerGrid controls");
+            JFrame f = new JFrame("Control Panel");
             f.setLayout(new BorderLayout());
             f.add(cp,"Center");
-            f.pack();
             f.setVisible(true);
+            target = f;
+        } else if (addOption == null) {
+            target.add(cp);
         } else {
-            if (addOption == null) 
-                target.add(cp);
-            else
-                target.add(cp,addOption);
+            target.add(cp,addOption);
+        }
+        
+        if (target instanceof JFrame) {
+            JFrame f = (JFrame) target;
+            f.setBackground(Color.BLACK);
+            f.pack();
+            try {
+                f.setIconImage(ImageIO.read(ClassLoader
+                        .getSystemResource(ICON_PATH)));
+                f.setTitle(PowerGrid.NAME + " (" + f.getTitle() + ")");
+            } catch (IOException e) {}
         }
         return cp;
     }
@@ -75,7 +92,7 @@ public class ControlPanel extends JPanel {
         messageArea.setForeground(Color.WHITE);
         
         TaskQueueListener l = new TaskQueueListener();
-        PowerGrid.TM.addTaskListener(l);
+        PowerGrid.PG.taskManager().addTaskListener(l);
         
         showWorldMap.setPreferredSize(buttonSize);
         runScripts.setPreferredSize(buttonSize);
@@ -120,7 +137,7 @@ public class ControlPanel extends JPanel {
     private class TaskQueueListener implements TaskListener {
         @Override public void taskAdded(Task task) {
             String queue = "Task Queue: ";
-            List<Task> tasks = PowerGrid.TM.getPendingTasks();
+            List<Task> tasks = PowerGrid.PG.taskManager().getPendingTasks();
             if (!tasks.isEmpty()) {
                 for (Task t : tasks) {
                     queue += "<< " + t.getName();
@@ -138,7 +155,9 @@ public class ControlPanel extends JPanel {
             taskAdded(t);
             String queue = getMessage();
             if (queue.startsWith("Task Queue: ")) {
-                queue = "Task Queue: (Running \"" + PowerGrid.TM.currentTask().getName() + "\") << " + queue.substring(12);
+                queue = "Task Queue: (Running \"" + 
+                        PowerGrid.PG.taskManager().currentTask().getName() + 
+                        "\") << " + queue.substring(12);
             }
             setMessage(queue);
         }

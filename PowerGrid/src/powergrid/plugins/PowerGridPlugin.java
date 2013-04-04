@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.ImageIcon;
 import powergrid.PowerGrid;
 import powergrid.control.interaction.InteractionController;
 import powergrid.control.interaction.Interactor;
@@ -16,6 +17,7 @@ import powergrid.task.RestTask;
 import powergrid.task.Task;
 import powergrid.task.TravelNearestTask;
 import powergrid.task.TravelTask;
+import powergrid.view.ControlPanel;
 
 /**
  * This class acts as the container for the PowerGrid publicly accessible tasks.
@@ -50,6 +52,11 @@ public class PowerGridPlugin implements Plugin {
     private List<Interactor> interactors = new ArrayList<>(INTERACTOR_COUNT);
     
     private PowerGrid pg = null;
+    
+    @Override public ImageIcon getPluginIcon() {
+        return new ImageIcon(
+                ClassLoader.getSystemResource(ControlPanel.ICON_PATH));
+    }
     
     @Override public void withPowerGrid(PowerGrid pg) {
         this.pg = pg;

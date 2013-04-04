@@ -1,5 +1,7 @@
 package powergrid.task;
 
+import sun.util.calendar.LocalGregorianCalendar;
+
 /**
  * Task Class that is used to queue tasks for the Bot to execute.
  * <p />
@@ -188,14 +190,12 @@ public abstract class Task implements Comparable<Task> {
      * This method is effectively the same as calling 
      * <code>org.powerbot.core.script.job.Task.sleep(min,max);</code>
      * <p/>
-     * This method should actually not belong in Task, but they were implemented 
-     * here to allow for easy access even when having imports for PowerGrid's Task class.
-     * <p/>
      * @param min the minimum waiting time.
      * @param max the maximum waiting time.
      */
     public static void sleep(int min, int max) {
-        org.powerbot.core.script.job.Task.sleep(min,max);
+        int wait = (int) (Math.min(min, max) + (max - min) * Math.random());
+        sleep(wait);
     }
     
     /**
@@ -205,12 +205,13 @@ public abstract class Task implements Comparable<Task> {
      * This method is effectively the same as calling 
      * <code>org.powerbot.core.script.job.Task.sleep(time);</code>
      * <p/>
-     * This method should actually not belong in Task, but they were implemented 
-     * here to allow for easy access even when having imports for PowerGrid's Task class.
-     * <p/>
      * @param time the waiting time
      */
     public static void sleep(int time) {
-        org.powerbot.core.script.job.Task.sleep(time);
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException ignored) {
+            throw new ThreadDeath();
+        }
     }
 }

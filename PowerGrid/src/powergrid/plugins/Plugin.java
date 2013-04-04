@@ -1,6 +1,7 @@
 package powergrid.plugins;
 
 import java.util.Collection;
+import javax.swing.ImageIcon;
 import powergrid.PowerGrid;
 import powergrid.task.Task;
 
@@ -17,6 +18,28 @@ import powergrid.task.Task;
  * @author Chronio
  */
 public interface Plugin {
+    
+    /**
+     * Path to the default Plugin icon. 
+     * This icon will be used when the Plugin does not provide its own icon.
+     */
+    public static final String DEFAULT_PLUGIN_ICON = 
+            "powergrid/images/plugin_icon.png";
+    
+    /**
+     * This method is called whenever the GUI needs the Plugin's icon.
+     * <p/>
+     * The icon returned here will be placed in front of the Plugin's tasks in
+     * the Task window. It may also be used in other places for easy 
+     * identification.
+     * <p/>
+     * This method is allowed to return null. When it does, the default Plugin 
+     * icon will be used. The path to this default icon is defined as 
+     * <code>DEFAULT_PLUGIN_ICON</code>.
+     * <p/>
+     * @return this Plugin's icon.
+     */
+    public ImageIcon getPluginIcon();
     
     /**
      * This method is executed just after the Plugin is instantiated.

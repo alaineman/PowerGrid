@@ -21,7 +21,7 @@ public class GraphNetworkTest {
     private NetworkElement elem, other;
     
     /**
-     * Creates the GraphNetwork instance and one NetworkElement.
+     * Creates the GraphNetwork instance and two NetworkElements.
      */
     @Before public void setup() {
         graph = new GraphNetwork();

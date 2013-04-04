@@ -1,9 +1,13 @@
 package powergrid.plugins;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import powergrid.PowerGrid;
 import powergrid.control.interaction.InteractionController;
+import powergrid.control.interaction.Interactor;
 import powergrid.control.interaction.interactor.FairyringInteractor;
 import powergrid.control.interaction.interactor.MinecartInteractor;
 import powergrid.control.uicontrols.RSInteractor;
@@ -35,8 +39,15 @@ import powergrid.task.TravelTask;
 )
 public class PowerGridPlugin implements Plugin {
     
+    /**
+     * The amount of interactors that this Plugin provides.
+     */
+    public static final int INTERACTOR_COUNT = 2;
+    
     private RSInteractor interactor = null;
     private WorldMap worldmap = null;
+    
+    private List<Interactor> interactors = new ArrayList<>(INTERACTOR_COUNT);
     
     private PowerGrid pg = null;
     
@@ -51,8 +62,12 @@ public class PowerGridPlugin implements Plugin {
      */
     @Override public void setUp() {
         InteractionController ic = pg.interactionController();
-        ic.addInteractor(new MinecartInteractor(worldmap,interactor));
-        ic.addInteractor(new FairyringInteractor(worldmap,interactor));
+        interactors.add(new MinecartInteractor(worldmap,interactor));
+        interactors.add(new FairyringInteractor(worldmap,interactor));
+        
+        for (Interactor i : interactors) {
+            ic.addInteractor(i);
+        }
     }
     
     @Override public Collection<Class> getPublicTasks() {
@@ -79,8 +94,11 @@ public class PowerGridPlugin implements Plugin {
     
     @Override public void tearDown() {
         InteractionController ic = pg.interactionController();
-        
+        Iterator<Interactor> it = interactors.iterator();
+        while (it.hasNext()) {
+            ic.removeInteractor(it.next());
+        }
+        interactors.clear();
     }
-
     
 }

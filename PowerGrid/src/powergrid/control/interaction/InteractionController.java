@@ -1,11 +1,12 @@
 package powergrid.control.interaction;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Iterator;
 import powergrid.model.OutOfReachException;
 
 /**
- * Class that handles all interactions with GameTiles.
+ * Class that handles all interactions with Objects.
  * <p/>
  * This class maintains a Map mapping Classes to Interactors. When the interact
  * method is invoked, the InteractionController finds the closest matching 
@@ -23,7 +24,12 @@ import powergrid.model.OutOfReachException;
  * @author Chronio
  */
 public class InteractionController {
-    private HashMap<Class<?>,Interactor> types = new HashMap<>();
+    
+    public static final int DEFAULT_BUCKET_CAPACITY = 2;
+    public static final int DEFAULT_MAP_CAPACITY = 16;
+    
+    private HashMap<Class<?>,ArrayDeque<Interactor>> types 
+            = new HashMap<>(DEFAULT_MAP_CAPACITY);
     private Interactor defaultInteractor = null;
     
     /**
@@ -39,6 +45,10 @@ public class InteractionController {
         defaultInteractor = i;
     }
     
+    /**
+     * @return the default Interactor, used when no other Interactor is 
+     *         available.
+     */
     public Interactor getDefault() {
         return defaultInteractor;
     }
@@ -48,35 +58,41 @@ public class InteractionController {
      * <p/>
      * The InteractionController will match this Iterator against other 
      * Iterators that cover the same classes, to decide which Interactor to
-     * use.
+     * use. The unused Interactor will be stored as a replacement when the 
+     * used Interactor is removed.
      * <p/>
      * @param i the Interactor to add
-     * @return true if the Interactor was added and is used for at least one 
-     *         class, false otherwise.
+     * @return true if the operation completed successfully, false otherwise.
      */
     public boolean addInteractor(Interactor i) {
         if (i == null) {
             return false;
         }
-        boolean used = false;
         for (Class c : i.getTypes()) {
-            Interactor original = types.get(c);
-            if (original == null) {
-                // update when no Interactor exists yet
-                used = true;
-                types.put(c,i);
+            ArrayDeque<Interactor> is = types.get(c);
+            if (is == null) {
+                // update when no Interactors exist yet
+                ArrayDeque<Interactor> ad 
+                        = new ArrayDeque<>(DEFAULT_BUCKET_CAPACITY);
+                ad.addFirst(i);
+                types.put(c,ad);
             } else {
-                boolean preferOld = original.isMoreFavorableThan(i, c);
-                boolean preferNew = i.isMoreFavorableThan(original, c);
-                // update when prefer new, or don't care
-                if ((!preferOld && preferNew) || (preferOld == preferNew)) {
-                    used = true;
-                    types.put(c, i);
+                if (is.isEmpty()) {
+                    is.addFirst(i);
+                } else {
+                    Interactor active = is.getFirst();
+                    boolean preferOld = active.isMoreFavorableThan(i, c);
+                    boolean preferNew = i.isMoreFavorableThan(active, c);
+                    // add as last when prefer old, add as first otherwise.
+                    if (preferOld && !preferNew) {
+                        is.addLast(i);
+                    } else {
+                        is.addFirst(i);
+                    }
                 }
             }
-            
         }
-        return used;
+        return true;
     }
     
     /**
@@ -88,10 +104,17 @@ public class InteractionController {
      */
     public boolean removeInteractor(Interactor i) {
         int oldSize = types.size();
-        Iterator<Interactor> it = types.values().iterator();
-        while (it.hasNext()) {
-            if (it.next().equals(i)) {
-                it.remove();
+        Iterator<ArrayDeque<Interactor>> classes = types.values().iterator();
+        while (classes.hasNext()) {
+            ArrayDeque<Interactor> deque = classes.next();
+            Iterator interactors = deque.iterator();
+            while (interactors.hasNext()) {
+                if (interactors.next().equals(i)) {
+                    interactors.remove();
+                }
+            }
+            if (deque.isEmpty()) {
+                classes.remove();
             }
         }
         return oldSize != types.size();
@@ -157,18 +180,21 @@ public class InteractionController {
      *         that Class exists.
      */
     public Interactor findInteractor(Class<?> c) {
-        Interactor in = types.get(c);
+        ArrayDeque<Interactor> deque = types.get(c);
+        Interactor in = (deque == null ? null : deque.peekFirst());
         if (in == null) {
             Class<?>[] ifs = c.getInterfaces();
             for (Class<?> i : ifs) {
-                in = types.get(i);
+                deque = types.get(i);
+                in = (deque == null ? null : deque.peekFirst());
                 if (in != null) {
                     return in;
                 }
             }
             c = c.getSuperclass();
             while (c != null) {
-                in = types.get(c);
+                deque = types.get(c);
+                in = (deque == null ? null : deque.peekFirst());
                 if (in != null) {
                     return in;
                 }

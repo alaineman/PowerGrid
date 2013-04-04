@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Set;
 import powergrid.model.OutOfReachException;
@@ -26,7 +27,7 @@ public class GraphNetwork implements TransportNetwork {
     
     public boolean makeDirectedConnection(NetworkElement from, 
             NetworkElement to, int weight) {
-        if (from != null && to != null) {
+        if (from != null && to != null && !Objects.equals(from, to)) {
             boolean elemAdded = false;
             if (!nodes.containsKey(from)) {
                 add(from);

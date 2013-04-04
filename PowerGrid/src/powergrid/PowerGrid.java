@@ -2,17 +2,22 @@ package powergrid;
 
 import java.awt.Window;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import org.powerbot.Boot;
 import org.powerbot.game.client.Client;
 import powergrid.control.Mapper;
@@ -85,6 +90,8 @@ public class PowerGrid {
         }
     };
     
+    
+    
     /**
      * Main method of PowerGrid. 
      * <p/>
@@ -97,15 +104,25 @@ public class PowerGrid {
         handler.setFormatter(new PGFormatter());
         LOGGER.setUseParentHandlers(false);
         LOGGER.addHandler(handler);
-        
+        RSBotUpdater updater = new RSBotUpdater();
         // launch RSBot
         try {
-            Boot.main(new String[0]);
+            try {
+                // the main runner method of RSBot. Frankly, the rest is 
+                // optional (also, this does not load the SecurityManager).
+                org.powerbot.qb.a();
+                LOGGER.info("RSBot started - no SecurityManager set");
+            } catch (Exception e) {
+                Boot.main(new String[0]);
+                LOGGER.log(Level.WARNING, "RSBot started normally", e);
+            }
+            updater.hook();
             LOGGER.info("RSBot started.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "RSBot failed to start.", e);
             System.exit(1);
         }
+        
         
         Iterator<String> it = Arrays.asList(args).iterator();
         while (it.hasNext()) {
@@ -121,9 +138,11 @@ public class PowerGrid {
                 }
             }
         }
-        
         // Wait for Client's Thread to start
         waitForClient();
+        
+        // when RSBot has loaded the client, there are no updates.
+        updater.unhook();
         
         PG = new PowerGrid(org.powerbot.core.Bot.client());
         // Load the default PowerGridPlugin and any custom Plugins.
@@ -145,6 +164,20 @@ public class PowerGrid {
         Thread main = Thread.currentThread();
         ThreadGroup mainGroup = main.getThreadGroup();
         ThreadGroup[] groups = new ThreadGroup[1];
+        // 25 seconds is the maximum wait time before deciding RSBot takes too 
+        // long.
+        long destTime = System.currentTimeMillis() + 30000;
+        
+        JFrame frame =  null;
+        while (frame == null) {
+            Window[] ws = Window.getWindows();
+            if (ws.length > 0 && ws[0] instanceof JFrame) {
+                frame = (JFrame) ws[0];
+            }
+        }
+        
+        
+        
         while (true) {
             // find all ThreadGroups directly in the main ThreadGroup
             mainGroup.enumerate(groups, false);
@@ -155,6 +188,14 @@ public class PowerGrid {
                 break;
             }
             Task.sleep(50);
+            String text = ""; //notificationLabel.getText().toLowerCase();
+            
+            if (System.currentTimeMillis() > destTime 
+                    || text.contains("newer version")) {
+                // in case of a timeout, prompt the user to update
+                
+                break;
+            }
         }
         // Give the GUI time to properly initialize before continuing.
         Task.sleep(1200);

@@ -40,7 +40,7 @@ public class DestinationPanel extends JPanel {
             go.setEnabled(false);
             this.name.setText(destinationName + " (unavailable)");
         } else {
-            destination = new Point(dest);
+            destination = dest;
         }
         createAndShowGUI();
     }
@@ -69,7 +69,7 @@ public class DestinationPanel extends JPanel {
      * @return the Destination linked to this DestinationPanel
      */
     public Point getDestination() {
-        return new Point(destination);
+        return destination;
     }
     
     /**

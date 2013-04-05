@@ -91,7 +91,11 @@ public class GraphNetwork implements TransportNetwork {
 
     @Override
     public boolean remove(NetworkElement element) {
-        return nodes.remove(element) != null;
+        if (nodes.remove(element) != null) {
+            element.withNetwork(null);
+            return true;
+        }
+        return false;
     }
 
     @Override

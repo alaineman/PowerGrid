@@ -62,23 +62,15 @@ public class Point implements Locatable, Copyable {
     }
     
     /**
-     * Creates a Point with the same Position as the given Point
-     * @param p The Position this Point will refer to
-     */
-    public Point(Point p) {
-        x = p.x;
-        y = p.y;
-        z = p.z;
-    }
-    
-    /**
      * Creates a new Point with the same position as the given Tile.
      * @param t The Tile this Point will refer to
      */
-    public Point(Tile t) {
-        x = t.getX();
-        y = t.getY();
-        z = t.getPlane();
+    public Point(Locatable t) {
+        assert t != null;
+        Tile tile = t.getLocation();
+        x = tile.getX();
+        y = tile.getY();
+        z = tile.getPlane();
     }
     
     /**

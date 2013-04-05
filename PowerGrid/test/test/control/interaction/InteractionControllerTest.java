@@ -47,14 +47,15 @@ public class InteractionControllerTest {
         assertTrue(ic.addInteractor(mockedInteractor));
     }
     
-    @Test public void testAddOverwriteTrue() {
+    @Test public void testAddWithOverwriteTrue() {
         ic.addInteractor(mockedInteractor);
         assertTrue(ic.addInteractor(mockedSpecificInteractor));
     }
     
-    @Test public void testAddOverwriteFalse() {
+    @Test public void testAddWithoutOverwrite() {
         ic.addInteractor(mockedSpecificInteractor);
-        assertFalse(ic.addInteractor(mockedInteractor));
+        ic.addInteractor(mockedInteractor);
+        assertEquals(mockedSpecificInteractor, ic.findInteractor(Object.class));
     }
     
     @Test public void testInteractNoOption() throws OutOfReachException {

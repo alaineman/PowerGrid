@@ -165,7 +165,7 @@ public class TravelTask extends StepTask {
      * @return the destination of this TravelTask
      */
     public Point getDestination() {
-        return new Point(destination);
+        return destination;
     }
 
     // walks to the given tile and possibly executes the appropriate action

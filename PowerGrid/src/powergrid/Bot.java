@@ -149,8 +149,11 @@ public class Bot {
      * Returns the local RSPlayer, or null if the Player has not been loaded.
      * @return the local RSPlayer
      */
-    public Player getPlayer() {
-        return rsPlayer;
+    public powergrid.model.world.Player getPlayer() {
+        if (isPlayerSet()) {
+            return new powergrid.model.world.Player(rsPlayer.get());
+        }
+        return null;
     }
     
     /**

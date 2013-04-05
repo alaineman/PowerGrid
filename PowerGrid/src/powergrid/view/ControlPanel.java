@@ -74,7 +74,7 @@ public class ControlPanel extends JPanel {
         return cp;
     }
     
-    public static final Dimension buttonSize = new Dimension(160,28);
+    private PowerGrid powergrid = null;
     
     private JButton showWorldMap = new JButton("Show Worldmap");
     private JButton runScripts = new JButton("Scripts/Tasks");
@@ -84,7 +84,14 @@ public class ControlPanel extends JPanel {
     
     public ControlPanel() {
         super(new GridBagLayout());
+        powergrid = PowerGrid.PG;
         setupPanel();
+    }
+    
+    public ControlPanel usePowerGrid(PowerGrid pg) {
+        assert pg != null;
+        powergrid = pg;
+        return this;
     }
     
     private void setupPanel() {
@@ -92,8 +99,9 @@ public class ControlPanel extends JPanel {
         messageArea.setForeground(Color.WHITE);
         
         TaskQueueListener l = new TaskQueueListener();
-        PowerGrid.PG.taskManager().addTaskListener(l);
+        powergrid.taskManager().addTaskListener(l);
         
+        Dimension buttonSize = new Dimension(160,28);
         showWorldMap.setPreferredSize(buttonSize);
         runScripts.setPreferredSize(buttonSize);
         showStatus.setPreferredSize(buttonSize);
@@ -101,7 +109,8 @@ public class ControlPanel extends JPanel {
         showWorldMap.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 new MapViewer()
-                        .useMap(PowerGrid.PG.worldmap())
+                        .useMap(powergrid.worldmap())
+                        .usePlayer(powergrid.bot().getPlayer())
                         .initialize();
             }
         });
@@ -140,13 +149,13 @@ public class ControlPanel extends JPanel {
         return messageArea.getText();
     }
     
-    private class TaskQueueListener implements TaskListener {
-        @Override public void taskAdded(Task task) {
+    public class TaskQueueListener implements TaskListener {
+        @Override public void taskAdded(Task t) {
             String queue = "Task Queue: ";
-            List<Task> tasks = PowerGrid.PG.taskManager().getPendingTasks();
+            List<Task> tasks = powergrid.taskManager().getPendingTasks();
             if (!tasks.isEmpty()) {
-                for (Task t : tasks) {
-                    queue += "<< " + t.getName();
+                for (Task task : tasks) {
+                    queue += "<< " + task.getName();
                 }
                 queue = queue.substring(2);
             } else {
@@ -162,7 +171,7 @@ public class ControlPanel extends JPanel {
             String queue = getMessage();
             if (queue.startsWith("Task Queue: ")) {
                 queue = "Task Queue: (Running \"" + 
-                        PowerGrid.PG.taskManager().currentTask().getName() + 
+                        powergrid.taskManager().currentTask().getName() + 
                         "\") << " + queue.substring(12);
             }
             setMessage(queue);

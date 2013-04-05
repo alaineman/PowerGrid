@@ -47,7 +47,9 @@ public class WorldMap {
      * @param object the GameTile to store
      */
     public void put(GameTile object) {
-        data.put(object.getPosition(),object);
+        if (object != null) {
+            data.put(object.getPosition(),object);
+        }
     }
     
     /**

@@ -6,18 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import org.powerbot.Boot;
 import org.powerbot.game.client.Client;
 import powergrid.control.Mapper;
@@ -52,6 +48,10 @@ import powergrid.view.ControlPanel;
  *       <code>java -jar PowerGrid.jar -p someFolder\customPluginDirectory</code> will look 
  *       for plugins in the directory named <code>someFolder\customPluginDirectory</code>
  *       instead of the default "plugins" directory.</dd>
+ *   <dt>--update</dt>
+ *   <dd>Forces PowerGrid to update the RSBot jar file. This must be the first 
+ *       parameter. After the update, PowerGrid will restart without 
+ *       parameters.</dd>
  * </dl>
  * <p/>
  * @author Chronio
@@ -90,8 +90,6 @@ public class PowerGrid {
         }
     };
     
-    
-    
     /**
      * Main method of PowerGrid. 
      * <p/>
@@ -105,18 +103,25 @@ public class PowerGrid {
         LOGGER.setUseParentHandlers(false);
         LOGGER.addHandler(handler);
         RSBotUpdater updater = new RSBotUpdater();
+        
+        if (args.length > 0 && args[0].equals("--update")) {
+            updater.update();
+            String[] newArgs = new String[args.length - 1];
+            for (int i = 1; i < args.length; i++) {
+                newArgs[i - 1] = args[i];
+            }
+            try {
+                updater.useCmdArgs(newArgs).restart();
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Restart failed", e);
+                System.exit(1);
+            }
+        }
+        
         // launch RSBot
         try {
-            try {
-                // the main runner method of RSBot. Frankly, the rest is 
-                // optional (also, this does not load the SecurityManager).
-                org.powerbot.qb.a();
-                LOGGER.info("RSBot started - no SecurityManager set");
-            } catch (Exception e) {
-                Boot.main(new String[0]);
-                LOGGER.log(Level.WARNING, "RSBot started normally", e);
-            }
-            updater.hook();
+            Boot.main(new String[0]);
+            updater.useCmdArgs(args).hook();
             LOGGER.info("RSBot started.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "RSBot failed to start.", e);
@@ -164,19 +169,6 @@ public class PowerGrid {
         Thread main = Thread.currentThread();
         ThreadGroup mainGroup = main.getThreadGroup();
         ThreadGroup[] groups = new ThreadGroup[1];
-        // 25 seconds is the maximum wait time before deciding RSBot takes too 
-        // long.
-        long destTime = System.currentTimeMillis() + 30000;
-        
-        JFrame frame =  null;
-        while (frame == null) {
-            Window[] ws = Window.getWindows();
-            if (ws.length > 0 && ws[0] instanceof JFrame) {
-                frame = (JFrame) ws[0];
-            }
-        }
-        
-        
         
         while (true) {
             // find all ThreadGroups directly in the main ThreadGroup
@@ -188,14 +180,6 @@ public class PowerGrid {
                 break;
             }
             Task.sleep(50);
-            String text = ""; //notificationLabel.getText().toLowerCase();
-            
-            if (System.currentTimeMillis() > destTime 
-                    || text.contains("newer version")) {
-                // in case of a timeout, prompt the user to update
-                
-                break;
-            }
         }
         // Give the GUI time to properly initialize before continuing.
         Task.sleep(1200);
@@ -232,30 +216,34 @@ public class PowerGrid {
     
     /**
      * Loads Plugins from the specified directory.
+     * <p/>
+     * When the directory does not exist, this method does nothing.
      * @param directory the directory from which to load.
      */
     public void loadPlugins(File directory) {
-        assert directory != null && directory.isDirectory();
-        PluginLoader pl = new PluginLoader(directory);
-        List<Plugin> ps = Arrays.asList(pl.getLoadedPlugins());
-        if (plugins == null) {
-            plugins = new ArrayList<>(ps);
-        } else {
-            plugins.addAll(ps);
-        }
-        for (Plugin p : ps) {
-            /* try to setUp each Plugin instance or discard upon Exception.
-             * This way it is certain that PowerGrid will not crash because of 
-             * loading a failing Plugin.
-             */
-            String name = p.getClass().getAnnotation(PluginInfo.class).name();
-            try {
-                p.withPowerGrid(this);
-                p.setUp();
-                LOGGER.info("Plugin loaded: " + name);
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Failed to load Plugin " + name, e);
-                plugins.remove(p);
+        assert directory != null;
+        if (directory.exists()) {
+            PluginLoader pl = new PluginLoader(directory);
+            List<Plugin> ps = Arrays.asList(pl.getLoadedPlugins());
+            if (plugins == null) {
+                plugins = new ArrayList<>(ps);
+            } else {
+                plugins.addAll(ps);
+            }
+            for (Plugin p : ps) {
+                /* try to setUp each Plugin instance or discard upon Exception.
+                 * This way it is certain that PowerGrid will not crash because of 
+                 * loading a failing Plugin.
+                 */
+                String name = p.getClass().getAnnotation(PluginInfo.class).name();
+                try {
+                    p.withPowerGrid(this);
+                    p.setUp();
+                    LOGGER.info("Plugin loaded: " + name);
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Failed to load Plugin " + name, e);
+                    plugins.remove(p);
+                }
             }
         }
     }

@@ -1,9 +1,8 @@
-package com.bvscripting.bankedboner;
+package powergrid.view.status;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
-
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
@@ -13,7 +12,6 @@ import javax.swing.plaf.synth.SynthConstants;
 import javax.swing.plaf.synth.SynthContext;
 import javax.swing.plaf.synth.SynthLookAndFeel;
 import javax.swing.plaf.synth.SynthStyle;
-
 
 public class FilledTitleTabbedPane extends JTabbedPane {
 

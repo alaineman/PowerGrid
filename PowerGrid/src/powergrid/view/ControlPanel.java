@@ -98,7 +98,13 @@ public class ControlPanel extends JPanel {
         runScripts.setPreferredSize(buttonSize);
         showStatus.setPreferredSize(buttonSize);
         
-        showWorldMap.addActionListener(new MapViewer());
+        showWorldMap.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                new MapViewer()
+                        .useMap(PowerGrid.PG.worldmap())
+                        .initialize();
+            }
+        });
         runScripts.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent ae) {
                 TaskPanel.showTaskPanel();

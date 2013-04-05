@@ -48,6 +48,8 @@ public class TabTwo extends JPanel implements ChangeListener, ActionListener {
         group.add(cmdPrimus);
         group.add(cmdSecundus);
         group.add(cmdTertius);
+        
+        
     }
 
     @Override

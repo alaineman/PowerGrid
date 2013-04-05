@@ -1,6 +1,5 @@
 package powergrid.view.status;
 
-import com.bvscripting.bankedboner.FilledTitleTabbedPane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;

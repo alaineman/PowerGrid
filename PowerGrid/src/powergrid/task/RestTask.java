@@ -97,7 +97,7 @@ public class RestTask extends StepTask implements Configurable {
      * Task ends.
      */
     @Override public synchronized void step() {
-        if (abortOnTask && PowerGrid.TM.tasksPending() > 0) {
+        if (abortOnTask && PowerGrid.PG.taskManager().tasksPending() > 0) {
             cancel();
         } else {
             if (Walking.getEnergy() >= targetEnergy) {

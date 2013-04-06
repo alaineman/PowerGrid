@@ -48,7 +48,7 @@ public class ConfigureFrame extends JFrame {
                 Configurable c = config.getTask();
                 if (c instanceof Task) {
                     c.apply();
-                    PowerGrid.TM.assignTask((Task)c);
+                    PowerGrid.PG.taskManager().assignTask((Task)c);
                     dispose();
                 } else {
                     c.configCanceled();

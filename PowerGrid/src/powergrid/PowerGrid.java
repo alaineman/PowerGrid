@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -67,28 +68,18 @@ public class PowerGrid {
     /** The PowerGrid Logger. */
     public static final Logger LOGGER = Logger.getLogger(NAME);
     
+    /** The startup delay in milliseconds. 
+     * <p/>
+     * PowerGrid waits this amount of milliseconds after the Client is loaded
+     * before initializing itself. This is to prevent unexpected Exceptions.
+     */
+    public static final int STARTUP_DELAY = 800;
+    
     /** The PowerGrid instance. */
     public static PowerGrid PG = null;
-    /** The default TaskManager instance. */
-    public static final TaskManager TM = new TaskManager();
-    /** The default Mapper instance. */
-    public static final Mapper MAPPER = new Mapper();
-    
     
     /** The plugin directory, default is "plugins". */
     public static File pluginDirectory = new File("plugins");
-    
-    /** Thread that shuts down PowerGrid in case of RSBot shutdown. 
-     * <p/>
-     * Ensures that everything is cleaned up and terminated gracefully. 
-     */
-    private static Thread terminatorThread 
-            = new Thread("PowerGrid-Terminator") {
-        @Override public void run() {
-            if (!PG.terminate())
-                System.err.println("WARNING: PowerGrid termination failed");
-        }
-    };
     
     /**
      * Main method of PowerGrid. 
@@ -98,10 +89,7 @@ public class PowerGrid {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new PGFormatter());
-        LOGGER.setUseParentHandlers(false);
-        LOGGER.addHandler(handler);
+        setupLogger(LOGGER, new ConsoleHandler(), false);
         RSBotUpdater updater = new RSBotUpdater();
         
         if (args.length > 0 && args[0].equals("--update")) {
@@ -150,9 +138,11 @@ public class PowerGrid {
         updater.unhook();
         
         PG = new PowerGrid(org.powerbot.core.Bot.client());
+        
         // Load the default PowerGridPlugin and any custom Plugins.
         PG.loadPlugin(new PowerGridPlugin());
         PG.loadPlugins(pluginDirectory);
+        
         LOGGER.info("Plugins loaded. Starting PowerGrid...");
         if (PG.launch(true, false)) {
             LOGGER.info("PowerGrid started and running");
@@ -163,9 +153,30 @@ public class PowerGrid {
     }
     
     /**
-     * Waits for the RSBot client to start, and returns after that.
+     * Sets up the provided Logger to use the custom Formatter of PowerGrid.
+     * <p/>
+     * It changes the Formatter of all registered handlers to a PGFormatter 
+     * instance.
+     * @param l the Logger to configure
+     * @param h the Handler to apply to the Logger
+     * @param useParentHandlers true to keep parent handlers, false to disable.
      */
-    private static void waitForClient() {
+    public static void setupLogger(Logger l, Handler h, 
+            boolean useParentHandlers) {
+        l.setUseParentHandlers(useParentHandlers);
+        h.setFormatter(new PGFormatter());
+        l.addHandler(h);
+    }
+    
+    /**
+     * Waits for the RSBot client to start, and returns after that.
+     * <p/>
+     * There is a delay in order to give RSBot the time to properly 
+     * initialize itself. Therefore, it is safe to assume that most RSBot 
+     * functions are available after this method returns. The delay is equal to
+     * the amount of milliseconds specified in <code>STARTUP_DELAY</code>
+     */
+    public static void waitForClient() {
         Thread main = Thread.currentThread();
         ThreadGroup mainGroup = main.getThreadGroup();
         ThreadGroup[] groups = new ThreadGroup[1];
@@ -182,7 +193,7 @@ public class PowerGrid {
             Task.sleep(50);
         }
         // Give the GUI time to properly initialize before continuing.
-        Task.sleep(1200);
+        Task.sleep(STARTUP_DELAY);
     }
     
     private boolean isRunning = false;
@@ -201,6 +212,12 @@ public class PowerGrid {
     private Bot bot;
     private ScriptLoader taskManagerLoader;
     
+    private Thread terminationThread;
+    
+    /**
+     * Constructs a PowerGrid instance that can operate on the given Client.
+     * @param c the RSBot Client object
+     */
     public PowerGrid(Client c) {
         assert c != null;
         plugins = new ArrayList<>();
@@ -212,6 +229,7 @@ public class PowerGrid {
         taskManager = new TaskManager();
         bot = new Bot(taskManager);
         taskManagerLoader = new ScriptLoader(taskManager);
+        terminationThread = null;
     }
     
     /**
@@ -293,30 +311,51 @@ public class PowerGrid {
         }
     }
     
+    /** 
+     * @return the Client of RSBot.
+     */
     public Client client() {
         return client;
     }
     
+    /**
+     * @return the InteractionController used to handle interactions.
+     */
     public InteractionController interactionController() {
         return iController;
     }
     
+    /*
+     * @return the Mapper that maps the Runescape world.
+     */
     public Mapper mapper() {
         return mapper;
     }
     
+    /**
+     * @return the RSInteractor used to interact with the Runescape interface.
+     */
     public RSInteractor rsInteractor() {
         return rsInteractor;
     }
     
+    /**
+     * @return the TaskManager instance that schedules and executes Tasks.
+     */
     public TaskManager taskManager() {
         return taskManager;
     }
     
+    /**
+     * @return the WorldMap instance contained in the Mapper.
+     */
     public WorldMap worldmap() {
         return mapper().getWorldMap();
     }
     
+    /**
+     * @return the Bot object of PowerGrid
+     */
     public Bot bot() {
         return bot;
     }
@@ -368,7 +407,8 @@ public class PowerGrid {
         mapper().startMapping();
         debugMessage("Mapper Started");
         
-        Runtime.getRuntime().addShutdownHook(terminatorThread);
+        terminationThread = new Thread(new PGTerminator());
+        Runtime.getRuntime().addShutdownHook(terminationThread);
         logMessage("PowerGrid started");
         theControlPanel.setMessage("PowerGrid has started");
         isRunning = true;
@@ -380,9 +420,9 @@ public class PowerGrid {
      * Terminates PowerGrid, disabling core functionality.
      * <p/>
      * PowerGrid can still be used for Pathfinding and such, but be aware that 
-     * the Worldmap will not be updated and Tasks will not be executed anymore.
+     * the WorldMap will not be updated and Tasks will not be executed anymore.
      * <p/>
-     * @return whether the termination was succesful
+     * @return whether the termination was successful
      */
     public boolean terminate() {
         if (!isRunning)
@@ -390,10 +430,11 @@ public class PowerGrid {
         logMessage("stopping PowerGrid...");
         theControlPanel.setMessage("PowerGrid stopping...");
         try {
-            Runtime.getRuntime().removeShutdownHook(terminatorThread);
+            Runtime.getRuntime().removeShutdownHook(terminationThread);
+            terminationThread = null;
         } catch (IllegalStateException e) {} // was already shutting down
-        if (MAPPER.isMapping()) 
-            MAPPER.stopMapping();
+        if (mapper().isMapping()) 
+            mapper().stopMapping();
         debugMessage("Mapper stopped");
         
         theControlPanel.getParent().remove(theControlPanel);
@@ -435,9 +476,9 @@ public class PowerGrid {
     
     /**
      * Logs a message to the console, followed by a stack trace (max 10 items) of 
-     * the provided Throwable if PowerGrid runs in devmode.
+     * the provided Throwable if PowerGrid runs in development mode.
      * <p/>
-     * If PowerGrid is not running in devmode, only a line with "caused by 
+     * If PowerGrid is not running in development mode, only a line with "caused by 
      * ExceptionClass: Exception message" will be displayed.
      * @param message the message to log
      * @param cause the Throwable that caused the message to be logged
@@ -483,6 +524,9 @@ public class PowerGrid {
         }
     }
     
+    /**
+     * Custom Formatter for the PowerGrid Logger.
+     */
     public static class PGFormatter extends Formatter {
         @Override
         public String format(LogRecord record) {
@@ -499,5 +543,19 @@ public class PowerGrid {
             }
             return sb.append("\n").toString();
         }
+    }
+    
+    /**
+     * Runnable that ensures that PowerGrid is terminated gracefully in case 
+     * of RSBot shutdown.
+     */
+    public class PGTerminator implements Runnable {
+
+        @Override public void run() {
+            if (!terminate()) {
+                LOGGER.severe("PowerGrid failed to terminate gracefully");
+            }
+        }
+        
     }
 }

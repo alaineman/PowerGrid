@@ -153,7 +153,7 @@ public class TaskPanel extends JPanel {
                         } else {
                             if (JOptionPane.showConfirmDialog(null, "Run the Task \"" + task.getName() + "\"?", "Run this Task", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
                                     == JOptionPane.YES_OPTION) {
-                                PowerGrid.TM.assignTask(t);
+                                PowerGrid.PG.taskManager().assignTask(t);
                             }
                         }
                     } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {

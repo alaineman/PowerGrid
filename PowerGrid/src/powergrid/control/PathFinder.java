@@ -88,7 +88,7 @@ public class PathFinder implements Copyable {
     public PathFinder(Point start, Point goal) {
         assert start != null && goal != null;
         
-        theMap = PowerGrid.MAPPER.getWorldMap();
+        theMap = PowerGrid.PG.mapper().getWorldMap();
         this.start = start;
         this.goal = goal;
 

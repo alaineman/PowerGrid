@@ -186,7 +186,7 @@ public class TravelTask extends StepTask {
                 }
             } else {
                 //attempt walkTo anyways, insert teleportable / transportable usage
-                GameTile obj = PowerGrid.MAPPER.getWorldMap().get(p);
+                GameTile obj = PowerGrid.PG.mapper().getWorldMap().get(p);
                 if (obj instanceof Transportable) {
                     Transportable trans = (Transportable) obj;
                     try {

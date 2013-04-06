@@ -1,4 +1,6 @@
-# PowerGrid #
+
+![PowerGrid](http://i.imgur.com/I8SAxWT.png)
+
 PowerGrid is an extension on RSBot that aims to completely replace faulty or inefficient classes and methods with a completely new suite of classes and tools to make scripting much easier and less frustrating. 
 
 ## PowerGrid functionality ##

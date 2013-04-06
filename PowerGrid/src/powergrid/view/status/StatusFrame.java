@@ -34,7 +34,7 @@ public class StatusFrame extends JFrame {
         //      construction never fails.
         super("PowerGrid status"); // Directly sets the given String as title
         pg = null;
-        content = null; // TODO change to default JPanel
+        content = new JPanel(); // TODO change to default JPanel
     }
     
     /**
@@ -117,8 +117,9 @@ public class StatusFrame extends JFrame {
         //      JFrame to be resized to roughly 80 x 32 px, which is too small.
         setMinimumSize(new Dimension(320, 240));
         
-        // TODO GUI setup code here
-        
+        // NOTE sets a default JPanel to the StatusFrame.
+        add(content, BorderLayout.CENTER);
+                
         // NOTE packing is a useful thing to do since it sets the size to what 
         //      the content wants. This ensures the initial display closely 
         //      matches the optimal presentation.

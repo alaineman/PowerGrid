@@ -85,8 +85,6 @@ public class RSBotUpdater {
      * destination.
      * <p/>
      * The transfer itself is done using Java NIO Channels.
-     * <p/>
-     * @throws IOException when the transfer fails
      */
     public void update() {
         UpdateFrame frame = new UpdateFrame();
@@ -200,9 +198,8 @@ public class RSBotUpdater {
      * cannot be passed to the JVM, and therefore cannot be used when 
      * restarting.
      * <p/>
-     * @see powergrid.PowerGrid for information on the supported command line 
-     *                          arguments for PowerGrid
-     * @param args the command line arguments
+     * @see powergrid.PowerGrid powergrid.PowerGrid (for information on the 
+     *                          supported command line arguments for PowerGrid)
      * @throws IOException when the restart operation could not be completed.
      */
     public void restart() throws IOException {

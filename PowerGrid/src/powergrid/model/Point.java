@@ -128,6 +128,7 @@ public class Point implements Locatable, Copyable {
      * here.
      * <p/>
      * @return a RegionOffset object set to (0,0,0)
+     * @deprecated by RSBot API
      */
     @Deprecated
     @Override public RegionOffset getRegionOffset() {

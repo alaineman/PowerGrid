@@ -51,6 +51,6 @@ public interface TransportNetwork {
      * Returns a Set containing the elements in this network.
      * @return a Set containing the elements in this network
      */
-    public Set<NetworkElement> getElements();
+    public Set<? extends NetworkElement> getElements();
     
 }

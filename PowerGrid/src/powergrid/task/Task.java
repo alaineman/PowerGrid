@@ -1,6 +1,6 @@
 package powergrid.task;
 
-import sun.util.calendar.LocalGregorianCalendar;
+import java.util.Objects;
 
 /**
  * Task Class that is used to queue tasks for the Bot to execute.
@@ -138,6 +138,19 @@ public abstract class Task implements Comparable<Task> {
     }
     
     /**
+     * Returns the description of this Task.
+     * <p/>
+     * Subclasses should override this method to provide a detailed description
+     * about the functionality and purpose of the Task.
+     * <p/>
+     * The default value is "&lt;no description&gt;".
+     * @return the String "&lt;no description&gt;"
+     */
+    public String getDescription() {
+        return "<no description>";
+    }
+    
+    /**
      * Resets this Task, allowing it to be run again.
      * <p />
      * By default, this method throws an UnsupportedOperationException. Classes 
@@ -157,17 +170,25 @@ public abstract class Task implements Comparable<Task> {
      * <p/>
      * This method returns true if all the following conditions are met.
      * <ul>
-     *   <li>The given Object is a Task instance</li>
-     *   <li>The given Task-object has the same name as this Task-object</li>
-     *   <li>The given Task-object has the same priority as this Task-object</li>
+     *   <li>The given Object has the same class as this Task-object</li>
+     *   <li>The given Object has the same name as this Task-object</li>
+     *   <li>The given Object has the same priority as this Task-object</li>
+     *   <li>The given Object has the same description as this Task-object</li>
      * </ul>
      * If any of the above conditions are false, this method returns false.
      * @param other the Object to compare to this Task
      * @return true if this Task is equal to the given Object, false otherwise.
      */
     @Override public boolean equals(Object other) {
-        if (other instanceof Task) {
-            return (this.getName().equals(((Task)other).getName()) && this.getPriority() == ((Task)other).getPriority());
+        if (getClass().equals(other.getClass())) {
+            Task that = (Task) other;
+            if (getPriority() != that.getPriority()) {
+                return false;
+            }
+            if (!Objects.equals(getName(), that.getName())) {
+                return false;
+            }
+            return Objects.equals(getDescription(), that.getDescription());
         }
         return false;
     }

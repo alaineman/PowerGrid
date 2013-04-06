@@ -51,11 +51,13 @@ public abstract class Interactor {
     }
     
     /**
-     * Returns an array containing the actions this Interactor can perform on
+     * Returns a Set containing the actions this Interactor can perform on
      * the given object.
      * <p/>
      * This does not have to be equal to the possible actions in the Runescape
      * environment, it simply means this Interactor can handle the operation.
+     * However, to avoid confusion, it is highly recommended to stick to the 
+     * options as given in the Runescape environment.
      * <p/>
      * This method may throw an IllegalArgumentException when the provided 
      * Object is not supported.
@@ -72,7 +74,10 @@ public abstract class Interactor {
      * <p/>
      * The Interactor is free to decide what the default action is, but it 
      * should generally be the default action in the Runescape environment to
-     * avoid confusion.
+     * avoid confusion. When a subclass does not map this method call to the 
+     * default action in Runescape, the method's documentation should state
+     * that the action performed is inconsistent with the default action in 
+     * the Runescape environment.
      * <p/>
      * @param elem the element to interact with
      * @return whether the interaction was successful
@@ -136,7 +141,7 @@ public abstract class Interactor {
         Set<Class<?>> hisTypes = i.getTypes();
         Class<?> myClass = null, hisClass = null;
         // Select the most appropriate class from my classes
-        for (Class clazz : myTypes) {
+        for (Class<?> clazz : myTypes) {
             if (clazz.isAssignableFrom(c)) {
                 if (myClass == null || myClass.isAssignableFrom(clazz)) {
                     myClass = clazz;
@@ -144,7 +149,7 @@ public abstract class Interactor {
             }
         }
         // Select the most appriopriate class from his classes
-        for (Class clazz : hisTypes) {
+        for (Class<?> clazz : hisTypes) {
             if (clazz.isAssignableFrom(c)) {
                 if (hisClass == null || hisClass.isAssignableFrom(clazz)) {
                     hisClass = clazz;

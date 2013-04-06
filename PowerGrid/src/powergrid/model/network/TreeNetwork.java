@@ -136,7 +136,7 @@ public class TreeNetwork implements TransportNetwork {
         return result;
     }
     
-    @Override public Set<NetworkElement> getElements() {
+    @Override public Set<? extends NetworkElement> getElements() {
         Set<TreeNode<NetworkElement>> nodes = getRoot().allChildren();
         HashSet<NetworkElement> elems = new HashSet<>(nodes.size());
         for (TreeNode<NetworkElement> node : nodes) {

@@ -311,6 +311,23 @@ public class PowerGrid {
         }
     }
     
+    /**
+     * Looks up the Plugin that provides the specified Task
+     * @param t the Task to look up the Plugin for.
+     * @return the Plugin for the Task, or null if no Plugin was found.
+     */
+    public Plugin lookupPluginForTask(Task t) {
+        if (t == null) {
+            return null;
+        }
+        for (Plugin p : getPlugins()) {
+            if (p.getPublicTasks().contains(t.getClass())) {
+                return p;
+            }
+        }
+        return null;
+    }
+    
     /** 
      * @return the Client of RSBot.
      */

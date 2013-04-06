@@ -32,9 +32,9 @@ public class StatusFrame extends JFrame {
         //      is done in the initialize method. Also note that even though 
         //      This object has prerequirements in order to work as expected,
         //      construction never fails.
-        super("PowerGrid status"); // Directly sets the given String as title
+        super("PowerGrid status");
         pg = null;
-        content = new JPanel(); // TODO change to default JPanel
+        content = null;
     }
     
     /**
@@ -104,6 +104,13 @@ public class StatusFrame extends JFrame {
         if (getPowerGrid() == null) {
             throw new IllegalStateException("PowerGrid instance undefined");
         }
+        
+        // NOTE we only initialize and create the default panel when the GUI is
+        //      actually created, making construction itself faster.
+        //      This also allows us to safely pass the PowerGrid instance along.
+        content = new TaskControlPanel()
+                .withPowerGrid(getPowerGrid())
+                .initialize();
         
         // NOTE BorderLayout makes it easy to add a top bar and bottom bar that 
         //      display global information, and also makes it easy to change the 

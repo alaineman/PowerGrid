@@ -66,14 +66,10 @@ public class MinecartInteractor extends Interactor {
      */
     @Override public Set<Minecart> getOptions(Object o) {
         Minecart elem = verify(o);
-        Set<NetworkElement> elems = elem.getNetwork().getElements();
-        HashSet<Minecart> res = new HashSet<>((int)(1.5*elems.size()));
-        for (NetworkElement t : elems) {
-            if (t instanceof Minecart && !t.equals(o)) {
-                res.add((Minecart) t);
-            }
-        }
-        return res;
+        Set<? extends NetworkElement> elems = elem.getNetwork().getElements();
+        elems.remove(elem);
+        
+        return new HashSet<>((Set<Minecart>) elems);
     }
 
     

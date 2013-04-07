@@ -15,6 +15,7 @@ public class Item {
     /**
      * Creates an Item object that represents the given RSbot Item 
      * @param rsItem the Item object as given by the RSBot environment.
+     * @param rsItemDef the RSItemDef object describing this Item 
      */
     public Item(RSItem rsItem,RSItemDef rsItemDef) {
         item = rsItem;

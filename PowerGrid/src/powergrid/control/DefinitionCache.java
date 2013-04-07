@@ -145,7 +145,7 @@ public class DefinitionCache {
                     elem = node;
                 }
                 if (clazz.isInstance(elem)) {
-                    map.put((int) node.getId(), (T) elem);
+                    map.put((int) node.getId(), clazz.cast(elem));
                 }
             }
         }

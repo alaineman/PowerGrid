@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import org.powerbot.game.api.wrappers.Tile;
-import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powergrid.control.interaction.Interactor;
@@ -14,6 +13,7 @@ import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.WorldMap;
 import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TreeNetwork;
+import powergrid.model.world.Player;
 import powergrid.model.world.transportation.Minecart;
 import powergrid.task.Task;
 
@@ -68,8 +68,13 @@ public class MinecartInteractor extends Interactor {
         Minecart elem = verify(o);
         Set<? extends NetworkElement> elems = elem.getNetwork().getElements();
         elems.remove(elem);
-        
-        return new HashSet<>((Set<Minecart>) elems);
+        Set<Minecart> res = new HashSet<>(elems.size() * 4 / 3);
+        for (NetworkElement e : elems) {
+            if (e instanceof Minecart) {
+                res.add((Minecart) e);
+            }
+        }
+        return res;
     }
 
     
@@ -98,7 +103,7 @@ public class MinecartInteractor extends Interactor {
         Minecart elem = verify(o);
         Minecart dest = verify(destination);
         TreeNetwork nw = elem.getNetwork();
-        Set<NetworkElement> dests = nw.getElements();
+        Set<? extends NetworkElement> dests = nw.getElements();
         for (NetworkElement t : dests) {
             if (t.equals(dest) && travelPath(elem,nw.findPath(elem, t))) {
                 return true;
@@ -177,7 +182,7 @@ public class MinecartInteractor extends Interactor {
     }
     
     private void waitForComplete() {
-        Player local = getInteractor().getLocalPBPlayer();
+        Player local = getInteractor().getLocalPlayer();
         long endTime = System.currentTimeMillis() + 6000;
         while (System.currentTimeMillis() < endTime) {
             if (local.getAnimation() == 2148) {

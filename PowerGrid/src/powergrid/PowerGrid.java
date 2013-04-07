@@ -405,28 +405,28 @@ public class PowerGrid {
         assert plugins != null;
         if (isRunning) 
             return false;
-        logMessage("starting PowerGrid...");
-        debugMessage("With parameters: Developer mode"
+        LOGGER.info("starting PowerGrid...");
+        LOGGER.fine("With parameters: Developer mode"
                 + (splitUI ? ", Split user interface":""));
         if (splitUI) {
             ControlPanel.addControlPanel(null, null);
         } else {
-            PowerGrid.debugMessage("Modifying RSBot JFrame...");
+            LOGGER.fine("Modifying RSBot JFrame...");
             Window[] ws = Window.getWindows();
             if (ws.length > 0 && ws[0] instanceof JFrame) {
                 theControlPanel = ControlPanel.addControlPanel(ws[0], "South");
             }
         }
-        debugMessage("ControlPanel created");
+        LOGGER.fine("ControlPanel created");
         
         taskManagerLoader.run();
         
         mapper().startMapping();
-        debugMessage("Mapper Started");
+        LOGGER.fine("Mapper Started");
         
         terminationThread = new Thread(new PGTerminator());
         Runtime.getRuntime().addShutdownHook(terminationThread);
-        logMessage("PowerGrid started");
+        LOGGER.info("PowerGrid started");
         theControlPanel.setMessage("PowerGrid has started");
         isRunning = true;
         
@@ -444,7 +444,7 @@ public class PowerGrid {
     public boolean terminate() {
         if (!isRunning)
             return false;
-        logMessage("stopping PowerGrid...");
+        LOGGER.info("stopping PowerGrid...");
         theControlPanel.setMessage("PowerGrid stopping...");
         try {
             Runtime.getRuntime().removeShutdownHook(terminationThread);
@@ -452,22 +452,22 @@ public class PowerGrid {
         } catch (IllegalStateException e) {} // was already shutting down
         if (mapper().isMapping()) 
             mapper().stopMapping();
-        debugMessage("Mapper stopped");
+        LOGGER.fine("Mapper stopped");
         
         theControlPanel.getParent().remove(theControlPanel);
         theControlPanel = null;
-        debugMessage("ControlPanel removed");
+        LOGGER.fine("ControlPanel removed");
         
         taskManagerLoader.stop();
         taskManagerLoader = taskManagerLoader.copy();
-        debugMessage("TaskManager stopped");
+        LOGGER.fine("TaskManager stopped");
         
         for (Plugin p : plugins) {
             p.tearDown();
         }
-        debugMessage("Plugins finalized");
+        LOGGER.fine("Plugins finalized");
         
-        logMessage("PowerGrid stopped");
+        LOGGER.info("PowerGrid stopped");
         isRunning = false;
         return true;
     }

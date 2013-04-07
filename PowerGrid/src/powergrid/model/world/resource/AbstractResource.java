@@ -1,7 +1,7 @@
 package powergrid.model.world.resource;
 
 import powergrid.model.GameTile;
-import powergrid.model.Item;
+import powergrid.model.item.Item;
 import powergrid.model.Point;
 import powergrid.model.rsbot.RSGroundImpl;
 

@@ -2,7 +2,7 @@ package powergrid.model.interact;
 
 import java.util.HashMap;
 import powergrid.model.GameTile;
-import powergrid.model.Item;
+import powergrid.model.item.Item;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.rsbot.RSGroundImpl;

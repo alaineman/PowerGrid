@@ -1,4 +1,6 @@
-package powergrid.model;
+package powergrid.model.item;
+
+import powergrid.model.Copyable;
 
 /**
  *

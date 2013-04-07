@@ -3,7 +3,7 @@ package powergrid.model.interact;
 import java.util.ArrayList;
 import org.powerbot.game.client.RSItem;
 import org.powerbot.game.client.RSItemDef;
-import powergrid.model.Item;
+import powergrid.model.item.Item;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 

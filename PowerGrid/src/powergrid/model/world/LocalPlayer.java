@@ -1,8 +1,8 @@
 package powergrid.model.world;
 
 import org.powerbot.game.client.RSPlayer;
-import powergrid.model.Equipment;
-import powergrid.model.Inventory;
+import powergrid.model.item.Equipment;
+import powergrid.model.item.Inventory;
 /**
  *
  * @author Vincent W

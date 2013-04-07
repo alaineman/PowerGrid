@@ -2,10 +2,7 @@ package powergrid.view.status;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.util.ArrayList;
+import java.awt.Dimension;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -31,6 +28,8 @@ import powergrid.task.Task;
 //TODO implement actions
 public class TaskControlPanel extends JPanel {
 
+    public static final int SIDEPANEL_WIDTH = 200;
+    
     private PowerGrid pg;
     
     private JLabel taskName;
@@ -44,11 +43,8 @@ public class TaskControlPanel extends JPanel {
     private JButton moveDownButton;
     private JButton configButton;
     
-    private JScrollPane listScroller;
-    private GridBagConstraints listGBC;
-    private JPanel listPanel;
+    private ScrollableElementList list;
     
-    private ArrayList<TaskEntry> entries;
     private TaskEntry selected;
 
     /**
@@ -66,10 +62,7 @@ public class TaskControlPanel extends JPanel {
         moveUpButton = new JButton("Move up");
         moveDownButton = new JButton("Move down");
         configButton = new JButton("Configure");
-        listPanel = new JPanel(new GridBagLayout());
-        listScroller = new JScrollPane(listPanel);
-        listGBC = new GridBagConstraints();
-        entries = new ArrayList<>(6);
+        list = new ScrollableElementList();
     }
 
     /**
@@ -98,25 +91,41 @@ public class TaskControlPanel extends JPanel {
      * @return itself for fluency.
      */
     public TaskControlPanel initialize() {
-        setPreferredSize(null);
+        assert pg != null;
+        
+        list.initialize();
+        
+        setPreferredSize(new Dimension(320, 240));
         pg.taskManager().addTaskListener(new TaskListUpdater());
         
-        List<Task> pendingTasks = pg.taskManager().getPendingTasks();
-        entries.ensureCapacity(pendingTasks.size());
-        listGBC.gridx = 0;
-        listGBC.gridy = 0;
-        listGBC.fill = GridBagConstraints.HORIZONTAL;
-        listGBC.anchor = GridBagConstraints.NORTHWEST;
-        listGBC.weightx = 1;
+        JPanel side = new JPanel(new BorderLayout());
         
-        for (Task t : pendingTasks) {
-            TaskEntry e = new TaskEntry(t).initialize();
-            entries.add(e);
-            listPanel.add(e, listGBC);
-            listGBC.gridy++;
-        }
+        JPanel taskInfo = new JPanel(new BorderLayout(0, 4));
+        JPanel taskInfoLabels = new JPanel();
         
-        setSelectedEntry(null);
+        Dimension labelSize = new Dimension(SIDEPANEL_WIDTH - 20, 32);
+        taskName.setPreferredSize(labelSize);
+        taskType.setPreferredSize(labelSize);
+        taskPlugin.setPreferredSize(labelSize);
+        
+        labelSize.setSize(labelSize.getWidth(), 128);
+        descriptionScroller.setPreferredSize(labelSize);
+        
+        taskInfoLabels.add(taskName);
+        taskInfoLabels.add(taskType);
+        taskInfoLabels.add(taskPlugin);
+        
+        taskInfo.add(taskInfoLabels, BorderLayout.NORTH);
+        taskInfo.add(descriptionScroller, BorderLayout.CENTER);
+        
+        side.add(taskInfo, BorderLayout.CENTER);
+        
+        //TODO add buttons SOUTH
+        
+        add(side, BorderLayout.EAST);
+        add(list, BorderLayout.CENTER);
+        
+        updateList();
         return this;
     }
     
@@ -124,7 +133,7 @@ public class TaskControlPanel extends JPanel {
      * Sets the selected TaskEntry on this TaskControlPanel.
      * @param entry the TaskEntry to select
      */
-    public void setSelectedEntry(TaskEntry entry) {
+    public synchronized void setSelectedEntry(TaskEntry entry) {
          if (entry != null) {
              entry.setSelected(true);
          }
@@ -144,35 +153,25 @@ public class TaskControlPanel extends JPanel {
     /**
      * Updates the Task list to match the current state of the TaskManager.
      */
-    public void updateList() {
-        entries.clear();
+    public synchronized void updateList() {
         // Store the selected Task to try and match the Task to a Task in the 
         // updated list of tasks. This provides a smoother experience when 
         // performing operations on the Task queue.
         Task selectedTask = (selected == null ? null : selected.getTask());
         setSelectedEntry(null);
-        listPanel.removeAll();
         TaskEntry newSelection = null;
-        listGBC.gridy = 0;
-        for (Task t : pg.taskManager().getPendingTasks()) {
-            TaskEntry e = new TaskEntry(t).initialize();
-            entries.add(e);
-            add(e, listGBC);
-            listGBC.gridy++;
-            // if the current Task is equal to the previously selected Task,
-            // we take the current TaskEntry as the new selection.
-            if (t.equals(selectedTask)) {
-                newSelection = e;
+        
+        List<Task> tasks = pg.taskManager().getPendingTasks();
+        TaskEntry[] entries = new TaskEntry[tasks.size()];
+        for (int i = 0; i < tasks.size(); i++) {
+            entries[i] = new TaskEntry(tasks.get(i));
+            if (tasks.get(i).equals(selectedTask)) {
+                newSelection = entries[i];
             }
         }
-        // add a filler component to the listPanel to push the TaskEntries to 
-        // the top of the listPanel. Otherwise the GridBagLayout will center
-        // them on screen. Because the size is set 
-        listGBC.fill = GridBagConstraints.BOTH;
-        listGBC.weighty = 1;
-        add(new Container(), listGBC);
-        listGBC.weighty = 0;
-        listGBC.fill = GridBagConstraints.HORIZONTAL;
+        
+        list.clear();
+        list.add(entries);
         
         // restore the original selection
         setSelectedEntry(newSelection);
@@ -184,7 +183,7 @@ public class TaskControlPanel extends JPanel {
      * When no entry is selected, the text fields will be set to a generic 
      * value and the control buttons will be disabled.
      */
-    public void updateTaskData() {
+    public synchronized void updateTaskData() {
         if (selected == null) {
             // Set each component's text content to a default value
             taskName.setText("no task selected");

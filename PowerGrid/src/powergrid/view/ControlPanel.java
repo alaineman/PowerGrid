@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,6 +19,7 @@ import javax.swing.JPanel;
 import powergrid.PowerGrid;
 import powergrid.control.listener.TaskListener;
 import powergrid.task.Task;
+import powergrid.view.status.TaskControlPanel;
 
 /**
  * Control Panel that allows control and overview of PowerGrid functionality.
@@ -119,7 +121,17 @@ public class ControlPanel extends JPanel {
                 TaskPanel.showTaskPanel();
             }
         });
-        showStatus.addActionListener(null);
+        showStatus.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent ae) {
+                try {
+                new TaskControlPanel()
+                        .withPowerGrid(powergrid)
+                        .initialize();
+                } catch (Exception e) {
+                    PowerGrid.LOGGER.log(Level.WARNING, "Exception occurred", e);
+                }
+            }
+        });
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;

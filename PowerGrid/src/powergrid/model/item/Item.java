@@ -1,4 +1,4 @@
-package powergrid.model;
+package powergrid.model.item;
 
 import org.powerbot.game.client.RSItem;
 import org.powerbot.game.client.RSItemDef;

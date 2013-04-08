@@ -2,16 +2,18 @@
 
 - Create Interactors and corresponding model classes
 
-- Create and hook listeners for RSMonitor -- Chronio
+- Create and hook listeners for RSMonitor
 
-- implement Player methods
+- implement Local Player methods
     -> Implemented, but some required values are hard to find in the RSPlayer.
        @Alaineman: please check implemented methods and verify these are 
                    correct. Some RSPlayer methods are unclear. -- Chronio
+    -> Bank, Store, Summoning, Money, GE
+
 
 - GUI for TaskManager and PG settings
 
-- Requirement<T> interface
+- Add interface Requirement to model and update interactors and pathfinders
 
 - Inventory and items (equipment)
 

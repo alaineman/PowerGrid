@@ -13,7 +13,8 @@ import powergrid.task.Configurable;
 import powergrid.task.Task;
 
 /**
- * Frame that holds the run and cancel buttons along with the Task's Configuration panel.
+ * Frame that holds the confirm and cancel buttons along with the Task's 
+ * Configuration panel.
  * @author Chronio
  */
 public class ConfigureFrame extends JFrame {
@@ -41,7 +42,7 @@ public class ConfigureFrame extends JFrame {
                 dispose();
             }
         });
-        JButton run = new JButton ("Run");
+        JButton run = new JButton ("Confirm");
         run.setPreferredSize(buttonDim);
         run.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent ae) {

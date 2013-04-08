@@ -113,9 +113,21 @@ public class TaskControlPanel extends PGPanel {
         
         moveUpButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent ae) {
-                
+                TaskEntry entry = getSelectedEntry();
+                if (entry != null) {
+                    getPowerGrid().taskManager().moveTaskUp(entry.getTask());
+                }
             }
         });
+        moveDownButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent ae) {
+                TaskEntry entry = getSelectedEntry();
+                if (entry != null) {
+                    getPowerGrid().taskManager().moveTaskDown(entry.getTask());
+                }
+            }
+        });
+        
         
         buttons.setBorder(new LineBorder(Color.BLACK));
         

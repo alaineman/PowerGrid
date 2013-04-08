@@ -1,9 +1,11 @@
 package powergrid.view;
 
 import java.awt.Component;
+import java.io.IOException;
+import java.util.logging.Level;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import powergrid.PowerGrid;
-import powergrid.view.PGPanel;
 
 /**
  * Template JFrame that contains a PowerGrid instance and provides a consistent
@@ -35,6 +37,11 @@ public class PGFrame extends JFrame {
      * The default title for PGFrames.
      */
     public static final String DEFAULT_TITLE = PowerGrid.NAME;
+    /**
+     * The default icon for PGFrames.
+     */
+    public static final String DEFAULT_ICON_PATH 
+            = "powergrid/images/icon_small.png";
     
     private PowerGrid powergrid;
     private boolean initialized;
@@ -109,6 +116,12 @@ public class PGFrame extends JFrame {
         }
         if (isInitialized()) {
             throw new IllegalStateException("Already initialized");
+        }
+        try {
+            setIconImage(ImageIO.read(ClassLoader
+                    .getSystemResource(DEFAULT_ICON_PATH)));
+        } catch (IOException e) {
+            PowerGrid.LOGGER.log(Level.WARNING, "Could not set icon", e);
         }
         initialized = true;
         return this;

@@ -1,16 +1,16 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package powergrid.model;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import org.powerbot.game.api.util.Filter;
 
 /**
  *
- * @author Vincent W
+ * @param <T> the type of elements stored in this LinkedList
+ * @author Alaineman
  */
-public class LinkedList<T> {
+public class LinkedList<T> implements Iterable<T> {
 
     private LinkedListNode<T> end;
     private int size;
@@ -18,6 +18,24 @@ public class LinkedList<T> {
     public LinkedList() {
         end = null;
         size = 0;
+    }
+    
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+    
+    public T getFirst() {
+        if (isEmpty()) {
+            return null;
+        }
+        return end.getNext().getElement();
+    }
+    
+    public T getLast() {
+        if (isEmpty()) {
+            return null;
+        }
+        return end.getElement();
     }
 
     public boolean addFirst(T element) {
@@ -101,19 +119,26 @@ public class LinkedList<T> {
         previous.setNext(previous.getNext().getNext());
         size--;
         return true;
-
     }
 
     public boolean contains(T element) {
-        return true;
+        return getPrevious(element) != null;
     }
 
     public boolean insertAfter(T after, T element) {
         return true;
     }
+    
+    public boolean swap(T elem1, T elem2) {
+        return false;
+    }
 
     public boolean insertBefore(T before, T element) {
         return true;
+    }
+    
+    public T find(Filter<T> filter) {
+        return null;
     }
 
     private LinkedListNode<T> getPrevious(T element) {
@@ -126,5 +151,60 @@ public class LinkedList<T> {
         } else {
             return current;
         }
+    }
+    
+    public T get(int index) {
+        if (index < 0 || index >= size()) {
+            return null;
+        }
+        LinkedListNode<T> node = end.getNext();
+        for (int i = 0; i < index; i++) {
+            node = node.getNext();
+        }
+        return node.getElement();
+    }
+    
+    public int size() {
+        return size;
+    }
+    
+    @Override 
+    public Iterator<T> iterator() {
+        return null;
+    }
+    
+    public class LinkedListIterator implements Iterator<T> {
+
+        // the node containing the node before the last returned element
+        private LinkedListNode<T> previous = null;
+        
+        @Override
+        public boolean hasNext() {
+            if (size == 0) {
+                return false;
+            }
+            if (size == 1) {
+                return previous == null;
+            }
+            return previous.getNext() != end;
+        }
+
+        @Override
+        public T next() {
+            if (hasNext()) {
+                if (previous == null) {
+                    previous = end;
+                }
+                previous = previous.getNext();
+                return previous.getNext().getElement();
+            }
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public void remove() {
+            previous.setNext(previous.getNext().getNext());
+        }
+        
     }
 }

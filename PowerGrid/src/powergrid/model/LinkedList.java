@@ -3,7 +3,6 @@ package powergrid.model;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import org.powerbot.game.api.util.Filter;
 
 /**
  *
@@ -19,18 +18,18 @@ public class LinkedList<T> implements Iterable<T> {
         end = null;
         size = 0;
     }
-    
+
     public boolean isEmpty() {
         return size() == 0;
     }
-    
+
     public T getFirst() {
         if (isEmpty()) {
             return null;
         }
         return end.getNext().getElement();
     }
-    
+
     public T getLast() {
         if (isEmpty()) {
             return null;
@@ -126,19 +125,34 @@ public class LinkedList<T> implements Iterable<T> {
     }
 
     public boolean insertAfter(T after, T element) {
-        return true;
+        LinkedListNode<T> previous = getPrevious(after);
+        if(previous != null){
+            LinkedListNode<T> original = previous.getNext();
+            original.setNext(new LinkedListNode<>(element, original.getNext()));
+            size++;
+            return true;
+        } else {
+            return false;
+        }
     }
-    
+
     public boolean swap(T elem1, T elem2) {
         return false;
     }
 
     public boolean insertBefore(T before, T element) {
-        return true;
+        LinkedListNode<T> previous = getPrevious(before);
+        if(previous != null){
+            previous.setNext(new LinkedListNode<>(element, previous.getNext()));            
+            size++;
+            return true;
+        } else {
+            return false;
+        }    
     }
-    
-    public T find(Filter<T> filter) {
-        return null;
+
+    public T find(Matcher<T> matcher) {
+        return getPrevious(Item).getNext().getElement();
     }
 
     private LinkedListNode<T> getPrevious(T element) {
@@ -152,7 +166,7 @@ public class LinkedList<T> implements Iterable<T> {
             return current;
         }
     }
-    
+
     public T get(int index) {
         if (index < 0 || index >= size()) {
             return null;
@@ -163,21 +177,21 @@ public class LinkedList<T> implements Iterable<T> {
         }
         return node.getElement();
     }
-    
+
     public int size() {
         return size;
     }
-    
-    @Override 
+
+    @Override
     public Iterator<T> iterator() {
         return null;
     }
-    
+
     public class LinkedListIterator implements Iterator<T> {
 
         // the node containing the node before the last returned element
         private LinkedListNode<T> previous = null;
-        
+
         @Override
         public boolean hasNext() {
             if (size == 0) {
@@ -205,6 +219,5 @@ public class LinkedList<T> implements Iterable<T> {
         public void remove() {
             previous.setNext(previous.getNext().getNext());
         }
-        
     }
 }

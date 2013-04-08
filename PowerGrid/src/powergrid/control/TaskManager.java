@@ -1,6 +1,7 @@
 package powergrid.control;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -157,8 +158,9 @@ public class TaskManager extends ActiveScript {
      */
     public List<Task> getPendingTasks() {
         ArrayList<Task> tasks = new ArrayList<>(pendingTasks.size());
-        for (Task t : pendingTasks)
+        for (Task t : pendingTasks) {
             tasks.add(t);
+        }
         Collections.sort(tasks);
         return tasks;
     }
@@ -190,5 +192,67 @@ public class TaskManager extends ActiveScript {
      */
     public void removeTaskListener(TaskListener l) {
         listeners.remove(l);
+    }
+    
+    /**
+     * Moves a Task up in the queue.
+     * <p/>
+     * When this method returns normally, and the provided Task was not the 
+     * first Task in the queue, it is guaranteed that the Task's position in 
+     * the queue is now above the Task which was first above the specified Task.
+     * <p/>
+     * @param t the Task to move
+     * @return the new priority of the Task
+     * @throws IllegalArgumentException when <code>t == null</code> or t is not 
+     *                                  in the task queue.
+     */
+    public int moveTaskUp(Task t) {
+        if (t == null) {
+            throw new IllegalArgumentException("Null value");
+        }
+        Task[] tasks = pendingTasks.toArray(new Task[pendingTasks.size()]);
+        Arrays.sort(tasks);
+        int index = Arrays.binarySearch(tasks, t);
+        if (index < 0) {
+            throw new IllegalArgumentException("Task not in Queue");
+        }
+        if (index != 0) {
+            Task higherTask = tasks[index - 1];
+            removeTask(t);
+            t.setPriority(higherTask.getPriority() + 1);
+            assignTask(t);
+        }
+        return t.getPriority();
+    }
+    
+    /**
+     * Moves a Task down in the queue.
+     * <p/>
+     * When this method returns normally, and the provided Task was not the 
+     * last Task in the queue, it is guaranteed that the Task's position in 
+     * the queue is now below the Task which was first below the specified Task.
+     * <p/>
+     * @param t the Task to move
+     * @return the new priority of the Task
+     * @throws IllegalArgumentException when <code>t == null</code> or t is not 
+     *                                  in the task queue.
+     */
+    public int moveTaskDown(Task t) {
+        if (t == null) {
+            throw new IllegalArgumentException("Null value");
+        }
+        Task[] tasks = pendingTasks.toArray(new Task[pendingTasks.size()]);
+        Arrays.sort(tasks);
+        int index = Arrays.binarySearch(tasks, t);
+        if (index < 0) {
+            throw new IllegalArgumentException("Task not in Queue");
+        }
+        if (index != tasks.length - 1) {
+            Task lowerTask = tasks[index + 1];
+            removeTask(t);
+            t.setPriority(lowerTask.getPriority() - 1);
+            assignTask(t);
+        }
+        return t.getPriority();
     }
 }

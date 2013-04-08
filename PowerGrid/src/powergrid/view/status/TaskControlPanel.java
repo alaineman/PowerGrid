@@ -3,6 +3,9 @@ package powergrid.view.status;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -16,6 +19,7 @@ import powergrid.control.listener.TaskListener;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
 import powergrid.task.Task;
+import powergrid.view.PGPanel;
 
 /**
  * Panel that offers functionality to monitor and modify the task queue of
@@ -24,9 +28,8 @@ import powergrid.task.Task;
  * @author Alaineman
  * @author Chronio
  */
-//TODO finish initalize and data load
 //TODO implement actions
-public class TaskControlPanel extends JPanel {
+public class TaskControlPanel extends PGPanel {
 
     public static final int SIDEPANEL_WIDTH = 200;
     
@@ -65,33 +68,15 @@ public class TaskControlPanel extends JPanel {
         list = new ScrollableElementList();
     }
 
-    /**
-     * Sets the PowerGrid instance to show the information of.
-     * <p/>
-     * This method should only be called once.
-     *
-     * @param p the PowerGrid instance
-     * @return itself for fluency
-     */
-    public TaskControlPanel withPowerGrid(PowerGrid p) {
-        assert pg == null && p != null;
-        pg = p;
+    @Override 
+    public TaskControlPanel withPowerGrid(PowerGrid pg) {
+        super.withPowerGrid(pg);
         return this;
     }
-
-    /**
-     * @return the PowerGrid instance.
-     */
-    public PowerGrid getPowerGrid() {
-        return pg;
-    }
-
-    /**
-     * Setup the TaskControlPanel.
-     * @return itself for fluency.
-     */
+    
+    @Override
     public TaskControlPanel initialize() {
-        assert pg != null;
+        super.initialize();
         
         list.initialize();
         
@@ -120,7 +105,21 @@ public class TaskControlPanel extends JPanel {
         
         side.add(taskInfo, BorderLayout.CENTER);
         
-        //TODO add buttons SOUTH
+        JPanel buttons = new JPanel(new GridLayout(2, 2, 6, 4));
+        buttons.add(moveUpButton);
+        buttons.add(configButton);
+        buttons.add(moveDownButton);
+        buttons.add(removeButton);
+        
+        moveUpButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent ae) {
+                
+            }
+        });
+        
+        buttons.setBorder(new LineBorder(Color.BLACK));
+        
+        side.add(buttons, BorderLayout.SOUTH);
         
         add(side, BorderLayout.EAST);
         add(list, BorderLayout.CENTER);
@@ -137,7 +136,9 @@ public class TaskControlPanel extends JPanel {
          if (entry != null) {
              entry.setSelected(true);
          }
-         selected.setSelected(false);
+         if (selected != null) {
+             selected.setSelected(false);
+         }
          selected = entry;
          
          updateTaskData();
@@ -164,7 +165,9 @@ public class TaskControlPanel extends JPanel {
         List<Task> tasks = pg.taskManager().getPendingTasks();
         TaskEntry[] entries = new TaskEntry[tasks.size()];
         for (int i = 0; i < tasks.size(); i++) {
-            entries[i] = new TaskEntry(tasks.get(i));
+            entries[i] = new TaskEntry(tasks.get(i))
+                    .withPowerGrid(getPowerGrid())
+                    .initialize();
             if (tasks.get(i).equals(selectedTask)) {
                 newSelection = entries[i];
             }
@@ -219,7 +222,7 @@ public class TaskControlPanel extends JPanel {
     /**
      * JPanel that shows the information related to a Task object.
      */
-    public class TaskEntry extends JPanel {
+    public class TaskEntry extends PGPanel {
 
         private Task task;
 
@@ -240,11 +243,16 @@ public class TaskControlPanel extends JPanel {
             return task;
         }
 
-        /**
-         * Setup the TaskControlPanel.
-         * @return itself for fluency.
-         */
+        @Override
+        public TaskEntry withPowerGrid(PowerGrid pg) {
+            super.withPowerGrid(pg);
+            return this;
+        }
+        
+        @Override
         public TaskEntry initialize() {
+            super.initialize();
+            
             setBackground(Color.WHITE);
             setBorder(new LineBorder(Color.BLACK));
             

@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -128,7 +127,7 @@ public class ControlPanel extends JPanel {
                         .withPowerGrid(powergrid)
                         .initialize();
                 } catch (Exception e) {
-                    PowerGrid.LOGGER.log(Level.WARNING, "Exception occurred", e);
+                    e.printStackTrace(System.out);
                 }
             }
         });

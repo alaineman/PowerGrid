@@ -27,11 +27,24 @@ public class PathFinderTest {
         theMap.putMask(new Point(3,1),BLOCK);
     }
     
-    /* Convenience methods for creating points used in the parameters for fluency */
+    /**
+     * Convenience method for creating points used in the parameters for
+     * fluency and readablitily.
+     * @param x the Point's x coordinate
+     * @param y the Point's y coordinate
+     * @return a Point instance representing the position identified by (x,y)
+     */
     public static Point p(int x, int y) {
         return new Point(x,y);
     }
-    public static List<Point> lp(Point... ps) {
+    
+    /**
+     * Convenience method for creating a list of Points, providing better 
+     * readability in this test class' Parameters method.
+     * @param ps the array of Points to be used as path
+     * @return a List representation of the specified Points.
+     */
+    public static List<Point> path(Point... ps) {
         return Arrays.asList(ps);
     }
     
@@ -39,10 +52,10 @@ public class PathFinderTest {
     public static List<Object[]> data() {
         return Arrays.asList(new Object[][] {
             /* { start,goal, expected path }*/
-            { p(0,0),p(1,0), lp(p(1,0)) },
-            { p(3,2),p(3,0), lp(p(4,2), p(4,1), p(4,0), p(3,0)) },
+            { p(0,0),p(1,0), path(p(1,0)) },
+            { p(3,2),p(3,0), path(p(4,2), p(4,1), p(4,0), p(3,0)) },
             { p(2,1),p(1,2), null},
-            { p(2,1),p(2,1), lp() }
+            { p(2,1),p(2,1), path() }
         });
     }
     

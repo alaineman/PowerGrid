@@ -7,27 +7,51 @@ package powergrid.model;
 import java.util.Objects;
 
 /**
- *
- * @author Vincent W
+ * This class represents a node object to a LinkedList.
+ * <p> 
+ * A node consists of an element and is linked to a next node. This generic 
+ * structure is suitable for every object T.
+ * 
+ * @param <T> the type of object the node contains as element.
+ * @author Alaineman
  */
 public class LinkedListNode<T> {
     
     private T element;
     private LinkedListNode<T> next;
     
+    /**
+     * Creates a new LinkedListNode.
+     * @param element the specified element this node refers to.
+     * @param next the specified node this node refers to.
+     */
     public LinkedListNode(T element, LinkedListNode<T> next){
         this.element = element;
         this.next = next;
     }
 
+    /**
+     * 
+     * @return the element the node refers to.
+     */
     public T getElement() {
         return element;
     }
 
+    /**
+     * 
+     * @return the next node in the LinkedList.
+     * @see LinkedList
+     */
     public LinkedListNode<T> getNext() {
         return next;
     }
     
+    /**
+     * Links to a new node and returns the old node.
+     * @param nextNode the new node link this node to.
+     * @return the old node this node was linking to.
+     */
     public LinkedListNode<T> setNext(LinkedListNode<T> nextNode) {
         LinkedListNode<T> temp = next;
         next = nextNode;

@@ -246,21 +246,11 @@ public class Bank extends AbstractList<Item> {
         return verifyItem(slot);
     }
     
-    
-    
-    
-    
-
-    // MORE JAVA DOCS FROM HERE ON DOWN!!! ! @ _ ! @ _ ! @ _
-    
-    // REPEATED MESSAGE INCOMING
-    
-    // MORE JAVA DOCS FROM HERE ON DOWN!!! ! @ _ ! @ _ ! @ _
-     
-    
-    
-    
-    
+    /**
+     * Gets the slot corresponding to the matcher
+     * @param matcher the specified matcher
+     * @return the Slot found by the matcher, null if no such Slot is found
+     */
     public Slot getSlot(ItemMatcher matcher) {
         for(int i = 0; i < items.size(); i++){
             int index = items.get(i).findIndex(matcher);
@@ -271,6 +261,10 @@ public class Bank extends AbstractList<Item> {
         return null;
     }
 
+    /**
+     * Retrieves all Items from the Bank object in a List
+     * @return a list of the items
+     */
     public List<Item> getAllItems() {
         ArrayList<Item> allItems = new ArrayList<>(size());
         for (LinkedList<Item> tab : items) {
@@ -281,12 +275,36 @@ public class Bank extends AbstractList<Item> {
         return allItems;
     }
 
+    /**
+     * Lists all the found Items who match the matcher.
+     * @param matcher the matcher
+     * @return the list of items
+     */
     public List<Item> getAllMatchingItems(ItemMatcher matcher) {
-        return null;
+        List<Item> result = new ArrayList<>(8);
+        for(int i = 0; i < items.size(); i++){
+            Item item = items.get(i).find(matcher);
+            if(item != null){
+                result.add(item);
+            }
+        }        
+        return result;
     }
 
+    /**
+     * Lists all the Slots of the found items who match the matcher
+     * @param matcher the matcher
+     * @return the list of Slots
+     */
     public List<Slot> getAllMatchingSlots(ItemMatcher matcher) {
-        return null;
+        List<Slot> result = new ArrayList<>(8);
+        for(int i = 0; i < items.size(); i++){
+            int index = items.get(i).findIndex(matcher);
+            if(index != -1){
+                result.add(getSlot(index));
+            }
+        }        
+        return result;
     }
 
     /**
@@ -300,6 +318,11 @@ public class Bank extends AbstractList<Item> {
         return verifyTab(tab).getFirst();
     }
 
+    /**
+     * Search and retrieves the Item when matches
+     * @param matcher the matcher
+     * @return the Item found, null if no such Item could be found
+     */
     public Item locateItem(ItemMatcher matcher) {
         for(int i = 0; i < items.size(); i++){            
             Item item = items.get(i).find(matcher);
@@ -310,15 +333,27 @@ public class Bank extends AbstractList<Item> {
         return null;
     }
 
+    /**
+     * Gets the tab in which the matched Item if stored
+     * @param matcher the matcher
+     * @return the tab number, -1 if no matches have been found
+     */
     public int getTab(ItemMatcher matcher) {
         Slot slot = getSlot(matcher);
         return slot == null ? -1 : slot.getTab();
     }
     
+    /**
+     * Retrieves the amount of bank tabs you currently have
+     * @return the amount of bank tabs
+     */
     public int tabCount() {
         return items.size();
     }
 
+    /**
+     * @return the total amount of occupied Slots in your bank
+     */
     @Override
     public int size() {
         int size = 0;
@@ -336,21 +371,35 @@ public class Bank extends AbstractList<Item> {
         throw new IndexOutOfBoundsException();
     }
 
+    /**
+     * Represents a Slot in the Bank
+     */
     public static class Slot {
 
         private int tab;
         private int index;
 
+        /**
+         * Creates a new Slot with the specified tab with the specified index
+         * @param tab the specified tab
+         * @param index the specified index
+         */
         public Slot(int tab, int index) {
             assert tab >= 0 && index >= 0 && tab < TAB_COUNT;
             this.tab = tab;
             this.index = index;
         }
 
+        /** 
+         * @return the tab number of this Slot
+         */
         public int getTab() {
             return tab;
         }
 
+        /**
+         * @return The index of this Slot
+         */
         public int getIndex() {
             return index;
         }

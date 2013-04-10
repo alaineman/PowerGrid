@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import powergrid.model.Point;
-import powergrid.model.XMLNode;
+import powergrid.model.structure.XMLNode;
 import powergrid.task.TravelNearestTask;
 
 public class TravelNearestTaskTest {

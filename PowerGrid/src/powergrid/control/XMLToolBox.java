@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.powerbot.game.api.methods.Environment;
 import powergrid.PowerGrid;
-import powergrid.model.XMLNode;
+import powergrid.model.structure.XMLNode;
 
 /**
  * Utility class providing methods for handling XML files

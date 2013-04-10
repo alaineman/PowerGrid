@@ -12,7 +12,7 @@ import powergrid.control.interaction.Interactor;
 import powergrid.control.interaction.interactor.FairyringInteractor;
 import powergrid.control.interaction.interactor.MinecartInteractor;
 import powergrid.control.uicontrols.RSInteractor;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import powergrid.task.RestTask;
 import powergrid.task.Task;
 import powergrid.task.TravelNearestTask;

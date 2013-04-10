@@ -1,10 +1,12 @@
-package powergrid.model;
+package powergrid.model.structure;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import powergrid.model.Copyable;
+import powergrid.model.Point;
 
 /**
  * Maps Strings (names) to Points and places in the Runescape world.

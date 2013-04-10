@@ -10,7 +10,7 @@ import org.junit.runners.Parameterized;
 import powergrid.control.PathFinder;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import static powergrid.model.world.Wall.*;
 
 @RunWith(Parameterized.class)

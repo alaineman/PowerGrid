@@ -5,7 +5,7 @@
 package powergrid.control.factory;
 
 import org.powerbot.game.client.RSGround;
-import powergrid.model.GameTile;
+import powergrid.model.world.GameTile;
 import powergrid.model.Point;
 
 /**

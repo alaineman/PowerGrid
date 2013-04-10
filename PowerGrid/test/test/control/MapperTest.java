@@ -20,7 +20,7 @@ import org.powerbot.game.client.RSInteractableLocation;
 import powergrid.control.Mapper;
 import powergrid.control.Mapper.MapperThread;
 import powergrid.model.Point;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import powergrid.model.world.Wall;
 
 @RunWith(MockitoJUnitRunner.class)

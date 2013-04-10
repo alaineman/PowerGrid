@@ -3,7 +3,7 @@ package powergrid.model.item;
 import powergrid.model.Copyable;
 
 /**
- *
+ * Represents the equipment window
  * @author Vincent W
  */
 public class Equipment extends FixedItemList implements Copyable {

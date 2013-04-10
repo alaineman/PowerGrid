@@ -10,7 +10,7 @@ import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import powergrid.control.interaction.Interactor;
 import powergrid.control.uicontrols.RSInteractor;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TreeNetwork;
 import powergrid.model.world.Player;

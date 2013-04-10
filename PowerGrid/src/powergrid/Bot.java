@@ -2,7 +2,7 @@ package powergrid;
 
 import org.powerbot.game.api.wrappers.interactive.Player;
 import powergrid.control.TaskManager;
-import powergrid.model.DestinationMap.Destination;
+import powergrid.model.structure.DestinationMap.Destination;
 import powergrid.model.Point;
 import powergrid.task.RestTask;
 import powergrid.task.TravelNearestTask;

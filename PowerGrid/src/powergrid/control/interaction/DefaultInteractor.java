@@ -7,7 +7,7 @@ import org.powerbot.game.api.wrappers.Locatable;
 import org.powerbot.game.api.wrappers.ViewportEntity;
 import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.OutOfReachException;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 
 /**
  * Default Interactor that simply clicks the provided Object when the 

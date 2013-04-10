@@ -22,7 +22,7 @@ import powergrid.control.ScriptLoader;
 import powergrid.control.TaskManager;
 import powergrid.control.interaction.InteractionController;
 import powergrid.control.uicontrols.RSInteractor;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
 import powergrid.plugins.PluginLoader;

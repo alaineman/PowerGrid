@@ -8,12 +8,10 @@ import org.powerbot.game.api.methods.Walking;
 import powergrid.Bot;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
-import powergrid.model.DestinationMap.Destination;
-import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
-import powergrid.model.interact.Lodestone;
-import powergrid.model.interact.Transportable;
+import powergrid.model.structure.DestinationMap.Destination;
+import powergrid.model.world.GameTile;
 
 /**
  * This Task travels to the given destination using all available methods.
@@ -66,9 +64,9 @@ public class TravelTask extends StepTask {
     }
 
     /**
-     * Calculates a path and checks preconditions for this TravelTask. 
+     * Calculates a path and checks preconditions for this TravelTask.
      * <p/>
-     * The Task is immediately canceled when 
+     * The Task is immediately canceled when
      * <code>getDestination() == null</code>, or when the PathFinder class has
      * found no path to the given destination.
      */
@@ -83,16 +81,6 @@ public class TravelTask extends StepTask {
                 path = PathFinder.findPath(bot.getPosition(), destination);
                 if (PowerGrid.PG.isDevmode()) {
                     StringBuilder sb = new StringBuilder("Composed path:\n");
-                    for (Point p : path) {
-                        Lodestone l = Lodestone.getLodestone(p);
-                        if (l == null) {
-                            sb.append("  ").append(p.toString()).append("\n");
-                        } else {
-                            sb.append("  Lodestone to ").append(l.getName())
-                                    .append(" (").append(p.toString()).append(")\n");
-                        }
-                    }
-
                     PowerGrid.logMessage(sb.toString());
                 }
                 if (path.size() > 0) {
@@ -172,32 +160,8 @@ public class TravelTask extends StepTask {
     private void walkToTile(Point p) {
         Point playerPos = PowerGrid.PG.bot().getPosition();
         if (playerPos.distance(p) > PathFinder.maxDist) {
-            Lodestone l = Lodestone.getLodestone(p);
-            if (l != null) {
-                try {
-                    PowerGrid.debugMessage("Attempting to follow Lodestone to " + l.getPosition());
-                    
-                    l.follow();
-                    Task.sleep(134, 245);
-                    walkToTile(path.get(++target));
-                } catch (OutOfReachException e) {
-                    PowerGrid.logMessage("Failed to follow Lodestone to " + l.getName() + ", aborting travel.");
-                    cancel();
-                }
-            } else {
-                //attempt walkTo anyways, insert teleportable / transportable usage
-                GameTile obj = PowerGrid.PG.mapper().getWorldMap().get(p);
-                if (obj instanceof Transportable) {
-                    Transportable trans = (Transportable) obj;
-                    try {
-                        trans.follow();
-                        Task.sleep(200, 400);
-                    } catch (OutOfReachException e) {
-                        PowerGrid.logMessage("Failed to follow " + trans.getClass().getSimpleName() + " to " + trans + ", aborting travel.");
-                        cancel();
-                    }
-                }
-            }
+            //attempt walkTo anyways, insert teleportable / transportable usage
+            GameTile obj = PowerGrid.PG.mapper().getWorldMap().get(p);
         } else {
             Walking.walk(p);
         }
@@ -210,13 +174,12 @@ public class TravelTask extends StepTask {
         return hash;
     }
 
-    @Override public boolean equals(Object other) {
+    @Override
+    public boolean equals(Object other) {
         if (other instanceof TravelTask) {
-            TravelTask that = (TravelTask)other;
+            TravelTask that = (TravelTask) other;
             return this.getDestination().equals(that.getDestination());
         }
         return false;
     }
-    
-    
 }

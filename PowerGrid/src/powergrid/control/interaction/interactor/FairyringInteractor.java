@@ -10,7 +10,7 @@ import powergrid.control.interaction.Interactor;
 import powergrid.control.uicontrols.RSInteractor;
 import static powergrid.control.uicontrols.RSInteractor.FAIRYRING_PANEL;
 import powergrid.model.OutOfReachException;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TreeNetwork;
 import powergrid.model.network.TreeNode;

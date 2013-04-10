@@ -13,9 +13,9 @@ import org.powerbot.game.api.wrappers.ViewportEntity;
 import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import org.powerbot.game.client.Client;
-import powergrid.model.GameTile;
+import powergrid.model.world.GameTile;
 import powergrid.model.Point;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import powergrid.model.world.Player;
 
 /**

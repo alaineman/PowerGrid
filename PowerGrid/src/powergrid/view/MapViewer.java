@@ -3,10 +3,9 @@ package powergrid.view;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.HashMap;
-import powergrid.model.GameTile;
 import powergrid.model.Point;
-import powergrid.model.WorldMap;
-import powergrid.model.interact.Interactable;
+import powergrid.model.structure.WorldMap;
+import powergrid.model.world.GameTile;
 import powergrid.model.world.Player;
 import powergrid.model.world.Wall;
 import powergrid.task.Task;
@@ -307,9 +306,7 @@ public class MapViewer extends Canvas {
                 } else {
                     Color c;
                     if (tile == null)
-                        c = getColor(EMPTY);
-                    else if (tile instanceof Interactable)
-                        c = getColor(INTERACTION);
+                        c = getColor(EMPTY);                   
                     else if (tile.getCollisionFlag() == Wall.BLOCK 
                             && tile.getBoundary() == -1)
                         c = getColor(WATER);

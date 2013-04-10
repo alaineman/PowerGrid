@@ -1,8 +1,10 @@
-package powergrid.model;
+package powergrid.model.structure;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import powergrid.model.Copyable;
+import powergrid.model.Matcher;
 
 /**
  * This class represents a LinkedList structure.

@@ -1,6 +1,9 @@
-package powergrid.model;
+package powergrid.model.world.transportation;
 
+import powergrid.model.world.GameTile;
 import org.powerbot.game.client.RSGround;
+import powergrid.model.Point;
+import powergrid.model.Point;
 import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TransportNetwork;
 

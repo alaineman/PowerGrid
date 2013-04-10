@@ -3,11 +3,10 @@ package powergrid.control;
 import java.util.*;
 import powergrid.PowerGrid;
 import powergrid.model.Copyable;
-import powergrid.model.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
-import powergrid.model.WorldMap;
-import powergrid.model.interact.Lodestone;
+import powergrid.model.structure.WorldMap;
+import powergrid.model.world.GameTile;
 import powergrid.model.world.Wall;
 
 /**
@@ -69,7 +68,6 @@ public class PathFinder implements Copyable {
      * The maximum distance between two Points in the result Path.
      */
     private WorldMap theMap = null;
-    
     public static final int maxDist = 14;
     private Point start, goal;
     private HashMap<Point, Point> cameFrom;
@@ -87,7 +85,7 @@ public class PathFinder implements Copyable {
      */
     public PathFinder(Point start, Point goal) {
         assert start != null && goal != null;
-        
+
         this.start = start;
         this.goal = goal;
 
@@ -109,9 +107,10 @@ public class PathFinder implements Copyable {
         fScore.put(start, start.distance(goal));
         pending.offer(start);
     }
-    
+
     /**
      * Specifies the WorldMap that is used for the pathfinding.
+     *
      * @param map the WorldMap to use
      * @return itself for fluency
      */
@@ -120,19 +119,20 @@ public class PathFinder implements Copyable {
         theMap = map;
         return this;
     }
-    
+
     /**
      * Calculates a precise path between start and goal using the A* algorithm.
      * <p/>
      * When this method has been called once, any consecutive calls to this
      * method will return the same path.
      * <p/>
-     * @return An unmodifyable List describing a shortest path from start to goal
+     * @return An unmodifyable List describing a shortest path from start to
+     * goal
      * @throws OutOfReachException When no path between start and goal exists
      */
     public List<Point> calculatePrecise() throws OutOfReachException {
-        
-        if (path != null) { 
+
+        if (path != null) {
             /* if a path already exists, return that path, since we assume that
              * the environment is static. */
             return path;
@@ -141,17 +141,6 @@ public class PathFinder implements Copyable {
             /* Return an empty List when we are already at the specified destination,
              * because no action needs to be taken to reach the destination. */
             return new ArrayList<>(1);
-        }
-        for (Lodestone l : Lodestone.getAvailableLodestones()) {
-            /* Check for available Lodestones at the beginning, and add them to 
-             * the PriorityQueue. If a Lodestone teleport is feasible, it will
-             * be the most appropriate at the start. */
-            Point p = l.getPosition();
-            if (p.distance(start) > maxDist) {
-                pathCost.put(p, 1d * maxDist);
-                fScore.put(p, 2d * maxDist);
-                pending.add(p);
-            }
         }
 
         while (!pending.isEmpty()) {
@@ -187,13 +176,13 @@ public class PathFinder implements Copyable {
         }
         throw new OutOfReachException(goal, "Destination could not be reached, is the area explored?");
     }
-    
+
     /**
      * Calculates a path between start and goal using the A* algorithm.
      * <p/>
-     * The returned List will contain Points placed at most <code>maxDist</code>
-     * from one another, allowing the path to be executed in the RSBot environment
-     * Point by Point.
+     * The returned List will contain Points placed at most
+     * <code>maxDist</code> from one another, allowing the path to be executed
+     * in the RSBot environment Point by Point.
      * <p/>
      * When this method has been called once, any consecutive calls to this
      * method will return the same path.
@@ -204,12 +193,14 @@ public class PathFinder implements Copyable {
     public List<Point> calculatePath() throws OutOfReachException {
         return Collections.unmodifiableList(reducePoints(calculatePrecise()));
     }
-    
+
     /**
      * Returns the direction of the Point adj as seen from base.
+     *
      * @param base the Point from which to look
      * @param adj the adjacent Point.
-     * @return the mask that specifies the Wall side that would block going from base to adj.
+     * @return the mask that specifies the Wall side that would block going from
+     * base to adj.
      */
     public static int getDirection(Point base, Point adj) {
         double theta = adj.subtract(base).theta(); // the angle from base to adj
@@ -227,6 +218,7 @@ public class PathFinder implements Copyable {
 
     /**
      * Helper method that returns all available edges going from base.
+     *
      * @param base the Point to check from
      * @return a Set of Points that contains the available edges.
      */
@@ -242,7 +234,7 @@ public class PathFinder implements Copyable {
             GameTile go = theMap.get(p);
             if (go == null || go.getCollisionFlag() == 0) {
                 points.add(p);
-            } else if (!theMap.isBoundary(p,getDirection(p, base))) {
+            } else if (!theMap.isBoundary(p, getDirection(p, base))) {
                 points.add(p);
             }
         }
@@ -250,7 +242,9 @@ public class PathFinder implements Copyable {
     }
 
     /**
-     * Helper method that reconstructs the Path recursively using the cameFrom HashMap
+     * Helper method that reconstructs the Path recursively using the cameFrom
+     * HashMap
+     *
      * @param current the node to look up
      * @return the path leading to <code>current</code>
      */
@@ -268,13 +262,13 @@ public class PathFinder implements Copyable {
     }
 
     /**
-     * Reduces points in a path to contain only points that are approximately 
+     * Reduces points in a path to contain only points that are approximately
      * <code>maxDist</code> tiles apart.
      * <p/>
      * For this, a pseudo-optimal Greedy algorithm is used that picks Points
-     * <code>maxDist - (2 + 4 * Math.random())</code> apart, where this value 
-     * is recomputed for each Point in the resulting path, leading to variations 
-     * in distance between the path's points.
+     * <code>maxDist - (2 + 4 * Math.random())</code> apart, where this value is
+     * recomputed for each Point in the resulting path, leading to variations in
+     * distance between the path's points.
      * <p/>
      * @param path the original path with all points.
      * @return the resulting path with obsolete Points removed
@@ -285,18 +279,13 @@ public class PathFinder implements Copyable {
         int distSinceLastSelected = 0;
         int targetDistance = maxDist - (int) (2 + 4 * Math.random());
         for (Point p : path) {
-            Lodestone l = Lodestone.getLodestone(p);
-            if (l != null && (selected.isEmpty() || selected.get(selected.size() - 1).distance(p) >= maxDist)) {
-                selected.add(p);
+            if (distSinceLastSelected < targetDistance) {
+                distSinceLastSelected++;
             } else {
-                if (distSinceLastSelected < targetDistance) {
-                    distSinceLastSelected++;
-                } else {
-                    // set a new targetDistance
-                    targetDistance = maxDist - (int) (2 + 4 * Math.random());
-                    selected.add(p);
-                    distSinceLastSelected = 0;
-                }
+                // set a new targetDistance
+                targetDistance = maxDist - (int) (2 + 4 * Math.random());
+                selected.add(p);
+                distSinceLastSelected = 0;
             }
         }
         Point lastPoint = path.get(path.size() - 1);
@@ -307,7 +296,8 @@ public class PathFinder implements Copyable {
         return selected;
     }
 
-    @Override public PathFinder copy() {
+    @Override
+    public PathFinder copy() {
         return new PathFinder(start, goal).withMap(theMap);
     }
 }

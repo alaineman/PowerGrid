@@ -6,9 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
-import powergrid.model.TransportTile;
 import powergrid.model.network.GraphNetwork;
 import powergrid.model.network.NetworkElement;
+import powergrid.model.world.transportation.TransportTile;
 
 /**
  * Test class that tests functionality of the GraphNetwork class.

@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
 import powergrid.model.Point;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import powergrid.model.world.Player;
 import powergrid.view.MapViewer;
 

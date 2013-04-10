@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import powergrid.model.DestinationMap;
+import powergrid.model.structure.DestinationMap;
 import powergrid.model.Point;
 
 /**

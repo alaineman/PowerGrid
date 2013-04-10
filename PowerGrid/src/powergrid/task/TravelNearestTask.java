@@ -11,7 +11,7 @@ import powergrid.control.PathFinder;
 import powergrid.control.XMLToolBox;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
-import powergrid.model.XMLNode;
+import powergrid.model.structure.XMLNode;
 
 /**
  * Calculates a path to the nearest position matching certain criteria and 

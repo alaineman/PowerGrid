@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.OutOfReachException;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 
 /**
  * Abstract class that defines methods that allows interaction with a certain

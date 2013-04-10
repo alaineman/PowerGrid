@@ -1,9 +1,11 @@
-package powergrid.model;
+package powergrid.model.structure;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
 import org.powerbot.game.client.RSGround;
+import powergrid.model.Point;
+import powergrid.model.world.GameTile;
 
 /**
  * This class represents a World Map containing data in the Runescape world.

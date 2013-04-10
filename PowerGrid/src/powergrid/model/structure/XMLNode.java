@@ -1,4 +1,4 @@
-package powergrid.model;
+package powergrid.model.structure;
 
 import java.util.ArrayList;
 import java.util.HashMap;

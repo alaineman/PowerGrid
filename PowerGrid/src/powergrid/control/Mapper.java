@@ -13,7 +13,7 @@ import org.powerbot.game.client.RSInteractableLocation;
 import powergrid.control.listener.MapperListener;
 import powergrid.model.Copyable;
 import powergrid.model.Point;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import powergrid.model.world.Wall;
 import powergrid.task.Task;
 

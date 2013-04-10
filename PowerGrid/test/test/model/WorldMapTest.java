@@ -3,9 +3,9 @@ package test.model;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import powergrid.model.GameTile;
+import powergrid.model.world.GameTile;
 import powergrid.model.Point;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 
 public class WorldMapTest {
     

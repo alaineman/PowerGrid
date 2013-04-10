@@ -3,7 +3,7 @@ package powergrid.model.item;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-import powergrid.model.LinkedList;
+import powergrid.model.structure.LinkedList;
 
 /**
  * This class represents the Runescape local player Bank

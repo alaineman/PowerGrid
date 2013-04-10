@@ -11,7 +11,7 @@ import static org.mockito.Mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import powergrid.control.interaction.InteractionController;
 import powergrid.control.interaction.Interactor;
-import powergrid.model.GameTile;
+import powergrid.model.world.GameTile;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 

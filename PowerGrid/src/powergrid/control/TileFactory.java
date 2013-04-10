@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.ListIterator;
 import org.powerbot.game.client.RSGround;
 import powergrid.control.factory.TypeFactory;
-import powergrid.model.GameTile;
+import powergrid.model.world.GameTile;
 import powergrid.model.Point;
 
 /**

@@ -16,7 +16,7 @@ import org.powerbot.game.api.wrappers.ViewportEntity;
 import org.powerbot.game.client.Client;
 import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.Point;
-import powergrid.model.WorldMap;
+import powergrid.model.structure.WorldMap;
 import powergrid.model.world.Player;
 
 /**

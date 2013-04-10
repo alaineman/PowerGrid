@@ -9,7 +9,7 @@ import static org.mockito.Mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSObject;
-import powergrid.model.GameTile;
+import powergrid.model.world.GameTile;
 import powergrid.model.Point;
 import powergrid.model.world.Wall;
 

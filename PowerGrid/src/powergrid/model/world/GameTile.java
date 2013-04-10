@@ -1,4 +1,4 @@
-package powergrid.model;
+package powergrid.model.world;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +8,8 @@ import org.powerbot.game.api.wrappers.RegionOffset;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSObject;
+import powergrid.model.Copyable;
+import powergrid.model.Point;
 import powergrid.model.rsbot.RSGroundImpl;
 
 /**

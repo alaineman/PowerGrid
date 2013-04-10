@@ -4,7 +4,7 @@ import java.util.HashMap;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import powergrid.model.DestinationMap;
+import powergrid.model.structure.DestinationMap;
 import powergrid.model.Point;
 
 public class DestinationMapTest {

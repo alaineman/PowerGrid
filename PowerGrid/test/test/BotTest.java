@@ -12,7 +12,7 @@ import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import powergrid.Bot;
 import powergrid.control.TaskManager;
-import powergrid.model.DestinationMap.Destination;
+import powergrid.model.structure.DestinationMap.Destination;
 import powergrid.model.Point;
 import powergrid.task.RestTask;
 import powergrid.task.Task;

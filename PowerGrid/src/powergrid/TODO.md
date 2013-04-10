@@ -9,8 +9,10 @@
 
 - GUI for TaskManager and PG settings
 
-- Add interface Requirement to model and update interactors and pathfinders
+- Deintegrate Wall.java
 
-- Inventory and items (equipment)
+- Rework wrapper around directly to our client
+
+- Add interface Requirement to model and update interactors and pathfinders
 
 - Add test classes and javadoc, and clean up classes

@@ -1,6 +1,7 @@
-package powergrid.model.world;
+package powergrid.model.world.player;
 
 import org.powerbot.game.client.RSPlayer;
+import powergrid.model.world.Mobile;
 
 /**
  * This class represents a Player in Runescape.

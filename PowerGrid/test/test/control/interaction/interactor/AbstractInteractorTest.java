@@ -17,7 +17,7 @@ import org.powerbot.game.client.Client;
 import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.Point;
 import powergrid.model.structure.WorldMap;
-import powergrid.model.world.Player;
+import powergrid.model.world.player.Player;
 
 /**
  * Test class that can be used as a base for Interactor tests.

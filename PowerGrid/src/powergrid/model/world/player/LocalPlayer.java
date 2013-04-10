@@ -1,4 +1,4 @@
-package powergrid.model.world;
+package powergrid.model.world.player;
 
 import org.powerbot.game.client.RSPlayer;
 import powergrid.model.item.Equipment;
@@ -37,7 +37,6 @@ public class LocalPlayer extends Player {
     public Equipment getEquipment(){
         return equipment.copy();
     }
-    
     
     
     //TODO the following methods below

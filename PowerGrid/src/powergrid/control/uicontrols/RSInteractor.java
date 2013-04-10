@@ -16,7 +16,7 @@ import org.powerbot.game.client.Client;
 import powergrid.model.world.GameTile;
 import powergrid.model.Point;
 import powergrid.model.structure.WorldMap;
-import powergrid.model.world.Player;
+import powergrid.model.world.player.Player;
 
 /**
  * This class deals with interactions with the Runescape GUI, such as retrieving

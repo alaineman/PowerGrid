@@ -3,7 +3,7 @@ package powergrid.model.world.transportation;
 import org.powerbot.game.client.RSNPC;
 import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TransportNetwork;
-import powergrid.model.world.NPC;
+import powergrid.model.world.npc.NPC;
 
 /**
  * This class represents any Mobile that can be interacted with in order to use

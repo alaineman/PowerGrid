@@ -13,7 +13,7 @@ import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.structure.WorldMap;
 import powergrid.model.network.NetworkElement;
 import powergrid.model.network.TreeNetwork;
-import powergrid.model.world.Player;
+import powergrid.model.world.player.Player;
 import powergrid.model.world.transportation.Minecart;
 import powergrid.task.Task;
 

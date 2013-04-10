@@ -6,7 +6,7 @@ import java.util.HashMap;
 import powergrid.model.Point;
 import powergrid.model.structure.WorldMap;
 import powergrid.model.world.GameTile;
-import powergrid.model.world.Player;
+import powergrid.model.world.player.Player;
 import powergrid.model.world.Wall;
 import powergrid.task.Task;
 

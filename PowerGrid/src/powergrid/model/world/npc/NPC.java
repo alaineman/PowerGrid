@@ -1,6 +1,7 @@
-package powergrid.model.world;
+package powergrid.model.world.npc;
 
 import org.powerbot.game.client.RSNPC;
+import powergrid.model.world.Mobile;
 
 /**
  *

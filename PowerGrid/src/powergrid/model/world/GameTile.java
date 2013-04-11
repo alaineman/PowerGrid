@@ -17,6 +17,21 @@ import powergrid.model.rsbot.RSGroundImpl;
  * @author Chronio
  */
 public class GameTile implements Locatable, Copyable {
+    
+        /** No Walls */
+    public static final int EMPTY = 0x0;
+    /** Wall on North side */
+    public static final int NORTH = 0x1;
+    /** Wall on East side */
+    public static final int EAST  = 0x2;
+    /** Wall on South side */
+    public static final int SOUTH = 0x4;
+    /** Wall on West side */
+    public static final int WEST  = 0x8;
+    
+    /** Wall on all sides, This tile cannot be entered at all */
+    public static final int BLOCK = NORTH | EAST | SOUTH | WEST;
+    
     private Point position;
     private int collFlag = 0;
     private RSGround ground = null;

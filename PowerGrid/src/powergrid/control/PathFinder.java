@@ -7,7 +7,6 @@ import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.structure.WorldMap;
 import powergrid.model.world.GameTile;
-import powergrid.model.world.Wall;
 
 /**
  * This class deals with finding a path between two Points in the RSBot
@@ -205,15 +204,15 @@ public class PathFinder implements Copyable {
     public static int getDirection(Point base, Point adj) {
         double theta = adj.subtract(base).theta(); // the angle from base to adj
         if (Math.abs(theta) <= Math.PI / 4) {
-            return Wall.EAST;
+            return GameTile.EAST;
         }
         if (Math.abs(theta) >= 3 * Math.PI / 4) {
-            return Wall.WEST;
+            return GameTile.WEST;
         }
         if (theta > 0) {
-            return Wall.NORTH;
+            return GameTile.NORTH;
         }
-        return Wall.SOUTH;
+        return GameTile.SOUTH;
     }
 
     /**

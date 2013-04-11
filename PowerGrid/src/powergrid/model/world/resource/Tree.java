@@ -7,7 +7,7 @@ import powergrid.model.item.Item;
  *
  * @author Alaineman
  */
-public class Tree extends AbstractResource {
+public class Tree extends ResourceTile {
     
     public Tree(int x, int y, int rawValue, Item... it) {
         super(x, y, rawValue, it);

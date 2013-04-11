@@ -1,6 +1,8 @@
 package powergrid.control;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import static org.powerbot.game.api.wrappers.Tile.Flag.*;
 import org.powerbot.game.client.Client;
@@ -10,11 +12,13 @@ import org.powerbot.game.client.RSGroundInfo;
 import org.powerbot.game.client.RSInfo;
 import org.powerbot.game.client.RSInteractable;
 import org.powerbot.game.client.RSInteractableLocation;
+import powergrid.control.factory.DefaultGameTileFactory;
+import powergrid.control.factory.ModelBuilder;
 import powergrid.control.listener.MapperListener;
 import powergrid.model.Copyable;
 import powergrid.model.Point;
 import powergrid.model.structure.WorldMap;
-import powergrid.model.world.Wall;
+import powergrid.model.world.GameTile;
 import powergrid.task.Task;
 
 /**
@@ -31,6 +35,7 @@ public class Mapper implements Copyable {
     private volatile boolean stop = true;
     private WorldMap map = null;
     private Client client = null;
+    private ModelBuilder builder = null;
     private MapperThread thread = null;
     
     private HashSet<MapperListener> listeners = new HashSet<>(5);
@@ -53,6 +58,12 @@ public class Mapper implements Copyable {
         assert this.client == null && client != null;
         this.client = client;
         //assert invariant();
+        return this;
+    }
+    
+    public Mapper withBuilder(ModelBuilder builder){
+        assert this.builder == null && builder != null;
+        this.builder = builder;
         return this;
     }
     
@@ -106,8 +117,14 @@ public class Mapper implements Copyable {
         }
         if (client == null) {
             throw new IllegalStateException("Undefined Client");
+        }        
+        if (builder == null) {
+            builder = new ModelBuilder();
+            builder.addFactory(new DefaultGameTileFactory());
         }
         RSInfo info = client.getRSGroundInfo();
+        
+        Map<Point, RSGround> grounds = new HashMap<>(104 * 104 * 8 / 7, 7 / 8f);
         
         RSGroundInfo ginfo = info.getRSGroundInfo();
         Point basePoint = new Point(
@@ -130,7 +147,7 @@ public class Mapper implements Copyable {
                                     (int)(location.getX()/512),
                                     (int)(location.getY()/512)
                                     ).add(basePoint);
-                            map.putGround(position, value);
+                            grounds.put(position, value);
                         }
                     }
                 }
@@ -151,14 +168,17 @@ public class Mapper implements Copyable {
                 int[] row = colFlags[y];
                 for (int x=0;x<row.length;x++) {
                     Point position = new Point(x,y).add(basePoint);
-                    map.putMask(position, convertToSides(row[x]));
+                    RSGround ground = grounds.get(position);
+                    int flag = convertToSides(row[x]);
+                    GameTile gt = builder.createGameTile(position, ground, flag);
+                    map.put(gt);
                 }
             }
         }
         
         for (MapperListener l : listeners) {
             l.mapUpdated(this);
-        }
+        }        
         
         //assert invariant();
     }
@@ -180,18 +200,18 @@ public class Mapper implements Copyable {
     
     private static int convertToSides(int flag) {
         if ((flag | OBJECT_BLOCK | OBJECT_TILE) == flag)
-            return Wall.BLOCK;
+            return GameTile.BLOCK;
         if ((flag | OBJECT_ALLOW_RANGE | OBJECT_TILE) == flag) 
-            return Wall.BLOCK;
+            return GameTile.BLOCK;
         int res = 0;
         if ((flag & (WALL_ALLOW_RANGE_NORTH | WALL_BLOCK_NORTH)) != 0)
-            res |= Wall.NORTH;
+            res |= GameTile.NORTH;
         if ((flag & (WALL_ALLOW_RANGE_EAST | WALL_BLOCK_EAST)) != 0)
-            res |= Wall.EAST;
+            res |= GameTile.EAST;
         if ((flag & (WALL_ALLOW_RANGE_SOUTH | WALL_BLOCK_SOUTH)) != 0)
-            res |= Wall.SOUTH;
+            res |= GameTile.SOUTH;
         if ((flag & (WALL_ALLOW_RANGE_WEST | WALL_BLOCK_WEST)) != 0)
-            res |= Wall.WEST;
+            res |= GameTile.WEST;
         return res;
     }
     

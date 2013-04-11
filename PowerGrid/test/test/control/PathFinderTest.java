@@ -11,7 +11,7 @@ import powergrid.control.PathFinder;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.structure.WorldMap;
-import static powergrid.model.world.Wall.*;
+import static powergrid.model.world.GameTile.*;
 
 @RunWith(Parameterized.class)
 public class PathFinderTest {

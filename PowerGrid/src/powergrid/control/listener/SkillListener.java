@@ -1,14 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package powergrid.control.listener;
 
 /**
  *
- * @author Vincent W
+ * @author Alaineman
  */
 public interface SkillListener {
     
+    public void levelUp(String skillName, int newLevel);
     
+    public void experienceGained(String skillName, double exp);
+        
 }

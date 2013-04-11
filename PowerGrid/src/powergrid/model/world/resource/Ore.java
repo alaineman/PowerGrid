@@ -6,7 +6,7 @@ import powergrid.model.item.Item;
  *
  * @author Alaineman
  */
-public class Ore extends AbstractResource {
+public class Ore extends ResourceTile {
     
     public Ore(int x, int y, int rawValue, Item... it) {
         super(x, y, rawValue, it);

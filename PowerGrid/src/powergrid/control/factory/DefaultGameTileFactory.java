@@ -1,8 +1,8 @@
 package powergrid.control.factory;
 
 import org.powerbot.game.client.RSGround;
-import powergrid.model.world.GameTile;
 import powergrid.model.Point;
+import powergrid.model.world.GameTile;
 
 /**
  * Default factory class for GameObjects.
@@ -60,5 +60,10 @@ public class DefaultGameTileFactory implements TypeFactory {
         } else {
             return this.getClass().equals(other.getClass());
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return 7;
     }
 }

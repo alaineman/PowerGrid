@@ -1,11 +1,19 @@
 package powergrid.control.factory;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
+import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSItem;
 import org.powerbot.game.client.RSItemDef;
 import powergrid.PowerGrid;
 import powergrid.control.DefinitionCache;
+import powergrid.model.Point;
 import powergrid.model.item.Item;
 import powergrid.model.rsbot.RSItemImpl;
+import powergrid.model.world.GameTile;
+import powergrid.model.world.Mobile;
 
 /**
  * This class contains the required functionality to build and set up elements 
@@ -23,13 +31,39 @@ public class ModelBuilder {
     
     private DefinitionCache cache;
     
+    private List<TypeFactory> factories;
+    
     /**
      * Creates a new ModelBuilder.
      */
     public ModelBuilder() {
         pg = null;
         cache = null;
+        factories = new ArrayList<>();
     }
+    
+    public boolean addFactory(TypeFactory tf){
+        if(factories.add(tf)){
+            Collections.sort(factories);
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean removeFactory(TypeFactory tf){
+        return factories.remove(tf);
+    }
+    
+    public TypeFactory getFactory(Point p, RSGround g, int c){
+        ListIterator<TypeFactory> it = factories.listIterator(factories.size());
+        while(it.hasPrevious()){
+            TypeFactory tf = it.previous();
+            if(tf.accept(p, g, c)){
+                return tf;
+            }
+        }
+        return null;
+    }    
     
     /**
      * Sets the PowerGrid instance to use if one was not already set.
@@ -56,6 +90,18 @@ public class ModelBuilder {
      */
     public PowerGrid getPowerGrid() {
         return pg;
+    }
+    
+    public GameTile createGameTile(Point p, RSGround g, int c){
+        TypeFactory tf = getFactory(p, g, c);
+        if(tf != null){
+            return tf.create(p, g, c);
+        }
+        return null;
+    }
+    
+    public Mobile createMobile(){
+        return null;
     }
     
     /**

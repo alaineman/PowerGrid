@@ -5,8 +5,8 @@
 package powergrid.control.factory;
 
 import org.powerbot.game.client.RSGround;
-import powergrid.model.world.GameTile;
 import powergrid.model.Point;
+import powergrid.model.world.GameTile;
 
 /**
  * Interface for the Factories that are linked to the TileFactory.

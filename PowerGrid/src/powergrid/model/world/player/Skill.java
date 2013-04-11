@@ -6,8 +6,34 @@ package powergrid.model.world.player;
  */
 public class Skill {
     
+    public static final String ATTACK = "Attack";
+    public static final String STRENGTH = "Strength";
+    public static final String DEFENCE = "Defence";
+    public static final String RANGED = "Ranged";
+    public static final String PRAYER = "Prayer";
+    public static final String MAGIC = "Magic";
+    public static final String CONSTITUTION = "Constitution";
+    public static final String SUMMONING = "Summoning";
+    public static final String MINING = "Mining";
+    public static final String FISHING = "Fishing";
+    public static final String WOODCUTTING = "Woodcutting";
+    public static final String FARMING = "Farming";
+    public static final String HUNTER = "Hunter";
+    public static final String HERBLORE = "Herblore";
+    public static final String CRAFTING = "Crafting";
+    public static final String FLETCHING = "Fletching";
+    public static final String SMITHING = "Smithing";
+    public static final String COOKING = "Cooking";
+    public static final String FIREMAKING = "Firemaking";
+    public static final String RUNECRAFTING = "Runecrafting";
+    public static final String CONSTRUCTION = "Construction";
+    public static final String AGILITY = "Agility";
+    public static final String THIEVING = "Thieving";
+    public static final String SLAYER = "Slayer";
+    public static final String DUNGEONEERING = "Dungeoneering";    
+    
     private String name;
-    private double experience;
+    private double experience;    
     
     /**
      * Creates a new Skill by the specified name

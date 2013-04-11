@@ -6,7 +6,7 @@ import powergrid.model.item.Item;
  *
  * @author Alaineman
  */
-public class Fishspot extends AbstractResource {
+public class Fishspot extends ResourceTile {
     
     public Fishspot(int x, int y, int rawValue, Item... it) {
         super(x, y, rawValue, it);

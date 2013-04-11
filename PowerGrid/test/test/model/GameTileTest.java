@@ -9,9 +9,8 @@ import static org.mockito.Mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.powerbot.game.client.RSGround;
 import org.powerbot.game.client.RSObject;
-import powergrid.model.world.GameTile;
 import powergrid.model.Point;
-import powergrid.model.world.Wall;
+import powergrid.model.world.GameTile;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GameTileTest {
@@ -22,7 +21,7 @@ public class GameTileTest {
     @Mock public RSObject mockedDecoration;
     
     @Before public void setup() {
-        go = new GameTile(new Point(3,4),mockedGround,Wall.EAST | Wall.NORTH);
+        go = new GameTile(new Point(3,4),mockedGround,GameTile.EAST | GameTile.NORTH);
         when(mockedGround.getBoundary1()).thenReturn(null);
         when(mockedGround.getBoundary2()).thenReturn(mockedBoundary);
         when(mockedGround.getFloorDecoration()).thenReturn(null);
@@ -73,10 +72,10 @@ public class GameTileTest {
     }
     
     @Test public void testContainsWallTrue() {
-        assertTrue(go.containsWall(Wall.EAST));
+        assertTrue(go.containsWall(GameTile.EAST));
     }
     
     @Test public void testContainsWallFalse() {
-        assertFalse(go.containsWall(Wall.SOUTH));
+        assertFalse(go.containsWall(GameTile.SOUTH));
     }
 }

@@ -9,11 +9,11 @@ import powergrid.model.world.GameTile;
  *
  * @author Alaineman
  */
-public abstract class AbstractResource extends GameTile {
+public abstract class ResourceTile extends GameTile {
         
     private Item[] items;
     
-    public AbstractResource(int x, int y, int rawValue, Item... it){
+    public ResourceTile(int x, int y, int rawValue, Item... it){
         super(new Point(x,y), new RSGroundImpl(rawValue), -1);
         items = new Item[it.length];
         System.arraycopy(it, 0, items, 0, it.length);

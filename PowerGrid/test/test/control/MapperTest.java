@@ -21,7 +21,7 @@ import powergrid.control.Mapper;
 import powergrid.control.Mapper.MapperThread;
 import powergrid.model.Point;
 import powergrid.model.structure.WorldMap;
-import powergrid.model.world.Wall;
+import powergrid.model.world.GameTile;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MapperTest {
@@ -61,8 +61,8 @@ public class MapperTest {
         
         when(mockedRSInteractableData.getLocation()).thenReturn(mockedRSInteractableLocation);
         
-        when(mockedRSInteractableLocation.getX()).thenReturn(Float.valueOf(512 * 40));
-        when(mockedRSInteractableLocation.getY()).thenReturn(Float.valueOf(512 * 37));
+        when(mockedRSInteractableLocation.getX()).thenReturn(0f);
+        when(mockedRSInteractableLocation.getY()).thenReturn(0f);
         
         when(mockedRSGroundData.getBlocks()).thenReturn(
                 new int[][]{
@@ -80,12 +80,11 @@ public class MapperTest {
     @Test public void testMapOnce() {
         mapper.mapOneRound();
         
-        verify(mockedMap).putGround(new Point(42,41,1), mockedRSGround);
+        verify(mockedMap).put(new GameTile(new Point(2,4,1), mockedRSGround, 0));
         
-        verify(mockedMap).putMask(new Point(2,4,1), 0);
-        verify(mockedMap).putMask(new Point(3,4,1), Wall.BLOCK);
-        verify(mockedMap).putMask(new Point(2,5,1), Wall.EAST);
-        verify(mockedMap).putMask(new Point(3,5,1), Wall.SOUTH);
+        verify(mockedMap).put(new GameTile(new Point(3,4,1), null, GameTile.BLOCK));
+        verify(mockedMap).put(new GameTile(new Point(2,5,1), null, GameTile.EAST));
+        verify(mockedMap).put(new GameTile(new Point(3,5,1), null, GameTile.SOUTH));
     }
     
     @Test public void testEquals() {
@@ -111,11 +110,10 @@ public class MapperTest {
         
         thread.run();
         
-        verify(mockedMap).putGround(new Point(42,41,1), mockedRSGround);
-        
-        verify(mockedMap).putMask(new Point(2,4,1), 0);
-        verify(mockedMap).putMask(new Point(3,4,1), Wall.BLOCK);
-        verify(mockedMap).putMask(new Point(2,5,1), Wall.EAST);
-        verify(mockedMap).putMask(new Point(3,5,1), Wall.SOUTH);
+        verify(mockedMap).put(new GameTile(new Point(2,4,1), mockedRSGround, 0));        
+       
+        verify(mockedMap).put(new GameTile(new Point(3,4,1), null, GameTile.BLOCK));
+        verify(mockedMap).put(new GameTile(new Point(2,5,1), null, GameTile.EAST));
+        verify(mockedMap).put(new GameTile(new Point(3,5,1), null, GameTile.SOUTH));
     }
 }

@@ -1,5 +1,6 @@
 package powergrid.plugins;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import powergrid.control.interaction.interactor.FairyringInteractor;
 import powergrid.control.interaction.interactor.MinecartInteractor;
 import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.structure.WorldMap;
+import powergrid.task.DelayTask;
 import powergrid.task.RestTask;
 import powergrid.task.Task;
 import powergrid.task.TravelNearestTask;
@@ -81,22 +83,24 @@ public class PowerGridPlugin implements Plugin {
         return Arrays.asList(new Class[] {
             RestTask.class,
             TravelNearestTask.class,
-            TravelTask.class
+            TravelTask.class,
+            DelayTask.class
         });
     }
     
     @Override
     public <T extends Task> T instantiate(Class<T> clazz) {
-        if (RestTask.class.isAssignableFrom(clazz)) {
-            return (T) new RestTask();
+        /* Note that all PowerGrid Tasks have parameterless contructors.
+         * This allows for easy instantiation here.
+         */
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (NoSuchMethodException | SecurityException | 
+                InstantiationException | IllegalAccessException | 
+                IllegalArgumentException | InvocationTargetException |
+                NullPointerException e) {
+            throw new UnsupportedOperationException("Unsupported Class type");
         }
-        if (TravelNearestTask.class.isAssignableFrom(clazz)) {
-            return (T) new TravelNearestTask();
-        }
-        if (TravelTask.class.isAssignableFrom(clazz)) {
-            return (T) new TravelTask();
-        }
-        throw new UnsupportedOperationException("Unsupported Class type");
     }
     
     @Override public void tearDown() {

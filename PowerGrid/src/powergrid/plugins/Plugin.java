@@ -37,7 +37,8 @@ public interface Plugin {
      * icon will be used. The path to this default icon is defined as 
      * <code>DEFAULT_PLUGIN_ICON</code>.
      * <p/>
-     * @return this Plugin's icon.
+     * Exceptions should be handled in this method.
+     * @return this Plugin's icon, or null when the Plugin has no icon.
      */
     public ImageIcon getPluginIcon();
     
@@ -59,12 +60,14 @@ public interface Plugin {
     public void setUp() throws Exception;
     
     /**
-     * Returns a List of the public Task classes that 
+     * Returns a List of the public Task classes that PowerGrid is allowed to
+     * provide as Tasks to users.
      * <p/>
      * PowerGrid expects a Collection of Tasks that should be provided to 
      * the end-user as runnable tasks.
      * @return a Collection of the tasks that PowerGrid is allowed to provide 
-     *         to the user. This Collection should not be null
+     *         to the user. This Collection should not be null, but can 
+     *         occasionally be empty.
      */
     public Collection<Class> getPublicTasks();
     

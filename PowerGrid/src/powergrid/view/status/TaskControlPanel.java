@@ -19,6 +19,7 @@ import powergrid.control.listener.TaskListener;
 import powergrid.plugins.Plugin;
 import powergrid.plugins.PluginInfo;
 import powergrid.task.Task;
+import powergrid.view.ControlPanel;
 import powergrid.view.PGPanel;
 
 /**
@@ -73,7 +74,7 @@ public class TaskControlPanel extends PGPanel {
     
     @Override
     public TaskControlPanel initialize() {
-        //super.initialize();
+        super.initialize();
         
         list.initialize();
         
@@ -125,13 +126,14 @@ public class TaskControlPanel extends PGPanel {
             }
         });
         
-        
         buttons.setBorder(new LineBorder(Color.BLACK));
         
         side.add(buttons, BorderLayout.SOUTH);
-        
+        side.setPreferredSize(new Dimension(SIDEPANEL_WIDTH, getHeight()));
         add(side, BorderLayout.EAST);
         add(list, BorderLayout.CENTER);
+        
+        setMinimumSize(new Dimension(640, 480));
         
         updateList();
         return this;
@@ -169,24 +171,29 @@ public class TaskControlPanel extends PGPanel {
         // performing operations on the Task queue.
         Task selectedTask = (selected == null ? null : selected.getTask());
         setSelectedEntry(null);
-        TaskEntry newSelection = null;
-        
-        List<Task> tasks = getPowerGrid().taskManager().getPendingTasks();
-        TaskEntry[] entries = new TaskEntry[tasks.size()];
-        for (int i = 0; i < tasks.size(); i++) {
-            entries[i] = new TaskEntry(tasks.get(i))
-                    .withPowerGrid(getPowerGrid())
-                    .initialize();
-            if (tasks.get(i).equals(selectedTask)) {
-                newSelection = entries[i];
-            }
-        }
         
         list.clear();
-        list.add(entries);
+        List<Task> tasks = getPowerGrid().taskManager().getPendingTasks();
         
-        // restore the original selection
-        setSelectedEntry(newSelection);
+        if (tasks.isEmpty()) {
+            JLabel label = new JLabel("no pending tasks");
+            label.setFont(ControlPanel.TITLE_FONT);
+            label.setHorizontalAlignment(JLabel.CENTER);
+            list.add(label);
+        } else {
+            TaskEntry newSelection = null;
+            TaskEntry[] entries = new TaskEntry[tasks.size()];
+            for (int i = 0; i < tasks.size(); i++) {
+                entries[i] = new TaskEntry(tasks.get(i))
+                        .withPowerGrid(getPowerGrid())
+                        .initialize();
+                if (tasks.get(i).equals(selectedTask)) {
+                    newSelection = entries[i];
+                }
+            }
+            list.add(entries);
+            setSelectedEntry(newSelection);
+        }
     }
     
     /**

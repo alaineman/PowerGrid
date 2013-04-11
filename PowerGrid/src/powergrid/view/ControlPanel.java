@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -34,6 +35,11 @@ public class ControlPanel extends JPanel {
      * The path to the file that will be used as icon.
      */
     public static final String ICON_PATH = "powergrid/images/icon_small.png";
+    
+    /**
+     * Bold, 16px Font that can be used for titles.
+     */
+    public static final Font TITLE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 16);
     
     /**
      * Creates a new ControlPanel and adds it to the given JFrame.
@@ -83,6 +89,8 @@ public class ControlPanel extends JPanel {
     
     private JLabel messageArea = new JLabel("PowerGrid is not yet started");
     
+    private PGFrame controlFrame = null;
+    
     public ControlPanel() {
         super(new GridBagLayout());
         powergrid = PowerGrid.PG;
@@ -122,16 +130,18 @@ public class ControlPanel extends JPanel {
         });
         showStatus.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent ae) {
-                try {
-                TaskControlPanel tcp = new TaskControlPanel().withPowerGrid(powergrid)
-                        .initialize();
-                PGFrame pgf = new PGFrame("PowerGrid - Task Control Panel");
-                pgf.withPowerGrid(powergrid);
-                pgf.add(tcp);
-                pgf.setMinimumSize(new Dimension(640, 480));
-                pgf.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace(System.out);
+                if (controlFrame != null && controlFrame.isVisible()) {
+                    // ensure the TaskControlFrame is brought to front
+                    controlFrame.setAlwaysOnTop(true);
+                    controlFrame.setAlwaysOnTop(false);
+                } else {
+                    TaskControlPanel panel = new TaskControlPanel().withPowerGrid(powergrid)
+                            .initialize();
+                    controlFrame = new PGFrame("PowerGrid - Task Control Panel");
+                    controlFrame.withPowerGrid(powergrid).initialize();
+                    controlFrame.add(panel);
+                    controlFrame.setMinimumSize(panel.getMinimumSize());
+                    controlFrame.setVisible(true);
                 }
             }
         });

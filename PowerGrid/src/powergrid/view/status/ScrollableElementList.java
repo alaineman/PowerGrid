@@ -95,6 +95,16 @@ public class ScrollableElementList extends JScrollPane {
         gbc.ipady = 0;
     }
     
+    @Override
+    protected void addImpl(Component comp, Object constraints, int index) {
+        if (comp.equals(getViewport()) || comp.equals(getVerticalScrollBar())
+                || comp.equals(getHorizontalScrollBar())) {
+            super.addImpl(comp, constraints, index);
+        } else {
+            add(new Component[] {comp});
+        }
+    }
+    
     /**
      * Adds the specified elements to the list.
      * @param elements the elements to add

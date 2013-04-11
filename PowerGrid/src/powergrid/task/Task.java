@@ -180,6 +180,9 @@ public abstract class Task implements Comparable<Task> {
      * @return true if this Task is equal to the given Object, false otherwise.
      */
     @Override public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
         if (getClass().equals(other.getClass())) {
             Task that = (Task) other;
             if (getPriority() != that.getPriority()) {

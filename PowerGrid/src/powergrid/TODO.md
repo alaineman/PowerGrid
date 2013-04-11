@@ -7,9 +7,7 @@
 - implement Local Player methods
     -> Summoning, Money, GE
 
-- GUI for TaskManager and PG settings
-
-- Rework wrapper around directly to our client
+- Rework wrapper around directly to our CLIENT
 
 - Add interface Requirement to model and update interactors and pathfinders
 

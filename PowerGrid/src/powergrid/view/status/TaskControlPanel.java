@@ -117,6 +117,7 @@ public class TaskControlPanel extends PGPanel {
                 TaskEntry entry = getSelectedEntry();
                 if (entry != null) {
                     getPowerGrid().taskManager().moveTaskUp(entry.getTask());
+                    updateList();
                 }
             }
         });
@@ -125,6 +126,7 @@ public class TaskControlPanel extends PGPanel {
                 TaskEntry entry = getSelectedEntry();
                 if (entry != null) {
                     getPowerGrid().taskManager().moveTaskDown(entry.getTask());
+                    updateList();
                 }
             }
         });

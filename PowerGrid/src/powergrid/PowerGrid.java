@@ -1,8 +1,10 @@
 package powergrid;
 
+import java.awt.Dimension;
 import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +16,8 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import org.powerbot.Boot;
 import org.powerbot.game.client.Client;
@@ -81,6 +85,24 @@ public class PowerGrid {
     /** The plugin directory, default is "plugins". */
     public static File pluginDirectory = new File("plugins");
     
+    /** The path to the file that will be used as icon. */
+    public static final String ICON_PATH = "powergrid/images/icon_small.png";
+    
+    private static Icon icon = null;
+
+    /**
+     * Returns the PowerGrid icon to be used on user interfaces and such.
+     * <p/>
+     * The Icon is cached once it's created, so consecutive calls return the 
+     * same Icon.
+     * @return the PowerGrid Icon
+     */
+    public static Icon getIcon() {
+        if (icon == null) {
+            icon = new ImageIcon(ClassLoader.getSystemResource(ICON_PATH));
+        }
+        return icon;
+    }
     /**
      * Main method of PowerGrid. 
      * <p/>
@@ -426,7 +448,6 @@ public class PowerGrid {
         
         terminationThread = new Thread(new PGTerminator());
         Runtime.getRuntime().addShutdownHook(terminationThread);
-        LOGGER.info("PowerGrid started");
         theControlPanel.setMessage("PowerGrid has started");
         isRunning = true;
         

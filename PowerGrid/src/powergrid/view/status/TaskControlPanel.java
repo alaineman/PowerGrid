@@ -1,5 +1,6 @@
 package powergrid.view.status;
 
+import powergrid.view.ScrollableElementList;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -91,6 +92,8 @@ public class TaskControlPanel extends PGPanel {
         taskType.setPreferredSize(labelSize);
         taskPlugin.setPreferredSize(labelSize);
         
+        description.setEditable(false);
+        
         labelSize.setSize(labelSize.getWidth(), 128);
         descriptionScroller.setPreferredSize(labelSize);
         
@@ -179,6 +182,7 @@ public class TaskControlPanel extends PGPanel {
             JLabel label = new JLabel("no pending tasks");
             label.setFont(ControlPanel.TITLE_FONT);
             label.setHorizontalAlignment(JLabel.CENTER);
+            label.setForeground(Color.DARK_GRAY);
             list.add(label);
         } else {
             TaskEntry newSelection = null;

@@ -90,6 +90,7 @@ public class ControlPanel extends JPanel {
     private JLabel messageArea = new JLabel("PowerGrid is not yet started");
     
     private PGFrame controlFrame = null;
+    private PGFrame taskFrame = null;
     
     public ControlPanel() {
         super(new GridBagLayout());
@@ -125,7 +126,19 @@ public class ControlPanel extends JPanel {
         });
         runScripts.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent ae) {
-                TaskPanel.showTaskPanel();
+                if (taskFrame != null && taskFrame.isVisible()) {
+                    // ensure the TaskControlFrame is brought to front
+                    taskFrame.setAlwaysOnTop(true);
+                    taskFrame.setAlwaysOnTop(false);
+                } else {
+                    TaskPanel panel = new TaskPanel().withPowerGrid(powergrid)
+                            .initialize();
+                    taskFrame = new PGFrame("PowerGrid - Task panel");
+                    taskFrame.withPowerGrid(powergrid).initialize();
+                    taskFrame.add(panel);
+                    taskFrame.setMinimumSize(panel.getMinimumSize());
+                    taskFrame.setVisible(true);
+                }
             }
         });
         showStatus.addActionListener(new ActionListener() {
@@ -137,7 +150,7 @@ public class ControlPanel extends JPanel {
                 } else {
                     TaskControlPanel panel = new TaskControlPanel().withPowerGrid(powergrid)
                             .initialize();
-                    controlFrame = new PGFrame("PowerGrid - Task Control Panel");
+                    controlFrame = new PGFrame("PowerGrid - Control panel");
                     controlFrame.withPowerGrid(powergrid).initialize();
                     controlFrame.add(panel);
                     controlFrame.setMinimumSize(panel.getMinimumSize());

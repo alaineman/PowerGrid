@@ -123,6 +123,11 @@ public class PGFrame extends JFrame {
         } catch (IOException e) {
             PowerGrid.LOGGER.log(Level.WARNING, "Could not set icon", e);
         }
+        
+        // Allows the OS to place the Frame anywhere, rather than placing it at
+        // (0, 0) on the screen.
+        setLocationByPlatform(true);
+        
         initialized = true;
         return this;
     }

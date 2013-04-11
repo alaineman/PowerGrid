@@ -13,9 +13,9 @@ import org.powerbot.game.api.wrappers.ViewportEntity;
 import org.powerbot.game.api.wrappers.widget.Widget;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 import org.powerbot.game.client.Client;
-import powergrid.model.world.GameTile;
 import powergrid.model.Point;
 import powergrid.model.structure.WorldMap;
+import powergrid.model.world.GameTile;
 import powergrid.model.world.player.Player;
 
 /**
@@ -174,6 +174,9 @@ public class RSInteractor {
         }
         if (object instanceof Locatable) {
             Tile tile = ((Locatable) object).getLocation();
+            /* The locatable is considered off screen if at least one corner 
+             * is not on the screen.
+             */
             for (int xOff = 0; xOff <= 1; xOff++) {
                 for (int yOff = 0; yOff <= 1; yOff++) {
                     if (!isOnScreen(tile.getPoint(xOff, yOff, 0))) {
@@ -189,6 +192,11 @@ public class RSInteractor {
         throw new UnsupportedOperationException("Unsupported object");
     }
     
+    /**
+     * Checks if the given java AWT Point is on screen.
+     * @param p the Java AWT Point to check
+     * @return whether the given Point is on screen
+     */
     public boolean isOnScreen(java.awt.Point p) {
         Canvas c = getClient().getCanvas();
         return p.x >= 0 && p.y >= 0 && p.x < c.getWidth() 
@@ -328,15 +336,9 @@ public class RSInteractor {
     }
     
     /**
-     * Returns the currently logged in Player in the Runescape environment
+     * Returns the local Player.
      * @return the local Player
-     * @deprecated replaced with getLocalPlayer()
      */
-    @Deprecated
-    public org.powerbot.game.api.wrappers.interactive.Player getLocalPBPlayer() {
-        return new org.powerbot.game.api.wrappers.interactive.Player(getClient().getMyRSPlayer());
-    }
-    
     public Player getLocalPlayer() {
         if (localPlayer == null) {
             localPlayer = new Player(getClient().getMyRSPlayer());

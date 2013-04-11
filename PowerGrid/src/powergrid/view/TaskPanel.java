@@ -9,13 +9,10 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,47 +28,30 @@ import powergrid.task.Task;
  * This Panel shows all available tasks of each Loaded Plugin.
  * @author Chronio
  */
-public class TaskPanel extends JPanel {
+public class TaskPanel extends PGPanel {
     
+    /**
+     * The size (in pixels) of the icons displayed before each Task entry.
+     */
     public static final int ICON_SIZE = 32;
     
-    private static TaskPanel theTaskPanel = null;
-    private static JFrame taskFrame = null;
-    
-    public static TaskPanel showTaskPanel() {
-        if (theTaskPanel == null) {
-            theTaskPanel = new TaskPanel();
-        }
-        if (taskFrame == null) {
-            taskFrame = new JFrame("PowerGrid - Tasks");
-            try {
-                taskFrame.setIconImage(
-                        ImageIO.read(ClassLoader.getSystemResource(
-                        ControlPanel.ICON_PATH)));
-            } catch (IOException e) {
-            }
-            taskFrame.setLayout(new BorderLayout());
-            taskFrame.add(theTaskPanel,"Center");
-            taskFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-            taskFrame.setMinimumSize(new Dimension(300,240));
-            
-            taskFrame.pack();
-        }
-        taskFrame.setVisible(true);
-        
-        // ensure the JFrame is brought to the front.
-        taskFrame.setAlwaysOnTop(true);
-        taskFrame.setAlwaysOnTop(false);
-        
-        return theTaskPanel;
-    }
-    
+    /**
+     * Creates a new TaskPanel.
+     */
     public TaskPanel () {
         super(new BorderLayout());
-        setupPanel();
     }
     
-    private void setupPanel() {
+    @Override 
+    public TaskPanel withPowerGrid(PowerGrid pg) {
+        super.withPowerGrid(pg);
+        return this;
+    }
+    
+    @Override
+    public TaskPanel initialize() {
+        super.initialize();
+        
         JPanel entries = new JPanel (new GridBagLayout());
         JScrollPane scrollPane = new JScrollPane(entries);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -79,7 +59,9 @@ public class TaskPanel extends JPanel {
         
         GridBagConstraints gbc = new GridBagConstraints();
         entries.setPreferredSize(new Dimension(250,200));
-        setPreferredSize(new Dimension(250,200));
+        Dimension dim = new Dimension(300,240);
+        setMinimumSize(dim);
+        setPreferredSize(dim);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1;
@@ -88,7 +70,7 @@ public class TaskPanel extends JPanel {
         ImageIcon defaultIcon = new ImageIcon(new ImageIcon(
                 ClassLoader.getSystemResource(Plugin.DEFAULT_PLUGIN_ICON))
                 .getImage().getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH));
-        for (Plugin p : PowerGrid.PG.getPlugins()) {
+        for (Plugin p : getPowerGrid().getPlugins()) {
             String name = p.getClass().getAnnotation(PluginInfo.class).name();
             ImageIcon icon = p.getPluginIcon();
             if (icon == null) {
@@ -106,18 +88,28 @@ public class TaskPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
         entries.add(new Container(),gbc);
         add(entries,"Center");
+        
+        return this;
     }
     
+    /**
+     * A JPanel placed on the TaskPanel to represent a single Task.
+     */
     public class TaskEntry extends JPanel {
         private Icon icon = null;
         private String pluginName = "Unknown Plugin";
         private Class<? extends Task> task = null;
         
+        /**
+         * Constructs a new TaskEntry with the specified information.
+         * @param icon the Icon to use for the entry
+         * @param pluginName the pluginName to display
+         * @param t the Task class this entry represents
+         */
         public TaskEntry(Icon icon, String pluginName, Class<? extends Task> t) {
             super(new BorderLayout(4, 0));
             if (t == null)
                 throw new IllegalArgumentException("Null-value for Task");
-            System.out.println("Task " + t.getName() + " loaded.");
             task = t;
             this.icon = icon;
             if (pluginName != null)
@@ -153,7 +145,7 @@ public class TaskPanel extends JPanel {
                         } else {
                             if (JOptionPane.showConfirmDialog(null, "Run the Task \"" + task.getName() + "\"?", "Run this Task", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
                                     == JOptionPane.YES_OPTION) {
-                                PowerGrid.PG.taskManager().assignTask(t);
+                                getPowerGrid().taskManager().assignTask(t);
                             }
                         }
                     } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {

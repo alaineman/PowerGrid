@@ -27,10 +27,13 @@ public interface Configurable {
      * Called by PowerGrid to indicate that the Task should parse the configuration 
      * panel's data and save the configuration settings.
      * <p/>
-     * After this method returns, the Task will be automatically assigned to the 
-     * TaskManager.
+     * When this method returns true, the Task will be automatically assigned
+     * to the TaskManager. Otherwise, nothing happens. This allows for 
+     * Configurables to check the input data before setting their configuration.
+     * <p/>
+     * @return whether the configuration is valid.
      */
-    public void apply();
+    public boolean apply();
     
     /**
      * Called by PowerGrid to indicate the configuration panel is closed without 

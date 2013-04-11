@@ -117,10 +117,11 @@ public class RestTask extends StepTask implements Configurable {
          return panel;
     }
 
-    @Override public void apply() {
+    @Override public boolean apply() {
         if (panel != null) {
             targetEnergy = panel.getEnergy();
         }
+        return true;
     }
 
     @Override public void configCanceled() {

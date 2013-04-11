@@ -1,4 +1,4 @@
-package powergrid.view.status;
+package powergrid.view;
 
 import java.awt.Component;
 import java.awt.Container;

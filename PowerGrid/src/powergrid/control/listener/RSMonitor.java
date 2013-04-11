@@ -1,19 +1,15 @@
-
 package powergrid.control.listener;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.Point;
 
 /**
- * Class that monitors various parameters and settings in Runescape. 
+ * Class that monitors various parameters and settings in Runescape.
  * <p/>
  * It works by continuously polling information from the Runescape environment.
- * It then calls the appropriate methods of the Listeners registered in the 
+ * It then calls the appropriate methods of the Listeners registered in the
  * Monitor.
  * <p/>
  * @author Chronio
@@ -21,19 +17,39 @@ import powergrid.model.Point;
 public class RSMonitor implements Runnable {
 
     private RSInteractor interactor;
-    
     private Set<HealthListener> healthListeners = new HashSet<>(6);
-    private Map<AreaListener, Boolean> areaListeners = new HashMap<>(6);
-    
+    private Set<AreaListener> areaListeners = new HashSet<>(6);
     private double health = 1;
-    
+    private Point position = new Point();
+
     /**
      * Creates a new RSMonitor.
+     *
      * @param interactor the RSInteractor this Monitor should use
      */
     public RSMonitor(RSInteractor interactor) {
         assert interactor != null;
         this.interactor = interactor;
+    }
+
+    public void addHealthListener(HealthListener hpl) {
+        if (hpl != null) {
+            healthListeners.add(hpl);
+        }
+    }
+
+    public void removeHealthListener(HealthListener hpl) {
+        healthListeners.remove(hpl);
+    }
+    
+    public void addAreaListener(AreaListener arl){
+        if(arl != null){
+            areaListeners.add(arl);
+        }
+    }
+    
+    public void removeAreaListener(AreaListener arl){
+        areaListeners.remove(arl);
     }
 
     /**
@@ -42,7 +58,7 @@ public class RSMonitor implements Runnable {
     public RSInteractor getInteractor() {
         return interactor;
     }
-    
+
     /**
      * Checks all values once and calls the appropriate listeners.
      */
@@ -52,12 +68,12 @@ public class RSMonitor implements Runnable {
             checkHealth();
         }
         if (!areaListeners.isEmpty()) {
-            
+            checkArea();
         }
     }
-    
+
     /**
-     * Checks the player's health and calls the appropriate listeners when 
+     * Checks the player's health and calls the appropriate listeners when
      * required.
      */
     public synchronized void checkHealth() {
@@ -78,20 +94,22 @@ public class RSMonitor implements Runnable {
         }
         health = newHealth;
     }
-    
+
+    /**
+     * Checks the player's location and calls the appropriate listeners when 
+     * required.
+     */
     public synchronized void checkArea() {
         Point pos = getInteractor().getLocalPlayer().getPosition();
-        for (Entry<AreaListener, Boolean> e : areaListeners.entrySet()) {
-            AreaListener a = e.getKey();
-            if (e.getValue()) {
-                if (pos.distance(a.centerPoint()) > a.radius()) {
-                    a.areaLeft(getInteractor());
-                }
-            } else {
-                if (pos.distance(a.centerPoint()) <= a.radius()) {
-                    a.areaLeft(getInteractor());
+        if(!position.equals(pos)){
+            for(AreaListener al : areaListeners){
+                if (pos.distance(al.centerPoint()) < al.radius() && position.distance(al.centerPoint()) >= al.radius()) { 
+                    al.areaEntered(getInteractor());
+                } else if (pos.distance(al.centerPoint()) >= al.radius() && position.distance(al.centerPoint()) < al.radius()) {
+                    al.areaLeft(getInteractor());
                 }
             }
+            position = pos;
         }
     }
 }

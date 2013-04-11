@@ -157,9 +157,9 @@ public class PGPanel extends JPanel {
      */
     @Override
     protected void addImpl(Component comp, Object constraints, int index) {
-        if (!isInitialized()) {
+        /*if (!isInitialized()) {
             throw new IllegalStateException("Not initialized yet");
-        }
+        }*/
         if (comp instanceof PGPanel) {
             ((PGPanel) comp).withPowerGrid(getPowerGrid()).initialize();
         }

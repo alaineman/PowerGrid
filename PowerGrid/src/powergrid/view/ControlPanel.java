@@ -123,9 +123,13 @@ public class ControlPanel extends JPanel {
         showStatus.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent ae) {
                 try {
-                new TaskControlPanel()
-                        .withPowerGrid(powergrid)
+                TaskControlPanel tcp = new TaskControlPanel().withPowerGrid(powergrid)
                         .initialize();
+                PGFrame pgf = new PGFrame("PowerGrid - Task Control Panel");
+                pgf.withPowerGrid(powergrid);
+                pgf.add(tcp);
+                pgf.setMinimumSize(new Dimension(640, 480));
+                pgf.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace(System.out);
                 }

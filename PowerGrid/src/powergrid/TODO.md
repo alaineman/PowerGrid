@@ -2,14 +2,12 @@
 
 - Create Interactors and corresponding model classes
 
-- Create and hook listeners for RSMonitor
+- Create more listeners for RSMonitor
 
 - implement Local Player methods
-    -> Bank, Store, Summoning, Money, GE
+    -> Summoning, Money, GE
 
 - GUI for TaskManager and PG settings
-
-- Deintegrate Wall.java
 
 - Rework wrapper around directly to our client
 

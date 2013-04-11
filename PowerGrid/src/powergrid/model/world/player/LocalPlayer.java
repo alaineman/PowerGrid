@@ -1,8 +1,10 @@
 package powergrid.model.world.player;
 
 import org.powerbot.game.client.RSPlayer;
+import powergrid.model.item.Bank;
 import powergrid.model.item.Equipment;
 import powergrid.model.item.Inventory;
+import powergrid.model.item.Item;
 /**
  *
  * @author Vincent W
@@ -11,6 +13,7 @@ public class LocalPlayer extends Player {
  
     private Inventory inventory;
     private Equipment equipment;
+    private Bank bank;
     
     /**
      * Creates an object representing the local Player.
@@ -38,17 +41,34 @@ public class LocalPlayer extends Player {
         return equipment.copy();
     }
     
+    public Bank getBank(){
+        return bank.copy();
+    }
     
     //TODO the following methods below
     
     public int getTotalCash(){
+        int inventoryMoney  = 0;
+        Inventory inv = getInventory();
+        for(Item i : inv){
+            if(i.getId() == 995){
+                inventoryMoney = i.getStackSize();
+                break;
+            }
+        }
+        return inventoryMoney + getMoneyPouch();
+        
+        
+    }
+    
+    public int getMoneyPouch(){
+        //Where is the money??
+        //Widget 548, child 199
         return -1;
     }
     
-    public int getMoneyPouchTotal(){
-        return -1;
-    }
     
+    //getGE
     //public Bank getBank(){}      
     //Quests
     //Achievements

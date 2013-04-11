@@ -31,9 +31,7 @@ import powergrid.view.PGPanel;
 //TODO implement actions
 public class TaskControlPanel extends PGPanel {
 
-    public static final int SIDEPANEL_WIDTH = 200;
-    
-    private PowerGrid pg;
+    public static final int SIDEPANEL_WIDTH = 200;    
     
     private JLabel taskName;
     private JLabel taskPlugin;
@@ -55,7 +53,6 @@ public class TaskControlPanel extends PGPanel {
      */
     public TaskControlPanel() {
         super(new BorderLayout());
-        pg = null;
         taskName = new JLabel();
         taskType = new JLabel();
         taskPlugin = new JLabel();
@@ -76,12 +73,12 @@ public class TaskControlPanel extends PGPanel {
     
     @Override
     public TaskControlPanel initialize() {
-        super.initialize();
+        //super.initialize();
         
         list.initialize();
         
         setPreferredSize(new Dimension(320, 240));
-        pg.taskManager().addTaskListener(new TaskListUpdater());
+        getPowerGrid().taskManager().addTaskListener(new TaskListUpdater());
         
         JPanel side = new JPanel(new BorderLayout());
         
@@ -174,7 +171,7 @@ public class TaskControlPanel extends PGPanel {
         setSelectedEntry(null);
         TaskEntry newSelection = null;
         
-        List<Task> tasks = pg.taskManager().getPendingTasks();
+        List<Task> tasks = getPowerGrid().taskManager().getPendingTasks();
         TaskEntry[] entries = new TaskEntry[tasks.size()];
         for (int i = 0; i < tasks.size(); i++) {
             entries[i] = new TaskEntry(tasks.get(i))
@@ -214,7 +211,7 @@ public class TaskControlPanel extends PGPanel {
         } else {
             // Collect the information about the selected Task
             Task t = selected.getTask();
-            Plugin p = pg.lookupPluginForTask(t);
+            Plugin p = getPowerGrid().lookupPluginForTask(t);
             String name = p.getClass().getAnnotation(PluginInfo.class).name();
             
             // set the collected information in the appropriate fields
@@ -268,7 +265,7 @@ public class TaskControlPanel extends PGPanel {
             setBackground(Color.WHITE);
             setBorder(new LineBorder(Color.BLACK));
             
-            Icon image = pg.lookupPluginForTask(task).getPluginIcon();
+            Icon image = getPowerGrid().lookupPluginForTask(task).getPluginIcon();
             add(new JLabel(image), BorderLayout.WEST);
             add(new JLabel(task.getName()), BorderLayout.CENTER);
             

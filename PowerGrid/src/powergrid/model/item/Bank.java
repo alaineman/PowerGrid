@@ -3,6 +3,7 @@ package powergrid.model.item;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import powergrid.model.Copyable;
 import powergrid.model.structure.LinkedList;
 
 /**
@@ -11,7 +12,7 @@ import powergrid.model.structure.LinkedList;
  * The bank is represented as a list of tabs containing a LinkedList of items.
  * @author Vincent W
  */
-public class Bank extends AbstractList<Item> {
+public class Bank extends AbstractList<Item> implements Copyable{
 
     /**
      * The maximum amount of tabs
@@ -369,6 +370,11 @@ public class Bank extends AbstractList<Item> {
             //TODO implement set functionality
         }
         throw new IndexOutOfBoundsException();
+    }
+
+    @Override
+    public Bank copy() {
+        return new Bank(items);
     }
 
     /**

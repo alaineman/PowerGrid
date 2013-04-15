@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import powergrid.PowerGrid;
 import powergrid.model.Point;
+import powergrid.task.TravelTask;
 
 /**
  * This Panel shows an available destination, and a button that orders the Bot 
@@ -55,7 +56,8 @@ public class DestinationPanel extends JPanel {
             setBackground(Color.WHITE);
             go.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
-                    PowerGrid.PG.bot().travelTo(destination, 0);
+                    PowerGrid.PG.taskManager().assignTask(
+                            new TravelTask(destination));
                 }
             });
         }

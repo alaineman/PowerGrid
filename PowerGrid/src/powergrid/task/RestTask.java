@@ -10,9 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.powerbot.game.api.methods.Walking;
-import org.powerbot.game.api.methods.Widgets;
-import powergrid.Bot;
 import powergrid.PowerGrid;
+import powergrid.control.uicontrols.RSInteractor;
 import powergrid.view.TaskConfigurationPanel;
 
 /**
@@ -95,15 +94,15 @@ public class RestTask extends StepTask implements Configurable {
      * achieved.
      */
     @Override public void start() {
-        Bot bot = PowerGrid.PG.bot();
+        RSInteractor in = PowerGrid.PG.rsInteractor();
         for (int attempt=0;attempt<5;attempt++) {
-            if (bot.getState() == Bot.STATE_RESTING) break;
-            Widgets.get(750, 5).interact("Rest");
+            //if (in.getState() == Bot.STATE_RESTING) break;
+            in.click(in.getWidgetChild(750, 5));
         }
-        if (bot.getState() != Bot.STATE_RESTING) {
-            cancel();
-            PowerGrid.LOGGER.info("RestTask: Resting Failed");
-        }
+//        if (bot.getState() != Bot.STATE_RESTING) {
+//            cancel();
+//            PowerGrid.LOGGER.info("RestTask: Resting Failed");
+//        }
         if (Walking.getEnergy() >= targetEnergy) {
             cancel();
             PowerGrid.LOGGER.info("RestTask: Energy is already sufficient, task has been canceled");
@@ -116,19 +115,25 @@ public class RestTask extends StepTask implements Configurable {
      * Task ends.
      */
     @Override public synchronized void step() {
-        if (abortOnTask && PowerGrid.PG.taskManager().tasksPending() > 0) {
+        if (willAbortOnTask() && PowerGrid.PG.taskManager().tasksPending() > 0) {
             cancel();
         } else {
-            if (Walking.getEnergy() >= targetEnergy) {
+            if (targetReached()) {
                 cancel();
                 PowerGrid.LOGGER.info("RestTask: Target Energy (" + targetEnergy + ") achieved, RestTask completed");
             }
-            if (PowerGrid.PG.bot().getState() != Bot.STATE_RESTING) {
-                // re-run the start method to start resting
-                PowerGrid.LOGGER.info("Currently not resting, restarting RestTask");
-                start();
-            }
+//            if (PowerGrid.PG.bot().getState() != Bot.STATE_RESTING) {
+//                // re-run the start method to start resting
+//                PowerGrid.LOGGER.info("Currently not resting, restarting RestTask");
+//                start();
+//            }
         }
+    }
+    
+    private boolean targetReached() {
+        RSInteractor in = PowerGrid.PG.rsInteractor();
+        int energy = Integer.parseInt(in.getWidgetChild(750, 6).getText());
+        return energy >= targetEnergy();
     }
 
     @Override public TaskConfigurationPanel configPanel() {

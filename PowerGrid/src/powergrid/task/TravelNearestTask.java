@@ -104,7 +104,7 @@ public class TravelNearestTask extends TravelTask {
     
     @Override public synchronized void start() {
         List<XMLNode> matches = getMatching();
-        path = calculateNearest(PowerGrid.PG.bot().getPosition(),matches);
+        path = calculateNearest(PowerGrid.PG.rsInteractor().getPosition(),matches);
     }
     
     public static List<Point> calculateNearest(final Point from, List<XMLNode> options) {

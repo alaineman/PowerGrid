@@ -30,7 +30,7 @@ public class ReturnTask extends Task {
     @Override public synchronized void execute() {
         stop = false;
         // save the position for later
-        Point p = PowerGrid.PG.bot().getPosition();
+        Point p = PowerGrid.PG.rsInteractor().getLocalPlayer().getPosition();
         // run the task that was set to run
         runningTask = theTask;
         theTask.execute();

@@ -347,6 +347,14 @@ public class RSInteractor {
     }
     
     /**
+     * Returns the local player's position
+     * @return the local player's position
+     */
+    public Point getPosition() {
+        return getLocalPlayer().getPosition();
+    }
+    
+    /**
      * Retrieves the GameTile at the specified Point from the WorldMap.
      * 
      * @param p the position of the GameTile to retrieve

@@ -227,7 +227,6 @@ public class PowerGrid {
     private Mapper mapper;
     private RSInteractor rsInteractor;
     private TaskManager taskManager;
-    private Bot bot;
     private ScriptLoader taskManagerLoader;
     
     private Thread terminationThread;
@@ -245,7 +244,6 @@ public class PowerGrid {
         rsInteractor = new RSInteractor().useClient(client)
                 .useWorldMap(mapper.getWorldMap());
         taskManager = new TaskManager();
-        bot = new Bot(taskManager);
         taskManagerLoader = new ScriptLoader(taskManager);
         terminationThread = null;
     }
@@ -386,13 +384,6 @@ public class PowerGrid {
      */
     public WorldMap worldmap() {
         return mapper().getWorldMap();
-    }
-    
-    /**
-     * @return the Bot object of PowerGrid
-     */
-    public Bot bot() {
-        return bot;
     }
     
     /**

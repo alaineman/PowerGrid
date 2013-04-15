@@ -6,9 +6,9 @@ import java.util.Objects;
 import java.util.logging.Level;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Walking;
-import powergrid.Bot;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
+import powergrid.control.uicontrols.RSInteractor;
 import powergrid.model.OutOfReachException;
 import powergrid.model.Point;
 import powergrid.model.structure.DestinationMap.Destination;
@@ -77,9 +77,9 @@ public class TravelTask extends StepTask {
         if (destination == null) {
             cancel();
         } else {
-            Bot bot = PowerGrid.PG.bot();
+            RSInteractor in = PowerGrid.PG.rsInteractor();
             try {
-                path = PathFinder.findPath(bot.getPosition(), destination);
+                path = PathFinder.findPath(in.getPosition(), destination);
                 if (path.size() > 0) {
                     Point t = path.get(target);
                     PowerGrid.LOGGER.info("Travel to " + path.get(path.size() - 1) + " has started, there are " + path.size() + " points on this path.");
@@ -87,7 +87,7 @@ public class TravelTask extends StepTask {
                 }
             } catch (OutOfReachException e) {
                 path = new ArrayList<>(1);
-                path.add(bot.getPosition());
+                path.add(in.getPosition());
                 PowerGrid.LOGGER.log(Level.WARNING, 
                         "No path found to " + destination + ", task was canceled", e);
                 cancel();
@@ -105,7 +105,7 @@ public class TravelTask extends StepTask {
     @Override
     public synchronized void step() {
         setStepsLeft(path.size() - target);
-        Point playerPos = PowerGrid.PG.bot().getPosition();
+        Point playerPos = PowerGrid.PG.rsInteractor().getPosition();
         // check the distance to our next point.
         double distToTarget = playerPos.distance(path.get(target));
 
@@ -156,7 +156,7 @@ public class TravelTask extends StepTask {
 
     // walks to the given tile and possibly executes the appropriate action
     private void walkToTile(Point p) {
-        Point playerPos = PowerGrid.PG.bot().getPosition();
+        Point playerPos = PowerGrid.PG.rsInteractor().getPosition();
         if (playerPos.distance(p) > PathFinder.maxDist) {
             //attempt walkTo anyways, insert teleportable / transportable usage
             GameTile obj = PowerGrid.PG.mapper().getWorldMap().get(p);

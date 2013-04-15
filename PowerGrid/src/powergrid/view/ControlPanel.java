@@ -120,7 +120,7 @@ public class ControlPanel extends JPanel {
             @Override public void actionPerformed(ActionEvent e) {
                 new MapViewer()
                         .useMap(powergrid.worldmap())
-                        .usePlayer(powergrid.bot().getPlayer())
+                        .usePlayer(powergrid.rsInteractor().getLocalPlayer())
                         .initialize();
             }
         });

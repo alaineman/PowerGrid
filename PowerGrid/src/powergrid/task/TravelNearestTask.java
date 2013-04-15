@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import powergrid.PowerGrid;
 import powergrid.control.PathFinder;
 import powergrid.control.XMLToolBox;
@@ -132,7 +133,8 @@ public class TravelNearestTask extends TravelTask {
                 }
                 retries--;
             } catch (OutOfReachException e) {
-                PowerGrid.logMessage("Found point " + dest + ", but could not reach it");
+                PowerGrid.LOGGER.log(Level.WARNING, 
+                        "Found point " + dest + ", but could not reach it", e);
             }
         }
         

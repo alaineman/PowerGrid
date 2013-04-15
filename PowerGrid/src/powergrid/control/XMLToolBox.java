@@ -46,7 +46,7 @@ public class XMLToolBox {
                 vals.put(att, val);
                 xml = xml.substring(closeVal+1);
             } catch (StringIndexOutOfBoundsException e) {
-                PowerGrid.logMessage("Not the entire XML String could be parsed");
+                PowerGrid.LOGGER.warning("Not the entire XML String could be parsed");
             }
         }
         return vals;
@@ -84,7 +84,7 @@ public class XMLToolBox {
             }
             return getXMLTree(lines,0);
         } catch (IOException iox) {
-            PowerGrid.logMessage("Could not read the InputStream");
+            PowerGrid.LOGGER.warning("Could not read the InputStream");
             return null;
         }
     }
@@ -106,7 +106,7 @@ public class XMLToolBox {
             if (val != null && value.equals(val))
                 matches.add(n);
         }
-        return matches.toArray(new XMLNode[0]);
+        return matches.toArray(new XMLNode[matches.size()]);
     }
     
     public static XMLNode[] filterNodesRecursive(Iterable<XMLNode> root, String attribute,String value) {
@@ -114,7 +114,7 @@ public class XMLToolBox {
         for (XMLNode n : root) {
             matches.addAll(Arrays.asList(filterNodesRecursive(n, attribute, value)));
         }
-        return matches.toArray(new XMLNode[0]);
+        return matches.toArray(new XMLNode[matches.size()]);
     }
     
     /**
@@ -191,7 +191,7 @@ public class XMLToolBox {
         }
         return new XMLNode(tag,attributes,children);
         } catch (Exception e) {
-            PowerGrid.logMessage("Error while parsing XML tree");
+            PowerGrid.LOGGER.warning("Error while parsing XML tree");
             return null;
         }
     }
@@ -204,14 +204,14 @@ public class XMLToolBox {
             File target = new File(fullpath);
             if (!target.exists()) {
                 target.createNewFile();
-                PowerGrid.logMessage("New File created at " + target.getAbsolutePath());
+                PowerGrid.LOGGER.info("New File created at " + target.getAbsolutePath());
             }
             try (FileWriter w = new FileWriter(target)) {
                 w.write(text);
             }
             return true;
         } catch (IOException e) {
-            PowerGrid.logMessage("Error writing to file");
+            PowerGrid.LOGGER.warning("Error writing to file");
             return false;
         }
     }

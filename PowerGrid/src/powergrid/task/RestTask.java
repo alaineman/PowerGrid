@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Level;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -70,6 +71,24 @@ public class RestTask extends StepTask implements Configurable {
     }
 
     /**
+     * Returns whether this Task will abort when another Task is in the task 
+     * queue.
+     * @return true if this Task cancels itself when another Task is pending.
+     */
+    public boolean willAbortOnTask() {
+        return abortOnTask;
+    }
+    
+    /**
+     * Returns the target energy level that this Task tries to achieve before
+     * finishing.
+     * @return the minimal energy level before this Task completes.
+     */
+    public int targetEnergy() {
+        return targetEnergy;
+    }
+    
+    /**
      * Attempts to issue the rest command to the RSBot environment.
      * <p/>
      * This Task will be canceled here when the required energy is already
@@ -83,11 +102,11 @@ public class RestTask extends StepTask implements Configurable {
         }
         if (bot.getState() != Bot.STATE_RESTING) {
             cancel();
-            PowerGrid.logMessage("RestTask: Resting Failed");
+            PowerGrid.LOGGER.info("RestTask: Resting Failed");
         }
         if (Walking.getEnergy() >= targetEnergy) {
             cancel();
-            PowerGrid.logMessage("RestTask: Energy is already sufficient, task has been canceled");
+            PowerGrid.LOGGER.info("RestTask: Energy is already sufficient, task has been canceled");
         }
     }
     
@@ -102,11 +121,11 @@ public class RestTask extends StepTask implements Configurable {
         } else {
             if (Walking.getEnergy() >= targetEnergy) {
                 cancel();
-                PowerGrid.logMessage("RestTask: Target Energy (" + targetEnergy + ") achieved, RestTask completed");
+                PowerGrid.LOGGER.info("RestTask: Target Energy (" + targetEnergy + ") achieved, RestTask completed");
             }
             if (PowerGrid.PG.bot().getState() != Bot.STATE_RESTING) {
                 // re-run the start method to start resting
-                PowerGrid.logMessage("Currently not resting, restarting RestTask");
+                PowerGrid.LOGGER.info("Currently not resting, restarting RestTask");
                 start();
             }
         }
@@ -137,7 +156,8 @@ public class RestTask extends StepTask implements Configurable {
                 icon = new ImageIcon(icon.getImage().getScaledInstance(240, 61, Image.SCALE_SMOOTH));
                 add(new JLabel(icon),"North");
             } catch (IOException ex) {
-                System.err.println("Could not load the specified icon:\n"+ex);
+                PowerGrid.LOGGER.log(Level.WARNING, 
+                        "Could not load the specified icon", ex);
             }
             add(new JLabel("Value:"),"West");
             add(targetEnergy,"Center");
@@ -154,11 +174,20 @@ public class RestTask extends StepTask implements Configurable {
         }
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (abortOnTask ? 1 : 0);
+        hash = 37 * hash + targetEnergy;
+        return hash;
+    }
+
     @Override public boolean equals(Object other) {
         if (other instanceof RestTask) {
             RestTask that = (RestTask)other;
             return this.getPriority() == that.getPriority() 
-                    && this.abortOnTask == that.abortOnTask;
+                    && this.targetEnergy() == that.targetEnergy()
+                    && this.willAbortOnTask() == that.willAbortOnTask();
         }
         return false;
     }

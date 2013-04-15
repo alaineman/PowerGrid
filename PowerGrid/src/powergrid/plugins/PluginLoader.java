@@ -145,7 +145,8 @@ public class PluginLoader {
                 Plugin plugin = cons.newInstance();
                 ps.add(plugin);
             } catch (IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
-                PowerGrid.logMessage("Could not load the Plugin, since the plugin could not be instantiated",e);
+                PowerGrid.LOGGER.log(Level.SEVERE, 
+                        "Could not load the Plugin, since the plugin could not be instantiated", e);
             }
         }
         return ps.toArray(new Plugin[ps.size()]);

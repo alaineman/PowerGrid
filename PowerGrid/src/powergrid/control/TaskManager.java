@@ -9,6 +9,7 @@ import java.util.PriorityQueue;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.game.api.Manifest;
 import powergrid.PowerGrid;
+import static powergrid.PowerGrid.LOGGER;
 import powergrid.control.listener.TaskListener;
 import powergrid.task.Task;
 
@@ -85,12 +86,12 @@ public class TaskManager extends ActiveScript {
     @Override public int loop() {
         if (tasksPending() > 0) {
             currentTask = pendingTasks.poll();
-            PowerGrid.logMessage("Beginning " + currentTask.getClass().getSimpleName() + " \"" + currentTask.getName() + "\"...");
+            LOGGER.info("Beginning " + currentTask.getClass().getSimpleName() + " \"" + currentTask.getName() + "\"...");
             for (TaskListener l : listeners) {
                 l.taskStarted(currentTask);
             }
             currentTask.execute();
-            PowerGrid.logMessage(currentTask.getClass().getSimpleName() + " \"" + currentTask.getName() + "\" has ended.");
+            LOGGER.info(currentTask.getClass().getSimpleName() + " \"" + currentTask.getName() + "\" has ended.");
             
             for (TaskListener l : listeners) {
                 l.taskFinished(currentTask);

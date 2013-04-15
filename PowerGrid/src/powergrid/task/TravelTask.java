@@ -3,6 +3,7 @@ package powergrid.task;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Walking;
 import powergrid.Bot;
@@ -79,19 +80,16 @@ public class TravelTask extends StepTask {
             Bot bot = PowerGrid.PG.bot();
             try {
                 path = PathFinder.findPath(bot.getPosition(), destination);
-                if (PowerGrid.PG.isDevmode()) {
-                    StringBuilder sb = new StringBuilder("Composed path:\n");
-                    PowerGrid.logMessage(sb.toString());
-                }
                 if (path.size() > 0) {
                     Point t = path.get(target);
-                    PowerGrid.logMessage("Travel to " + path.get(path.size() - 1) + " has started, there are " + path.size() + " points on this path.");
+                    PowerGrid.LOGGER.info("Travel to " + path.get(path.size() - 1) + " has started, there are " + path.size() + " points on this path.");
                     walkToTile(t);
                 }
             } catch (OutOfReachException e) {
                 path = new ArrayList<>(1);
                 path.add(bot.getPosition());
-                PowerGrid.logMessage("No path found to " + destination + ", task was canceled");
+                PowerGrid.LOGGER.log(Level.WARNING, 
+                        "No path found to " + destination + ", task was canceled", e);
                 cancel();
             }
         }

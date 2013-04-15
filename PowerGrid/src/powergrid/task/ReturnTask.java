@@ -12,7 +12,7 @@ public class ReturnTask extends Task {
 
     private Task theTask = null;
     private Task runningTask = null;
-    private boolean stop = false;
+    private volatile boolean stop = false;
     
     /**
      * Creates a new ReturnTask that executes the given Task and then makes its 
@@ -36,7 +36,8 @@ public class ReturnTask extends Task {
         theTask.execute();
         
         if (!stop) {
-            PowerGrid.logMessage("ReturnTask: Task \"" + theTask.getName() + "\" completed, returning to " + p);
+            PowerGrid.LOGGER.info("ReturnTask: Task \"" + theTask.getName() + 
+                    "\" completed, returning to " + p);
             Task.sleep(200,300);
             // go back to the original position
             runningTask = new TravelTask(p);
@@ -65,7 +66,8 @@ public class ReturnTask extends Task {
      * Cancels the linked Task, but still executes the TravelTask to get back to 
      * the original Point.
      * <p/>
-     * When the linked Task is not running, this method does nothing.
+     * When the linked Task is not running or the return Task has already 
+     * started, this method does nothing.
      */
     public void cancelAndReturn() {
         if (theTask == runningTask) {

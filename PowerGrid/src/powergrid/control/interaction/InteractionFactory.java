@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.logging.Level;
 import powergrid.PowerGrid;
 import powergrid.control.XMLToolBox;
 import powergrid.model.Point;
@@ -40,7 +41,7 @@ public class InteractionFactory {
                 case "peerset":
                     setUpPeers(type);
                 default:
-                    PowerGrid.logMessage("The interaction type \"" + type.getTag() + "\" is not recognized.");
+                    PowerGrid.LOGGER.warning("The interaction type \"" + type.getTag() + "\" is not recognized.");
             }
         }
     }
@@ -80,7 +81,7 @@ public class InteractionFactory {
                 if (serverNode == null) {
                     serverNode = n;
                 } else {
-                    PowerGrid.logMessage("Critical error for type " + type.get("type") + ", there are multiple servers defined.");
+                    PowerGrid.LOGGER.warning("Critical error for type " + type.get("type") + ", there are multiple servers defined.");
                     return null;
                 }
             } else {
@@ -105,10 +106,13 @@ public class InteractionFactory {
         for (XMLNode n : clients) {
             Point p = new Point(n.getOrElse("pos", "(0,0)"));
             try {
-                TransportTile t = clazz.getConstructor(int.class,int.class,int.class,int.class).newInstance(p.x,p.y,p.z,-1);
+                TransportTile t = clazz.getConstructor(int.class, int.class,
+                        int.class, int.class).newInstance(p.x, p.y, p.z, -1);
                 network.add(t);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                PowerGrid.logMessage("Could not instantiate transportable at " + p,e);
+            } catch (InstantiationException | IllegalAccessException | 
+                    InvocationTargetException | NoSuchMethodException e) {
+                PowerGrid.LOGGER.log(Level.SEVERE, 
+                        "Could not instantiate transportable at " + p, e);
             }
         }
         networks.put(type.get("type"), network);
@@ -133,7 +137,9 @@ public class InteractionFactory {
                 return clazz.asSubclass(TransportTile.class);
             }
         } catch (ClassNotFoundException e) {
-            PowerGrid.logMessage("The specified interaction type is not recognized: \"" + name + "\"", e);
+            PowerGrid.LOGGER.log(Level.SEVERE, 
+                    "The specified interaction type is not recognized: \"" + 
+                    name + "\"", e);
 
         }
         return null;
@@ -155,7 +161,8 @@ public class InteractionFactory {
                 network.add(t);
             } catch (InvocationTargetException | InstantiationException | 
                     IllegalAccessException | NoSuchMethodException e) {
-                PowerGrid.logMessage("Could not instantiate transportable at " + p,e);
+                PowerGrid.LOGGER.log(Level.WARNING, 
+                        "Could not instantiate transportable at " + p, e);
             }
         }
         networks.put(type.get("type"), network);

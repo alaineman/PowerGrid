@@ -1,10 +1,8 @@
 package powergrid;
 
-import java.awt.Dimension;
 import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,9 +43,6 @@ import powergrid.view.ControlPanel;
  *   <dt>-dev</dt>
  *   <dd>PowerGrid developer mode. Setting this flag logs more detailed messages
  *       to the console.</dd>
- *   <dt>-splitui (or -s)</dt>
- *   <dd>Split PowerGrid's user interface from RSBot window. This means that the
- *       PowerGrid control panel will appear in a separate frame.</dd>
  *   <dt>-plugins (or -p)</dt>
  *   <dd>Specify a custom Plugins directory. For example: 
  *       <code>java -jar PowerGrid.jar -p someFolder\customPluginDirectory</code> will look 
@@ -55,8 +50,8 @@ import powergrid.view.ControlPanel;
  *       instead of the default "plugins" directory.</dd>
  *   <dt>--update</dt>
  *   <dd>Forces PowerGrid to update the RSBot jar file. This must be the first 
- *       parameter. After the update, PowerGrid will restart without 
- *       parameters.</dd>
+ *       parameter. After the update, PowerGrid will restart with the other 
+ *       specified parameters.</dd>
  * </dl>
  * <p/>
  * @author Chronio
@@ -82,7 +77,7 @@ public class PowerGrid {
     /** The PowerGrid instance. */
     public static PowerGrid PG = null;
     
-    /** The plugin directory, default is "plugins". */
+    /** The default plugin directory, which is "plugins". */
     public static File pluginDirectory = new File("plugins");
     
     /** The path to the file that will be used as icon. */
@@ -103,6 +98,7 @@ public class PowerGrid {
         }
         return icon;
     }
+    
     /**
      * Main method of PowerGrid. 
      * <p/>
@@ -471,9 +467,10 @@ public class PowerGrid {
             Runtime.getRuntime().removeShutdownHook(terminationThread);
             terminationThread = null;
         } catch (IllegalStateException e) {} // was already shutting down
-        if (mapper().isMapping()) 
+        if (mapper().isMapping()) {
             mapper().stopMapping();
-        LOGGER.fine("Mapper stopped");
+            LOGGER.fine("Mapper stopped");
+        }
         
         theControlPanel.getParent().remove(theControlPanel);
         theControlPanel = null;
@@ -505,64 +502,6 @@ public class PowerGrid {
     }
     
     /**
-     * Logs a message to the console.
-     * @param message the message to log
-     */
-    public static void logMessage(String message) {
-        System.out.println("[PowerGrid] " + message);
-    }
-    
-    /**
-     * Logs a message to the console, followed by a stack trace (max 10 items) of 
-     * the provided Throwable if PowerGrid runs in development mode.
-     * <p/>
-     * If PowerGrid is not running in development mode, only a line with "caused by 
-     * ExceptionClass: Exception message" will be displayed.
-     * @param message the message to log
-     * @param cause the Throwable that caused the message to be logged
-     */
-    public static void logMessage(String message, Throwable cause) {
-        if (cause == null) {
-            logMessage(message);
-            return;
-        }
-        System.out.println("[PowerGrid] " + message);
-        System.out.println("  caused by: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
-        if (PG.isDevmode()) {
-            StackTraceElement[] trace = cause.getStackTrace();
-            int elementCount = 0;
-            for (StackTraceElement e : trace) {
-                System.out.println("    in " + e.getClassName() + ": " + e.getLineNumber() + " (" + e.getMethodName() + ")");
-                elementCount++;
-                if (elementCount >= 10) {
-                    System.out.println("    (" + (trace.length-10) + " more...)");
-                    break;
-                }
-            }
-        }
-    }
-    
-    /**
-     * Logs a message to the console only if PowerGrid is running in devmode.
-     * @param message the message to log
-     */
-    public static void debugMessage(String message) {
-        if (PG.isDevmode()) System.out.println("[PowerGrid] <debug> " + message);
-    }
-    
-    /**
-     * Logs a message to the console followed by the stack trace of the provided 
-     * Throwable if and only if PowerGrid is started in Developer mode.
-     * @param message the message to log
-     * @param cause the Throwable that caused this message to be logged.
-     */
-    public static void debugMessage(String message, Throwable cause) {
-        if (PG.isDevmode()) {
-            logMessage("<debug> " + message, cause);
-        }
-    }
-    
-    /**
      * Custom Formatter for the PowerGrid Logger.
      */
     public static class PGFormatter extends Formatter {
@@ -588,7 +527,10 @@ public class PowerGrid {
      * of RSBot shutdown.
      */
     public class PGTerminator implements Runnable {
-
+        /**
+         * Attempts to terminate PowerGrid gracefully, or prints a warning 
+         * message otherwise.
+         */
         @Override public void run() {
             if (!terminate()) {
                 LOGGER.severe("PowerGrid failed to terminate gracefully");

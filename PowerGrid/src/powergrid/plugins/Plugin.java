@@ -56,6 +56,7 @@ public interface Plugin {
      * <p/>
      * When the Plugin fails to load, any Exception may be thrown indicating the
      * cause, and PowerGrid will not load the Plugin.
+     * @throws Exception When plugin loading failed
      */
     public void setUp() throws Exception;
     
@@ -81,6 +82,7 @@ public interface Plugin {
      * properly, and it provides the freedom to Plugin developers to ensure 
      * that the Tasks are set up correctly before running the Task.
      * <p/>
+     * @param <T> the type of Task to instantiate
      * @param clazz the Class Object to instantiate
      * @return a Task instance of the provided class type
      * @throws UnsupportedOperationException when the provided Class cannot be 

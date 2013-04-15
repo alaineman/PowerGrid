@@ -40,15 +40,15 @@ import powergrid.view.ControlPanel;
  * <p/>
  * PowerGrid's main method can take the following arguments:
  * <dl>
- *   <dt>-dev</dt>
+ *   <dt>-d</dt>
  *   <dd>PowerGrid developer mode. Setting this flag logs more detailed messages
  *       to the console.</dd>
- *   <dt>-plugins (or -p)</dt>
+ *   <dt>-p</dt>
  *   <dd>Specify a custom Plugins directory. For example: 
  *       <code>java -jar PowerGrid.jar -p someFolder\customPluginDirectory</code> will look 
  *       for plugins in the directory named <code>someFolder\customPluginDirectory</code>
  *       instead of the default "plugins" directory.</dd>
- *   <dt>--update</dt>
+ *   <dt>-u</dt>
  *   <dd>Forces PowerGrid to update the RSBot jar file. This must be the first 
  *       parameter. After the update, PowerGrid will restart with the other 
  *       specified parameters.</dd>
@@ -110,7 +110,7 @@ public class PowerGrid {
         setupLogger(LOGGER, new ConsoleHandler(), false);
         RSBotUpdater updater = new RSBotUpdater();
         
-        if (args.length > 0 && args[0].equals("--update")) {
+        if (args.length > 0 && args[0].equals("-u")) {
             updater.update();
             String[] newArgs = new String[args.length - 1];
             for (int i = 1; i < args.length; i++) {
@@ -134,19 +134,25 @@ public class PowerGrid {
             System.exit(1);
         }
         
+        boolean devMode = false;
         
         Iterator<String> it = Arrays.asList(args).iterator();
         while (it.hasNext()) {
             String arg = it.next();
-            if (arg.equals("-p") || arg.equals("-plugins")) {
-                if (it.hasNext()) {
-                    File pluginDir = new File(it.next());
-                    if (pluginDir.isDirectory()) {
-                        pluginDirectory = pluginDir;
-                        LOGGER.info("Custom plugin directory set at " 
-                                + pluginDir.getPath());
+            switch (arg) {
+                case "-p":
+                    if (it.hasNext()) {
+                        File pluginDir = new File(it.next());
+                        if (pluginDir.isDirectory()) {
+                            pluginDirectory = pluginDir;
+                            LOGGER.info("Custom plugin directory set at " 
+                                    + pluginDir.getPath());
+                        }
                     }
-                }
+                    break;
+                case "-d":
+                    devMode = true;
+                    break;
             }
         }
         // Wait for Client's Thread to start
@@ -157,12 +163,8 @@ public class PowerGrid {
         
         PG = new PowerGrid(org.powerbot.core.Bot.client());
         
-        // Load the default PowerGridPlugin and any custom Plugins.
-        PG.loadPlugin(new PowerGridPlugin());
-        PG.loadPlugins(pluginDirectory);
-        
         LOGGER.info("Plugins loaded. Starting PowerGrid...");
-        if (PG.launch(true, false)) {
+        if (PG.launch(devMode)) {
             LOGGER.info("PowerGrid started and running");
         } else {
             LOGGER.severe("PowerGrid failed to start, shutting down");
@@ -215,12 +217,11 @@ public class PowerGrid {
     }
     
     private boolean isRunning = false;
-    private boolean devmode = false; 
-    private boolean splitUI = false;
+    private boolean devmode = false;
     
     private ControlPanel theControlPanel = null;
     
-    private List<Plugin> plugins;
+    private ArrayList<Plugin> plugins;
     
     private Client client;
     private InteractionController iController;
@@ -244,7 +245,7 @@ public class PowerGrid {
         rsInteractor = new RSInteractor().useClient(client)
                 .useWorldMap(mapper.getWorldMap());
         taskManager = new TaskManager();
-        taskManagerLoader = new ScriptLoader(taskManager);
+        taskManagerLoader = null;
         terminationThread = null;
     }
     
@@ -257,27 +258,10 @@ public class PowerGrid {
     public void loadPlugins(File directory) {
         assert directory != null;
         if (directory.exists()) {
-            PluginLoader pl = new PluginLoader(directory);
-            List<Plugin> ps = Arrays.asList(pl.getLoadedPlugins());
-            if (plugins == null) {
-                plugins = new ArrayList<>(ps);
-            } else {
-                plugins.addAll(ps);
-            }
+            Plugin[] ps = new PluginLoader(directory).getLoadedPlugins();
+            plugins.ensureCapacity(plugins.size() + ps.length);
             for (Plugin p : ps) {
-                /* try to setUp each Plugin instance or discard upon Exception.
-                 * This way it is certain that PowerGrid will not crash because of 
-                 * loading a failing Plugin.
-                 */
-                String name = p.getClass().getAnnotation(PluginInfo.class).name();
-                try {
-                    p.withPowerGrid(this);
-                    p.setUp();
-                    LOGGER.info("Plugin loaded: " + name);
-                } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Failed to load Plugin " + name, e);
-                    plugins.remove(p);
-                }
+                loadPlugin(p);
             }
         }
     }
@@ -390,16 +374,13 @@ public class PowerGrid {
      * Launches PowerGrid with the given settings.
      * <p/>
      * @param devmode true to enable developer mode, false to disable
-     * @param splitUI true to split the user interface in a separate frame
      * @return whether the launch was successful
      */
-    public boolean launch(boolean devmode, boolean splitUI) {
-        assert plugins != null;
+    public boolean launch(boolean devmode) {
         if (isRunning) {
             return false;
         }
         this.devmode = devmode;
-        this.splitUI = splitUI;
         return launch();
     }
     
@@ -411,24 +392,30 @@ public class PowerGrid {
      * @return whether the launch was successful
      */
     public boolean launch() {
-        assert plugins != null;
         if (isRunning) 
             return false;
+        
+        loadPlugin(new PowerGridPlugin());
+        loadPlugins(pluginDirectory);
         LOGGER.info("starting PowerGrid...");
-        LOGGER.fine("With parameters: Developer mode"
-                + (splitUI ? ", Split user interface":""));
-        if (splitUI) {
-            ControlPanel.addControlPanel(null, null);
-        } else {
-            LOGGER.fine("Modifying RSBot JFrame...");
-            Window[] ws = Window.getWindows();
-            if (ws.length > 0 && ws[0] instanceof JFrame) {
-                theControlPanel = ControlPanel.addControlPanel(ws[0], "South");
-            }
+        LOGGER.fine("    (in Developer mode)");
+        
+        LOGGER.fine("Modifying RSBot JFrame...");
+        Window[] ws = Window.getWindows();
+        if (ws.length > 0 && ws[0] instanceof JFrame) {
+            theControlPanel = ControlPanel.addControlPanel(ws[0], "South");
         }
+        
         LOGGER.fine("ControlPanel created");
         
+        if (taskManagerLoader == null) {
+            taskManagerLoader = new ScriptLoader(taskManager);
+        } else {
+            taskManagerLoader = taskManagerLoader.copy();
+        }
+        
         taskManagerLoader.run();
+        LOGGER.fine("TaskManager started");
         
         mapper().startMapping();
         LOGGER.fine("Mapper Started");
@@ -464,11 +451,9 @@ public class PowerGrid {
         }
         
         theControlPanel.getParent().remove(theControlPanel);
-        theControlPanel = null;
         LOGGER.fine("ControlPanel removed");
         
         taskManagerLoader.stop();
-        taskManagerLoader = taskManagerLoader.copy();
         LOGGER.fine("TaskManager stopped");
         
         for (Plugin p : plugins) {

@@ -1,6 +1,7 @@
 package powergrid.core;
 
 import java.applet.Applet;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -11,18 +12,18 @@ import static powergrid.PowerGrid.LOGGER;
 
 /**
  * Loads the RS client and provides access methods to interact with the client.
+ *
  * @author Chronio
  */
 public class RSAccessor {
 
-    
     private URL base;
     private Applet rsClient = null;
-    
     private byte[] loader = null;
-    
+
     /**
      * Creates a new RSAccessor instance.
+     *
      * @param base The base URL to load from
      */
     public RSAccessor(URL base) {
@@ -32,14 +33,16 @@ public class RSAccessor {
 
     /**
      * Returns the running RS Applet.
+     *
      * @return the Runescape Applet
      */
     public Applet getRSClient() {
         return rsClient;
     }
-    
+
     /**
      * Returns whether the client has been loaded.
+     *
      * @return true if the client has been loaded, false otherwise.
      */
     public boolean isLoaded() {
@@ -48,16 +51,19 @@ public class RSAccessor {
 
     /**
      * Returns the URL used as the base for loading the client.
+     *
      * @return the base URL
      */
     public URL getBaseURL() {
         return base;
     }
-    
+
     /**
-     * Navigates the Runescape site to fetch the loader, then downloads and 
-     * runs it.
-     * @return true if and only if the operation was successful, false otherwise.
+     * Navigates the Runescape site to fetch the loader, then downloads and runs
+     * it.
+     *
+     * @return true if and only if the operation was successful, false
+     * otherwise.
      */
     public boolean load() {
         HTTPClient client = new HTTPClient(getBaseURL());
@@ -67,10 +73,10 @@ public class RSAccessor {
             URL url = client.findAndFollow("src=\"(.*)\" frameborder");
             // find the java archive this source links to
             String archiveLink = client.findFirst("archive=(.*) ", 1);
-            url = new URL(url.getProtocol() + "://" + 
-                    url.getHost() + "/" + archiveLink);
+            url = new URL(url.getProtocol() + "://"
+                    + url.getHost() + "/" + archiveLink);
             String className = client.findFirst("code=(.*) ", 1);
-            HashMap<String, String> params = new HashMap<>(16, 7/8f);
+            HashMap<String, String> params = new HashMap<>(16, 7 / 8f);
             Matcher m = client.find("<param name=\"([^\\s]+)\"\\s+value=\"([^>]*)\">");
             while (m.find()) {
                 params.put(m.group(1), m.group(2));
@@ -80,28 +86,56 @@ public class RSAccessor {
             }
             return setupLoader(client, url, className, params);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, 
-                   "An Exception occurred while loading RS client", e);
+            LOGGER.log(Level.SEVERE,
+                    "An Exception occurred while loading RS client", e);
         } catch (IllegalStateException e) {
-            LOGGER.log(Level.SEVERE, 
-                   "Required data not found in URL: " + client.getCurrent(), e);
+            LOGGER.log(Level.SEVERE,
+                    "Required data not found in URL: " + client.getCurrent(), e);
         }
         return false;
     }
-    
+
     /**
-     * Downloads the Runescape Loader from the given URL, then instantiates it 
+     * Downloads the Runescape Loader from the given URL, then instantiates it
      * using the given className and parameters.
+     *
      * @param client the HTTPClient to use
      * @param url the URL to load from
      * @param className the name of the class to run
      * @param params the Applet parameters
-     * @return 
+     * @return
      */
-    private boolean setupLoader(HTTPClient client, URL url, String className, 
-            Map<String, String> params) {
-        
+    private boolean setupLoader(HTTPClient client, URL url, String className,
+            Map<String, String> params) throws IOException {
+        client.follow(url);
+        loader = client.getContentsAsBytes("cache" + File.separator + "loader.cache");
+        String secretKey = params.get("0");
+        String ivParamKey = params.get("-1");
+        if (secretKey == null || ivParamKey == null) {
+            LOGGER.severe("invalid security keys: aborting");
+            return false;
+        }
+
         return false;
     }
-    
+
+    private byte[] unscrambleKey(String key) {
+        // unscrambling unscrambleKey method
+        int keyLength = key.length();
+        if (key.isEmpty()) {
+            return new byte[0];
+        }
+        int lengthMod = -4 & keyLength + 3;
+        int unscrambledLength = lengthMod / 4 * 3;
+        //TODO if (keyLength <= lengthMod - 2 || charIndex(key.charAt(lengthMod - 2)) == -1) {
+            unscrambledLength -= 2;
+        //TODO } else if (keyLength <= lengthMod - 1 || -1 == charIndex(key.charAt(lengthMod - 1))) {
+            --unscrambledLength;
+        // } 
+
+        final byte[] keyBytes = new byte[unscrambledLength];
+        //TODO unscramble(keyBytes, 0, key);
+        return keyBytes;
+
+    }
 }

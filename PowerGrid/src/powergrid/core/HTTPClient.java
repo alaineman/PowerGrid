@@ -1,11 +1,15 @@
 package powergrid.core;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
@@ -119,12 +123,37 @@ public class HTTPClient {
         return contents;
     }
     
-    public byte[] getContentsAsBytes() throws IOException {
+    /**
+     * Downloads the contents from the current URL and writes them to the given 
+     * cache File. The contents of the URL are then returned as a byte array.
+     * <p/>
+     * The cache file will be returned when the cache contains the newest 
+     * version.
+     * 
+     * @param cache the cache to write the contents to 
+     * @return the contents of the URL as byte array
+     * @throws IOException when reading or writing the contents failed
+     */
+    public byte[] getContentsAsBytes(String cache) throws IOException {
         HttpURLConnection conn = createConnection();
-        ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
-        WritableByteChannel wbc = Channels.newChannel(new ByteArrayOutputStream());
-        //Hmmm... there should be a shortcut...
-        return null;
+        File cacheFile = new File(cache);
+        if (!cacheFile.exists()) {
+            cacheFile.createNewFile();
+        } else {
+            conn.setIfModifiedSince(cacheFile.lastModified());
+        }
+        if (conn.getResponseCode() != HttpURLConnection.HTTP_NOT_MODIFIED) {
+            ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
+            try (FileOutputStream out = new FileOutputStream(cacheFile)) {
+                out.getChannel().transferFrom(rbc, 0, 1 << 24);
+            }
+        }
+        ByteArrayOutputStream bout = new ByteArrayOutputStream((int) cacheFile.length());
+        WritableByteChannel wbc = Channels.newChannel(bout);
+        try (FileInputStream in = new FileInputStream(cacheFile)) {
+            in.getChannel().transferTo(0, cacheFile.length(), wbc);
+        }
+        return bout.toByteArray();
     }
 
     /**

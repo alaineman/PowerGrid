@@ -1,11 +1,16 @@
 package powergrid.core;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -109,13 +114,17 @@ public class HTTPClient {
         if (!contentsLoaded()) {
             HttpURLConnection conn = createConnection();
             Object loaded = conn.getContent();
-            if (loaded instanceof String) {
-                contents = (String) loaded;
-            } else {
-                throw new UnsupportedOperationException("Unsupported content type");
-            }
+            contents = Objects.toString(loaded);
         }
         return contents;
+    }
+    
+    public byte[] getContentsAsBytes() throws IOException {
+        HttpURLConnection conn = createConnection();
+        ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
+        WritableByteChannel wbc = Channels.newChannel(new ByteArrayOutputStream());
+        //Hmmm... there should be a shortcut...
+        return null;
     }
 
     /**

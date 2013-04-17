@@ -78,7 +78,7 @@ public class RSAccessor {
             if (params.containsKey("haveie6")) {
                 params.put("haveie6", "false");
             }
-            return setupLoader(url, className, params);
+            return setupLoader(client, url, className, params);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, 
                    "An Exception occurred while loading RS client", e);
@@ -92,12 +92,15 @@ public class RSAccessor {
     /**
      * Downloads the Runescape Loader from the given URL, then instantiates it 
      * using the given className and parameters.
+     * @param client the HTTPClient to use
      * @param url the URL to load from
      * @param className the name of the class to run
      * @param params the Applet parameters
      * @return 
      */
-    private boolean setupLoader(URL url, String className, Map<String, String> params) {
+    private boolean setupLoader(HTTPClient client, URL url, String className, 
+            Map<String, String> params) {
+        
         return false;
     }
     

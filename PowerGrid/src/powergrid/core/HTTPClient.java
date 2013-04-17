@@ -14,6 +14,9 @@ import java.util.regex.Pattern;
  * <p/>
  * The page content is decoded before it is returned, so it is advised to use
  * this class when handling server connections with encoded responses.
+ * <p/>
+ * This class also fakes HTTP header information, so to the connected server it 
+ * should appear as if it is a Mozilla client running on Windows 7.
  *
  * @author Chronio
  */
@@ -53,17 +56,44 @@ public class HTTPClient {
      * match the given regular expression.
      *
      * @param pattern the regular expression to scan for
-     * @return a List of all classes matching the given regular expression
+     * @return a Matcher object that matches the given regular expression in 
+     *         the content
      * @throws IOException when the contents of the page could not be loaded
      */
-    public List<String> find(String pattern) throws IOException {
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(getContents());
-        ArrayList<String> results = new ArrayList<>();
-        while (m.find()) {
-            results.add(m.group());
-        }
-        return results;
+    public Matcher find(String pattern) throws IOException {
+        return Pattern.compile(pattern).matcher(getContents());
+    }
+    
+    /**
+     * Finds and returns the first occurrence of the provided regular expression
+     * 
+     * @param pattern the regular expression to match
+     * @param group the regular expression group to return
+     * @return the matching String
+     * @throws IOException when the contents of the page could not be loaded
+     */
+    public String findFirst(String pattern, int group) throws IOException {
+        Matcher m = find(pattern);
+        m.find();
+        return m.group(group);
+    }
+    
+    /**
+     * Scans through the content and finds the first occurrence of the provided 
+     * regular expression. When a match is found, this HTTPClient will follow
+     * the link the regular expression's first group matched.
+     * <p/>
+     * @param pattern the regular expression to match
+     * @return the URL that was navigated to
+     * @throws IOException the loading the contents failed
+     * @throws IllegalStateException when the pattern could not be found
+     */
+    public URL findAndFollow(String pattern) throws IOException {
+        Matcher m = find(pattern);
+        m.find();
+        URL u = new URL(m.group(1));
+        follow(u);
+        return u;
     }
 
     /**

@@ -1,7 +1,13 @@
 package powergrid.core;
 
 import java.applet.Applet;
+import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.regex.Matcher;
+import static powergrid.PowerGrid.LOGGER;
 
 /**
  * Loads the RS client and provides access methods to interact with the client.
@@ -12,6 +18,8 @@ public class RSAccessor {
     
     private URL base;
     private Applet rsClient = null;
+    
+    private byte[] loader = null;
     
     /**
      * Creates a new RSAccessor instance.
@@ -47,11 +55,50 @@ public class RSAccessor {
     }
     
     /**
-     * Loads the Runescape client Applet and runs it.
+     * Navigates the Runescape site to fetch the loader, then downloads and 
+     * runs it.
+     * @return true if and only if the operation was successful, false otherwise.
      */
-    public void load() {
+    public boolean load() {
         HTTPClient client = new HTTPClient(getBaseURL());
-        // TODO implement navigation through RS pages to find the loader.
+        try {
+            client.follow(new URL(getBaseURL().toString() + "game.ws?j=1"));
+            // find the source of the frame's contents
+            URL url = client.findAndFollow("src=\"(.*)\" frameborder");
+            // find the java archive this source links to
+            String archiveLink = client.findFirst("archive=(.*) ", 1);
+            url = new URL(url.getProtocol() + "://" + 
+                    url.getHost() + "/" + archiveLink);
+            String className = client.findFirst("code=(.*) ", 1);
+            HashMap<String, String> params = new HashMap<>(16, 7/8f);
+            Matcher m = client.find("<param name=\"([^\\s]+)\"\\s+value=\"([^>]*)\">");
+            while (m.find()) {
+                params.put(m.group(1), m.group(2));
+            }
+            if (params.containsKey("haveie6")) {
+                params.put("haveie6", "false");
+            }
+            return setupLoader(url, className, params);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, 
+                   "An Exception occurred while loading RS client", e);
+        } catch (IllegalStateException e) {
+            LOGGER.log(Level.SEVERE, 
+                   "Required data not found in URL: " + client.getCurrent(), e);
+        }
+        return false;
+    }
+    
+    /**
+     * Downloads the Runescape Loader from the given URL, then instantiates it 
+     * using the given className and parameters.
+     * @param url the URL to load from
+     * @param className the name of the class to run
+     * @param params the Applet parameters
+     * @return 
+     */
+    private boolean setupLoader(URL url, String className, Map<String, String> params) {
+        return false;
     }
     
 }

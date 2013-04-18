@@ -1,5 +1,6 @@
 package powergrid.core;
 
+import powergrid.core.decoding.InputStreamDecoder;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,11 +10,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -259,7 +257,7 @@ public class HTTPClient {
         if (encoding == null) {
             return null;
         } else {
-            return new Decoder(in).decode(encoding.split(":")).get();
+            return new InputStreamDecoder(in).decode(encoding.split(":")).get();
         }
     }
 }

@@ -1,4 +1,4 @@
-package powergrid.core;
+package powergrid.core.decoding;
 
 import javax.crypto.Cipher;
 

@@ -127,15 +127,46 @@ public class RSAccessor {
         }
         int lengthMod = -4 & keyLength + 3;
         int unscrambledLength = lengthMod / 4 * 3;
-        //TODO if (keyLength <= lengthMod - 2 || charIndex(key.charAt(lengthMod - 2)) == -1) {
+        if (keyLength <= lengthMod - 2 || charIndex(key.charAt(lengthMod - 2)) == -1) {
             unscrambledLength -= 2;
-        //TODO } else if (keyLength <= lengthMod - 1 || -1 == charIndex(key.charAt(lengthMod - 1))) {
+        } else if (keyLength <= lengthMod - 1 || -1 == charIndex(key.charAt(lengthMod - 1))) {
             --unscrambledLength;
-        // } 
+        } 
 
         final byte[] keyBytes = new byte[unscrambledLength];
         //TODO unscramble(keyBytes, 0, key);
         return keyBytes;
 
+    }
+    
+    private int charIndex(char c) {
+        if (c >= 42 && c < 122) {
+            if (c >= 65 && c <= 90) {
+                return c - 65;
+            }
+            if (c >= 97 && c <= 122) {
+                return c + 26 - 97;
+            }
+            if (c >= 48 && c <= 57) {
+                return c + 4;
+            }
+            if (c == 42 || c == 43) {
+                return 62;
+            }
+            if (c == 45 || c == 47) {
+                return 63;
+            }
+        }
+        return -1;
+    }
+    
+    private void unscramble(byte[] bytes, int off, String key) {
+        int keyLength = key.length();
+        
+        int pos = off;
+        
+        while (off < keyLength) {
+            
+        }
     }
 }

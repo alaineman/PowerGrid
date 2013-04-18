@@ -1,4 +1,4 @@
-package powergrid.core;
+package powergrid.core.decoding;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,18 +32,18 @@ import javax.crypto.spec.SecretKeySpec;
  * In case {@code cis} is used with the Cipher algorithm "XOR", the custom 
  * XORInputStream is used instead of the Java API's native CipherInputStream.
  */
-public class Decoder {
+public class InputStreamDecoder {
 
     private static byte[] sharedKey = null;
     
     private InputStream in;
 
     /**
-     * Creates a new Decoder instance that decodes the provided InputStream.
+     * Creates a new InputStreamDecoder instance that decodes the provided InputStream.
      *
      * @param in the InputStream to decodeBase64
      */
-    protected Decoder(InputStream in) {
+    public InputStreamDecoder(InputStream in) {
         assert in != null;
         this.in = in;
     }
@@ -64,7 +64,7 @@ public class Decoder {
      * @return itself for fluency
      * @throws IOException when the decoding failed
      */
-    public Decoder decode(String method) throws IOException {
+    public InputStreamDecoder decode(String method) throws IOException {
         if (method != null) {
             String m = method.toLowerCase();
             switch (m) {
@@ -106,7 +106,7 @@ public class Decoder {
      * @return itself for fluency
      * @throws IOException when the decoding failed
      */
-    public Decoder decode(String[] methods) throws IOException {
+    public InputStreamDecoder decode(String[] methods) throws IOException {
         if (methods != null) {
             for (String method : methods) {
                 decode(method);
@@ -253,14 +253,14 @@ public class Decoder {
     }
 
     /**
-     * Returns a String-representation of this Decoder, including the
+     * Returns a String-representation of this InputStreamDecoder, including the
      * String-value of the InputStream that would be returned if the
      * {@code get()} method was called.
      * <p/>
      * If, for any reason, the InputStream is equal to {@code null}, then the
-     * String {@code "Decoder(null)"} is returned.
+     * String {@code "InputStreamDecoder(null)"} is returned.
      * <p/>
-     * @return a String-representation of this Decoder.
+     * @return a String-representation of this InputStreamDecoder.
      */
     @Override
     public String toString() {

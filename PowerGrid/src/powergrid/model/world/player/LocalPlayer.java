@@ -3,6 +3,7 @@ package powergrid.model.world.player;
 import org.powerbot.game.client.RSPlayer;
 import powergrid.model.item.Bank;
 import powergrid.model.item.Equipment;
+import powergrid.model.item.GrandExchange;
 import powergrid.model.item.Inventory;
 import powergrid.model.item.Item;
 /**
@@ -11,6 +12,7 @@ import powergrid.model.item.Item;
  */
 public class LocalPlayer extends Player {
  
+    private GrandExchange grandexchange;
     private Inventory inventory;
     private Equipment equipment;
     private Bank bank;
@@ -68,9 +70,12 @@ public class LocalPlayer extends Player {
     }
     
     
-    //getGE
-    //public Bank getBank(){}      
+    public GrandExchange getGrandExchange(){
+        return grandexchange.copy();
+    }
+    
     //Quests
+    //Summoning
     //Achievements
         
     public boolean isLoggedIn(){

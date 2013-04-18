@@ -5,10 +5,14 @@
 - Create more listeners for RSMonitor
 
 - implement Local Player methods
-    -> Summoning, Money, GE
+    -> Summoning, Money
 
 - Rework wrapper around directly to our CLIENT
 
 - Add interface Requirement to model and update interactors and pathfinders
 
-- Add test classes and javadoc, and clean up classes
+- Decryption in C
+
+- Account functionality in C
+
+- Add test classes and javadocs, and clean up classes

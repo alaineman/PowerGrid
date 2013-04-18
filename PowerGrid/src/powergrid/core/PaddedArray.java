@@ -9,13 +9,16 @@ import java.lang.reflect.Array;
  * Wrapping the array in an instance of this class prevents the need to copy 
  * the array to an array of the correct size, and as such may give a reasonably
  * large performance increase for large arrays.
- * 
- * @param <T> the type of this sub array
+ * <p/>
+ * Type safety cannot be guaranteed when using this class. It's the 
+ * responsibility of the developer to ensure that array is casted to the 
+ * correct type. This decision was made in favor of performance over safety.
+ * <p/>
  * @author Chronio
  */
-public class PaddedArray<T> {
+public class PaddedArray {
     
-    private T[] arr;
+    private Object arr;
     private int off;
     private int len;
     
@@ -26,11 +29,11 @@ public class PaddedArray<T> {
      * treatment.
      * @param arr the array this PaddedArray references
      */
-    public PaddedArray(T[] arr) {
+    public PaddedArray(Object arr) {
         assert arr != null;
         this.arr = arr;
         this.off = 0;
-        this.len = arr.length;
+        this.len = Array.getLength(arr);
     }
     
     /**
@@ -44,15 +47,15 @@ public class PaddedArray<T> {
      * @param off the offset of the array
      * @param len the unpadded length of the array
      */
-    public PaddedArray(T[] arr, int off, int len) {
+    public PaddedArray(Object arr, int off, int len) {
         assert arr != null && off >= 0 && len >= 0 
-                && off + len - arr.length < 0;
+                && off + len - Array.getLength(arr) < 0;
         this.arr = arr;
         this.off = off;
         this.len = len;
     }
     
-    public T[] getArray() {
+    public Object getArray() {
         return arr;
     }
     
@@ -61,16 +64,19 @@ public class PaddedArray<T> {
     }
     
     public int getArrayLength() {
-        return getArray().length;
+        return Array.getLength(arr);
     }
     
     public int getOffset() {
         return off;
     }
     
-    public T[] getTrimmedCopy() {
+    public Object getTrimmedCopy() {
         @SuppressWarnings("unchecked") // since we know it's going to be that type
-        T[] copy = (T[]) Array.newInstance(arr.getClass().getComponentType(), len);
+        Object copy = Array.newInstance(arr.getClass().getComponentType(), len);
+        // Even though arr and copy are technically not array types, this class
+        // assumes they are, and so the invocation of System.arraycopy is 
+        // perfectly valid here.
         System.arraycopy(arr, off, copy, 0, len);
         return copy;
     }

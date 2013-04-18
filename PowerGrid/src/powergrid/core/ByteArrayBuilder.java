@@ -72,6 +72,18 @@ public class ByteArrayBuilder {
     }
     
     /**
+     * Returns a PaddedArray instance of the buffer of this ByteArrayBuilder.
+     * <p/>
+     * Since this invalidates the constraint that the buffer should be private, 
+     * the buffer is set to null when this method is called, similar to the 
+     * {@code get()} method.
+     * @return a PaddedArray containing the buffer of this ByteArayBuilder
+     */
+    public synchronized PaddedArray getPaddedArray() {
+        return new PaddedArray(get(), 0, getCount());
+    }
+    
+    /**
      * Returns the amount of bytes that was read with this ByteArrayBuilder.
      * @return the size of this ByteArrayBuilder's buffer
      */

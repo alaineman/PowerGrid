@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import powergrid.core.ByteArrayBuilder;
+import powergrid.core.PaddedArray;
 
 /**
  * Splits the contents of a byte array that represents a jar file in its 
@@ -15,6 +16,8 @@ import powergrid.core.ByteArrayBuilder;
  * @author Chronio
  */
 public class JarExtractor {
+    
+    public static final int INNER_PACK_SIZE = 2048;
     
     private byte[] source;
     private Map<String, byte[]> decoded;
@@ -45,11 +48,17 @@ public class JarExtractor {
         if (decoded == null) {
             JarInputStream jarIn = new JarInputStream(
                     new ByteArrayInputStream(getRawSource()));
+            PaddedArray inner_pack = null;
             for (JarEntry entry = jarIn.getNextJarEntry(); entry != null; 
                     entry = jarIn.getNextJarEntry()) {
                 if (entry.getName().equals("inner.pack.gz")) {
-                    
+                    ByteArrayBuilder bab = new ByteArrayBuilder(INNER_PACK_SIZE);
+                    bab.load(jarIn);
+                    inner_pack = bab.getPaddedArray();
                 }
+            }
+            if (inner_pack != null) {
+                
             }
         }
         return decoded;

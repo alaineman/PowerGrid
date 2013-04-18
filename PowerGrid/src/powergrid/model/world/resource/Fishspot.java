@@ -1,6 +1,7 @@
 package powergrid.model.world.resource;
 
 import powergrid.model.item.Item;
+import powergrid.model.world.player.Skill;
 
 /**
  *
@@ -27,6 +28,11 @@ public class Fishspot extends ResourceTile {
     @Override
     public boolean canGather() {
         return isAvailable();
+    }
+
+    @Override
+    public boolean requirementMet(Skill object, Object option) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

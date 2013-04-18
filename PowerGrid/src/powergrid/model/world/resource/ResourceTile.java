@@ -1,15 +1,17 @@
 package powergrid.model.world.resource;
 
 import powergrid.model.Point;
+import powergrid.model.Requirement;
 import powergrid.model.item.Item;
 import powergrid.model.rsbot.RSGroundImpl;
 import powergrid.model.world.GameTile;
+import powergrid.model.world.player.Skill;
 
 /**
  *
  * @author Alaineman
  */
-public abstract class ResourceTile extends GameTile {
+public abstract class ResourceTile extends GameTile implements Requirement<Skill> {
         
     private Item[] items;
     

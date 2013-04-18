@@ -1,7 +1,7 @@
-
 package powergrid.model.world.resource;
 
 import powergrid.model.item.Item;
+import powergrid.model.world.player.Skill;
 
 /**
  *
@@ -16,7 +16,7 @@ public class Tree extends ResourceTile {
     @Override
     public void gather() {
         if (canGather()) {
-            //get id and interact "chop"
+            //call interactor
         }
     }
 
@@ -29,6 +29,11 @@ public class Tree extends ResourceTile {
     public boolean canGather() {
         if (isAvailable()) return true;
         return false;
+    }
+
+    @Override
+    public boolean requirementMet(Skill object, Object option) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

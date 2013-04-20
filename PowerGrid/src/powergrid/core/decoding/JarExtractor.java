@@ -13,15 +13,31 @@ import powergrid.core.PaddedArray;
  * individual classes, and produces a mapping from Class name to the contents
  * of that particular Class.
  * <p/>
+ * This class has been made to work with the Runescape Loader file, and 
+ * therefore will not work with other files.
+ * <p/>
+ * This class does not handle the source array in a safe way. Therefore, the 
+ * developer must make sure that the array is not being altered during the 
+ * process of decoding, since this can have unexpected results. The decision
+ * not to copy the array was made to improve performance, since the source array
+ * has the potential to be large.
+ * 
  * @author Chronio
  */
 public class JarExtractor {
     
+    /**
+     * The expected size of the inner.pack.gz file in the Runescape Loader.
+     */
     public static final int INNER_PACK_SIZE = 2048;
     
     private byte[] source;
     private Map<String, byte[]> decoded;
     
+    /**
+     * Creates a new JarExtractor to decode the provided source
+     * @param source the byte array containing the jar file's contents
+     */
     public JarExtractor(byte[] source) {
         assert source != null;
         this.source = source;
@@ -38,7 +54,11 @@ public class JarExtractor {
     }
     
     /**
-     * Decodes, splits and returns the byte array in this JarExtractor. 
+     * Decodes, splits and returns the byte array in this JarExtractor.
+     * <p/>
+     * If this method has been called before, the result from that time is 
+     * returned.
+     * 
      * @param secretKey the secret key belonging to the byte array
      * @param ivParamKey the ivParam key belonging to the byte array
      * @return the decoded mapping from class name to class source
@@ -46,6 +66,9 @@ public class JarExtractor {
      */
     public Map<String, byte[]> getDecoded(String secretKey, String ivParamKey) throws IOException {
         if (decoded == null) {
+            if (secretKey == null || ivParamKey == null) {
+                return null;
+            }
             JarInputStream jarIn = new JarInputStream(
                     new ByteArrayInputStream(getRawSource()));
             PaddedArray inner_pack = null;
@@ -63,5 +86,4 @@ public class JarExtractor {
         }
         return decoded;
     }
-    
 }

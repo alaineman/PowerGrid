@@ -119,10 +119,14 @@ public class RSAccessor {
         return false;
     }
 
-    private byte[] unscrambleKey(String key) {
-        // unscrambling unscrambleKey method
+    /**
+     * Unscrambles the given key and returns it in a byte array.
+     * @param key the key to unscramble
+     * @return a byte array containing the unscrambled key
+     */
+    private byte[] unscrambleKeyJava(String key) {
         int keyLength = key.length();
-        if (key.isEmpty()) {
+        if (keyLength == 0) {
             return new byte[0];
         }
         int lengthMod = -4 & keyLength + 3;
@@ -131,14 +135,42 @@ public class RSAccessor {
             unscrambledLength -= 2;
         } else if (keyLength <= lengthMod - 1 || -1 == charIndex(key.charAt(lengthMod - 1))) {
             --unscrambledLength;
-        } 
+        }
 
-        final byte[] keyBytes = new byte[unscrambledLength];
-        //TODO unscramble(keyBytes, 0, key);
-        return keyBytes;
+        byte[] bytes = new byte[unscrambledLength];
+        int offset = 0;
+        int pos = 0;
+
+        while (pos < keyLength) {
+            int pos_1 = keyLength > pos + 1 ? charIndex(key.charAt(pos + 1)) : -1;
+            bytes[offset++] = (byte) (pos_1 >>> 4 | charIndex(key.charAt(pos)) << 2);
+            if (pos + 2 < keyLength) {
+                int pos_2 = charIndex(key.charAt(2 + pos));
+                if (pos_2 >= 0) {
+                    bytes[offset++] = (byte) (pos_1 << 4 & 240 | pos_2 >>> 2);
+                    if (pos + 3 < keyLength) {
+                        int pos_3 = charIndex(key.charAt(3 + pos));
+                        if (pos_3 >= 0) {
+                            bytes[offset++] = (byte) (192 & pos_2 << 6 | pos_3);
+                            pos += 4;
+                            continue;
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        return bytes;
 
     }
+
+    private native byte[] unscramble(String key, int offset);
     
+    /**
+     * Looks up the char index of the provided char. 
+     * @param c the char to look up
+     * @return the index belonging to that char
+     */
     private int charIndex(char c) {
         if (c >= 42 && c < 122) {
             if (c >= 65 && c <= 90) {
@@ -158,15 +190,5 @@ public class RSAccessor {
             }
         }
         return -1;
-    }
-    
-    private void unscramble(byte[] bytes, int off, String key) {
-        int keyLength = key.length();
-        
-        int pos = off;
-        
-        while (off < keyLength) {
-            
-        }
     }
 }

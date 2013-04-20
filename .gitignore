@@ -12,3 +12,5 @@
 
 # Linux backup files
 *~
+/CppPowerGrid/build/
+/CppPowerGrid/dist/

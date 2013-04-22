@@ -25,12 +25,12 @@ namespace powergrid {
         args.nOptions = 2;
         args.options = new JavaVMOption[2];
 
-        args.options[0].optionString = "-Djava.class.path=" + getRSLink();
+        args.options[0].optionString = "-Djava.class.path=" + getRSGamepackLink();
         args.options[1].optionString = "-Xmx256m";
 
         jint result = JNI_CreateJavaVM(&jvm, reinterpret_cast<void **>(&env), &args);
         if (result != JNI_OK) {
-            cout << "Failed to create JVM" << endl;
+            cout << "Failed to create JVM, JNI result was " << result << endl;
             return EXIT_FAILURE;
         }
         jclass mainClass = env->FindClass("Rs2Applet");
@@ -50,7 +50,7 @@ namespace powergrid {
         return EXIT_SUCCESS;
     }
 
-    char* getRSLink() {
+    char* getRSGamepackLink() {
         char* link = NULL;
         stringstream stream;
         try {

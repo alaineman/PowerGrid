@@ -8,10 +8,13 @@
 #ifndef LAUNCHER_H
 #define	LAUNCHER_H
 
-/* Collects the configuration for the Runescape client.
- * It returns the direct full link to the Loader jar file as a string
- */
-std::string getRSLink();
+namespace powergrid {
+    
+    /* Collects the configuration for the Runescape client.
+     * It returns the direct full link to the Loader jar file as a string
+     */
+    std::string getRSGamepackLink();
 
+}
 #endif	/* LAUNCHER_H */
 

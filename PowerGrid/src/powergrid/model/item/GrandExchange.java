@@ -38,9 +38,9 @@ public class GrandExchange implements Copyable {
      * Creates a new Grand Exchange object with the given GrandSlots
      * @param gslots the GrandSlot elements
      */
-    public GrandExchange(GrandSlot[] gslots) {
-        assert gslots.length >= 0 && gslots.length < 6;
-        slots = Arrays.copyOf(gslots, GE_CAPACITY);              // ??? 
+    public GrandExchange(GrandSlot[] gslots) throws IndexOutOfBoundsException {
+        if(gslots.length < 0 || gslots.length > 5) throw new IndexOutOfBoundsException();        
+        slots = Arrays.copyOf(gslots, GE_CAPACITY);             
     }    
     
     /**
@@ -83,7 +83,8 @@ public class GrandExchange implements Copyable {
      * @param index the specified index
      * @return true if occupied, false otherwise
      */
-    public boolean isOccupied(int index){
+    public boolean isOccupied(int index) throws IndexOutOfBoundsException {
+        if(index < 0 || index > 5) throw new IndexOutOfBoundsException();
         return slots[index] == null || slots[index].getItem() == null;
     }   
     

@@ -27,6 +27,9 @@
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>Chronio</word>
+            <word>classpath</word>
+            <word>jclass</word>
+            <word>namespace</word>
             <word>Runescape</word>
         </spellchecker-wordlist>
     </configuration>

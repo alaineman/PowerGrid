@@ -35,7 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/759273772/Launcher.o
+	${OBJECTDIR}/_ext/759273772/Launcher.o \
+	${OBJECTDIR}/_ext/291684570/JavaEnv.o
 
 
 # C Compiler Flags
@@ -52,7 +53,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=-lcurlpp -lcurl
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -60,12 +61,17 @@ LDLIBSOPTIONS=
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpppowergrid: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpppowergrid ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpppowergrid ${OBJECTFILES} ${LDLIBSOPTIONS} -shared -framework JavaVM -Wl,-S
 
 ${OBJECTDIR}/_ext/759273772/Launcher.o: /Users/patrick/git/PowerGrid/CppPowerGrid/Launcher.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/759273772
 	${RM} $@.d
 	$(COMPILE.cc) -g -I/Library/Java/JavaVirtualMachines/jdk1.7.0_17.jdk/Contents/Home/include -I/Library/Java/JavaVirtualMachines/jdk1.7.0_17.jdk/Contents/Home/include/darwin -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/759273772/Launcher.o /Users/patrick/git/PowerGrid/CppPowerGrid/Launcher.cpp
+
+${OBJECTDIR}/_ext/291684570/JavaEnv.o: /Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/291684570
+	${RM} $@.d
+	$(COMPILE.cc) -g -I/Library/Java/JavaVirtualMachines/jdk1.7.0_17.jdk/Contents/Home/include -I/Library/Java/JavaVirtualMachines/jdk1.7.0_17.jdk/Contents/Home/include/darwin -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/291684570/JavaEnv.o /Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.cpp
 
 # Subprojects
 .build-subprojects:

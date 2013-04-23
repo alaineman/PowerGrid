@@ -14,14 +14,14 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc
-CCC=g++
-CXX=g++
+CC=clang
+CCC=clang++
+CXX=clang++
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-MacOSX
+CND_PLATFORM=CLang-MacOSX
 CND_DLIB_EXT=dylib
 CND_CONF=Release
 CND_DISTDIR=dist
@@ -35,7 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/759273772/Launcher.o
+	${OBJECTDIR}/_ext/759273772/Launcher.o \
+	${OBJECTDIR}/_ext/291684570/JavaEnv.o
 
 
 # C Compiler Flags
@@ -66,6 +67,11 @@ ${OBJECTDIR}/_ext/759273772/Launcher.o: /Users/patrick/git/PowerGrid/CppPowerGri
 	${MKDIR} -p ${OBJECTDIR}/_ext/759273772
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/759273772/Launcher.o /Users/patrick/git/PowerGrid/CppPowerGrid/Launcher.cpp
+
+${OBJECTDIR}/_ext/291684570/JavaEnv.o: /Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/291684570
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/291684570/JavaEnv.o /Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.cpp
 
 # Subprojects
 .build-subprojects:

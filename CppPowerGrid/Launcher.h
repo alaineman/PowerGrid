@@ -13,7 +13,7 @@ namespace powergrid {
     /* Collects the configuration for the Runescape client.
      * It returns the direct full link to the Loader jar file as a string
      */
-    std::string getRSGamepackLink();
+    char* getRSGamepackLink();
 
 }
 #endif	/* LAUNCHER_H */

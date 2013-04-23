@@ -4,6 +4,9 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="reflect" projectFiles="true">
+        <itemPath>/Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.h</itemPath>
+      </logicalFolder>
       <itemPath>/Users/patrick/git/PowerGrid/CppPowerGrid/Launcher.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -13,6 +16,9 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="reflect" projectFiles="true">
+        <itemPath>/Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.cpp</itemPath>
+      </logicalFolder>
       <itemPath>/Users/patrick/git/PowerGrid/CppPowerGrid/Launcher.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -44,6 +50,16 @@
             flavor2="0">
       </item>
       <item path="/Users/patrick/git/PowerGrid/CppPowerGrid/Launcher.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -80,11 +96,21 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="/Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="Debug-Mac" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>default</compilerSet>
+        <compilerSet>GNU|GNU</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
@@ -94,7 +120,16 @@
             <pElem>/Library/Java/JavaVirtualMachines/jdk1.7.0_17.jdk/Contents/Home/include</pElem>
             <pElem>/Library/Java/JavaVirtualMachines/jdk1.7.0_17.jdk/Contents/Home/include/darwin</pElem>
           </incDir>
+          <useLinkerLibraries>false</useLinkerLibraries>
         </ccTool>
+        <linkerTool>
+          <stripSymbols>true</stripSymbols>
+          <linkerLibItems>
+            <linkerLibLibItem>curlpp</linkerLibLibItem>
+            <linkerLibLibItem>curl</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-shared -framework JavaVM</commandLine>
+        </linkerTool>
       </compileType>
       <item path="/Users/patrick/git/PowerGrid/CppPowerGrid/Launcher.cpp"
             ex="false"
@@ -102,6 +137,16 @@
             flavor2="0">
       </item>
       <item path="/Users/patrick/git/PowerGrid/CppPowerGrid/Launcher.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/Users/patrick/git/PowerGrid/CppPowerGrid/reflect/JavaEnv.h"
             ex="false"
             tool="3"
             flavor2="0">

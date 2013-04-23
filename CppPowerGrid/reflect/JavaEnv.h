@@ -1,6 +1,10 @@
 /* 
- * File:   Core.h
+ * File:   JavaEnv.h
  * Author: Chronio
+ * 
+ * Defines a Java Environment object that acts as a wrapper around JNI.
+ * The object can perform calls to the running Java environment in a fashion 
+ * similar to the Java Reflection library. 
  *
  * Created on April 22, 2013, 9:45 AM
  */
@@ -8,6 +12,13 @@
 
 #ifndef JAVAENV_H
 #define	JAVAENV_H
+
+/* Error codes for the JavaEnv */
+#define JAVAENV_MISSING_CLASS 1
+#define JAVAENV_MISSING_METHOD 2;
+
+/* Macro that converts a string literal to a char* type. */
+#define C_TEXT( text ) ((char*)std::string( text ).c_str())
 
 namespace powergrid {
 namespace reflect {
@@ -33,15 +44,11 @@ namespace reflect {
         /** Sets up and starts the Java VM, using the given classpath and main
          *  Class.
          */
-        virtual int Setup(const char* classpath, const char* mainClass);
+        virtual void Setup(const char* classpath, const char* mainClass);
         /** Finds and returns the class with the given fully qualified name. 
          *  When no class with that name is found, this function returns NULL.
          */
         virtual jclass FindClass(const char* name);
-        /** Finds and returns a class that uses the given annotation class.
-         *  When no class with that annotation is found, this function returns NULL.
-         */
-        virtual jclass FindClass(jclass annotation);
         /** Finds all subclasses of the given parent class and places them in 
          *  the given jclass array. This method returns the amount of classes 
          *  found. Note that this is an expensive operation.

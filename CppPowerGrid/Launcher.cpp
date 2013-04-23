@@ -1,66 +1,59 @@
 #include <iostream>
+#include <sstream>
 #include <cstdlib>
 #include "Launcher.h"
 #include "jni.h"
+#include "reflect/JavaEnv.h"
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 #include <curlpp/Exception.hpp>
 
 using namespace std;
+
+using curlpp::Easy;
 using curlpp::options::Url;
 using curlpp::options::WriteStream;
+using powergrid::reflect::JavaEnv;
 
 namespace powergrid {
+
+    JavaEnv* env;
     
-    cURLpp::Easy easyHandle;
-
     int main(int argc, char** argv) {
-        easyHandle = new cURLpp::Easy();
+        try {
+            const char* link = getRSGamepackLink();
+            env->Setup(".", "Rs2Applet");
         
-        // Set up the Java Virtual Machine
-        JavaVM* jvm;
-        JNIEnv* env;
-        JavaVMInitArgs args;
-        args.version = JNI_VERSION_1_6;
-        args.nOptions = 2;
-        args.options = new JavaVMOption[2];
-
-        args.options[0].optionString = "-Djava.class.path=" + getRSGamepackLink();
-        args.options[1].optionString = "-Xmx256m";
-
-        jint result = JNI_CreateJavaVM(&jvm, reinterpret_cast<void **>(&env), &args);
-        if (result != JNI_OK) {
-            cout << "Failed to create JVM, JNI result was " << result << endl;
-            return EXIT_FAILURE;
+            while (false /* running */) {
+                //TODO run the bot
+                
+            }
+            
+            delete env;
+        } catch (int e) {
+            cout << "An error occurred: error code " << e << endl;
+        } catch (exception e) {
+            cout << "An exception occurred: " << e.what() << endl;
+        } catch (...) {
+            cout << "An undefined error has occurred" << endl;
         }
-        jclass mainClass = env->FindClass("Rs2Applet");
-        if (mainClass == NULL) {
-            cout << "Could not find the required class on the classPath" << endl;
-            return EXIT_FAILURE;
-        }
-        
-        env->CallStaticVoidMethod(mainClass, "main", NULL);
-        
-        while (true /* running */) {
-            /* Read and update fields */
-        }
-        
-        jvm->DestroyJavaVM();
-        
         return EXIT_SUCCESS;
     }
 
     char* getRSGamepackLink() {
+        Easy* easyHandle = new Easy();
         char* link = NULL;
         stringstream stream;
         try {
-            easyHandle.setOpt(Url("http://www.runescape.com/k=3/l=en/jav_config.ws"));
-            easyHandle.setOpt(WriteStream(&stream))
-            easyHandle.perform();
-        } catch (std::exception e) {
+            easyHandle->setOpt(Url("http://www.runescape.com/k=3/l=en/jav_config.ws"));
+            easyHandle->setOpt(WriteStream(&stream));
+            easyHandle->perform();
+        } catch (exception e) {
             cout << "Failed to set URL, exception occurred: " << e.what() << endl;
         }
-        //TODO dump and filter stream and store in link.
+        cout << "Stream contents:" << endl << stream;
+        
+        delete easyHandle;
         return link;
     }
 

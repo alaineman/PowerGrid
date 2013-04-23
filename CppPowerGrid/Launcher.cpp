@@ -4,57 +4,63 @@
 #include "Launcher.h"
 #include "jni.h"
 #include "reflect/JavaEnv.h"
-#include <curlpp/Easy.hpp>
-#include <curlpp/Options.hpp>
-#include <curlpp/Exception.hpp>
+#include <windows.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tchar.h>
 
 using namespace std;
 
-using curlpp::Easy;
-using curlpp::options::Url;
-using curlpp::options::WriteStream;
+//using curlpp::Easy;
+//using curlpp::options::Url;
+//using curlpp::options::WriteStream;
 using powergrid::reflect::JavaEnv;
 
-namespace powergrid {
 
-    JavaEnv* env;
     
-    int main(int argc, char** argv) {
+    int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
+					LPTSTR lpCmdLine, int nCmdShow) {
+		JavaEnv env = JavaEnv(hInstance);
         try {
-            const char* link = getRSGamepackLink();
-            env->Setup(".", "Rs2Applet");
-        
-            while (false /* running */) {
-                //TODO run the bot
-                
-            }
-            
-            delete env;
+            //const char* link = powergrid::getRSGamepackLink();
+            env.Setup(".", "");
+			MessageBox(NULL, "Environment created", "Hoera", MB_OK);
+			//jclass objectClass = env->FindClass("java.lang.Object");
+			//jobject o = env->Env()->AllocObject(objectClass);
+			//cout << "Created Object: " << env->AsString(o) << endl;
+			
+            //delete &env; 
         } catch (int e) {
-            cout << "An error occurred: error code " << e << endl;
+            MessageBox(NULL, "Exception number " + e, "Exception", MB_OK);
+			return EXIT_FAILURE;
         } catch (exception e) {
-            cout << "An exception occurred: " << e.what() << endl;
+			string msg = "Exception: ";
+			msg += e.what();
+            MessageBox(NULL, msg.c_str(), "Exception", MB_OK);
+			return EXIT_FAILURE;
         } catch (...) {
-            cout << "An undefined error has occurred" << endl;
+            MessageBox(NULL, "Unknown Exception", "Exception", MB_OK);
+			return EXIT_FAILURE;
         }
         return EXIT_SUCCESS;
     }
 
-    char* getRSGamepackLink() {
-        Easy* easyHandle = new Easy();
-        char* link = NULL;
-        stringstream stream;
-        try {
-            easyHandle->setOpt(Url("http://www.runescape.com/k=3/l=en/jav_config.ws"));
-            easyHandle->setOpt(WriteStream(&stream));
-            easyHandle->perform();
-        } catch (exception e) {
-            cout << "Failed to set URL, exception occurred: " << e.what() << endl;
-        }
-        cout << "Stream contents:" << endl << stream;
-        
-        delete easyHandle;
-        return link;
-    }
-
-}
+//namespace powergrid {
+//    char* getRSGamepackLink() {
+//        //Easy* easyHandle = new Easy();
+//        char* link = NULL;
+//        stringstream stream;
+//        try {
+//            //easyHandle->setOpt(Url("http://www.runescape.com/k=3/l=en/jav_config.ws"));
+//            //easyHandle->setOpt(WriteStream(&stream));
+//            //easyHandle->perform();
+//        } catch (exception e) {
+//            cout << "Failed to set URL, exception occurred: " << e.what() << endl;
+//        }
+//        cout << "Stream contents:" << endl << stream;
+//        
+//        //delete easyHandle;
+//        return link;
+//    }
+//
+//}

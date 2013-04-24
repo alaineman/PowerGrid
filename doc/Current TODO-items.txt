@@ -22,7 +22,7 @@ Alaineman:
 	- [OPT] Design the caching system for storing RS client data.
 
 Milestone clean-up:
-	- [REQ] Come up with a way to run a Java Applet in a Windows frame.
+	- [OPT] Come up with a way to run a Java Applet in a Windows frame.
 	- [REQ] Identify and repair any bugs in the core JNI connection layer.
 
 <<< Milestone: version 0.1 >>>

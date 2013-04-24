@@ -1,0 +1,31 @@
+## Global PowerGrid development plan ## 
+
+- create and finish JavaEnv class
+- create and test loading and running the environment.
+- Set up a window containing the Applet. 
+- version 0.1: client loader
+
+- implement reflection engine to collect RS data.
+- implement caching model to store RS data.
+- version 0.2: reflection enabled client
+
+- build an event injection system that can inject various input events into the client
+- version 0.3: working reflection client
+
+- create a Task mechanism for running entire tasks at once, and create various basic tasks.
+- version 0.4: useful reflection client
+
+- create various loaders, handlers and operators for handling various objects in the RS environment.
+- create an extendible Lua parser to execute custom code.
+- version 0.5: extendible reflection client
+
+- ... (Any missing required functionality)
+
+- test, verify and fix bugs
+- version 1.0: fully functional extendible reflection client
+
+- create API for more dynamic tasks
+- ... (whatever else comes up)
+- version 2.0: revised extendible reflection client
+
+- ... (continuous development cycle)

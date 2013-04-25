@@ -77,6 +77,9 @@ namespace reflect {
  
 		//Create the JVM
 		jint res = createJVM(&jvm, (void**)&env, &vm_args);
+
+		jvm->AttachCurrentThread((void**)&env, NULL);
+
 		if (res < 0) {
 			throw JavaEnvException("Error Creating JVM, result code: " + res);
 		}
@@ -85,12 +88,12 @@ namespace reflect {
 			if (c == NULL) {
 				throw JavaEnvException("Main Class not on provided classpath");
 			}
-			jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava.lang.String;)V");
+			jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
 			if (main == NULL) {
 				throw JavaEnvException("Provided class does not contain main method");
 			}
 			jobjectArray mainArgs = env->NewObjectArray(0, 
-				env->FindClass("java.lang.String"), NULL);
+				env->FindClass("java/lang/String"), NULL);
         
 			env->CallStaticVoidMethod(c, main, mainArgs);
 		}
@@ -114,6 +117,7 @@ namespace reflect {
     
     int JavaEnv::Terminate() {
 		if (jvm != NULL) {
+			jvm->DetachCurrentThread();
 			jvm->DestroyJavaVM();
 		}
         return 0;
@@ -124,8 +128,8 @@ namespace reflect {
 	}
 
 	string JavaEnv::AsString(jobject object) {
-		jmethodID getClassMethod = FindMethod(FindClass("java.lang.Object"), 
-			"toString", "()Ljava.lang.String;");
+		jmethodID getClassMethod = FindMethod(FindClass("java/lang/Object"), 
+			"toString", "()Ljava/lang/String;");
 		jstring res = (jstring)env->CallObjectMethod(object, getClassMethod);
 		return string(env->GetStringUTFChars(res, NULL));
 	}
@@ -139,7 +143,7 @@ namespace reflect {
 
 		jclass eClass = NULL;
 
-		eClass = env->FindClass("java.lang.Exception");
+		eClass = env->FindClass("java/lang/Exception");
 		env->ThrowNew(eClass, errorMessage);
 		env->DeleteLocalRef(eClass);
 	}

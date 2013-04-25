@@ -36,34 +36,12 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	env = JavaEnv(hInstance);
     try {
         env.Setup(NULL, NULL);
-
-		jclass objectClass = env.FindClass("java.lang.Object");
-		if (objectClass == NULL) {
-			throw "Failed to get Object Class from Java Environment";
-		}
-		jmethodID cons = env.FindConstructor(objectClass, "()V");
-		if (env.Env()->ExceptionOccurred()) {
-			env.Env()->ExceptionDescribe();
-			env.Env()->ExceptionClear();
-			throw "Exception occurred in Java Environment for collecting Object constructor";
-		} else {
-			jobject o = env.Env()->NewObject(objectClass, cons);
-			MessageBox(NULL, ("Created Object: " + env.AsString(o)).c_str(), "JavaEnv", MB_OK);
-		}
-    } catch (int e) {
-        MessageBox(NULL, "Exception number " + e, "Exception", MB_OK);
-		return EXIT_FAILURE;
     } catch (exception e) {
-		string msg = "Exception: ";
+		string msg = "Failed to create JVM: ";
 		msg += e.what();
-        MessageBox(NULL, msg.c_str(), "Exception", MB_OK);
+        MessageBox(NULL, msg.c_str(), "Critical Failure", MB_OK);
 		return EXIT_FAILURE;
-	} catch (LPCSTR message) {
-		MessageBox(NULL, message, "Error", MB_OK);
-    } catch (...) {
-        MessageBox(NULL, "Unknown Exception", "Exception", MB_OK);
-		return EXIT_FAILURE;
-    }
+	}
 
 	// Create a window
 	HWND hwnd = CreateWindowEx(

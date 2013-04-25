@@ -1,7 +1,7 @@
 
 ![PowerGrid](http://i.imgur.com/I8SAxWT.png)
 
-PowerGrid is an extension on RSBot that aims to completely replace faulty or inefficient classes and methods with a completely new suite of classes and tools to make scripting much easier and less frustrating. 
+PowerGrid is a bot platform that aims to provide a comprehensive suite of classes and tools to make scripting much easier and less frustrating than with the existing clients. 
 
 ## PowerGrid functionality ##
 PowerGrid offers a completely new travelling system that allows the user to walk to any location in the Runescape world, while also using available teleports and shortcurs to get to the destination in the fastest possible way.
@@ -12,4 +12,6 @@ PowerGrid offers a full user interface to travel to any destination or location 
 
 Scripters can use PowerGrid's functions to make scripts easier, but that's not all: PowerGrid comes with a unique plugin system, that allows scripters to create so-called Tasks that integrate seamlessly with the existing PowerGrid tasks to form larger, more complex tasks, making scripting much easier. Imagine the possibility of executing a task that gets you to the right location using only one line of code! These kind of possibilities make PowerGrid worthwhile, whether you're a scripter or an end-user.
 
-Since PowerGrid does not simply run as a script in RSBot, but is actually using RSBot as a library, it is possible for PowerGrid to completely integrate in RSBot itself, providing a control bar right in the RSBot window for quick access to PowerGrid's functions.
+PowerGrid is, unlike other bots, written in C++. While this causes a delay in transferring data from the Java environment to C++, the C++ functions themselves can be made much faster, and since most code will run outside the Java Virtual Machine, there is less chance of the Runescape client detecting the bot. 
+
+The loader itself is inspired by the official open-source loader for Runescape, also written in C++. Because of this, PowerGrid will appear to be a normal loader application, while in reality, PowerGrid monitors various settings, objects, and data structures to use for botting purposes.

@@ -6,6 +6,7 @@
 <... %comment% ...>       = General-purpose comment
 %Name%:                   = Identification of member and corresponding tasks
         - %desc%          = Task item description
+		- %desc%  = Note with above Task description
 Milestone clean-up:       = Tasks without specific owner, yet required to complete Milestone
 Milestone planning:       = Tasks done before all other tasks in the Milestone, used for planning
 
@@ -14,6 +15,7 @@ Milestone planning:       = Tasks done before all other tasks in the Milestone, 
 
 Chronio:
 	- [REQ] Get the Java environment running.
+		- Progress: Currently trying to fix the classpath
 	- [REQ] Get the RS client running.
 
 Alaineman:

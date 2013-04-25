@@ -1,7 +1,7 @@
 ## Global PowerGrid development plan ## 
 
-- create and finish JavaEnv class
-- create and test loading and running the environment.
+X create and finish JavaEnv class
+X create and test loading and running the environment.
 - Set up a window containing the Applet. 
 - version 0.1: client loader
 

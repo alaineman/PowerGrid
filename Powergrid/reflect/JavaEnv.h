@@ -56,10 +56,9 @@ namespace reflect {
         /* Returns the JavaVM object referenced in this JavaEnv. */
         JavaVM* JVM();
         
-        /* Sets up and starts the Java VM, using the given classpath and main
-           Class.
+        /* Sets up and starts the Java VM and the jagexappletloader's main method.
          */
-        virtual void Setup(LPCSTR classpath, LPCSTR mainClass);
+        virtual void Setup();
         /* Finds and returns the class with the given fully qualified name. 
            When no class with that name is found, this function returns NULL.
          */

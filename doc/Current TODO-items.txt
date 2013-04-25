@@ -14,8 +14,7 @@ Milestone planning:       = Tasks done before all other tasks in the Milestone, 
 --- Planning --------------------------------------------------------------------------------------
 
 Chronio:
-	- [REQ] Get the Java environment running.
-		- Progress: Currently trying to fix the classpath
+	X [REQ] Get the Java environment running.
 	- [REQ] Get the RS client running.
 
 Alaineman:

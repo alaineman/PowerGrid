@@ -35,7 +35,7 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// Set up a Java Environment
 	env = JavaEnv(hInstance);
     try {
-        env.Setup(NULL, NULL);
+        env.Setup();
     } catch (exception e) {
 		string msg = "Failed to create JVM: ";
 		msg += e.what();
@@ -47,25 +47,25 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	HWND hwnd = CreateWindowEx(
         0,                              // Optional window styles.
         CLASS_NAME,                     // Window class
-        TEXT("PowerGrid"),              // Window text
+        TEXT("PowerGrid Config panel"), // Window text
         WS_OVERLAPPEDWINDOW,            // Window style
 
         // Size and position
-        CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
+        CW_USEDEFAULT, CW_USEDEFAULT, 320, 480,
 
         NULL,       // Parent window    
         NULL,       // Menu
         hInstance,  // Instance handle
         NULL        // Additional application data
-        );
+		);
 
 	if (hwnd == NULL) {
-		MessageBox(NULL, "Creating a window failed", "Ciritcal error", MB_OK);
-		return 0;
+		MessageBox(NULL, "Creating a window failed", "Critical error", MB_OK);
+		return EXIT_FAILURE;
 	}
 
 	ShowWindow(hwnd, nCmdShow);
-
+	
 	// Start the message loop
 	MSG msg = { };
     while (GetMessage(&msg, NULL, 0, 0))

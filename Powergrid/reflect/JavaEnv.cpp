@@ -27,7 +27,7 @@ namespace reflect {
         return jvm;
     }
     
-    void JavaEnv::Setup(LPCSTR classpath, LPCSTR mainClass) {
+    void JavaEnv::Setup() {
 
 		// Collect the Registry key value for the Java Runtime library.
 		HKEY hKey;
@@ -38,11 +38,7 @@ namespace reflect {
 		if (ERROR_SUCCESS != GetStringRegKey(hKey, L"RuntimeLib", java_dll, L"bad")) {
 			throw JavaEnvException("Failed to read from registry, java directory not found.");
 		}
-		std::wstring defaultCP;
-		if (ERROR_SUCCESS != GetStringRegKey(hKey, L"JavaHome", defaultCP, L"bad")) {
-			throw JavaEnvException("Failed to read from registry, Java Home not found.");
-		}
-		defaultCP += L"\\lib\\rt.jar";
+
 		// try loading jvm dll
 		HMODULE jvmDll = LoadLibraryW(java_dll.c_str());
 		if(jvmDll == NULL) { 
@@ -54,26 +50,30 @@ namespace reflect {
 		if (createJVM == NULL)  {
 			throw JavaEnvException("JNI_CreateJavaVM procedure not found");
 		}
-		
+
+		// Get the Jagex cache location (the appletviewer must be in the correct directory).
+		char profile[512];
+		ExpandEnvironmentStrings("%USERPROFILE%\\jagexcache\\jagexlauncher\\bin\\jagexappletviewer.jar", profile, 512);
+		string classpath = string("-Djava.class.path=").append(profile);
+
 		JavaVMInitArgs vm_args;
 		vm_args.version            = JNI_VERSION_1_6;
-		
-		vm_args.ignoreUnrecognized = JNI_TRUE;
+		vm_args.ignoreUnrecognized = JNI_FALSE;
 
-		// Get the class path.
-		string cpArg = "-Djava.class.path=";
-		if (classpath != NULL) {
-			cpArg += classpath;
-			cpArg += ";";
-		}
-		string str (defaultCP.begin(), defaultCP.end());
-		cpArg += str;
-
-		JavaVMOption options[2];
-		options[0].optionString  = const_cast<char*>(cpArg.c_str());
+		JavaVMOption options[10];
+		options[0].optionString  = const_cast<char*>(classpath.c_str());
 		options[1].optionString  = "-verbose:jni";
+		options[2].optionString  = "-Dsun.java2d.noddraw=true";
+		options[3].optionString  = "-Dcom.jagex.config=http://www.runescape.com/k=3/l=$(language:0)/jav_config.ws";
+		options[4].optionString  = "-Xmx256m";
+		options[5].optionString  = "-Xss2m";
+		options[6].optionString  = "-XX:CompileThreshold=1500";
+		options[7].optionString  = "-Xincgc";
+		options[8].optionString  = "-XX:+UseConcMarkSweepGC";
+		options[9].optionString  = "-XX:+UseParNewGC";
+
 		vm_args.options          = options;
-		vm_args.nOptions         = 2;
+		vm_args.nOptions         = 10;
  
 		//Create the JVM
 		jint res = createJVM(&jvm, (void**)&env, &vm_args);
@@ -83,20 +83,17 @@ namespace reflect {
 		if (res < 0) {
 			throw JavaEnvException("Error Creating JVM, result code: " + res);
 		}
-		if (mainClass != NULL) {
-			jclass c = env->FindClass(mainClass);
-			if (c == NULL) {
-				throw JavaEnvException("Main Class not on provided classpath");
-			}
-			jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
-			if (main == NULL) {
-				throw JavaEnvException("Provided class does not contain main method");
-			}
-			jobjectArray mainArgs = env->NewObjectArray(0, 
-				env->FindClass("java/lang/String"), NULL);
-        
-			env->CallStaticVoidMethod(c, main, mainArgs);
+		jclass c = env->FindClass("jagexappletviewer");
+		if (c == NULL) {
+			throw JavaEnvException("Main Class not on classpath");
 		}
+		jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
+		if (main == NULL) {
+			throw JavaEnvException("Provided class does not contain main method");
+		}
+		jobjectArray mainArgs = env->NewObjectArray(1, env->FindClass("java/lang/String"), NULL);
+		env->SetObjectArrayElement(mainArgs, 0, env->NewStringUTF("runescape"));
+        env->CallStaticVoidMethod(c, main, mainArgs);
     }
     
     jclass JavaEnv::FindClass(LPSTR name) {

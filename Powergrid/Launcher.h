@@ -2,7 +2,8 @@
  * File:   Launcher.h
  * Author: Chronio
  *
- * Created on April 21, 2013, 6:37 PM
+ * Entry point for the application. This header defines functions required solely for starting 
+ * the application.
  */
 
 #ifndef LAUNCHER_H
@@ -17,10 +18,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 namespace powergrid {
     
     /* Collects the configuration for the Runescape client.
-     * It returns the direct full link to the Loader jar file as a string
+       It returns the direct full link to the Loader jar file as a string
      */
     char* getRSGamepackLink();
 
 }
 #endif	/* LAUNCHER_H */
-

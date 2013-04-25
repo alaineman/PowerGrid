@@ -16,19 +16,6 @@
 #ifndef JAVAENV_H
 #define	JAVAENV_H
 
-/* Error codes for the JavaEnv */
-/* Java Home directory not found */
-#define JAVAENV_NO_JAVAHOME 1
-/* Could not create Java process */
-#define JAVAENV_FAILED_PROCESS 2
-/* Main class not found */
-#define JAVAENV_MISSING_CLASS 3
-/* Main method not found */
-#define JAVAENV_MISSING_METHOD 4
-
-/* Macro that converts a string literal to a char* type. */
-#define C_TEXT( text ) ((char*)std::string( text ).c_str())
-
 namespace powergrid {
 namespace reflect {
     
@@ -44,6 +31,7 @@ namespace reflect {
      */
     class JavaEnv {
 	private:
+		/* Signature of the JNI_CreateJavaVM function in jvm.dll */
 		typedef jint (JNICALL *CreateJavaVM)(JavaVM **pvm, void **penv, void *args);
 
         /* The Java virtual machine. */
@@ -88,6 +76,9 @@ namespace reflect {
            provided jclass.
          */
         virtual jmethodID FindMethod(jclass c, LPSTR name, LPSTR sig);
+		/* Finds the constructor with the specified signature.
+		 */
+		virtual jmethodID FindConstructor(jclass c, LPSTR sig);
 		/* Invokes the method with the specified name, signature and parameters 
 		   on the object. The return value of the method should be jint.
 		 */
@@ -97,6 +88,9 @@ namespace reflect {
 		   to a std::string.
 		 */
 		virtual std::string AsString(jobject o);
+		/* Throws an Exception in the Java environment.
+		 */
+		virtual void ThrowException(LPCSTR file, INT line, LPCSTR info);
     };
     
 } /* namespace reflect */

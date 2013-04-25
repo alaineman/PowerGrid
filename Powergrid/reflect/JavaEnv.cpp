@@ -10,6 +10,8 @@ namespace powergrid {
 namespace reflect {
 	JavaEnv::JavaEnv(HINSTANCE h) {
 		hInstance = h;
+		jvm = NULL;
+		env = NULL;
 	}
 
     JavaEnv::~JavaEnv() {
@@ -36,7 +38,11 @@ namespace reflect {
 		if (ERROR_SUCCESS != GetStringRegKey(hKey, L"RuntimeLib", java_dll, L"bad")) {
 			throw JavaEnvException("Failed to read from registry, java directory not found.");
 		}
-
+		std::wstring defaultCP;
+		if (ERROR_SUCCESS != GetStringRegKey(hKey, L"JavaHome", defaultCP, L"bad")) {
+			throw JavaEnvException("Failed to read from registry, Java Home not found.");
+		}
+		defaultCP += L"\\lib\\rt.jar";
 		// try loading jvm dll
 		HMODULE jvmDll = LoadLibraryW(java_dll.c_str());
 		if(jvmDll == NULL) { 
@@ -49,19 +55,25 @@ namespace reflect {
 			throw JavaEnvException("JNI_CreateJavaVM procedure not found");
 		}
 		
+		JavaVMInitArgs vm_args;
+		vm_args.version            = JNI_VERSION_1_6;
+		
+		vm_args.ignoreUnrecognized = JNI_TRUE;
+
 		// Get the class path.
 		string cpArg = "-Djava.class.path=";
-		cpArg += classpath;
- 
+		if (classpath != NULL) {
+			cpArg += classpath;
+			cpArg += ";";
+		}
+		string str (defaultCP.begin(), defaultCP.end());
+		cpArg += str;
+
 		JavaVMOption options[2];
 		options[0].optionString  = const_cast<char*>(cpArg.c_str());
 		options[1].optionString  = "-verbose:jni";
- 
-		JavaVMInitArgs vm_args;
-		vm_args.version            = JNI_VERSION_1_6;
-		vm_args.options            = options;
-		vm_args.nOptions           = 2;
-		vm_args.ignoreUnrecognized = JNI_TRUE;
+		vm_args.options          = options;
+		vm_args.nOptions         = 2;
  
 		//Create the JVM
 		jint res = createJVM(&jvm, (void**)&env, &vm_args);
@@ -91,12 +103,19 @@ namespace reflect {
     jmethodID JavaEnv::FindMethod(jclass c, LPSTR name, LPSTR sig) {
         return env->GetMethodID(c, name, sig);
     }
+
+	jmethodID JavaEnv::FindConstructor(jclass c, LPSTR sig) {
+		return FindMethod(c, "<init>", sig);
+	}
     
     int JavaEnv::FindSubclasses(jclass* children, jclass parent) {
         return 0;
     }
     
     int JavaEnv::Terminate() {
+		if (jvm != NULL) {
+			jvm->DestroyJavaVM();
+		}
         return 0;
     }
 
@@ -109,6 +128,20 @@ namespace reflect {
 			"toString", "()Ljava.lang.String;");
 		jstring res = (jstring)env->CallObjectMethod(object, getClassMethod);
 		return string(env->GetStringUTFChars(res, NULL));
+	}
+
+	void JavaEnv::ThrowException(LPCSTR file, INT line, LPCSTR info) {
+		LPSTR errorMessage = "";
+
+		if (file != NULL && line != 0 && info != NULL) {
+			sprintf(errorMessage, "JNIException at %s:%d (%s)", file, line, info);
+		}
+
+		jclass eClass = NULL;
+
+		eClass = env->FindClass("java.lang.Exception");
+		env->ThrowNew(eClass, errorMessage);
+		env->DeleteLocalRef(eClass);
 	}
 }
 }

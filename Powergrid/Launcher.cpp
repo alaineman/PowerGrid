@@ -4,6 +4,7 @@
 #include "Launcher.h"
 #include "jni.h"
 #include "reflect/JavaEnv.h"
+#include "wintools/Registry.h"
 #include <windows.h>
 
 #ifndef UNICODE
@@ -34,13 +35,21 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// Set up a Java Environment
 	env = JavaEnv(hInstance);
     try {
-        //const char* link = powergrid::getRSGamepackLink();
-        env.Setup(".", NULL);
-		MessageBox(NULL, "Environment created", "Hoera", MB_OK);
-		//jclass objectClass = env->FindClass("java.lang.Object");
-		//jobject o = env->Env()->AllocObject(objectClass);
-		//cout << "Created Object: " << env->AsString(o) << endl;
-        //delete &env; 
+        env.Setup(NULL, NULL);
+
+		jclass objectClass = env.FindClass("java.lang.Object");
+		if (objectClass == NULL) {
+			throw "Failed to get Object Class from Java Environment";
+		}
+		jmethodID cons = env.FindConstructor(objectClass, "()V");
+		if (env.Env()->ExceptionOccurred()) {
+			env.Env()->ExceptionDescribe();
+			env.Env()->ExceptionClear();
+			throw "Exception occurred in Java Environment for collecting Object constructor";
+		} else {
+			jobject o = env.Env()->NewObject(objectClass, cons);
+			MessageBox(NULL, ("Created Object: " + env.AsString(o)).c_str(), "JavaEnv", MB_OK);
+		}
     } catch (int e) {
         MessageBox(NULL, "Exception number " + e, "Exception", MB_OK);
 		return EXIT_FAILURE;
@@ -49,6 +58,8 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		msg += e.what();
         MessageBox(NULL, msg.c_str(), "Exception", MB_OK);
 		return EXIT_FAILURE;
+	} catch (LPCSTR message) {
+		MessageBox(NULL, message, "Error", MB_OK);
     } catch (...) {
         MessageBox(NULL, "Unknown Exception", "Exception", MB_OK);
 		return EXIT_FAILURE;
@@ -62,7 +73,7 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         WS_OVERLAPPEDWINDOW,            // Window style
 
         // Size and position
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
 
         NULL,       // Parent window    
         NULL,       // Menu
@@ -109,22 +120,3 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
-//namespace powergrid {
-//    char* getRSGamepackLink() {
-//        //Easy* easyHandle = new Easy();
-//        char* link = NULL;
-//        stringstream stream;
-//        try {
-//            //easyHandle->setOpt(Url("http://www.runescape.com/k=3/l=en/jav_config.ws"));
-//            //easyHandle->setOpt(WriteStream(&stream));
-//            //easyHandle->perform();
-//        } catch (exception e) {
-//            cout << "Failed to set URL, exception occurred: " << e.what() << endl;
-//        }
-//        cout << "Stream contents:" << endl << stream;
-//        
-//        //delete easyHandle;
-//        return link;
-//    }
-//
-//}

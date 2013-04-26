@@ -15,12 +15,4 @@
  */
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-namespace powergrid {
-    
-    /* Collects the configuration for the Runescape client.
-       It returns the direct full link to the Loader jar file as a string
-     */
-    char* getRSGamepackLink();
-
-}
 #endif	/* LAUNCHER_H */

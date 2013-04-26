@@ -2,7 +2,6 @@
 #include "JavaEnv.h"
 #include <iostream>
 #include <stdarg.h>
-#include "../wintools/Registry.h"
 
 using namespace std;
 
@@ -29,18 +28,14 @@ namespace reflect {
     
     void JavaEnv::Setup() {
 
-		// Collect the Registry key value for the Java Runtime library.
-		HKEY hKey;
-		if (ERROR_SUCCESS != GetHKEYForRead(&hKey, HKEY_LOCAL_MACHINE, L"SOFTWARE\\JavaSoft\\Java Runtime Environment\\1.7")) {
-			throw JavaEnvException("Java directory not found. Verify that Java is installed.");
-		}
-		std::wstring java_dll;
-		if (ERROR_SUCCESS != GetStringRegKey(hKey, L"RuntimeLib", java_dll, L"bad")) {
-			throw JavaEnvException("Failed to read from registry, java directory not found.");
-		}
+		// Find the Jagex launcher's bin folder
+		char jagexfolder[512];
+		ExpandEnvironmentStrings("%USERPROFILE%\\jagexcache\\jagexlauncher\\bin", jagexfolder, 512);
 
 		// try loading jvm dll
-		HMODULE jvmDll = LoadLibraryW(java_dll.c_str());
+		string java_dll (jagexfolder);
+		java_dll += "\\jvm.dll";
+		HMODULE jvmDll = LoadLibrary(java_dll.c_str());
 		if(jvmDll == NULL) { 
 			throw JavaEnvException("jvm.dll not found");
 		}
@@ -52,9 +47,9 @@ namespace reflect {
 		}
 
 		// Get the Jagex cache location (the appletviewer must be in the correct directory).
-		char profile[512];
-		ExpandEnvironmentStrings("%USERPROFILE%\\jagexcache\\jagexlauncher\\bin\\jagexappletviewer.jar", profile, 512);
-		string classpath = string("-Djava.class.path=").append(profile);
+		string cp(jagexfolder);
+		cp += "\\jagexappletviewer.jar";
+		string classpath = string("-Djava.class.path=").append(cp);
 
 		JavaVMInitArgs vm_args;
 		vm_args.version            = JNI_VERSION_1_6;

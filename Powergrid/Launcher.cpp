@@ -4,7 +4,6 @@
 #include "Launcher.h"
 #include "jni.h"
 #include "reflect/JavaEnv.h"
-#include "wintools/Registry.h"
 #include <windows.h>
 
 #ifndef UNICODE
@@ -37,8 +36,9 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     try {
         env.Setup();
     } catch (exception e) {
-		string msg = "Failed to create JVM: ";
+		string msg = "Failed to start Runescape:\n";
 		msg += e.what();
+		msg += "\nEnsure that the official Jagex launcher is installed on your system.";
         MessageBox(NULL, msg.c_str(), "Critical Failure", MB_OK);
 		return EXIT_FAILURE;
 	}
@@ -78,9 +78,9 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	switch (uMsg)
-    {
+	switch (uMsg) {
     case WM_DESTROY:
+		env.Terminate();
         PostQuitMessage(0);
         return 0;
 
@@ -94,7 +94,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             EndPaint(hwnd, &ps);
         }
         return 0;
-
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

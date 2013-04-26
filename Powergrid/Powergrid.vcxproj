@@ -80,12 +80,10 @@
   <ItemGroup>
     <ClCompile Include="Launcher.cpp" />
     <ClCompile Include="reflect\JavaEnv.cpp" />
-    <ClCompile Include="wintools\Registry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Launcher.h" />
     <ClInclude Include="reflect\JavaEnv.h" />
-    <ClInclude Include="wintools\Registry.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

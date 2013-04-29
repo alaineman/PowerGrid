@@ -35,6 +35,7 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// Set up a Java Environment
 	env = JavaEnv(hInstance);
 	//_beginthread(JVMThread, 0, NULL);
+	JVMThread(NULL);
 
 	// Create a window
 	HWND hwnd = CreateWindowEx(
@@ -66,8 +67,6 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-	
-	env.Terminate();
 
     return EXIT_SUCCESS;
 }
@@ -75,8 +74,7 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
     case WM_DESTROY:
-		env.Terminate();
-        PostQuitMessage(0);
+		PostQuitMessage(0);
         return 0;
 
     case WM_PAINT:
@@ -101,5 +99,7 @@ void JVMThread(void* pParams) {
 		msg += e.what();
 		msg += "\nEnsure that the official Jagex launcher is installed on your system.";
 		MessageBox(NULL, msg.c_str(), "Critical Failure", MB_OK);
+	} catch (...) {
+		MessageBox(NULL, "An unknown error occurred", "Critical Failure", MB_OK);
 	}
 }

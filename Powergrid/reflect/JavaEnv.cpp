@@ -11,6 +11,7 @@ namespace reflect {
 		hInstance = h;
 		jvm = NULL;
 		env = NULL;
+		//InitializeCriticalSection(&lock);
 	}
 
     JavaEnv::~JavaEnv() {
@@ -27,7 +28,7 @@ namespace reflect {
     }
     
     void JavaEnv::Setup() {
-		EnterCriticalSection(lock);
+		//EnterCriticalSection(&lock);
 		// Find the Jagex launcher's bin folder
 		char jagexfolder[512];
 		ExpandEnvironmentStrings("%USERPROFILE%\\jagexcache\\jagexlauncher\\bin", jagexfolder, 512);
@@ -92,20 +93,29 @@ namespace reflect {
 
 		// Required classes / methods
 		jclass window = FindClass("java/awt/Window");
+		jclass frame = FindClass("java/awt/Frame");
 		jclass jframe = FindClass("javax/swing/JFrame");
 
-		jmethodID getWindows = FindMethod(window, "getWindows", "()V");
+		jmethodID getWindows = env->GetStaticMethodID(window, "getWindows", "()[Ljava/awt/Window;");
+		jmethodID getTitle = FindMethod(frame, "getTitle", "()Ljava/lang/String;");
 		jmethodID setCloseOp = FindMethod(jframe, "setDefaultCloseOperation", "(I)V");
 
-		//do {
-		//	Sleep(100);
-		//} while (true);
+		jobject theWindow = NULL;
 
-		// Method calls to adapt JFrame behavior
-		//jobjectArray result = (jobjectArray) env->CallStaticObjectMethod(window, getWindows);
-		//jobject theWindow = env->GetObjectArrayElement(result, 0); 
-		//env->CallVoidMethod(theWindow, setCloseOp, 2); // Dispose on close
-		LeaveCriticalSection(lock);
+		bool windowCreated = false;
+		do {
+			jobjectArray windows = (jobjectArray)env->CallStaticObjectMethod(window, getWindows);
+			if (env->GetArrayLength(windows) > 0) {
+				theWindow = env->GetObjectArrayElement(windows, 0);
+				jstring string = (jstring)env->CallObjectMethod(theWindow, getTitle);
+				std::string title(env->GetStringUTFChars(string, NULL));
+				windowCreated = !title.compare("RuneScape");
+			}
+		} while (!windowCreated);
+
+		env->CallVoidMethod(theWindow, setCloseOp, 2); // WindowConstants.DISPOSE_ON_CLOSE
+
+		//LeaveCriticalSection(&lock);
     }
     
     jclass JavaEnv::FindClass(LPSTR name) {
@@ -126,7 +136,6 @@ namespace reflect {
     
     int JavaEnv::Terminate() {
 		if (jvm != NULL) {
-			jvm->DetachCurrentThread();
 			jvm->DestroyJavaVM();
 		}
         return 0;

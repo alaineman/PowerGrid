@@ -40,7 +40,7 @@ namespace reflect {
         JNIEnv* env;
 
 		/* The Lock object of the JavaEnv. */
-		LPCRITICAL_SECTION lock;
+		CRITICAL_SECTION lock;
 
 		/* The Windows handle object. */
 		HINSTANCE hInstance;
@@ -100,15 +100,15 @@ namespace reflect {
 		/* Finds and returns the field ID for the given field. NULL is returned when 
 		   the field is not found.
 		 */
-		virtual jfieldID GetFieldID(jclass c, LPSTR name);
+		//virtual jfieldID GetFieldID(jclass c, LPSTR name);
 		/* Returns the contents of the object field with the given name. When no such field 
 		   exists, this method throws a JavaEnvException object.
 		 */
-		virtual jobject GetObjectField(jclass c, LPSTR name);
+		//virtual jobject GetObjectField(jclass c, LPSTR name);
 		/* Returns the contents of the integer field with the given name. When no such field
 	       exists, this method throws a JavaEnvException object.
 		 */
-		virtual jint GetIntField(jclass c, LPSTR name);
+		//virtual jint GetIntField(jclass c, LPSTR name);
     };
     
 } /* namespace reflect */

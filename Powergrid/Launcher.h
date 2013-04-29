@@ -15,4 +15,8 @@
  */
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+/* Starts the JVM.
+ */
+void JVMThread(void* pParams);
+
 #endif	/* LAUNCHER_H */

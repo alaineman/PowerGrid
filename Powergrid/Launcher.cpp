@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <process.h>
 #include "Launcher.h"
 #include "jni.h"
 #include "reflect/JavaEnv.h"
@@ -33,15 +34,7 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// Set up a Java Environment
 	env = JavaEnv(hInstance);
-    try {
-        env.Setup();
-    } catch (exception e) {
-		string msg = "Failed to start Runescape:\n";
-		msg += e.what();
-		msg += "\nEnsure that the official Jagex launcher is installed on your system.";
-        MessageBox(NULL, msg.c_str(), "Critical Failure", MB_OK);
-		return EXIT_FAILURE;
-	}
+	//_beginthread(JVMThread, 0, NULL);
 
 	// Create a window
 	HWND hwnd = CreateWindowEx(
@@ -73,6 +66,8 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+	
+	env.Terminate();
 
     return EXIT_SUCCESS;
 }
@@ -96,4 +91,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         return 0;
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+void JVMThread(void* pParams) {
+	try {
+		env.Setup();
+	} catch (exception e) {
+		string msg = "Failed to start Runescape:\n";
+		msg += e.what();
+		msg += "\nEnsure that the official Jagex launcher is installed on your system.";
+		MessageBox(NULL, msg.c_str(), "Critical Failure", MB_OK);
+	}
 }

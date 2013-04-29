@@ -6,6 +6,7 @@
 <... %comment% ...>       = General-purpose comment
 %Name%:                   = Identification of member and corresponding tasks
         - %desc%          = Task item description
+	X %desc%          = Completed task
 		- %desc%  = Note with above Task description
 Milestone clean-up:       = Tasks without specific owner, yet required to complete Milestone
 Milestone planning:       = Tasks done before all other tasks in the Milestone, used for planning
@@ -16,6 +17,7 @@ Milestone planning:       = Tasks done before all other tasks in the Milestone, 
 Chronio:
 	X [REQ] Get the Java environment running.
 	- [REQ] Get the RS client running.
+		- Get the application to terminate gracefully, not causing a BEX error
 
 Alaineman:
 	- [OPT] Design the Java Reflection API, ensuring that reflect 
@@ -23,7 +25,8 @@ Alaineman:
 	- [OPT] Design the caching system for storing RS client data.
 
 Milestone clean-up:
-	- [OPT] Come up with a way to run a Java Applet in a Windows frame.
+	X [OPT] Come up with a way to run a Java Applet in a Windows frame.
+		- no longer required, using a native Java Window for that.
 	- [REQ] Identify and repair any bugs in the core JNI connection layer.
 
 <<< Milestone: version 0.1 >>>

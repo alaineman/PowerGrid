@@ -39,6 +39,9 @@ namespace reflect {
         /* The JNI environment. */
         JNIEnv* env;
 
+		/* The Lock object of the JavaEnv. */
+		LPCRITICAL_SECTION lock;
+
 		/* The Windows handle object. */
 		HINSTANCE hInstance;
 		/* The Java Virtual Machine DLL handle. */
@@ -82,14 +85,30 @@ namespace reflect {
 		   on the object. The return value of the method should be jint.
 		 */
 		virtual jclass GetClass(jobject o);
-		/* Returns the string value for the given object, using that object's 
-		   toString() method. If the given jobject is a jstring, it is converted
-		   to a std::string.
+		/* Returns the string value for the given object, using the String.valueOf(Object) 
+		   method. If the given jobject is a jstring, it is converted to a std::string.
 		 */
 		virtual std::string AsString(jobject o);
-		/* Throws an Exception in the Java environment.
+		/* Returns true if the two provided jobjects are equal similar to the 
+		   Objects.equals method. More specifically, the result is true when one of 
+		   the following is true:
+		     a) Both parameters are NULL
+			 b) Both parameters are non-NULL and the Java method call o1.equals(o2) 
+			    returns true.
 		 */
-		virtual void ThrowException(LPCSTR file, INT line, LPCSTR info);
+		virtual jboolean equals(jobject o1, jobject o2);
+		/* Finds and returns the field ID for the given field. NULL is returned when 
+		   the field is not found.
+		 */
+		virtual jfieldID GetFieldID(jclass c, LPSTR name);
+		/* Returns the contents of the object field with the given name. When no such field 
+		   exists, this method throws a JavaEnvException object.
+		 */
+		virtual jobject GetObjectField(jclass c, LPSTR name);
+		/* Returns the contents of the integer field with the given name. When no such field
+	       exists, this method throws a JavaEnvException object.
+		 */
+		virtual jint GetIntField(jclass c, LPSTR name);
     };
     
 } /* namespace reflect */

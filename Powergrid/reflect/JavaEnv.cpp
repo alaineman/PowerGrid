@@ -27,7 +27,7 @@ namespace reflect {
     }
     
     void JavaEnv::Setup() {
-
+		EnterCriticalSection(lock);
 		// Find the Jagex launcher's bin folder
 		char jagexfolder[512];
 		ExpandEnvironmentStrings("%USERPROFILE%\\jagexcache\\jagexlauncher\\bin", jagexfolder, 512);
@@ -50,7 +50,7 @@ namespace reflect {
 		string cp(jagexfolder);
 		cp += "\\jagexappletviewer.jar";
 		string classpath = string("-Djava.class.path=").append(cp);
-
+		
 		JavaVMInitArgs vm_args;
 		vm_args.version            = JNI_VERSION_1_6;
 		vm_args.ignoreUnrecognized = JNI_FALSE;
@@ -89,6 +89,23 @@ namespace reflect {
 		jobjectArray mainArgs = env->NewObjectArray(1, env->FindClass("java/lang/String"), NULL);
 		env->SetObjectArrayElement(mainArgs, 0, env->NewStringUTF("runescape"));
         env->CallStaticVoidMethod(c, main, mainArgs);
+
+		// Required classes / methods
+		jclass window = FindClass("java/awt/Window");
+		jclass jframe = FindClass("javax/swing/JFrame");
+
+		jmethodID getWindows = FindMethod(window, "getWindows", "()V");
+		jmethodID setCloseOp = FindMethod(jframe, "setDefaultCloseOperation", "(I)V");
+
+		//do {
+		//	Sleep(100);
+		//} while (true);
+
+		// Method calls to adapt JFrame behavior
+		//jobjectArray result = (jobjectArray) env->CallStaticObjectMethod(window, getWindows);
+		//jobject theWindow = env->GetObjectArrayElement(result, 0); 
+		//env->CallVoidMethod(theWindow, setCloseOp, 2); // Dispose on close
+		LeaveCriticalSection(lock);
     }
     
     jclass JavaEnv::FindClass(LPSTR name) {
@@ -100,7 +117,7 @@ namespace reflect {
     }
 
 	jmethodID JavaEnv::FindConstructor(jclass c, LPSTR sig) {
-		return FindMethod(c, "<init>", sig);
+		return env->GetMethodID(c, "<init>", sig);
 	}
     
     int JavaEnv::FindSubclasses(jclass* children, jclass parent) {
@@ -120,24 +137,24 @@ namespace reflect {
 	}
 
 	string JavaEnv::AsString(jobject object) {
-		jmethodID getClassMethod = FindMethod(FindClass("java/lang/Object"), 
-			"toString", "()Ljava/lang/String;");
-		jstring res = (jstring)env->CallObjectMethod(object, getClassMethod);
+		if (object == NULL) {
+			return "NULL";
+		}
+		jclass stringClass = FindClass("java/lang/Object");
+		jmethodID toString = FindMethod(stringClass, "toString", "(Ljava/lang/Object;)Ljava/lang/String;");
+		jstring res = (jstring)env->CallObjectMethod(object, toString);
 		return string(env->GetStringUTFChars(res, NULL));
 	}
 
-	void JavaEnv::ThrowException(LPCSTR file, INT line, LPCSTR info) {
-		LPSTR errorMessage = "";
-
-		if (file != NULL && line != 0 && info != NULL) {
-			sprintf(errorMessage, "JNIException at %s:%d (%s)", file, line, info);
+	jboolean JavaEnv::equals(jobject o1, jobject o2) {
+		if (o1 == NULL) {
+			return o2 == NULL;
+		} else if (o2 == NULL) {
+			return false;
+		} else {
+			jmethodID equals = FindMethod(FindClass("java/lang/Object"), "equals", "(Ljava/lang/Object;)Z");
+			return env->CallBooleanMethod(o1, equals, o2);
 		}
-
-		jclass eClass = NULL;
-
-		eClass = env->FindClass("java/lang/Exception");
-		env->ThrowNew(eClass, errorMessage);
-		env->DeleteLocalRef(eClass);
 	}
 }
 }

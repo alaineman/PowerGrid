@@ -74,9 +74,9 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
     case WM_DESTROY:
-		PostQuitMessage(0);
-        return 0;
-
+		PostQuitMessage(WM_QUIT);
+		env.Terminate();
+		break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
@@ -86,9 +86,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
             EndPaint(hwnd, &ps);
         }
-        return 0;
+	default:
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
     }
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    return 0;
 }
 
 void JVMThread(void* pParams) {

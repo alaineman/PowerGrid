@@ -28,7 +28,6 @@ namespace reflect {
     }
     
     void JavaEnv::Setup() {
-		//EnterCriticalSection(&lock);
 		// Find the Jagex launcher's bin folder
 		char jagexfolder[512];
 		ExpandEnvironmentStrings("%USERPROFILE%\\jagexcache\\jagexlauncher\\bin", jagexfolder, 512);
@@ -91,14 +90,25 @@ namespace reflect {
 		env->SetObjectArrayElement(mainArgs, 0, env->NewStringUTF("runescape"));
         env->CallStaticVoidMethod(c, main, mainArgs);
 
+		/* Commented out because the last line causes an error */
 		// Required classes / methods
-		jclass window = FindClass("java/awt/Window");
-		jclass frame = FindClass("java/awt/Frame");
-		jclass jframe = FindClass("javax/swing/JFrame");
+		jclass window =       FindClass("java/awt/Window");
+		jclass frame =        FindClass("java/awt/Frame");
+		jclass jframe =       FindClass("javax/swing/JFrame");
+		jclass canvas =       FindClass("java/awt/Canvas");
+		jclass borderlayout = FindClass("java/awt/BorderLayout");
 
-		jmethodID getWindows = env->GetStaticMethodID(window, "getWindows", "()[Ljava/awt/Window;");
-		jmethodID getTitle = FindMethod(frame, "getTitle", "()Ljava/lang/String;");
-		jmethodID setCloseOp = FindMethod(jframe, "setDefaultCloseOperation", "(I)V");
+		jmethodID getWindows =         env->GetStaticMethodID(window, "getWindows", "()[Ljava/awt/Window;");
+		jmethodID getTitle =           FindMethod(jframe, "getTitle", "()Ljava/lang/String;");
+		jmethodID getTreeLock =        FindMethod(window, "getTreeLock", "()Ljava/lang/Object;");
+		jmethodID createJFrame =       FindConstructor(jframe, "(Ljava/lang/String;)V");
+		jmethodID createBorderLayout = FindConstructor(borderlayout, "()V");
+		jmethodID getComponents =      FindMethod(jframe, "getComponents", "()[Ljava/awt/Component;");
+		jmethodID addComponent =       FindMethod(jframe, "add", "(Ljava/awt/Component;Ljava/lang/Object;)V");
+		jmethodID removeComponent =    FindMethod(frame, "remove", "(Ljava/awt/Component;)V");
+		jmethodID setLayout =          FindMethod(jframe, "setLayout", "(Ljava/awt/LayoutManager;)V");
+		jmethodID setVisible =         FindMethod(frame, "setVisible", "(Z)V");
+		jmethodID pack =               FindMethod(jframe, "pack", "()V");
 
 		jobject theWindow = NULL;
 
@@ -107,15 +117,39 @@ namespace reflect {
 			jobjectArray windows = (jobjectArray)env->CallStaticObjectMethod(window, getWindows);
 			if (env->GetArrayLength(windows) > 0) {
 				theWindow = env->GetObjectArrayElement(windows, 0);
-				jstring string = (jstring)env->CallObjectMethod(theWindow, getTitle);
-				std::string title(env->GetStringUTFChars(string, NULL));
-				windowCreated = !title.compare("RuneScape");
+				if (theWindow != NULL) {
+					jstring string = (jstring)env->CallObjectMethod(theWindow, getTitle);
+					std::string title(env->GetStringUTFChars(string, NULL));
+					windowCreated = !title.compare("RuneScape");
+				}
 			}
 		} while (!windowCreated);
 
-		env->CallVoidMethod(theWindow, setCloseOp, 2); // WindowConstants.DISPOSE_ON_CLOSE
+		if (theWindow == NULL) {
+			MessageBox(NULL, "theWindow == NULL", "Error", MB_OK);
+		} else {
+			
+			jobject ourFrame = env->NewObject(jframe, createJFrame, env->NewStringUTF("PowerGrid - Runescape"));
+			env->CallVoidMethod(ourFrame, setLayout, env->NewObject(borderlayout, createBorderLayout)); // ourFrame.setLayout(new BorderLayout());
+			
+			jobject AWTLock = env->CallObjectMethod(theWindow, getTreeLock);
 
-		//LeaveCriticalSection(&lock);
+			env->MonitorEnter(AWTLock);
+			jobjectArray comps = (jobjectArray) env->CallObjectMethod(theWindow, getComponents);
+			jint size = env->GetArrayLength(comps);
+
+			if (size > 0) {
+				jobject comp = env->GetObjectArrayElement(comps, 0);
+				env->CallVoidMethod(theWindow, removeComponent, comp);
+				env->CallVoidMethod(ourFrame, addComponent, comp, env->NewStringUTF("Center"));
+				
+				env->CallVoidMethod(theWindow, setVisible, false);
+				env->CallVoidMethod(ourFrame, pack);
+				env->CallVoidMethod(ourFrame, setVisible, true);
+			}
+
+			env->MonitorExit(AWTLock);
+		}
     }
     
     jclass JavaEnv::FindClass(LPSTR name) {
@@ -150,7 +184,7 @@ namespace reflect {
 			return "NULL";
 		}
 		jclass stringClass = FindClass("java/lang/Object");
-		jmethodID toString = FindMethod(stringClass, "toString", "(Ljava/lang/Object;)Ljava/lang/String;");
+		jmethodID toString = FindMethod(stringClass, "toString", "()Ljava/lang/String;");
 		jstring res = (jstring)env->CallObjectMethod(object, toString);
 		return string(env->GetStringUTFChars(res, NULL));
 	}

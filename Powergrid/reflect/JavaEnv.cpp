@@ -1,5 +1,6 @@
 #include "jni.h"
 #include "JavaEnv.h"
+#include "pgexcept.h"
 #include <iostream>
 #include <stdarg.h>
 

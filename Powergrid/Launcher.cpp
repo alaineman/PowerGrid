@@ -6,6 +6,7 @@
 #include "jni.h"
 #include "reflect/JavaEnv.h"
 #include <windows.h>
+#include "pgexcept.h"
 
 #ifndef UNICODE
 #define UNICODE
@@ -100,7 +101,5 @@ void JVMThread(void* pParams) {
 		msg += e.what();
 		msg += "\nEnsure that the official Jagex launcher is installed on your system.";
 		MessageBox(NULL, msg.c_str(), "Critical Failure", MB_OK);
-	} catch (...) {
-		MessageBox(NULL, "An unknown error occurred", "Critical Failure", MB_OK);
-	}
+	} CATCH_UNKNOWN
 }

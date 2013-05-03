@@ -1,3 +1,4 @@
+#pragma once
 /* 
  * File:   JavaEnv.h
  * Author: Chronio
@@ -13,18 +14,8 @@
 #include <cstdlib>
 #include <stdexcept>
 
-#ifndef JAVAENV_H
-#define	JAVAENV_H
-
 namespace powergrid {
 namespace reflect {
-    
-	/* This class represents an exception thrown by a JavaEnv object upon failure.
-	 */
-	class JavaEnvException : public std::runtime_error {
-	public:
-		JavaEnvException(LPCSTR message) : runtime_error(message) {};
-	};
 
     /* This class provides an easy-to-use wrapper around a running Java 
      * environment.
@@ -113,6 +104,3 @@ namespace reflect {
     
 } /* namespace reflect */
 } /* namespace powergrid */
-
-#endif	/* JAVAENV_H */
-

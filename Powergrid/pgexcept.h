@@ -59,3 +59,9 @@ namespace powergrid {
 #define CATCH_UNKNOWN catch(...) { REPORT_UNKNOWN(); }
 
 #define CATCH_ALL CATCH_INT CATCH_STRING CATCH_EXCEPTION CATCH_UNKNOWN
+
+// Macros for quick Debug / Error reporting
+#define SHOW_MSG(message, title) MessageBox(NULL, message, title, MB_OK)
+#define SHOW_DEBUG(message) SHOW_MSG(message, "debug")
+#define SHOW_ERROR(message) SHOW_MSG(message, "error")
+#define SHOW_INFO(message) SHOW_MSG(message, "info")

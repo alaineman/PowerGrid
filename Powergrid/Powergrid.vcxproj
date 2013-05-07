@@ -40,8 +40,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>C:\Program Files (x86)\Java\jdk1.7.0_11\lib;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+    <LibraryPath>C:\Program Files (x86)\Java\jdk1.7.0_21\lib;$(ProjectDir)..\wxWidgets\lib;$(LibraryPath)</LibraryPath>
     <LinkIncremental />
+    <IncludePath>$(ProjectDir)..\wxWidgets\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -83,15 +84,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Launcher.cpp" />
-    <ClCompile Include="reflect\JavaEnv.cpp" />
-    <ClCompile Include="RSMonitor.cpp" />
+    <ClCompile Include="ControlPanel.cpp" />
+    <ClCompile Include="PowerGrid.cpp" />
+    <ClCompile Include="JNIAccessor\JavaEnv.cpp" />
+    <ClCompile Include="monitor\Monitor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ControlPanel.h" />
     <ClInclude Include="pgexcept.h" />
-    <ClInclude Include="Launcher.h" />
-    <ClInclude Include="reflect\JavaEnv.h" />
-    <ClInclude Include="RSMonitor.h" />
+    <ClInclude Include="PowerGrid.h" />
+    <ClInclude Include="JNIAccessor\JavaEnv.h" />
+    <ClInclude Include="monitor\Monitor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

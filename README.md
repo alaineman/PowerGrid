@@ -14,7 +14,10 @@ PowerGrid is, unlike other bots, written in C++. While this causes a delay in tr
 
 The loader itself is inspired by the official open-source loader for Runescape, also written in C++. More specifically, PowerGrid uses the very same files as the Runescape loader (and as such requires that the loader is installed in order to work). Because of this, PowerGrid will appear to be a normal loader application, while in reality, PowerGrid monitors various settings, objects, and data structures to use for botting purposes.
 
+
+
 ## Using PowerGrid ##
+
 PowerGrid comes with its own control frame that is separate from the main Runescape frame.  This is because the Runescape frame is in reality a Java frame, and PowerGrid's control frame is not.
 
 Because of this feature, it is also possible to use PowerGrid to play Runescape normally, without PowerGrid getting in the way. Also, PowerGrid solely uses reflection to monitor the bot, which opens up more dynamic possibilities than when using injection. This is because Runescape's classes themselves are not modified, and this prevents many workarounds that other bot platforms have to make to get the injection to work.

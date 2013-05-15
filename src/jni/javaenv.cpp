@@ -28,8 +28,9 @@ namespace jni {
     QString home = QDir::homePath().replace("/", "\\");
     classpath.append(home).append(sep).append("jagexcache").append(sep)
              .append("jagexlauncher").append(sep).append("bin").append(sep)
-             .append("jagexappletviewer.jar");//.replace("\\","/");
+             .append("jagexappletviewer.jar");
 
+    std::string printpath = classpath.toStdString();
     //qDebug() << qPrintable(classpath);
 
     JavaVMInitArgs vmargs;
@@ -39,8 +40,8 @@ namespace jni {
     // the JVM options themselves. They are all used because these are the same
     // that the official Runescape loader uses. We also use them since we're trying
     // to mimic the Runescape loader as accurately as possible.
-    JavaVMOption options[9];
-    options[0].optionString  = const_cast<char*>("-Djava.class.path=C:\\Users\\Patrick\\jagexcache\\jagexlauncher\\bin\\jagexappletviewer.jar");
+    JavaVMOption options[9];    
+    options[0].optionString  = const_cast<char*>(printpath.c_str());
     options[1].optionString  = const_cast<char*>("-Dsun.java2d.noddraw=true");
     // The entire configuration for loading Runescape itself is stored on this link.
     // The appletloader parses it by itself, so loading the client can be done completely native.

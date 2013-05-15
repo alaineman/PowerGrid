@@ -2,8 +2,11 @@
 [Tt]humbs.db
 *.DS_Store
 
-# build folder
-build
+# build-... folders (default location for storing compiled code)
+build*/
+
+# autosave files of Qt Creator
+*.autosave
 
 # Java class files
 *.class

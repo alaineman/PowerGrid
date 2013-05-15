@@ -38,6 +38,7 @@ namespace jni {
     // Accessor functions for looking up classes and methods. They check for NULL values and such.
     jclass GetClass(const char* name);
     jmethodID GetMethodID(jclass c, const char* name, const char* signature);
+    jmethodID GetStaticMethodID(jclass c, const char* name, const char* signature);
 
     // Version of the currently loaded environment as a QString
     QString GetEnvironmentVersion();

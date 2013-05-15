@@ -79,7 +79,7 @@ namespace jni {
 
   QString JavaEnv::GetEnvironmentVersion() {
     jclass system = GetClass("java/lang/System");
-    jmethodID getProperty = env->GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+    jmethodID getProperty = GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring infoStr = (jstring) env->CallStaticObjectMethod(system, getProperty, env->NewStringUTF("java.version"));
     const char* info = env->GetStringUTFChars(infoStr, NULL);
     return QString(info);
@@ -101,6 +101,15 @@ namespace jni {
     return meth;
   }
 
+  jmethodID JavaEnv::GetStaticMethodID(jclass c, const char *name, const char *signature) {
+    VerifyNonNull(c);
+    VerifyNonNull(name);
+    VerifyNonNull(signature);
+    jmethodID meth = env->GetStaticMethodID(c, name, signature);
+
+    return meth;
+  }
+
   JNIEnv* JavaEnv::GetEnv() {
     return env;
   }
@@ -109,4 +118,24 @@ namespace jni {
     return running;
   }
 
+  jobject JavaEnv::CallObjectMethod(jmethodID method, jobject obj, ...) {
+    va_list args;
+    va_start(args);
+    VerifyNonNull(method);
+    VerifyNonNull(obj);
+    jobject result = env->CallObjectMethodV(method, obj, args);
+    va_end();
+
+    return result;
+  }
+
+  jint JavaEnv::CallIntMethod(jmethodID method, jobject obj, ...) {
+    va_list args;
+    va_start(args);
+    VerifyNonNull(method);
+    VerifyNonNull(obj);
+    jint result = env->CallIntMethodV(method, obj, args);
+    va_end();
+    return result;
+  }
 }

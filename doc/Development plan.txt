@@ -2,8 +2,8 @@
 
 X create and finish JavaEnv class
 X create and test loading and running the environment.
-- Set up a window containing the Applet. 
-- version 0.1: client loader
+X Set up a window containing the Applet. 
+X version 0.1: client loader
 
 - implement reflection engine to collect RS data.
 - implement caching model to store RS data.

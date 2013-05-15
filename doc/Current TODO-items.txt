@@ -16,8 +16,8 @@ Milestone planning:       = Tasks done before all other tasks in the Milestone, 
 
 Chronio:
 	X [REQ] Get the Java environment running.
-	- [REQ] Get the RS client running.
-		- Get the application to terminate gracefully, prevent it from remaining active
+	X [REQ] Get the RS client running.
+		X Get the application to terminate gracefully, prevent it from remaining active
 
 Alaineman:
 	- [OPT] Design the Java Reflection API, ensuring that reflect 

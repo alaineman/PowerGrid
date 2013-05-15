@@ -25,7 +25,7 @@ namespace jni {
 
     QString classpath("-Djava.class.path=");
     QChar sep = QDir::separator();
-    QString home = QDir::homePath().replace("/", "\\");
+    QString home = QDir::homePath().replace("/", sep);
     classpath.append(home).append(sep).append("jagexcache").append(sep)
              .append("jagexlauncher").append(sep).append("bin").append(sep)
              .append("jagexappletviewer.jar");

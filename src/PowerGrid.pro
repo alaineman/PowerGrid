@@ -13,11 +13,16 @@ TEMPLATE = app
 
 SOURCES  += main.cpp\
             mainwindow.cpp \
-        jni/javaenv.cpp
+        jni/javaenv.cpp \
+    jni/jnimethod.cpp \
+    jni/jnielement.cpp
 
 HEADERS  += mainwindow.h \
         jni/javaenv.h \
-            stdafx.h
+            stdafx.h \
+    jni/jnimethod.h \
+    jni/jnielement.h \
+    JNIConnection
 
 FORMS    += mainwindow.ui
 

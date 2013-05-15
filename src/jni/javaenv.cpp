@@ -13,9 +13,11 @@ namespace jni {
   JavaEnv::~JavaEnv() {}
 
   void JavaEnv::VerifyNonNull(void* pntr, const char* message) {
+#ifdef PG_NULL_CHECK
     if (pntr == NULL) {
         throw runtime_error(message);
     }
+#endif
   }
 
   void JavaEnv::Setup() {
@@ -119,7 +121,7 @@ namespace jni {
     return running;
   }
 
-  jobject JavaEnv::CallObjectMethod(jmethodID method, jobject obj, int n_args ...) {
+  jobject JavaEnv::CallObjectMethod(jobject obj, jmethodID method, int n_args, ...) {
     va_list args;
     va_start(args, n_args);
     VerifyNonNull(method);
@@ -130,7 +132,7 @@ namespace jni {
     return result;
   }
 
-  jint JavaEnv::CallIntMethod(jmethodID method, jobject obj, int n_args, ...) {
+  jint JavaEnv::CallIntMethod(jobject obj, jmethodID method, int n_args, ...) {
     va_list args;
     va_start(args, n_args);
     VerifyNonNull(method);
@@ -138,5 +140,9 @@ namespace jni {
     jint result = env->CallIntMethodV(obj, method, args);
     va_end(args);
     return result;
+  }
+
+  jdouble JavaEnv::CallDoubleMethod(jobject obj, jmethodID method, int n_args, ...) {
+    return 0.0;
   }
 }

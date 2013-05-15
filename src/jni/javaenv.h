@@ -44,8 +44,8 @@ namespace jni {
     QString GetEnvironmentVersion();
 
     // Safe versions of all (14) method invocation functions. They check NULL values and such.
-    //jobject  CallObjectMethod  (jmethodID method, jobject obj, ...);
-    //jint     CallIntMethod     (jmethodID method, jobject obj, ...);
+    jobject  CallObjectMethod  (jmethodID method, jobject obj, int n_args, ...);
+    jint     CallIntMethod     (jmethodID method, jobject obj, int n_args, ...);
     //jdouble  CallDoubleMethod  (jmethodID method, jobject obj, ...);
     //jboolean CallBooleanMethod (jmethodID method, jobject obj, ...);
     //jfloat   CallFloatMethod   (jmethodID method, jobject obj, ...);

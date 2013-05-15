@@ -103,8 +103,8 @@ namespace jni {
 
   jmethodID JavaEnv::GetStaticMethodID(jclass c, const char *name, const char *signature) {
     VerifyNonNull(c);
-    VerifyNonNull(name);
-    VerifyNonNull(signature);
+    VerifyNonNull(const_cast<char*>(name));
+    VerifyNonNull(const_cast<char*>(signature));
     jmethodID meth = env->GetStaticMethodID(c, name, signature);
 
     return meth;
@@ -118,24 +118,24 @@ namespace jni {
     return running;
   }
 
-  jobject JavaEnv::CallObjectMethod(jmethodID method, jobject obj, ...) {
+  jobject JavaEnv::CallObjectMethod(jmethodID method, jobject obj, int n_args ...) {
     va_list args;
-    va_start(args);
+    va_start(args, n_args);
     VerifyNonNull(method);
     VerifyNonNull(obj);
-    jobject result = env->CallObjectMethodV(method, obj, args);
-    va_end();
+    jobject result = env->CallObjectMethodV(obj, method, args);
+    va_end(args);
 
     return result;
   }
 
-  jint JavaEnv::CallIntMethod(jmethodID method, jobject obj, ...) {
+  jint JavaEnv::CallIntMethod(jmethodID method, jobject obj, int n_args, ...) {
     va_list args;
-    va_start(args);
+    va_start(args, n_args);
     VerifyNonNull(method);
     VerifyNonNull(obj);
-    jint result = env->CallIntMethodV(method, obj, args);
-    va_end();
+    jint result = env->CallIntMethodV(obj, method, args);
+    va_end(args);
     return result;
   }
 }

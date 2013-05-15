@@ -9,7 +9,9 @@ The Qt libraries used to build and compile are quite large (around 400-650 MB, d
 
 Download and install the Qt libraries + Qt Creator + MinGW in one go from qt-project.org/downloads (take the version labeled "Qt 5.0.2 for Windows 32-bit (MinGW 4.7, 650 MB)")
 
-Once downloaded and installed, make sure that the paths to the Qt and MinGW binaries are added to your PATH variable.
+Once downloaded and installed, make sure that the following paths are added to your PATH variable.
+
+;C:\Qt\Qt5.0.2\5.0.2\mingw47_32\bin;C:\Users\YOURUSERNAME\jagexcache\jagexlauncher\bin
 
 The reason we use this version is because it packs everything in one installer. We could use the 64-bit version for Visual Studio, but a) Visual Studio and Qt don't work together as well as expected, and b) the speedup we get from compiling in 64-bit is almost nothing since PowerGrid's speed heavily depends on the speed of the running Java environment. Lastly (c), the project structure in Visual Studio makes things overly complicated, and Qt Creator is simple and more importantly, cross-platform.
 

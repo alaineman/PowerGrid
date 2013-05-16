@@ -1,14 +1,16 @@
-#ifndef JNICONNECTION_H
-#define JNICONNECTION_H
 
 // This header can be included to include the JNI environment all at once.
 // This is useful since you will often need various JNI types.
+
+#include "jni/jnielement.h"
+#include "jni/jnivalue.h"
+#include "jni/jnimethod.h"
+
+#include "jni/ongoinginvocation.h"
 
 // Java environment itself
 #include "jni/javaenv.h"
 
 // JNI element classes
-#include "jni/jnielement.h"
-#include "jni/jnimethod.h"
 
-#endif // JNICONNECTION_H
+

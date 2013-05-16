@@ -4,6 +4,18 @@
 // The PowerGrid version, should only be changed on version change.
 #define POWERGRID_VERSION "0.1"
 
+// Include common C/C++ headers
+#include <cstdlib>
+#include <iostream>
+#include <stdexcept>
+#include <memory>
+#include <string>
+#include <initializer_list>
+
+// Include common Qt headers
+#include <QtGlobal>
+#include <QDebug>
+
 // The below options may be customized at will to provide a combination of safety checks
 // and functionality that benefits your needs. In most cases, however, simply
 // enabling / disabling the DEBUG macro will do the trick.
@@ -26,10 +38,16 @@
  #define DEBUG_MSG(msg) (msg)
 #endif
 
+// Checks input from users and other arguments for validity. Checks basic properties of strings (such as length),
+// but does not look into the semantic meaning of the string to see if it's valid.
+#define PG_INPUT_CHECK
+
+
 // Checks for NULL values in arguments and return values. Recommended to alert the user when
 // something goes wrong in the JNI. NULL checks are usually fast, so they should be enabled
 // even in a release version.
 #define PG_NULL_CHECK
+
 
 #ifdef DEBUG
  // Deeply checks validity of strings, should be disabled in a release version to enhance speed.
@@ -38,13 +56,29 @@
  #define PG_STRING_CHECK
 #endif
 
-// Include common C/C++ headers
-#include <cstdlib>
-#include <iostream>
-#include <stdexcept>
 
-// Include common Qt headers
-#include <QtGlobal>
-#include <QDebug>
+// Define convenience macro's
+#ifdef PG_NULL_CHECK
+ #define VERIFY_NON_NULL(pointer) if(pointer == NULL) { throw std::runtime_error(std::string("pointer is NULL (").append(__FILE__).append(":").append(to_string(__LINE__)).append(")")); }
+#else
+ #define VERIFY_NON_NULL(pointer)
+#endif
+
+// Convenience macro for condition checking
+#ifdef PG_INPUT_CHECK
+ #define VERIFY_THAT(condition) if (!(condition)) { throw std::runtime_error(std::string("Condition failed (").append(__FILE__).append(":").append(to_string(__LINE__)).append(")")); }
+#else
+ #define VERIFY_THAT(condition)
+#endif
+
+// define a const c-type string as a cstring
+typedef const char* cstring;
+
+/**
+ * @brief enum indicating a value type in the Java environment
+ */
+enum jvalue_type {
+  JVOID, JBOOLEAN, JBYTE, JCHAR, JSHORT, JINT, JLONG, JFLOAT, JDOUBLE, JOBJECT
+};
 
 #endif // STDAFX_H

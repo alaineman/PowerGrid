@@ -1,69 +1,138 @@
+#include "stdafx.h"
+#include <jni.h>
+#include "jnimethod.h"
+
 #ifndef JAVAENV_H
 #define JAVAENV_H
 
-#include "stdafx.h"
-#include <jni.h>
-
+#define VALID_JAVA_ID(str) VERIFY_THAT(str.length() != 0 && ((str.at(0) >= 'A' && str.at(0) <= 'Z') || (str.at(0) >= 'a' && str.at(0) <= 'z') || str.at(0) == '$' || str.at(0) == '_'))
+#define VALID_JAVA_ID_CHARS(chars) VERIFY_NON_NULL(chars) VALID_JAVA_ID(std::string(chars))
 
 namespace jni {
   using namespace std;
 
-
-
-  // The JavaEnv class is a C++ wrapper around the Java environment (JNIEnv struct).
-  // The functions this class provides check for illegal arguments, like NULL values.
-  // The original JNI does not do this, and as such errors could occur when providing the
-  // JNI with such arguments.
+  /**
+   * The JavaEnv class is a C++ wrapper around the Java environment (JNIEnv struct).
+   * The functions this class provides checks for illegal arguments, like NULL values.
+   * The original JNI does not do this, and as such errors could occur when providing the
+   * JNI with such arguments. NULL value checking is enabled only when the PG_NULL_CHECK macro is defined.
+   */
   class JavaEnv {
   private:
-    static JavaEnv* environment;
-    // pointer to the JNIEnv object
     JNIEnv* env;
-    // Flag indicating if the environment has started.
     jboolean running;
 
-    void VerifyNonNull(void* pntr, const char* message = "NULL value not allowed");
-
   public:
-    static JavaEnv* Instance();
-    // Constructor and destructor don't really do anything useful.
+    /**
+     * Constructs a new JavaEnv object.
+     */
     JavaEnv();
-    ~JavaEnv();
 
-    // Returns the environment. Calling this before calling Setup does not give a valid JNIEnv object
+    /**
+     * @brief Returns the JNI environment object
+     *
+     * Calling this before calling Setup does not give a valid JNIEnv object.
+     * @return the JNI environment
+     */
     JNIEnv* GetEnv();
 
+    /**
+     * @brief Returns whether the JNI environment is running.
+     * @return true if the JNI environment is running, false otherwise.
+     */
     jboolean IsRunning();
 
-    // Setup function for the JNI environment. throws runtime_error upon failure.
+    /**
+     * @brief Setup function for the JNI environment.
+     *
+     * This function can only be called once. Calling this function again results in a runtime_error.
+     */
     void Setup();
 
+    /**
+     * @brief Starts the JNI environment
+     *
+     * Calling this function results in the main method of the jagexappletviewer jar file to be executed.
+     * This function returns when the main method in the JVM returns.
+     */
+    // TODO: consider merging with Setup function
     void Start();
 
-    // Accessor functions for looking up classes and methods. They check for NULL values and such.
-    jclass GetClass(const char* name);
-    jmethodID GetMethodID(jclass c, const char* name, const char* signature);
-    jmethodID GetStaticMethodID(jclass c, const char* name, const char* signature);
+    /**
+     * @brief Returns the class with the given name
+     * @param name the name of the requested class
+     * @return the jclass object with the requested name, or NULL if no such jclass exists on the JVM classpath.
+     */
+    jclass GetClass(cstring name);
 
-    // Version of the currently loaded environment as a QString
+    /**
+     * @brief Returns the method ID with the given requirements.
+     * @param c the class in which the method is declared
+     * @param name the name of the method
+     * @param signature the signature of the method
+     *
+     * Use the GetStaticMethodID function for static methods, because they are handled in a different way in the JNI.
+     *
+     * @return the jmethodID object representing the method with the given requirements, or NULL is the method was not found.
+     */
+    jmethodID GetMethodID(jclass c, cstring name, cstring signature);
+
+    /**
+     * @brief Returns the static method ID with the given requirements.
+     * @param c the class in which the static method is declared
+     * @param name the name of the static method
+     * @param signature the signature of the static method
+     *
+     * Use the GetMethodID function for non-static methods, because they are handled in a different way in the JNI.
+     *
+     * @return the jmethodID object representing the static method with the given requirements, or NULL is the method was not found.
+     */
+    jmethodID GetStaticMethodID(jclass c, cstring name, cstring signature);
+
+    /**
+     * @brief Returns the Java Virtual machine version
+     *
+     * This function call performs the following Java method invocation:
+     *      System.getProperty("java.version");
+     * and returns the result as a QString
+     * @return the version of the JVM as a QString
+     */
     QString GetEnvironmentVersion();
 
-    // Safe versions of all (14) method invocation functions. They check NULL values and such.
-    jobject  CallObjectMethod  (jobject obj, jmethodID method, int n_args, ...);
-    jint     CallIntMethod     (jobject obj, jmethodID method, int n_args, ...);
-    jdouble  CallDoubleMethod  (jobject obj, jmethodID method, int n_args, ...);
-    //jboolean CallBooleanMethod (jobject obj, jmethodID method, int n_args, ...);
-    //jfloat   CallFloatMethod   (jobject obj, jmethodID method, int n_args, ...);
-    //jbyte    CallByteMethod    (jobject obj, jmethodID method, int n_args, ...);
-    //jchar    CallCharMethod    (jobject obj, jmethodID method, int n_args, ...);
+    // Safe versions of all (16) method invocation functions. They check NULL values and such
+    // as long as the PG_NULL_CHECK macro is defined.
+    jobject  CallObjectMethod  (jobject obj, jmethodID method, uint n_args, ...);
+    jint     CallIntMethod     (jobject obj, jmethodID method, uint n_args, ...);
+    jdouble  CallDoubleMethod  (jobject obj, jmethodID method, uint n_args, ...);
+    jboolean CallBooleanMethod (jobject obj, jmethodID method, uint n_args, ...);
+    jfloat   CallFloatMethod   (jobject obj, jmethodID method, uint n_args, ...);
+    jbyte    CallByteMethod    (jobject obj, jmethodID method, uint n_args, ...);
+    jchar    CallCharMethod    (jobject obj, jmethodID method, uint n_args, ...);
+    jlong    CallLongMethod    (jobject obj, jmethodID method, uint n_args, ...);
+    jshort   CallShortMethod   (jobject obj, jmethodID method, uint n_args, ...);
 
-    //jobject  CallStaticObjectMethod  (jmethodID method, ...);
-    //jint     CallStaticIntMethod     (jmethodID method, ...);
-    //jdouble  CallStaticDoubleMethod  (jmethodID method, ...);
-    //jboolean CallStaticBooleanMethod (jmethodID method, ...);
-    //jfloat   CallStaticFloatMethod   (jmethodID method, ...);
-    //jbyte    CallStaticByteMethod    (jmethodID method, ...);
-    //jchar    CallStaticCharMethod    (jmethodID method, ...);
+    jobject  CallStaticObjectMethod  (jclass c, jmethodID method, uint n_args, ...);
+    jint     CallStaticIntMethod     (jclass c, jmethodID method, uint n_args, ...);
+    jdouble  CallStaticDoubleMethod  (jclass c, jmethodID method, uint n_args, ...);
+    jboolean CallStaticBooleanMethod (jclass c, jmethodID method, uint n_args, ...);
+    jfloat   CallStaticFloatMethod   (jclass c, jmethodID method, uint n_args, ...);
+    jbyte    CallStaticByteMethod    (jclass c, jmethodID method, uint n_args, ...);
+    jchar    CallStaticCharMethod    (jclass c, jmethodID method, uint n_args, ...);
+    jlong    CallStaticLongMethod    (jclass c, jmethodID method, uint n_args, ...);
+    jshort   CallStaticShortMethod   (jclass c, jmethodID method, uint n_args, ...);
+
+    /**
+     * @brief Retrieves information on the method specified by the given parameters
+     * @param c the class the method is declared in
+     * @param name the name of the method
+     * @param signature the signature of the method
+     *
+     * This method is completely type-safe regarding input and output.
+     *
+     * @return a pointer to the JNIMethod object containing the method information of the
+     *         requested method, or NULL if the method does not exist in the JVM.
+     */
+    JNIMethod* GetMethod(jclass c, cstring name, cstring signature);
 
   };
 }

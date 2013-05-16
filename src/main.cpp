@@ -35,16 +35,11 @@ int main(int argc, char *argv[]) {
   JavaEnv environment;
   try {
     environment.Setup();
+    environment.Start();
   } catch (runtime_error e) {
     // Report a fatal message stating what the problem was.
     // The message level is fatal because the application
     // cannot continue without a Java environment.
-    qFatal(e.what());
-  }
-  
-  try {
-    environment.Start();
-  } catch (runtime_error e) {
     qFatal(e.what());
   }
 

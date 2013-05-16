@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "jni.h"
 #include "jnielement.h"
+#include "jnivalue.h"
 
 namespace jni {
   using namespace std;
@@ -14,18 +15,25 @@ namespace jni {
   class JNIMethod : JNIElement {
     private:
       jclass cls;
-      string signature;
+      jvalue_type return_type;
+      vector<jvalue_type> argument_types;
       jmethodID method;
       jboolean isStatic;
     public:
       // Single constructor defining all fields.
-      JNIMethod(string nm, jclass c, string sig, jboolean stat, jmethodID meth);
+      JNIMethod(string nm, jclass c, jvalue_type ret, const vector<jvalue_type> args,
+                jboolean stat, jmethodID meth);
 
       // Getters for the fields.
       jclass GetClass();
-      string GetSignature();
+      jvalue_type GetReturnType();
+      jvalue_type GetArgumentType(uint n);
       jboolean IsStatic();
       jmethodID GetMethodID();
+      uint GetArgumentCount();
+
+      // Validates the given vector as input for the method.
+      jboolean ValidateInput(vector<JNIValue> arguments);
   };
 }
 #endif // JNIMETHOD_H

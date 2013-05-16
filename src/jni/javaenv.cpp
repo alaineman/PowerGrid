@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <QDir>
 
+
 namespace jni {
   using namespace std;
 
@@ -10,15 +11,8 @@ namespace jni {
     running = JNI_FALSE;
   }
 
-  JavaEnv::~JavaEnv() {}
 
-  void JavaEnv::VerifyNonNull(void* pntr, const char* message) {
-#ifdef PG_NULL_CHECK
-    if (pntr == NULL) {
-        throw runtime_error(message);
-    }
-#endif
-  }
+  // Intialize and set up the environment
 
   void JavaEnv::Setup() {
     if (running) {
@@ -62,8 +56,8 @@ namespace jni {
 
     qDebug() << "Creating Java Virtual Machine";
     JNI_CreateJavaVM(&jvm, (void**)&env, &vmargs);
-    VerifyNonNull(jvm, "JVM == NULL");
-    VerifyNonNull(env, "env == NULL");
+    VERIFY_NON_NULL(jvm);
+    VERIFY_NON_NULL(env);
     qDebug() << "Environment created";
     running = JNI_TRUE;
   }
@@ -80,38 +74,36 @@ namespace jni {
     env->CallStaticVoidMethod(c, mainMethod, args);
   }
 
-  QString JavaEnv::GetEnvironmentVersion() {
-    jclass system = GetClass("java/lang/System");
-    jmethodID getProperty = GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
-    jstring infoStr = (jstring) env->CallStaticObjectMethod(system, getProperty, env->NewStringUTF("java.version"));
-    const char* info = env->GetStringUTFChars(infoStr, NULL);
-    return QString(info);
-  }
 
-  jclass JavaEnv::GetClass(const char *name) {
-    VerifyNonNull(const_cast<char*>(name), "Name cannot be NULL");
+  // Get basic JNI element types
+
+  jclass JavaEnv::GetClass(cstring name) {
+    VALID_JAVA_ID_CHARS(name);
     jclass cls = env->FindClass(name);
     // TODO: implement a caching system to speed up consecutive calls.
     return cls;
   }
 
-  jmethodID JavaEnv::GetMethodID(jclass c, const char *name, const char *signature) {
-    VerifyNonNull(c);
-    VerifyNonNull(const_cast<char*>(name));
-    VerifyNonNull(const_cast<char*>(signature));
+  jmethodID JavaEnv::GetMethodID(jclass c, cstring name, cstring signature) {
+    VERIFY_NON_NULL(c);
+    VALID_JAVA_ID_CHARS(name);
+    VALID_JAVA_ID_CHARS(signature);
     jmethodID meth = env->GetMethodID(c, name, signature);
 
     return meth;
   }
 
-  jmethodID JavaEnv::GetStaticMethodID(jclass c, const char *name, const char *signature) {
-    VerifyNonNull(c);
-    VerifyNonNull(const_cast<char*>(name));
-    VerifyNonNull(const_cast<char*>(signature));
+  jmethodID JavaEnv::GetStaticMethodID(jclass c, cstring name, cstring signature) {
+    VERIFY_NON_NULL(c);
+    VALID_JAVA_ID_CHARS(name);
+    VALID_JAVA_ID_CHARS(signature);
     jmethodID meth = env->GetStaticMethodID(c, name, signature);
 
     return meth;
   }
+
+
+  // Get state and environment information
 
   JNIEnv* JavaEnv::GetEnv() {
     return env;
@@ -121,28 +113,228 @@ namespace jni {
     return running;
   }
 
-  jobject JavaEnv::CallObjectMethod(jobject obj, jmethodID method, int n_args, ...) {
+  QString JavaEnv::GetEnvironmentVersion() {
+    if (running) {
+      jclass system = GetClass("java/lang/System");
+      jmethodID getProperty = GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+      jstring infoStr = (jstring) env->CallStaticObjectMethod(system, getProperty, env->NewStringUTF("java.version"));
+      cstring info = env->GetStringUTFChars(infoStr, NULL);
+
+      return QString(info);
+    } else {
+      return QString("<not running>");
+    }
+  }
+
+
+  // Non-static Method Invocations
+
+  jobject JavaEnv::CallObjectMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
-    VerifyNonNull(method);
-    VerifyNonNull(obj);
+    VERIFY_NON_NULL(method);
+    VERIFY_NON_NULL(obj);
     jobject result = env->CallObjectMethodV(obj, method, args);
     va_end(args);
 
     return result;
   }
 
-  jint JavaEnv::CallIntMethod(jobject obj, jmethodID method, int n_args, ...) {
+  jint JavaEnv::CallIntMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
-    VerifyNonNull(method);
-    VerifyNonNull(obj);
+    VERIFY_NON_NULL(method);
+    VERIFY_NON_NULL(obj);
     jint result = env->CallIntMethodV(obj, method, args);
     va_end(args);
     return result;
   }
 
-  jdouble JavaEnv::CallDoubleMethod(jobject obj, jmethodID method, int n_args, ...) {
-    return 0.0;
+  jdouble JavaEnv::CallDoubleMethod(jobject obj, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(method);
+    VERIFY_NON_NULL(obj);
+    jdouble result = env->CallDoubleMethodV(obj, method, args);
+    va_end(args);
+    return result;
+  }
+
+  jboolean JavaEnv::CallBooleanMethod(jobject obj, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(method);
+    VERIFY_NON_NULL(obj);
+    jboolean result = env->CallBooleanMethodV(obj, method, args);
+    va_end(args);
+    return result;
+  }
+
+  jfloat JavaEnv::CallFloatMethod(jobject obj, jmethodID method, uint n_args, ...) {
+    VERIFY_NON_NULL(obj);
+    VERIFY_NON_NULL(method);
+    va_list args;
+    va_start(args, n_args);
+    jfloat result = env->CallFloatMethodV(obj, method, args);
+    va_end(args);
+    return result;
+  }
+
+  jbyte JavaEnv::CallByteMethod(jobject obj, jmethodID method, uint n_args, ...) {
+    VERIFY_NON_NULL(obj);
+    VERIFY_NON_NULL(method);
+    va_list args;
+    va_start(args, n_args);
+    jbyte result = env->CallByteMethodV(obj, method, args);
+    va_end(args);
+    return result;
+  }
+
+  jchar JavaEnv::CallCharMethod(jobject obj, jmethodID method, uint n_args, ...) {
+    VERIFY_NON_NULL(obj);
+    VERIFY_NON_NULL(method);
+    va_list args;
+    va_start(args, n_args);
+    jchar result = env->CallCharMethodV(obj, method, args);
+    va_end(args);
+    return result;
+  }
+
+  jlong JavaEnv::CallLongMethod(jobject obj, jmethodID method, uint n_args, ...) {
+    VERIFY_NON_NULL(obj);
+    VERIFY_NON_NULL(method);
+    va_list args;
+    va_start(args, n_args);
+    jlong result = env->CallLongMethodV(obj, method, args);
+    va_end(args);
+    return result;
+  }
+
+  jshort JavaEnv::CallShortMethod(jobject obj, jmethodID method, uint n_args, ...) {
+    VERIFY_NON_NULL(obj);
+    VERIFY_NON_NULL(method);
+    va_list args;
+    va_start(args, n_args);
+    jshort result = env->CallShortMethodV(obj, method, args);
+    va_end(args);
+    return result;
+  }
+
+
+  // Static Method Invocations
+
+  jobject JavaEnv::CallStaticObjectMethod(jclass c, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(c);
+    VERIFY_NON_NULL(method);
+    jobject result = env->CallStaticObjectMethodV(c, method, args);
+    va_end(args);
+
+    return result;
+  }
+
+  jint JavaEnv::CallStaticIntMethod(jclass c, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(c);
+    VERIFY_NON_NULL(method);
+    jint result = env->CallStaticIntMethodV(c, method, args);
+    va_end(args);
+
+    return result;
+  }
+
+  jdouble JavaEnv::CallStaticDoubleMethod(jclass c, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(c);
+    VERIFY_NON_NULL(method);
+    jdouble result = env->CallStaticDoubleMethodV(c, method, args);
+    va_end(args);
+
+    return result;
+  }
+
+  jboolean JavaEnv::CallStaticBooleanMethod(jclass c, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(c);
+    VERIFY_NON_NULL(method);
+    jboolean result = env->CallStaticBooleanMethodV(c, method, args);
+    va_end(args);
+
+    return result;
+  }
+
+  jfloat JavaEnv::CallStaticFloatMethod(jclass c, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(c);
+    VERIFY_NON_NULL(method);
+    jfloat result = env->CallStaticFloatMethodV(c, method, args);
+    va_end(args);
+
+    return result;
+  }
+
+  jbyte JavaEnv::CallStaticByteMethod(jclass c, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(c);
+    VERIFY_NON_NULL(method);
+    jbyte result = env->CallStaticByteMethodV(c, method, args);
+    va_end(args);
+
+    return result;
+  }
+
+  jchar JavaEnv::CallStaticCharMethod(jclass c, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(c);
+    VERIFY_NON_NULL(method);
+    jchar result = env->CallStaticCharMethodV(c, method, args);
+    va_end(args);
+
+    return result;
+  }
+
+  jlong JavaEnv::CallStaticLongMethod(jclass c, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(c);
+    VERIFY_NON_NULL(method);
+    jlong result = env->CallStaticLongMethodV(c, method, args);
+    va_end(args);
+
+    return result;
+  }
+
+  jshort JavaEnv::CallStaticShortMethod(jclass c, jmethodID method, uint n_args, ...) {
+    va_list args;
+    va_start(args, n_args);
+    VERIFY_NON_NULL(c);
+    VERIFY_NON_NULL(method);
+    jshort result = env->CallStaticShortMethodV(c, method, args);
+    va_end(args);
+
+    return result;
+  }
+
+
+  JNIMethod* JavaEnv::GetMethod(jclass c, cstring name, cstring signature) {
+    // TODO: Look up from internal cache
+    jboolean st = JNI_FALSE;
+    jmethodID methodID = GetMethodID(c, name, signature);
+    if (methodID == NULL) {
+      methodID = GetStaticMethodID(c, name, signature);
+      if (methodID == NULL) {
+        return NULL;
+      }
+      st = JNI_TRUE;
+    }
+    // TODO: Store in internal cache
+    return new JNIMethod(name, c, JVOID, vector<jvalue_type>(), st, methodID); // << warning: potential memory leak here, which will be fixed when cache is implemented, though.
   }
 }

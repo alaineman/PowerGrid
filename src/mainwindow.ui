@@ -35,6 +35,9 @@
    <iconset resource="resources.qrc">
     <normaloff>:/icons/images/icon.png</normaloff>:/icons/images/icon.png</iconset>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
@@ -46,7 +49,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="OverviewTab">
      <attribute name="title">
@@ -62,7 +65,7 @@
        </rect>
       </property>
       <property name="title">
-       <string>Client</string>
+       <string>Global Info</string>
       </property>
       <widget class="QWidget" name="formLayoutWidget">
        <property name="geometry">
@@ -73,7 +76,7 @@
          <height>71</height>
         </rect>
        </property>
-       <layout class="QFormLayout" name="formLayout">
+       <layout class="QFormLayout" name="clientLayout">
         <property name="fieldGrowthPolicy">
          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
         </property>
@@ -94,14 +97,14 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="PGversionLabel">
           <property name="text">
-           <string>PowerGrid version</string>
+           <string>PowerGrid version       </string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="1" column="1">
          <widget class="QLabel" name="PGversion">
           <property name="statusTip">
            <string>The PowerGrid version</string>
@@ -111,14 +114,14 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="usernameLabel">
           <property name="text">
            <string>Logged in user</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="3" column="1">
          <widget class="QLabel" name="username">
           <property name="statusTip">
            <string>The logged in user. &lt;none&gt; means no user is logged in.</string>
@@ -126,6 +129,93 @@
           <property name="text">
            <string>&lt;none&gt;</string>
           </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>291</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>PowerGrid </string>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>271</width>
+         <height>84</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>PowerGrid activity:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="pg_full">
+          <property name="toolTip">
+           <string>Enables PowerGrid including additional functions</string>
+          </property>
+          <property name="text">
+           <string>Fully active</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">ActivitySelector</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="pg_minimal">
+          <property name="toolTip">
+           <string>Only enables PowerGrid core functions</string>
+          </property>
+          <property name="text">
+           <string>Minimally active</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">ActivitySelector</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="pg_disable">
+          <property name="toolTip">
+           <string>Disables PowerGrid</string>
+          </property>
+          <property name="text">
+           <string>Disabled</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">ActivitySelector</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -136,6 +226,112 @@
      <attribute name="title">
       <string>Travel...</string>
      </attribute>
+     <widget class="QListView" name="destinationList">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>291</width>
+        <height>181</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="travelHere">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>320</y>
+        <width>101</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Travel here</string>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="travelInfo">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>220</y>
+        <width>291</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Travel information about the selected item</string>
+      </property>
+      <property name="title">
+       <string>Travel Info</string>
+      </property>
+      <widget class="QWidget" name="formLayoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>271</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <layout class="QFormLayout" name="travelLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="destLabel">
+          <property name="text">
+           <string>Selected Destination  </string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="distLabel">
+          <property name="text">
+           <string>Distance (in tiles)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="timeLabel">
+          <property name="text">
+           <string>Approx. travel time</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="destination">
+          <property name="text">
+           <string>&lt;none&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="distance">
+          <property name="text">
+           <string>N/A</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="traveltime">
+          <property name="text">
+           <string>N/A</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="headerLabel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>291</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Choose a destination</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -145,4 +341,7 @@
   <include location="resources.qrc"/>
  </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="ActivitySelector"/>
+ </buttongroups>
 </ui>

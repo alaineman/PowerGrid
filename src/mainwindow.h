@@ -19,7 +19,10 @@ public:
 
   void updateVersionInfo(jni::JavaEnv* environment);
   
-private:
+  private slots:
+  void on_travelHere_clicked();
+
+  private:
   Ui::MainWindow *ui;
 };
 

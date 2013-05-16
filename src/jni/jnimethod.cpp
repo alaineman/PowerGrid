@@ -9,13 +9,14 @@ namespace jni {
     }
 #endif
 #ifdef PG_STRING_CHECK
-    if (sig.length() == 0) {
+    unsigned int len = sig.length();
+    if (len == 0) {
       throw runtime_error("Empty String");
     }
-    if (sig.find_first_of("(") != 0 || sig.find_first_of(")") < 0) {
+    if (sig.find_first_of("(") != 0 || sig.find_first_of(")") == len) {
       throw runtime_error("Invalid signature");
     }
-    if (sig.find_first_of(" ") >= 0) {
+    if (sig.find_first_of(" ") != len) {
       throw runtime_error("Illegal character in signature");
     }
 #endif

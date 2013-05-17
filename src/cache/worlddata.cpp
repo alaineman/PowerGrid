@@ -1,5 +1,9 @@
 #include "worlddata.h"
 
-WorldData::WorldData()
-{
+namespace cache{
+
+WorldData::WorldData(){
+
+}
+
 }

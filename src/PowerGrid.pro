@@ -17,7 +17,10 @@ SOURCES  += main.cpp\
     jni/jnimethod.cpp \
     jni/jnielement.cpp \
     jni/jnivalue.cpp \
-    jni/ongoinginvocation.cpp
+    jni/ongoinginvocation.cpp \
+    cache/worlddata.cpp \
+    cache/sector.cpp \
+    cache/collisionmap.cpp
 
 HEADERS  += mainwindow.h \
         jni/javaenv.h \
@@ -26,7 +29,10 @@ HEADERS  += mainwindow.h \
     jni/jnielement.h \
     JNIConnection \
     jni/ongoinginvocation.h \
-    jni/jnivalue.h
+    jni/jnivalue.h \
+    cache/worlddata.h \
+    cache/sector.h \
+    cache/collisionmap.h
 
 FORMS    += mainwindow.ui
 

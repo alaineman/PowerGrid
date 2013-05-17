@@ -80,5 +80,6 @@ typedef const char* cstring;
 enum jvalue_type {
   JVOID, JBOOLEAN, JBYTE, JCHAR, JSHORT, JINT, JLONG, JFLOAT, JDOUBLE, JOBJECT
 };
+typedef unsigned char byte;
 
 #endif // STDAFX_H

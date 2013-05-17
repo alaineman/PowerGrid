@@ -87,7 +87,7 @@ namespace jni {
   jmethodID JavaEnv::GetMethodID(jclass c, cstring name, cstring signature) {
     VERIFY_NON_NULL(c);
     VALID_JAVA_ID_CHARS(name);
-    VALID_JAVA_ID_CHARS(signature);
+    VERIFY_THAT(strlen(signature) != 0);
     jmethodID meth = env->GetMethodID(c, name, signature);
 
     return meth;
@@ -96,7 +96,7 @@ namespace jni {
   jmethodID JavaEnv::GetStaticMethodID(jclass c, cstring name, cstring signature) {
     VERIFY_NON_NULL(c);
     VALID_JAVA_ID_CHARS(name);
-    VALID_JAVA_ID_CHARS(signature);
+    VERIFY_THAT(strlen(signature) != 0);
     jmethodID meth = env->GetStaticMethodID(c, name, signature);
 
     return meth;

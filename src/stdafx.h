@@ -74,12 +74,15 @@
 // define a const c-type string as a cstring
 typedef const char* cstring;
 
+// define a byte-type since it's used a lot as such.
+typedef unsigned char byte;
+
 /**
  * @brief enum indicating a value type in the Java environment
  */
 enum jvalue_type {
   JVOID, JBOOLEAN, JBYTE, JCHAR, JSHORT, JINT, JLONG, JFLOAT, JDOUBLE, JOBJECT
 };
-typedef unsigned char byte;
+
 
 #endif // STDAFX_H

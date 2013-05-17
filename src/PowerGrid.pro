@@ -20,7 +20,8 @@ SOURCES  += main.cpp\
     jni/ongoinginvocation.cpp \
     cache/worlddata.cpp \
     cache/sector.cpp \
-    cache/collisionmap.cpp
+    cache/collisionmap.cpp \
+    cache/stringmap.cpp
 
 HEADERS  += mainwindow.h \
         jni/javaenv.h \
@@ -32,7 +33,8 @@ HEADERS  += mainwindow.h \
     jni/jnivalue.h \
     cache/worlddata.h \
     cache/sector.h \
-    cache/collisionmap.h
+    cache/collisionmap.h \
+    cache/stringmap.h
 
 FORMS    += mainwindow.ui
 

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <jni.h>
 #include "jnimethod.h"
+#include "ongoinginvocation.h"
 
 #ifndef JAVAENV_H
 #define JAVAENV_H
@@ -22,9 +23,10 @@ namespace jni {
     JNIEnv* env;
     jboolean running;
 
+
   public:
     /**
-     * Constructs a new JavaEnv object.
+     * @brief Constructs a new JavaEnv object.
      */
     JavaEnv();
 
@@ -43,19 +45,12 @@ namespace jni {
     jboolean IsRunning();
 
     /**
-     * @brief Setup function for the JNI environment.
-     *
-     * This function can only be called once. Calling this function again results in a runtime_error.
-     */
-    void Setup();
-
-    /**
      * @brief Starts the JNI environment
      *
-     * Calling this function results in the main method of the jagexappletviewer jar file to be executed.
-     * This function returns when the main method in the JVM returns.
+     * Calling this function results in the JNI environment being set up. This function then calls the main method
+     * of the jagexappletviewer jar file afterwards. This function returns when the main method in the JVM returns.
+     * That is to say, when the intial loading screen of Runescape disappears.
      */
-    // TODO: consider merging with Setup function
     void Start();
 
     /**
@@ -123,6 +118,7 @@ namespace jni {
 
     /**
      * @brief Retrieves information on the method specified by the given parameters
+     *
      * @param c the class the method is declared in
      * @param name the name of the method
      * @param signature the signature of the method
@@ -133,6 +129,30 @@ namespace jni {
      *         requested method, or NULL if the method does not exist in the JVM.
      */
     JNIMethod* GetMethod(jclass c, cstring name, cstring signature);
+
+    /**
+     * @brief Returns an OngoingInvocation object for the specified non-static method and the specified object.
+     * @param value the object to call the method on
+     * @param method the method to invoke on the object
+     * @return a pointer to an OngoingInvocation object for the specified combination of object and method,
+     *         or NULL if the method cannot be invoked on the object
+     */
+    OngoingInvocation* Call(JNIValue object, JNIMethod* method);
+
+    /**
+     * @brief Returns an OngoingInvocation object for the specified static method.
+     * @param method the method to invoke
+     * @return a pointer to the
+     */
+    OngoingInvocation* CallStatic(JNIMethod* method);
+
+    /**
+     * @brief Creates a String in the Java environment's  String pool
+     * @param str the string to create
+     * @return a jstring object that references the created Java String.
+     */
+    jstring CreateString(cstring str);
+
 
   };
 }

@@ -14,7 +14,7 @@ namespace jni {
 
   // Intialize and set up the environment
 
-  void JavaEnv::Setup() {
+  void JavaEnv::Start() {
     if (running) {
       throw runtime_error("JVM already running.");
     }
@@ -59,19 +59,16 @@ namespace jni {
     VERIFY_NON_NULL(jvm);
     VERIFY_NON_NULL(env);
     qDebug() << "Environment created";
-    running = JNI_TRUE;
-  }
 
-  void JavaEnv::Start() {
-    if (!running) {
-      throw runtime_error("Environment must be running");
-    }
     jclass c = GetClass("jagexappletviewer");
     jmethodID mainMethod = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
     jobjectArray args = env->NewObjectArray(1, env->FindClass("java/lang/String"),
                                     env->NewStringUTF("runescape"));
 
     env->CallStaticVoidMethod(c, mainMethod, args);
+    qDebug() << "Runescape started and running";
+
+    running = JNI_TRUE;
   }
 
 
@@ -117,7 +114,7 @@ namespace jni {
     if (running) {
       jclass system = GetClass("java/lang/System");
       jmethodID getProperty = GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
-      jstring infoStr = (jstring) env->CallStaticObjectMethod(system, getProperty, env->NewStringUTF("java.version"));
+      jstring infoStr = (jstring) CallStaticObjectMethod(system, getProperty, 1, env->NewStringUTF("java.version"));
       cstring info = env->GetStringUTFChars(infoStr, NULL);
 
       return QString(info);
@@ -125,7 +122,6 @@ namespace jni {
       return QString("<not running>");
     }
   }
-
 
   // Non-static Method Invocations
 

@@ -34,7 +34,6 @@ int main(int argc, char *argv[]) {
   qDebug() << "Starting Java Environment";
   JavaEnv environment;
   try {
-    environment.Setup();
     environment.Start();
   } catch (runtime_error e) {
     // Report a fatal message stating what the problem was.

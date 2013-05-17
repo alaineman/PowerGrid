@@ -12,6 +12,11 @@ private:
     vector<Sector> sectors;
 public:
     WorldData();
+    int getCollisionFlag(byte x, byte y);
+    int getCollisionFlag(byte x, byte y, byte z);
+    int getSectorBase(byte x, byte y);
+    Sector getSector(byte x, byte y);
+    void setSector(Sector sector);
 };
 
 }

@@ -27,7 +27,7 @@ Alaineman:
 Milestone clean-up:
 	X [OPT] Come up with a way to run a Java Applet in a Windows frame.
 		- no longer required, using a native Java Window for that.
-	- [REQ] Identify and repair any bugs in the core JNI connection layer.
+	X [REQ] Identify and repair any bugs in the core JNI connection layer.
 
 <<< Milestone: version 0.1 >>>
 

@@ -21,6 +21,7 @@ namespace cache {
     private:
       uint GetHash(cstring key);
       std::vector<StringMapEntry<T>> entries;
+
       uint reserved_size;
     public:
       StringMap();

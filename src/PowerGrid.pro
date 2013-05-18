@@ -4,25 +4,45 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QMAKE_CXXFLAGS += -std=c++11
 
 TARGET   = PowerGrid
 TEMPLATE = app
 
 SOURCES  += main.cpp\
             mainwindow.cpp \
-        jni/javaenv.cpp
+        jni/javaenv.cpp \
+    jni/jnimethod.cpp \
+    jni/jnielement.cpp \
+    jni/jnivalue.cpp \
+    jni/ongoinginvocation.cpp \
+    cache/worlddata.cpp \
+    cache/sector.cpp \
+    cache/collisionmap.cpp \
+    cache/stringmap.cpp
 
 HEADERS  += mainwindow.h \
         jni/javaenv.h \
-            stdafx.h
+            stdafx.h \
+    jni/jnimethod.h \
+    jni/jnielement.h \
+    JNIConnection \
+    jni/ongoinginvocation.h \
+    jni/jnivalue.h \
+    cache/worlddata.h \
+    cache/sector.h \
+    cache/collisionmap.h \
+    cache/stringmap.h
 
 FORMS    += mainwindow.ui
 
-# Add the JVM library as a dependancy
+RESOURCES += \
+    resources.qrc
 
+
+# Add the JVM library as a dependancy
 INCLUDEPATH += $$PWD/../External/JNI/include
 DEPENDPATH += $$PWD/../External/JNI/include
 
@@ -39,8 +59,7 @@ macx {
     INCLUDEPATH += $$PWD/../External/JNI/include/darwin
     DEPENDPATH += $$PWD/../External/JNI/include/darwin
 
-    LIBS += -F$$PWD/../External/JNI/lib -framework jvm
+    LIBS += -framework JavaVM
 }
 
-RESOURCES += \
-    resources.qrc
+

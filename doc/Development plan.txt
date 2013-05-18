@@ -2,13 +2,13 @@
 
 X create and finish JavaEnv class
 X create and test loading and running the environment.
-X Set up a window containing the Applet. 
 X version 0.1: client loader
 
-- implement reflection engine to collect RS data.
+- implement JNI model for safe access to the Java environment.
 - implement caching model to store RS data.
 - version 0.2: reflection enabled client
 
+- implement reflection engine to collect RS data.
 - build an event injection system that can inject various input events into the client
 - version 0.3: working reflection client
 
@@ -16,7 +16,7 @@ X version 0.1: client loader
 - version 0.4: useful reflection client
 
 - create various loaders, handlers and operators for handling various objects in the RS environment.
-- create an extendible Lua parser to execute custom code.
+- create an extendible platform to execute custom code.
 - version 0.5: extendible reflection client
 
 - ... (Any missing required functionality)

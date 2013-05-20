@@ -13,6 +13,16 @@ Sector::~Sector(){
     }
 }
 
+uint Sector::getIndexForPlane(int z){
+    if (z < 0) {
+        return -2 * z;
+    } else if (z > 0) {
+        return 2 * (z - 1);
+    } else {
+        return 0;
+    }
+}
+
 JNIValue Sector::getObject(){
     return NULL;
 }
@@ -25,8 +35,9 @@ byte Sector::getObjectCount(){
 }
 
 void Sector::removeCollisionMap(int z){
-    byte* elem = collision_maps.at(z);
-    collision_maps.erase(collision_maps.begin()+z);
+    uint index = getIndexForPlane(z);
+    byte* elem = collision_maps.at(index);
+    //collision_maps.erase(index);
     delete elem;
 }
 
@@ -38,6 +49,13 @@ byte Sector::getCollision(byte x,byte y, int z){
 void Sector::setCollision(byte x,byte y, int z, byte value){
     byte* map = collision_maps.at(z);
     map[64*x + y] = value;
+}
+
+bool Sector::ensurePlane(int z){
+    uint index = getIndexForPlane(z);
+    while(collision_maps.size()<index-1){
+        //TODO
+    }
 }
 
 }

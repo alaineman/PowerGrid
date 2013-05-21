@@ -6,8 +6,11 @@
 
 QT       += core gui widgets
 
-QMAKE_CXXFLAGS += -std=c++11
-
+win32: QMAKE_CXXFLAGS += -std=c++11
+# Apple's Clang compiler does not recognize the -std=c++11 flag, but instead uses -std=c++0x
+macx {
+  QMAKE_CXXFLAGS += -stdlib=libc++ -std=c++0x
+}
 TARGET   = PowerGrid
 TEMPLATE = app
 

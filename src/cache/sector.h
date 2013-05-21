@@ -13,7 +13,8 @@ class Sector
 private:
     vector<byte*> collision_maps;
     vector<JNIValue> objects;
-public:
+    uint getIndexForPlane(int z);
+public:    
     Sector();
     ~Sector();
     JNIValue getObject();
@@ -22,6 +23,8 @@ public:
     void removeCollisionMap(int z);
     byte getCollision(byte x,byte y, int z);
     void setCollision(byte x,byte y, int z, byte value);
+
+    bool ensurePlane(int z);
 };
 
 }

@@ -56,6 +56,7 @@ bool Sector::ensurePlane(int z){
     while(collision_maps.size()<index-1){
         //TODO
     }
+    return false;
 }
 
 }

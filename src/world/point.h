@@ -12,6 +12,7 @@ namespace world {
     public:
       Point(int x_coordinate, int y_coordinate, short plane);
       Point(const Point& orig);
+      Point(int x_coordinate, int y_coordinate);
 
       int GetX();
       int GetY();

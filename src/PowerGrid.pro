@@ -25,7 +25,8 @@ SOURCES  += main.cpp\
     cache/sector.cpp \
     cache/stringmap.cpp \
     world/point.cpp \
-    world/widget.cpp
+    world/widget.cpp \
+    jni/updater.cpp
 
 HEADERS  += mainwindow.h \
         jni/javaenv.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     cache/sector.h \
     cache/stringmap.h \
     world/point.h \
-    world/widget.h
+    world/widget.h \
+    jni/updater.h
 
 FORMS    += mainwindow.ui
 

@@ -3,30 +3,44 @@
 #include <QApplication>
 #include <QLabel>
 #include "JNIConnection"
+#include <fstream>
 
 using namespace std;
 using namespace jni;
 
+std::ofstream logStream;
+
 // Custom message handler for Qt messages. It prints the message to the
 // standard error stream prepended with the appropriate level identifier.
 void PGMessageHandler(QtMsgType type, const QMessageLogContext&, const QString& msg) {
-     switch (type) {
-     case QtDebugMsg:
-         cerr << "Debug    | " << qPrintable(msg) << endl;
-         break;
-     case QtWarningMsg:
-         cerr << "Warning  | " << qPrintable(msg) << endl;
-         break;
-     case QtCriticalMsg:
-         cerr << "Critical | " << qPrintable(msg) << endl;
-         break;
-     case QtFatalMsg:
-         cerr << "Fatal    | " << qPrintable(msg) << endl;
-         abort();
-     }
- }
+  cstring prefix = "         | ";
+  switch (type) {
+    case QtDebugMsg:
+      prefix = "Debug    | ";
+      break;
+    case QtWarningMsg:
+      prefix = "Warning  | ";
+      break;
+    case QtCriticalMsg:
+      prefix = "Critical | ";
+      break;
+    case QtFatalMsg:
+      prefix = "Fatal    | ";
+      break;
+  }
+  cstring message = qPrintable(msg);
+  cerr << prefix << message << endl;
+  logStream << prefix << message << endl;
+  if (type == QtFatalMsg) {
+    abort();
+  }
+}
 
 int main(int argc, char *argv[]) {
+  // Open the log file for writing
+  logStream.open("PowerGrid.log", std::ofstream::out | std::ofstream::trunc);
+  logStream << "PowerGrid " << POWERGRID_VERSION << " log file" << endl;
+  // Install the message handler for Qt.
   qInstallMessageHandler(PGMessageHandler);
   QApplication a(argc, argv);
 

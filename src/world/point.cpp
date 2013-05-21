@@ -14,6 +14,12 @@ namespace world {
     z = plane;
   }
 
+  Point::Point(int x_coordinate, int y_coordinate) {
+    x = x_coordinate;
+    y = y_coordinate;
+    z = 0;
+  }
+
   int Point::GetX() {
     return x;
   }

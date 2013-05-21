@@ -134,17 +134,16 @@ namespace jni {
      * @brief Returns an OngoingInvocation object for the specified non-static method and the specified object.
      * @param value the object to call the method on
      * @param method the method to invoke on the object
-     * @return a pointer to an OngoingInvocation object for the specified combination of object and method,
-     *         or NULL if the method cannot be invoked on the object
+     * @return an OngoingInvocation object for the specified combination of object and method.
      */
-    OngoingInvocation* Call(JNIValue object, JNIMethod* method);
+    OngoingInvocation Call(JNIValue object, JNIMethod* method);
 
     /**
      * @brief Returns an OngoingInvocation object for the specified static method.
      * @param method the method to invoke
-     * @return a pointer to the
+     * @return a pointer to a OngoingInvocation object for the specified static method
      */
-    OngoingInvocation* CallStatic(JNIMethod* method);
+    OngoingInvocation CallStatic(JNIMethod* method);
 
     /**
      * @brief Creates a String in the Java environment's  String pool
@@ -153,7 +152,23 @@ namespace jni {
      */
     jstring CreateString(cstring str);
 
+    /**
+     * @brief Collects the given jstring from the Java environment and returns it as a cstring
+     * @param str the jstring to collect
+     * @return the cstring with the contents of the provided jstring
+     */
+    cstring GetString(jstring str);
 
+    /**
+     * @brief Collects the given JNIValue from the Java environment and returns it as a cstring
+     *
+     * If the provided JNIValue is not of the JOBJECT type, this function throws a runtime_error.
+     * @param str the JNIValue to collect
+     * @return the cstring with the contents of the provided jstring
+     */
+    cstring GetString(JNIValue str);
+
+    jvalue_type ParseReturnValueFromSignature(cstring signature);
   };
 }
 

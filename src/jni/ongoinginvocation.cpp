@@ -11,7 +11,8 @@ namespace jni {
 
   OngoingInvocation::OngoingInvocation(JavaEnv* e, jobject o, JNIMethod *m) {
     VERIFY_NON_NULL(e);
-    VERIFY_NON_NULL(o);
+    // if o == NULL the method must be static and vice-versa
+    VERIFY_THAT((o == NULL) == m->IsStatic());
     VERIFY_NON_NULL(m);
     env = e;
     object = o;
@@ -55,6 +56,7 @@ namespace jni {
   jvalue* OngoingInvocation::CreateArgumentArray() {
     uint n = arguments.size();
     jvalue* args = new jvalue[n];
+    qDebug() << "Creating argument array with" << n << "element(s)";
     for (uint i = 0; i < n; i++) {
       JNIValue val = arguments.at(i);
       args[i] = val.Get();
@@ -63,8 +65,8 @@ namespace jni {
   }
 
   OngoingInvocation OngoingInvocation::operator<<(JNIValue v) {
-    jvalue_type required = GetNextArgumentType();
-    VERIFY_THAT(v.GetType() == required);
+   // jvalue_type required = GetNextArgumentType();
+   // VERIFY_THAT(v.GetType() == required); // This is not yet collected and verifyable
     arguments.push_back(v);
     return *this;
   }
@@ -78,7 +80,10 @@ namespace jni {
   }
 
   JNIValue OngoingInvocation::Execute() {
-    VERIFY_THAT(isValid());
+    //VERIFY_THAT(isValid()); // This is not yet verifyable
+
+    throw runtime_error("OngoingInvocation is not yet supported as a JNI invocation procedure");
+
     jvalue* args = CreateArgumentArray();
     JNIEnv* jnienv = env->GetEnv();
     jvalue result;
@@ -96,6 +101,7 @@ namespace jni {
         case JLONG:    result.j = jnienv->CallStaticLongMethodA    (c, method->GetMethodID(), args); break;
         case JDOUBLE:  result.d = jnienv->CallStaticDoubleMethodA  (c, method->GetMethodID(), args); break;
         case JFLOAT:   result.f = jnienv->CallStaticFloatMethodA   (c, method->GetMethodID(), args); break;
+        case JVOID:               jnienv->CallStaticVoidMethodA    (c, method->GetMethodID(), args); break;
         default: throw logic_error("Invalid or unknown return type for static JNIMethod");
       }
     } else {
@@ -110,11 +116,12 @@ namespace jni {
         case JLONG:    result.j = jnienv->CallLongMethodA    (object, method->GetMethodID(), args); break;
         case JDOUBLE:  result.d = jnienv->CallDoubleMethodA  (object, method->GetMethodID(), args); break;
         case JFLOAT:   result.f = jnienv->CallFloatMethodA   (object, method->GetMethodID(), args); break;
+        case JVOID:               jnienv->CallVoidMethodA    (object, method->GetMethodID(), args); break;
         default: throw logic_error("Invalid or unknown non-static return type for JNIMethod");
       }
     }
-    JNIValue val (retType, result);
-    return val;
+    if (retType == JVOID) return JNIValue();
+    else return JNIValue(retType, result);
   }
 
 }

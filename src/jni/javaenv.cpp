@@ -112,11 +112,21 @@ namespace jni {
 
   QString JavaEnv::GetEnvironmentVersion() {
     if (running) {
+//      jclass system = GetClass("java/lang/System");
+//      jmethodID getProperty = GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+//      jstring infoStr = (jstring) CallStaticObjectMethod(system, getProperty, 1, env->NewStringUTF("java.version"));
+//      cstring info = env->GetStringUTFChars(infoStr, NULL);
       jclass system = GetClass("java/lang/System");
-      jmethodID getProperty = GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
-      jstring infoStr = (jstring) CallStaticObjectMethod(system, getProperty, 1, env->NewStringUTF("java.version"));
-      cstring info = env->GetStringUTFChars(infoStr, NULL);
-
+      JNIMethod* getProperty = GetMethod(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+      jstring property = CreateString("java.version");
+      JNIValue prop;
+      try {
+        prop = CallStatic(getProperty) << property << Invoke();
+      } catch (runtime_error e) {
+        qDebug() << e.what();
+        return QString("<failed to fetch info>");
+      }
+      cstring info = GetString(prop);
       return QString(info);
     } else {
       return QString("<not running>");
@@ -330,7 +340,56 @@ namespace jni {
       }
       st = JNI_TRUE;
     }
+    jvalue_type retType = ParseReturnValueFromSignature(signature);
     // TODO: Store in internal cache
-    return new JNIMethod(name, c, JVOID, vector<jvalue_type>(), st, methodID); // << warning: potential memory leak here, which will be fixed when cache is implemented, though.
+    return new JNIMethod(name, c, retType, vector<jvalue_type>(), st, methodID); // << warning: potential memory leak here, which will be fixed when cache is implemented, though.
+  }
+
+  OngoingInvocation JavaEnv::Call(JNIValue object, JNIMethod *method) {
+    if (object.GetType() != JOBJECT) {
+      throw runtime_error("Invalid value for Call: expected JOBJECT type");
+    }
+    return OngoingInvocation(this, object.GetObject(), method);
+  }
+
+  OngoingInvocation JavaEnv::CallStatic(JNIMethod *method) {
+    return OngoingInvocation(this, NULL, method);
+  }
+
+  jstring JavaEnv::CreateString(cstring str) {
+    return env->NewStringUTF(str);
+  }
+
+  cstring JavaEnv::GetString(JNIValue str) {
+    VERIFY_THAT(str.GetType() == JOBJECT);
+    jstring param = (jstring) str.GetObject();
+    return env->GetStringUTFChars(param, NULL);
+  }
+
+  cstring JavaEnv::GetString(jstring str) {
+    VERIFY_NON_NULL(str);
+    return env->GetStringUTFChars(str, NULL);
+  }
+
+  jvalue_type JavaEnv::ParseReturnValueFromSignature(cstring signature) {
+    VERIFY_NON_NULL(signature);
+    std::string sig (signature);
+    uint index = sig.find(')') + 1;
+    if (index < sig.length()) {
+      char c = sig.at(index);
+      switch (c) {
+        case 'Z': return JBOOLEAN;
+        case 'S': return JSHORT;
+        case 'C': return JCHAR;
+        case 'V': return JVOID;
+        case 'B': return JBYTE;
+        case 'L': return JOBJECT;
+        case 'I': return JINT;
+        case 'J': return JLONG;
+        case 'D': return JDOUBLE;
+        case 'F': return JFLOAT;
+      }
+    }
+    throw runtime_error("Invalid signature");
   }
 }

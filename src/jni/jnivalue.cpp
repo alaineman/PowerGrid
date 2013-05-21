@@ -6,8 +6,7 @@ namespace jni {
 
 
   JNIValue::JNIValue() {
-    value.i = 0;
-    type    = JINT;
+    type    = JVOID;
   }
 
   JNIValue::JNIValue(const JNIValue& val) {
@@ -79,6 +78,7 @@ namespace jni {
     } else {
       jvalue val2 = other.Get();
       switch(type) {
+        case JVOID:    return JNI_TRUE; // void type == void type regardless of actual content.
         case JBOOLEAN: return value.z == val2.z;
         case JSHORT:   return value.s == val2.s;
         case JBYTE:    return value.b == val2.b;

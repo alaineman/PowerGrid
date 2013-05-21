@@ -5,16 +5,29 @@
 #include "jnimethod.h"
 
 namespace jni {
+  class JavaEnv;
+  class Invoke {};
 
 class OngoingInvocation {
   private:
+    jvalue* CreateArgumentArray();
+
+    JavaEnv* env;
     jobject object;
     JNIMethod* method;
     vector<JNIValue> arguments;
   public:
-    OngoingInvocation(jobject o, JNIMethod* m);
+    OngoingInvocation(const OngoingInvocation& orig);
+    OngoingInvocation(JavaEnv* e, jobject o, JNIMethod* m);
 
     vector<JNIValue> GetArguments();
+    JNIMethod* GetMethod();
+    jobject GetObject();
+
+    jvalue_type GetNextArgumentType();
+    jvalue_type GetReturnType();
+
+    jboolean isValid();
 
     OngoingInvocation operator << (jobject);
     //OngoingInvocation operator << (jboolean);
@@ -26,10 +39,11 @@ class OngoingInvocation {
     //OngoingInvocation operator << (jfloat);
     //OngoingInvocation operator << (jdouble);
     OngoingInvocation operator << (JNIValue);
+    JNIValue          operator << (Invoke);
 
-    jboolean isValid();
+    void ClearArguments();
 
-    jvalue_type GetNextArgumentType();
+    JNIValue Execute();
 };
 
 }

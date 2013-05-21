@@ -24,7 +24,7 @@ uint Sector::getIndexForPlane(int z){
 }
 
 JNIValue Sector::getObject(){
-    return NULL;
+  return JNIValue();
 }
 
 void Sector::setObject(){

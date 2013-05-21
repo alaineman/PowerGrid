@@ -2,7 +2,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QLabel>
-#include "JNIConnection"
+#include "jni/javaenv.h"
 #include <fstream>
 
 using namespace std;

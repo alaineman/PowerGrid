@@ -12,11 +12,22 @@ class JNIValue {
     jvalue_type type;
   public:
     JNIValue();
-    JNIValue(jvalue_type t, jvalue val);
-    JNIValue(jobject o);
     JNIValue(const JNIValue& val);
-    //JNIValue operator = (OngoingInvocation oi);
+    JNIValue(jvalue_type t, jvalue val);
 
+    JNIValue(jobject o);
+    JNIValue(jboolean z);
+    JNIValue(jbyte b);
+    JNIValue(jshort s);
+    JNIValue(jchar c);
+    JNIValue(jint i);
+    JNIValue(jdouble d);
+    JNIValue(jfloat f);
+    JNIValue(jlong l);
+
+
+
+    //JNIValue operator = (OngoingInvocation oi);
     jboolean operator== (JNIValue v);
     //bool operator== (OngoingInvocation oi);
 

@@ -1,7 +1,10 @@
 #include "jnivalue.h"
 
+using namespace std;
+
 namespace jni {
-  using namespace std;
+
+
   JNIValue::JNIValue() {
     value.i = 0;
     type    = JINT;
@@ -20,6 +23,46 @@ namespace jni {
   JNIValue::JNIValue(jobject o) {
     value.l = o;
     type = JOBJECT;
+  }
+
+  JNIValue::JNIValue(jboolean z) {
+    value.z = z;
+    type = JBOOLEAN;
+  }
+
+  JNIValue::JNIValue(jbyte b) {
+    value.b = b;
+    type = JBYTE;
+  }
+
+  JNIValue::JNIValue(jchar c) {
+    value.c = c;
+    type = JCHAR;
+  }
+
+  JNIValue::JNIValue(jdouble d) {
+    value.d = d;
+    type = JDOUBLE;
+  }
+
+  JNIValue::JNIValue(jfloat f) {
+    value.f = f;
+    type = JFLOAT;
+  }
+
+  JNIValue::JNIValue(jint i) {
+    value.i = i;
+    type = JINT;
+  }
+
+  JNIValue::JNIValue(jlong l) {
+    value.j = l;
+    type = JLONG;
+  }
+
+  JNIValue::JNIValue(jshort s) {
+    value.s = s;
+    type = JSHORT;
   }
 
   jvalue JNIValue::Get() {
@@ -45,7 +88,7 @@ namespace jni {
         case JLONG:    return value.j == val2.j;
         case JDOUBLE:  return value.d == val2.d;
         case JFLOAT:   return value.f == val2.f;
-        default:       return JNI_FALSE; // should not happen
+        default:       throw logic_error("Invalid or unknown JNIValue"); // should not happen
       }
     }
   }

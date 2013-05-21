@@ -22,7 +22,8 @@ SOURCES  += main.cpp\
     cache/sector.cpp \
     cache/collisionmap.cpp \
     cache/stringmap.cpp \
-    world/point.cpp
+    world/point.cpp \
+    world/widget.cpp
 
 HEADERS  += mainwindow.h \
         jni/javaenv.h \
@@ -36,7 +37,8 @@ HEADERS  += mainwindow.h \
     cache/sector.h \
     cache/collisionmap.h \
     cache/stringmap.h \
-    world/point.h
+    world/point.h \
+    world/widget.h
 
 FORMS    += mainwindow.ui
 

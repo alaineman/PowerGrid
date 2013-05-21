@@ -3,9 +3,9 @@
 
 namespace world {
   Point::Point(const Point &orig) {
-    x = orig.GetX();
-    y = orig.GetY();
-    z = orig.GetPlane();
+    x = orig.x;
+    y = orig.y;
+    z = orig.z;
   }
 
   Point::Point(int x_coordinate, int y_coordinate, short plane) {
@@ -39,23 +39,23 @@ namespace world {
     return base.GetRadius();
   }
 
-  Point operator + (Point other) {
+  Point Point::operator + (Point other) {
     return Point(x + other.GetX(), y + other.GetY(), z + other.GetPlane());
   }
 
-  Point operator - (Point other) {
+  Point Point::operator - (Point other) {
     return Point(x - other.GetX(), y - other.GetY(), z - other.GetPlane());
   }
 
-  Point operator * (double s) {
+  Point Point::operator * (double s) {
     return Point ((int)(x * s), (int)(y * s), (int)(z * s));
   }
 
-  Point operator / (double s) {
+  Point Point::operator / (double s) {
     return *this * (1/s);
   }
 
-  bool operator == (Point other) {
+  bool Point::operator == (Point other) {
     return (x == other.GetX() && y == other.GetY() && z == other.GetPlane());
   }
 }

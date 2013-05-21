@@ -23,7 +23,6 @@ SOURCES  += main.cpp\
     jni/ongoinginvocation.cpp \
     cache/worlddata.cpp \
     cache/sector.cpp \
-    cache/collisionmap.cpp \
     cache/stringmap.cpp \
     world/point.cpp \
     world/widget.cpp
@@ -38,7 +37,6 @@ HEADERS  += mainwindow.h \
     jni/jnivalue.h \
     cache/worlddata.h \
     cache/sector.h \
-    cache/collisionmap.h \
     cache/stringmap.h \
     world/point.h \
     world/widget.h

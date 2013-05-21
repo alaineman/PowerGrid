@@ -10,7 +10,7 @@ namespace world {
     return id;
   }
 
-  bool Visible() {
+  bool Widget::Visible() {
     return false;
   }
 }

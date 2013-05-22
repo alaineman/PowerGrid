@@ -117,24 +117,24 @@ namespace jni {
 
   QString JavaEnv::GetEnvironmentVersion() {
     if (running) {
-//      jclass system = GetClass("java/lang/System");
-//      jmethodID getProperty = GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
-//      jstring infoStr = (jstring) CallStaticObjectMethod(system, getProperty, 1, env->NewStringUTF("java.version"));
-//      cstring info = env->GetStringUTFChars(infoStr, NULL);
       jclass system = GetClass("java/lang/System");
-      JNIMethod* getProperty = GetMethod(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
-      jstring property = CreateString("java.version");
-      JNIValue prop;
-      try {
-        prop = CallStatic(getProperty) << property << Invoke();
-      } catch (runtime_error e) {
-        qDebug() << e.what();
-        return QString("<failed to fetch info>");
-      }
-      cstring info = GetString(prop);
+      jmethodID getProperty = GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+      jstring infoStr = (jstring) CallStaticObjectMethod(system, getProperty, 1, env->NewStringUTF("java.version"));
+      cstring info = env->GetStringUTFChars(infoStr, NULL);
+//      jclass system = GetClass("java/lang/System");
+//      JNIMethod* getProperty = GetMethod(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+//      jstring property = CreateString("java.version");
+//      JNIValue prop;
+//      try {
+//        prop = CallStatic(getProperty) << property << Invoke();
+//      } catch (runtime_error e) {
+//        qDebug() << e.what();
+//        return QString("<failed to fetch info>");
+//      }
+//      cstring info = GetString(prop);
       return QString(info);
     } else {
-      return QString("<not running>");
+      return QString("");
     }
   }
 

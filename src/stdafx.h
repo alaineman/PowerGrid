@@ -66,14 +66,14 @@
 
 // Define convenience macro's
 #ifdef PG_NULL_CHECK
- #define VERIFY_NON_NULL(pointer) if(pointer == NULL) { throw std::runtime_error(std::string("pointer is NULL (").append(__FILE__).append(":").append(TO_STRING(__LINE__)).append(")")); }
+ #define VERIFY_NON_NULL(pointer) if(pointer == NULL) { qWarning("NULL-pointer"); throw std::runtime_error(std::string("pointer is NULL (").append(__FILE__).append(":").append(TO_STRING(__LINE__)).append(")")); }
 #else
  #define VERIFY_NON_NULL(pointer)
 #endif
 
 // Convenience macro for condition checking
 #ifdef PG_INPUT_CHECK
- #define VERIFY_THAT(condition) if (!(condition)) { throw std::runtime_error(std::string("Condition failed (").append(__FILE__).append(":").append(TO_STRING(__LINE__)).append(")")); }
+ #define VERIFY_THAT(condition) if (!(condition)) { qWarning("Failed assert"); throw std::runtime_error(std::string("Condition failed (").append(__FILE__).append(":").append(TO_STRING(__LINE__)).append(")")); }
 #else
  #define VERIFY_THAT(condition)
 #endif

@@ -11,11 +11,25 @@ namespace jni {
   }
 
   jclass Updater::GetClass(cstring identifier) {
-    try {
-      //jclass cls = bindings.Get(identifier);
-    } catch (logic_error e) {
-      qDebug() << "Got request for unidentified class: " << identifier;
+    if (identifier == NULL) {
+      qWarning() << "Passed NULL as parameter for Updater::GetClass";
+      return NULL;
     }
-    return NULL;
+    try {
+      return bindings.Get(identifier);
+    } catch (logic_error e) {
+      qWarning() << "Got request for unidentified class: " << identifier;
+      return NULL;
+    }
+  }
+
+  cstring Updater::Identify(jclass cls) {
+    if (cls == NULL) {
+      return NULL;
+    }
+    cstring id = NULL;
+    // perform the id algorithm on the class.
+
+    return id;
   }
 }

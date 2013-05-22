@@ -13,7 +13,16 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::updateVersionInfo(jni::JavaEnv* env) {
-  ui->jvmversion->setText(env->GetEnvironmentVersion());
+  if (env == NULL) {
+    ui->jvmversion->setText("<Failed to start JavaVM>");
+  } else {
+    QString result = env->GetEnvironmentVersion();
+    if (result.isEmpty()) {
+      ui->jvmversion->setText("<Java Virtual Machine is not running>");
+    } else {
+      ui->jvmversion->setText(result);
+    }
+  }
   ui->PGversion->setText(POWERGRID_VERSION);
 }
 

@@ -4,6 +4,7 @@
 #include <QLabel>
 #include "jni/javaenv.h"
 #include <fstream>
+#include <QtConcurrent/QtConcurrent>
 
 using namespace std;
 using namespace jni;
@@ -36,25 +37,28 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext&, const QString& 
   }
 }
 
+void RunJavaVM(JavaEnv* env) {
+    env = new JavaEnv();
+    qDebug << "Starting Java Virtual Machine";
+    try {
+        env->Start();
+    } catch (runtime_error e) {
+        qWarning << e.what();
+    }
+    qDebug << "Java Virtual Machine started";
+}
+
 int main(int argc, char *argv[]) {
   // Open the log file for writing
   logStream.open("PowerGrid.log", std::ofstream::out | std::ofstream::trunc);
   logStream << "PowerGrid " << POWERGRID_VERSION << " log file" << endl;
   // Install the message handler for Qt.
   qInstallMessageHandler(PGMessageHandler);
-  QApplication a(argc, argv);
 
-  // Attempt to start the Java environment
-  qDebug() << "Starting Java Environment";
-  JavaEnv environment;
-  try {
-    environment.Start();
-  } catch (runtime_error e) {
-    // Report a fatal message stating what the problem was.
-    // The message level is fatal because the application
-    // cannot continue without a Java environment.
-    qFatal(e.what());
-  }
+  JavaEnv* environment = NULL;
+  QFuture<JavaEnv*> future = QtConcurrent::run(RunJavaVM, environment);
+
+  QApplication a(argc, argv);
 
   // Show our main window
   MainWindow w;
@@ -63,17 +67,18 @@ int main(int argc, char *argv[]) {
 
   w.show();
 
-  qDebug() << "PowerGrid started";
-
   // enter the Qt message loop
   const int qtReturnValue = a.exec();
 
-  if (environment.IsRunning()) {
-    // Destroy the Java Virtual Machine.
-    JNIEnv* env = environment.GetEnv();
-    JavaVM* jvm;
-    env->GetJavaVM(&jvm);
-    jvm->DestroyJavaVM();
+  if (environment != NULL) {
+      if (environment->IsRunning()) {
+        // Destroy the Java Virtual Machine.
+        JNIEnv* env = environment->GetEnv();
+        JavaVM* jvm;
+        env->GetJavaVM(&jvm);
+        jvm->DestroyJavaVM();
+      }
+      delete environment;
   }
 
   // Exit the application;

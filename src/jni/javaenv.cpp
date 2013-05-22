@@ -20,11 +20,15 @@ namespace jni {
     }
 
     QString classpath("-Djava.class.path=");
+ #ifndef Q_OS_DARWIN
+    // In the case of Mac OS, the jagexappletviewer jar file is not accessible through the
+    // native Runescape loader and must be packaged along with the application.
     QChar sep = QDir::separator();
     QString home = QDir::homePath().replace("/", sep);
     classpath.append(home).append(sep).append("jagexcache").append(sep)
-             .append("jagexlauncher").append(sep).append("bin").append(sep)
-             .append("jagexappletviewer.jar");
+             .append("jagexlauncher").append(sep).append("bin").append(sep);
+#endif
+    classpath.append("jagexappletviewer.jar");
 
     std::string printpath = classpath.toStdString();
     //qDebug() << qPrintable(classpath);
@@ -61,6 +65,7 @@ namespace jni {
     qDebug() << "Environment created";
 
     jclass c = GetClass("jagexappletviewer");
+    VERIFY_NON_NULL(c); // if this fails the jar file could not be loaded or found.
     jmethodID mainMethod = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
     jobjectArray args = env->NewObjectArray(1, env->FindClass("java/lang/String"),
                                     env->NewStringUTF("runescape"));

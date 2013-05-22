@@ -10,10 +10,15 @@
 #include <stdexcept>
 #include <memory>
 #include <string>
-#include <initializer_list>
+#include <sstream>
 
 // Include common Qt headers
-#include <QtGlobal>
+#include <qcompilerdetection.h>
+#ifdef Q_COMPILER_INITIALIZER_LISTS
+ // It appears Qt decides that Clang can use initializer lists, but these cannot be found in some cases.
+ // As such we don't use them to make sure the Clang compiler does not fail to compile the Qt headers.
+ #undef Q_COMPILER_INITIALIZER_LISTS
+#endif
 #include <QDebug>
 
 // The below options may be customized at will to provide a combination of safety checks
@@ -56,17 +61,19 @@
  #define PG_STRING_CHECK
 #endif
 
+// to_string used to convert anything to its string value.
+#define TO_STRING(num) static_cast<std::stringstream*>( &(std::stringstream() << num) )->str()
 
 // Define convenience macro's
 #ifdef PG_NULL_CHECK
- #define VERIFY_NON_NULL(pointer) if(pointer == NULL) { throw std::runtime_error(std::string("pointer is NULL (").append(__FILE__).append(":").append(to_string(__LINE__)).append(")")); }
+ #define VERIFY_NON_NULL(pointer) if(pointer == NULL) { throw std::runtime_error(std::string("pointer is NULL (").append(__FILE__).append(":").append(TO_STRING(__LINE__)).append(")")); }
 #else
  #define VERIFY_NON_NULL(pointer)
 #endif
 
 // Convenience macro for condition checking
 #ifdef PG_INPUT_CHECK
- #define VERIFY_THAT(condition) if (!(condition)) { throw std::runtime_error(std::string("Condition failed (").append(__FILE__).append(":").append(to_string(__LINE__)).append(")")); }
+ #define VERIFY_THAT(condition) if (!(condition)) { throw std::runtime_error(std::string("Condition failed (").append(__FILE__).append(":").append(TO_STRING(__LINE__)).append(")")); }
 #else
  #define VERIFY_THAT(condition)
 #endif

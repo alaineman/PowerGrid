@@ -4,13 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui widgets concurrent
 
-win32: QMAKE_CXXFLAGS += -std=c++11
-# Apple's Clang compiler does not recognize the -std=c++11 flag, but instead uses -std=c++0x
-macx {
-  QMAKE_CXXFLAGS += -stdlib=libc++ -std=c++0x
-}
+QMAKE_CXXFLAGS += -std=c++11
+
 TARGET   = PowerGrid
 TEMPLATE = app
 
@@ -33,7 +30,6 @@ HEADERS  += mainwindow.h \
             stdafx.h \
     jni/jnimethod.h \
     jni/jnielement.h \
-    JNIConnection \
     jni/ongoinginvocation.h \
     jni/jnivalue.h \
     cache/worlddata.h \

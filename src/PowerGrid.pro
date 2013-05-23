@@ -65,4 +65,4 @@ macx {
     LIBS += -framework JavaVM
 }
 
-
+# Add the Unit++ testing framework as a dependancy

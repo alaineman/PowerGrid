@@ -67,11 +67,18 @@ namespace jni {
     jclass c = GetClass("jagexappletviewer");
     VERIFY_NON_NULL(c); // if this fails the jar file could not be loaded or found.
     jmethodID mainMethod = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
+    VERIFY_NON_NULL(mainMethod);
     jobjectArray args = env->NewObjectArray(1, env->FindClass("java/lang/String"),
                                     env->NewStringUTF("runescape"));
+    qDebug() << "Calling main method of Jagex Applet loader";
 
+    // FIXME: There seems to be an issue here on Mac OS X, since calling the main method seems to take forever.
     env->CallStaticVoidMethod(c, mainMethod, args);
     qDebug() << "Runescape started and running";
+
+    if (jvm->DetachCurrentThread() < 0) {
+        qWarning() << "Could not detach start thread from the Java VM";
+    }
 
     running = JNI_TRUE;
   }
@@ -379,7 +386,7 @@ namespace jni {
   jvalue_type JavaEnv::ParseReturnValueFromSignature(cstring signature) {
     VERIFY_NON_NULL(signature);
     std::string sig (signature);
-    uint index = sig.find(')') + 1;
+    uint index = sig.find_last_of(')') + 1;
     if (index < sig.length()) {
       char c = sig.at(index);
       switch (c) {
@@ -396,5 +403,37 @@ namespace jni {
       }
     }
     throw runtime_error("Invalid signature");
+  }
+
+  vector<jvalue_type> JavaEnv::ParseArgumentTypesFromSignature(cstring signature) {
+    VERIFY_NON_NULL(signature);
+    std::string sig (signature);
+    vector<jvalue_type> arguments;
+    uint index = 0;
+    uint end = sig.find_last_of(')');
+    if (end >= sig.length) {
+        throw runtime_error("Invalid signature");
+    }
+    while (index < end) {
+        char c = sig.at(index);
+        switch(c) {
+        case 'Z': arguments.push_back(JBOOLEAN); break;
+        case 'S': arguments.push_back(JSHORT);   break;
+        case 'C': arguments.push_back(JCHAR);   break;
+        case 'B': arguments.push_back(JBYTE);   break;
+        case 'I': arguments.push_back(JINT); break;
+        case 'J': arguments.push_back(JLONG); break;
+        case 'D': arguments.push_back(JDOUBLE); break;
+        case 'F': arguments.push_back(JFLOAT); break;
+        case 'L':
+            arguments.push_back(JOBJECT);
+            // For object types, the substring denoting the class should be skipped before continuing.
+            index = sig.find_first_of(';', index);
+            break;
+        }
+        default:
+            qWarning() << "unrecognized type: " << c;
+    }
+    return arguments;
   }
 }

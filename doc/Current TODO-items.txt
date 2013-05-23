@@ -17,7 +17,7 @@ Milestone planning:       = Tasks done before all other tasks in the Milestone, 
 <<< Current Milestone: version 0.1 >>>
 
 Milestone planning:
-	- [REQ] Discuss reflection API layer design.
+	X [REQ] Discuss reflection API layer design.
 	X [REQ] Discuss caching model design.
 	
 Chronio:

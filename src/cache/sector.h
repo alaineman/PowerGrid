@@ -24,7 +24,7 @@ public:
     byte getCollision(byte x,byte y, int z);
     void setCollision(byte x,byte y, int z, byte value);
 
-    bool ensurePlane(int z);
+    void ensurePlane(int z);
 };
 
 }

@@ -2,6 +2,8 @@
 #define WORLDDATA_H
 #include "stdafx.h"
 #include "sector.h"
+#include "world/point.h"
+
 
 
 namespace cache{
@@ -12,10 +14,13 @@ private:
     vector<Sector> sectors;
 public:
     WorldData();
+    int getCollisionFlag(Point p);
     int getCollisionFlag(byte x, byte y);
-    int getCollisionFlag(byte x, byte y, byte z);
+    int getCollisionFlag(byte x, byte y, int z);
+    int getSectorBase(Point p);
     int getSectorBase(byte x, byte y);
     Sector getSector(byte x, byte y);
+    Sector getSector(Point p);
     void setSector(Sector sector);
 };
 

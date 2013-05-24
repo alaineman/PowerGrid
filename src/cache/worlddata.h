@@ -11,17 +11,17 @@ namespace cache{
 class WorldData
 {
 private:
-    vector<Sector> sectors;
+    map<int, Sector*> sectors;
+    int convertToKey(int x, int y);
 public:
-    WorldData();
-    int getCollisionFlag(Point p);
-    int getCollisionFlag(byte x, byte y);
-    int getCollisionFlag(byte x, byte y, int z);
-    int getSectorBase(Point p);
-    int getSectorBase(byte x, byte y);
-    Sector getSector(byte x, byte y);
-    Sector getSector(Point p);
-    void setSector(Sector sector);
+    ~WorldData();
+    byte getCollisionFlag(Point p);
+    byte getCollisionFlag(int x, int y);
+    byte getCollisionFlag(int x, int y, int z);
+    Sector* getSector(int x, int y);
+    Sector* getSector(Point p);
+    Sector* allocate(int sectorX, int sectorY);
+    void remove(int sectorX, int sectorY);
 };
 
 }

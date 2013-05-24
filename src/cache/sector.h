@@ -14,8 +14,7 @@ private:
     vector<byte*> collision_maps;
     vector<JNIValue> objects;
     uint getIndexForPlane(int z);
-public:    
-    Sector();
+public:
     ~Sector();
     JNIValue getObject();
     byte getObjectCount();

@@ -2,9 +2,6 @@
 
 namespace cache {
 
-Sector::Sector(){
-}
-
 Sector::~Sector(){
     while (! collision_maps.empty()) {
         byte* elem = collision_maps.back();
@@ -34,7 +31,6 @@ byte Sector::getObjectCount(){
     return objects.size();
 }
 
-//This method shouldn't be used!
 void Sector::removeCollisionMap(int z){
     uint index = getIndexForPlane(z);    
     while(collision_maps.size()>= index){

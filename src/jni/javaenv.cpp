@@ -411,11 +411,11 @@ namespace jni {
     vector<jvalue_type> arguments;
     uint index = 0;
     uint end = sig.find_last_of(')');
-    if (end >= sig.length) {
+    if (end >= sig.length()) {
         throw runtime_error("Invalid signature");
     }
     while (index < end) {
-        char c = sig.at(index);
+        char c = sig.at(index++);
         switch(c) {
         case 'Z': arguments.push_back(JBOOLEAN); break;
         case 'S': arguments.push_back(JSHORT);   break;
@@ -428,11 +428,11 @@ namespace jni {
         case 'L':
             arguments.push_back(JOBJECT);
             // For object types, the substring denoting the class should be skipped before continuing.
-            index = sig.find_first_of(';', index);
-            break;
-        }
+            index = sig.find_first_of(';', index)+1;
+            break;       
         default:
             qWarning() << "unrecognized type: " << c;
+        }
     }
     return arguments;
   }

@@ -2,7 +2,7 @@
 #include "world/point.h"
 #include "worlddata.h"
 
-
+using namespace world;
 
 namespace cache{
 
@@ -31,11 +31,11 @@ int WorldData::getSectorBase(byte x, byte y){
 }
 
 Sector WorldData::getSector(byte x, byte y){
-    return NULL;
+    return Sector();
 }
 
 Sector WorldData::getSector(Point p){
-    return NULL;
+    return Sector();
 }
 
 void WorldData::setSector(Sector sector){

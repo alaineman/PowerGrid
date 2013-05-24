@@ -169,6 +169,7 @@ namespace jni {
     cstring GetString(JNIValue str);
 
     jvalue_type ParseReturnValueFromSignature(cstring signature);
+    vector<jvalue_type> ParseArgumentTypesFromSignature(cstring signature);
   };
 }
 

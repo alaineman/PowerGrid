@@ -4,7 +4,7 @@
 #include "sector.h"
 #include "world/point.h"
 
-
+using namespace world;
 
 namespace cache{
 

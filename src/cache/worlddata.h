@@ -12,7 +12,7 @@ class WorldData
 {
 private:
     map<int, Sector*> sectors;
-    int convertToKey(int x, int y);
+    //int convertToKey(int x, int y) <-> (x << 16) + y
 public:
     ~WorldData();
     byte getCollisionFlag(Point p);

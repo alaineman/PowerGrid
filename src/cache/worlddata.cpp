@@ -10,13 +10,6 @@ WorldData::~WorldData(){
 
 }
 
-int WorldData::convertToKey(int x, int y){
-    //convert x and y to shorts
-    //right shift x and concat y
-    //return the key
-    return -1;
-}
-
 byte WorldData::getCollisionFlag(Point p){
     return getCollisionFlag(p.GetX(),p.GetY(),p.GetPlane());
 }
@@ -38,7 +31,7 @@ byte WorldData::getCollisionFlag(int x, int y, int z){
 Sector* WorldData::getSector(int x, int y){
     int sectorX = x/64;
     int sectorY = y/64;
-    int index = convertToKey(sectorX, sectorY);
+    int index = (sectorX << 16) + sectorY;
     try {        
         return sectors.at(index);
     } catch (out_of_range){
@@ -51,14 +44,14 @@ Sector* WorldData::getSector(Point p){
 }
 
 Sector* WorldData::allocate(int sectorX, int sectorY){
-    int key = convertToKey(sectorX, sectorY);
+    int key = (sectorX << 16) + sectorY;
     Sector* s; // assignment needed?
     sectors.insert(std::pair<int,Sector*>(key,s));
     return s;
 }
 
 void WorldData::remove(int sectorX, int sectorY){
-    int key = convertToKey(sectorX, sectorY);
+    int key = (sectorX << 16) + sectorY;
     try {
         Sector* s = sectors.at(key);
         delete s;

@@ -11,15 +11,13 @@ namespace jni {
 
   OngoingInvocation::OngoingInvocation(JavaEnv* e, jobject o, JNIMethod *m) {
     VERIFY_NON_NULL(e);
-    // if o == NULL the method must be static and vice-versa
-    VERIFY_THAT((o == NULL) == m->IsStatic());
+    // the method must be static if and only if o == NULL
     VERIFY_NON_NULL(m);
+    VERIFY_THAT((o == NULL) == m->IsStatic());
     env = e;
     object = o;
     method = m;
   }
-
-
 
   vector<JNIValue> OngoingInvocation::GetArguments() {
     vector<JNIValue> copy (arguments);

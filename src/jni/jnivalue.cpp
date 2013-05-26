@@ -15,6 +15,7 @@ namespace jni {
   }
 
   JNIValue::JNIValue(jvalue_type t, jvalue val) {
+    VERIFY_THAT(t != JVOID);
     value = val;
     type  = t;
   }
@@ -73,7 +74,7 @@ namespace jni {
   }
 
   jboolean JNIValue::operator ==(JNIValue other) {
-    if (GetType() != other.GetType()) {
+    if (type != other.GetType()) {
       return JNI_FALSE;
     } else {
       jvalue val2 = other.Get();
@@ -91,6 +92,11 @@ namespace jni {
         default:       throw logic_error("Invalid or unknown JNIValue"); // should not happen
       }
     }
+  }
+
+  jboolean JNIValue::IsNull() {
+    // Note: we also count void JNIValues as NULL values.
+    return type == JVOID || (type == JOBJECT && value.l == NULL);
   }
 
   jboolean JNIValue::GetBoolean() {

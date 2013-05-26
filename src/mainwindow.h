@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include "stdafx.h"
-#include "JNIConnection"
+#include "jni/javaenv.h"
 #include <QMainWindow>
 
 namespace Ui {

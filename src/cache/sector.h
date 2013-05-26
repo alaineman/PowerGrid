@@ -1,7 +1,7 @@
 #ifndef SECTOR_H
 #define SECTOR_H
 #include "stdafx.h"
-#include "JNIConnection"
+#include "jni/jnivalue.h"
 
 using namespace std;
 using namespace jni;

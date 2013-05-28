@@ -42,8 +42,8 @@ namespace jni {
       JNIClass* superClass;       // This JNIClass' superclass
       QString* name;              // The fully qualified name (with '/' as separator) for use in signatures of functions.
       jint modifiers;             // The modifiers of the class (a combination of public, protected, private, final, static, abstract and interface, encoded in an integer)
-      map<JNIClass*, JNIValue> anns;    // Vector of annotations this JNIClass contains
-      map<QString, JNIMethod*> methods; // Vector of methods that this class provides.
+      map<JNIClass*, JNIValue> anns;    // Map of annotations this JNIClass contains
+      map<QString, JNIMethod*> methods; // Map of methods that this class provides.
     public:
       JNIClass(jclass c, JavaEnv* e);
 

@@ -118,11 +118,11 @@ int main(int argc, char *argv[]) {
   // << Add shutdown code here that does require the Java VM
 
   // Once we leave the Qt message loop, we should assert the Java Virtual Machine is terminated.
-  QFuture<void> futureStopJVM = QtConcurrent::run(TerminateJavaVM, environment);
+//  QFuture<void> futureStopJVM = QtConcurrent::run(TerminateJavaVM, environment);
 
-  // << Add shutdown code here that does not require the Java VM
+//  // << Add shutdown code here that does not require the Java VM
 
-  futureStopJVM.waitForFinished();
+//  futureStopJVM.waitForFinished();
   // Exit the application;
   return qtReturnValue;
 }

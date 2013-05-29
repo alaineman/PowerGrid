@@ -44,20 +44,78 @@ namespace jni {
       jint modifiers;             // The modifiers of the class (a combination of public, protected, private, final, static, abstract and interface, encoded in an integer)
       map<JNIClass*, JNIValue> anns;    // Map of annotations this JNIClass contains
       map<QString, JNIMethod*> methods; // Map of methods that this class provides.
+      map<QString, jfieldID> fields;    // Map of field that this class provides.
     public:
+      /**
+       * @brief Creates a JNIClass based on the given jclass reference
+       * @param c the jclass this JNIClass object represents
+       * @param e the Java environment
+       */
       JNIClass(jclass c, JavaEnv* e);
 
+      /**
+       * @brief Returns the simple name (without package) of the class
+       * @return the simple name of the class
+       */
       QString GetSimpleName();
+      /**
+       * @brief Returns the signature name of the class.
+       * The signature name contains the full package (separated by '/').
+       * @return the signature name of this class
+       */
       QString GetSigName();
 
+      /**
+       * @brief Returns whether the given JNIValue represents an instance of this JNIClass
+       * @param v the JNIValue to check
+       *
+       * This method always returns false if the type of the JNIValue is not JOBJECT.
+       * @return true if the provided JNIValue is an JOBJECT of this JNIClass, false otherwise
+       */
       jboolean IsInstance(JNIValue v);
+      /**
+       * @brief Returns whether the given jobject is an instance of this JNIClass
+       * @param o the jobject to check
+       * @return true if the jobject is an instance of this JNIClass, false otherwise
+       */
       jboolean IsInstance(jobject o);
 
+      /**
+       * @brief Returns the superclass of this JNIClass
+       * @return the superclass of this JNIClass
+       */
       JNIClass* GetSuperClass();
+      /**
+       * @brief Looks up the method with the specified name and signature
+       * @param name the name of the method
+       * @param signature the signature of the method
+       * @return the JNIMethod reference to the requested method, or NULL if no such method exists
+       */
       JNIMethod* GetMethod(QString name, QString signature);
+      /**
+       * @brief Looks up the constructor with the specified signature
+       * @param signature the signature of the constructor
+       * @return the JNIMethod reference to the requested constructor, or NULL if no such constructor exists
+       */
       JNIMethod* GetConstructor(QString signature);
-      QString GetFieldSignature();
-      jvalue_type GetFieldType();
+
+      /**
+       * @brief Returns the signature of the field with the given name
+       * @param fieldname the fieldname to look up
+       * @return the signature of the requested fieldname if it exists, or an empty QString otherwise
+       */
+      QString GetFieldSignature(QString fieldname);
+      /**
+       * @brief Returns the type of the field as a jvalue_type id
+       * @param fieldname the name of the field to look up
+       * @return the jvalue_type representing the field's type
+       */
+      jvalue_type GetFieldType(QString fieldname);
+      /**
+       * @brief Returns the contents of the field with the given name
+       * @param fieldName the name of the field
+       * @return the JNIValue with this field's contents.
+       */
       JNIValue GetFieldContents(QString fieldName);
 
       jint GetModifiers();

@@ -12,8 +12,9 @@ namespace jni {
   // The JNIMethod class represents a method in the Java Environment.
   // It contains information to help identifying the method,
   // since this is extremely hard with only the jmethodID reference.
-  class JNIMethod : JNIElement {
+  class JNIMethod {
     private:
+      string name;
       jclass cls;
       jvalue_type return_type;
       vector<jvalue_type> argument_types;
@@ -25,12 +26,14 @@ namespace jni {
                 jboolean stat, jmethodID meth);
 
       // Getters for the fields.
+      string GetName();
       jclass GetClass();
       jvalue_type GetReturnType();
       jvalue_type GetArgumentType(uint n);
       jboolean IsStatic();
       jmethodID GetMethodID();
       uint GetArgumentCount();
+
 
       // Validates the given vector as input for the method.
       jboolean ValidateInput(vector<JNIValue> arguments);

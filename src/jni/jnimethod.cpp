@@ -2,14 +2,24 @@
 
 namespace jni {
   JNIMethod::JNIMethod(string nm, jclass c, jvalue_type ret, const vector<jvalue_type> args,
-                       jboolean stat, jmethodID meth) : JNIElement(nm) {
+                       jboolean stat, jmethodID meth) {
     VERIFY_NON_NULL(c);
     VERIFY_NON_NULL(meth);
+    VERIFY_THAT(nm.length() != 0)
+#ifdef PG_STRING_CHECK
+    char first = nm.at(0);
+    VERIFY_THAT((first >= 'A' && first <= 'Z') || (first >= 'a' && first <= 'z') || first == '$' || first == '_');
+#endif
+    name = nm;
     cls = c;
     return_type = ret;
     argument_types = vector<jvalue_type>(args);
     isStatic = stat;
     method = meth;
+  }
+
+  string JNIMethod::GetName() {
+    return name;
   }
 
   jclass JNIMethod::GetClass() {

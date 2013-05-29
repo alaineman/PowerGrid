@@ -15,7 +15,6 @@ SOURCES  += main.cpp\
             mainwindow.cpp \
         jni/javaenv.cpp \
     jni/jnimethod.cpp \
-    jni/jnielement.cpp \
     jni/jnivalue.cpp \
     jni/ongoinginvocation.cpp \
     cache/worlddata.cpp \
@@ -24,13 +23,13 @@ SOURCES  += main.cpp\
     world/point.cpp \
     world/widget.cpp \
     jni/updater.cpp \
-    jni/jniclass.cpp
+    jni/jniclass.cpp \
+    jni/jniobject.cpp
 
 HEADERS  += mainwindow.h \
         jni/javaenv.h \
             stdafx.h \
     jni/jnimethod.h \
-    jni/jnielement.h \
     jni/ongoinginvocation.h \
     jni/jnivalue.h \
     cache/worlddata.h \
@@ -39,7 +38,9 @@ HEADERS  += mainwindow.h \
     world/point.h \
     world/widget.h \
     jni/updater.h \
-    jni/jniclass.h
+    jni/jniclass.h \
+    jni/jniobject.h \
+    jni/jniexception.h
 
 FORMS    += mainwindow.ui
 

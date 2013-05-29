@@ -3,12 +3,15 @@
 
 #include "stdafx.h"
 #include "javaenv.h"
+#include "jniobject.h"
 
 namespace jni {
 
-  // type definition of the access modifiers of a Java Class.
-  // These values are taken straight from the Java Language Specification (Java SE 7 Edition), table 4.1
-  typedef enum {
+  /**
+   * type definition of the access modifiers of a Java Class.
+   * These values are taken straight from the Java Language Specification (Java SE 7 Edition), table 4.1
+   */
+  enum AccModifier {
     ACC_PUBLIC     = 0x0001,
     ACC_PRIVATE    = 0x0002,
     ACC_PROTECTED  = 0x0004,
@@ -24,14 +27,20 @@ namespace jni {
     ACC_SYNTHETIC  = 0x1000,
     ACC_ANNOTATION = 0x2000,
     ACC_ENUM       = 0x4000
-  } AccModifier;
+  };
 
-  // These are defines that give the proper names for access flags of methods.
+  // These are defines that give the proper semantic names for access flags of methods.
   // This is required because these flags overlap with the access flags of fields.
 #define ACC_SYNCHRONIZED jni::ACC_SUPER
 #define ACC_BRIDGE jni::ACC_VOLATILE
 #define ACC_VARARGS jni::ACC_TRANSIENT
 
+  class JNIObject;
+
+  /**
+   * @brief Representation of a Class in the Java environment
+   *
+   */
   class JNIClass {
     private:
       // reference values
@@ -41,6 +50,7 @@ namespace jni {
       // cached values
       JNIClass* superClass;       // This JNIClass' superclass
       QString* name;              // The fully qualified name (with '/' as separator) for use in signatures of functions.
+      QString* semantic_name;     // The semantic name given to this JNIClass object for easy identification.
       jint modifiers;             // The modifiers of the class (a combination of public, protected, private, final, static, abstract and interface, encoded in an integer)
       map<JNIClass*, JNIValue> anns;    // Map of annotations this JNIClass contains
       map<QString, JNIMethod*> methods; // Map of methods that this class provides.
@@ -69,8 +79,8 @@ namespace jni {
        * @brief Returns whether the given JNIValue represents an instance of this JNIClass
        * @param v the JNIValue to check
        *
-       * This method always returns false if the type of the JNIValue is not JOBJECT.
-       * @return true if the provided JNIValue is an JOBJECT of this JNIClass, false otherwise
+       * This method always returns false if the type of the JNIValue is not @c JOBJECT.
+       * @return true if the provided JNIValue is an @c JOBJECT of this JNIClass, false otherwise
        */
       jboolean IsInstance(JNIValue v);
       /**
@@ -89,13 +99,13 @@ namespace jni {
        * @brief Looks up the method with the specified name and signature
        * @param name the name of the method
        * @param signature the signature of the method
-       * @return the JNIMethod reference to the requested method, or NULL if no such method exists
+       * @return the JNIMethod reference to the requested method, or @c NULL if no such method exists
        */
       JNIMethod* GetMethod(QString name, QString signature);
       /**
        * @brief Looks up the constructor with the specified signature
        * @param signature the signature of the constructor
-       * @return the JNIMethod reference to the requested constructor, or NULL if no such constructor exists
+       * @return the JNIMethod reference to the requested constructor, or @c NULL if no such constructor exists
        */
       JNIMethod* GetConstructor(QString signature);
 
@@ -118,11 +128,34 @@ namespace jni {
        */
       JNIValue GetFieldContents(QString fieldName);
 
+      /**
+       * @brief Retrieves the Access modifiers for this class
+       * @return the access modifiers for this class
+       */
       jint GetModifiers();
+      /**
+       * @brief Returns whether this JNIClass has the given access modifier
+       * @param m the AccModifier to check for
+       * @return @c (GetModifiers() & m != 0)
+       */
       jboolean HasModifier(AccModifier m);
 
-      JNIValue GetAnnotation(JNIClass* annotationClass);
+      /**
+       * @brief Returns the annotation object belonging to the given class.
+       * @param annotationClass the class of the annotation to retrieve
+       * @return the JNIObject representing the requested annotation, or a JNIObject representing @c NULL if the annotation was not found
+       */
+      JNIObject GetAnnotation(JNIClass* annotationClass);
+      /**
+       * @brief Returns whether this class contains the given annotation
+       * @param annotationClass the class of the annotation to check
+       *
+       * @return @c !GetAnnotation(annotationClass).IsNull()
+       */
       jboolean HasAnnotation(JNIClass* annotationClass);
+
+      JNIValue InvokeStaticMethod(QString name, QString signature);
+      JNIValue InvokeStaticMethod(JNIMethod* method);
 
       void emptyCache();
 

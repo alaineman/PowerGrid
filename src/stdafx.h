@@ -66,8 +66,10 @@
 
 // Define convenience macro's
 #ifdef PG_NULL_CHECK
- #define VERIFY_NON_NULL(pointer) if(pointer == NULL) { qWarning("NULL-pointer"); throw std::runtime_error(std::string("pointer is NULL (").append(__FILE__).append(":").append(TO_STRING(__LINE__)).append(")")); }
+ #define ISNULL(pointer) (pointer == NULL)
+#define VERIFY_NON_NULL(pointer) if(ISNULL(pointer)) { qWarning("NULL-pointer"); throw std::runtime_error(std::string("pointer is NULL (").append(__FILE__).append(":").append(TO_STRING(__LINE__)).append(")")); }
 #else
+ #define ISNULL(pointer) false
  #define VERIFY_NON_NULL(pointer)
 #endif
 

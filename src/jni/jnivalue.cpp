@@ -1,4 +1,5 @@
 #include "jnivalue.h"
+#include "jniexception.h"
 
 using namespace std;
 
@@ -15,8 +16,10 @@ namespace jni {
   }
 
   JNIValue::JNIValue(jvalue_type t, jvalue val) {
-    VERIFY_THAT(t != JVOID);
-    value = val;
+    if (t != JVOID) {
+      // If the type is JVOID we don't save the jvalue, since we don't retrieve it anyway.
+      value = val;
+    }
     type  = t;
   }
 
@@ -66,6 +69,9 @@ namespace jni {
   }
 
   jvalue JNIValue::Get() {
+    if (type == JVOID) {
+      throw jni_error("Get called on void JNIValue");
+    }
     return value;
   }
 
@@ -85,7 +91,7 @@ namespace jni {
         case JBYTE:    return value.b == val2.b;
         case JCHAR:    return value.c == val2.c;
         case JINT:     return value.i == val2.i;
-        case JOBJECT:  return value.l == val2.l; // naive == instead of equals for performance reasons
+        case JOBJECT:  return value.l == val2.l;
         case JLONG:    return value.j == val2.j;
         case JDOUBLE:  return value.d == val2.d;
         case JFLOAT:   return value.f == val2.f;

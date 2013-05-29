@@ -2,7 +2,9 @@
 
 namespace jni {
   Updater::Updater(JavaEnv *environment) {
-    if (environment == NULL) throw runtime_error("JavaEnv argument cannot be NULL");
+    if (ISNULL(environment)) {
+      throw invalid_argument("JavaEnv argument cannot be NULL");
+    }
     env = environment;
   }
 
@@ -10,11 +12,7 @@ namespace jni {
     return env;
   }
 
-  jclass Updater::GetClass(cstring identifier) {
-    if (identifier == NULL) {
-      qWarning() << "Passed NULL as parameter for Updater::GetClass";
-      return NULL;
-    }
+  JNIClass* Updater::GetClass(QString identifier) {
     try {
       return bindings.Get(identifier);
     } catch (logic_error e) {
@@ -23,9 +21,9 @@ namespace jni {
     }
   }
 
-  cstring Updater::Identify(jclass cls) {
-    if (cls == NULL) {
-      return NULL;
+  QString Updater::Identify(jclass cls) {
+    if (ISNULL(cls)) {
+      throw invalid_argument("class reference cannot be NULL");
     }
     cstring id = NULL;
     // perform the id algorithm on the class.

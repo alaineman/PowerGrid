@@ -2,12 +2,15 @@
 #include <jni.h>
 #include "jnimethod.h"
 #include "ongoinginvocation.h"
+#include "jniclass.h"
 
 #ifndef JAVAENV_H
 #define JAVAENV_H
 
 #define VALID_JAVA_ID(str) VERIFY_THAT(str.length() != 0 && ((str.at(0) >= 'A' && str.at(0) <= 'Z') || (str.at(0) >= 'a' && str.at(0) <= 'z') || str.at(0) == '$' || str.at(0) == '_'))
 #define VALID_JAVA_ID_CHARS(chars) VERIFY_NON_NULL(chars) VALID_JAVA_ID(std::string(chars))
+
+class JNIClass;
 
 namespace jni {
   using namespace std;
@@ -22,7 +25,7 @@ namespace jni {
   private:
     JNIEnv* env;
     jboolean running;
-
+    map<QString, JNIClass*> classes;
 
   public:
     /**

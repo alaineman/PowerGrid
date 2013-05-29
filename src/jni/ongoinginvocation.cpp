@@ -10,18 +10,17 @@ namespace jni {
   }
 
   OngoingInvocation::OngoingInvocation(JavaEnv* e, jobject o, JNIMethod *m) {
-    VERIFY_NON_NULL(e);
     // the method must be static if and only if o == NULL
-    VERIFY_NON_NULL(m);
-    VERIFY_THAT((o == NULL) == m->IsStatic());
+    if (ISNULL(e) || ISNULL(m) || (o == NULL) != m->IsStatic()) {
+      throw invalid_argument("invalid argument conbination");
+    }
     env = e;
     object = o;
     method = m;
   }
 
   vector<JNIValue> OngoingInvocation::GetArguments() {
-    vector<JNIValue> copy (arguments);
-    return copy;
+    return vector<JNIValue> (arguments);
   }
 
   JNIMethod* OngoingInvocation::GetMethod() {
@@ -31,8 +30,6 @@ namespace jni {
   jobject OngoingInvocation::GetObject() {
     return object;
   }
-
-
 
   jboolean OngoingInvocation::isValid() {
     return method->ValidateInput(arguments);

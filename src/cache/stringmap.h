@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include <vector>
 
+using namespace std;
+
 namespace cache {
 
   template<typename T> class StringMapEntry {
@@ -39,7 +41,7 @@ namespace cache {
   template<typename T> class StringMap {
     private:
       /// Returns the hash code of the given string
-      uint GetHash(cstring key);
+      uint GetHash(QString key);
       /// Rehashes the entire map and makes it the required size.
       void Rehash(uint newSize);
 
@@ -61,29 +63,36 @@ namespace cache {
       void shrink(uint minLength);
 
       /// Returns the binding for the given key
-      T Get(cstring key);
+      T Get(QString key);
 
       /// Sets a binding for a key, possibly overwriting an already existing binding
-      T Set(cstring key, T elem);
+      T Set(QString key, T elem);
       /// Removes the binding for the given key
-      T Remove(cstring key);
+      T Remove(QString key);
 
       /// Returns true iff the StringMap contains a binding for the given key
-      bool contains(cstring key);
+      bool contains(QString key);
 
       /// Returns a vector of all keys in this StringMap
-      std::vector<cstring> GetKeys();
+      vector<QString> GetKeys();
       /// Returns a copy of all entries in this StringMap
-      std::vector<StringMapEntry<T>> GetEntries();
+      vector<StringMapEntry<T>> GetEntries();
 
   };
 
 
-  template<typename T> uint StringMap<T>::GetHash(cstring key) {
-    uint h = 0;
-    for (uint i = 0; key[i] != 0;) {
-      h = 31 * h + key[i++];
+  template<typename T> uint StringMap<T>::GetHash(QString key) {
+    if (key.isEmpty()) {
+      throw invalid_argument("empty key");
     }
+    uint h = 0;
+    uint i = 0;
+    QChar c;
+    do {
+      c = key.at(i);
+      h = 31 * h + c.unicode();
+      i++;
+    } while (i < static_cast<uint>(key.length()));
     return h;
   }
 
@@ -106,7 +115,7 @@ namespace cache {
     delete entries;
   }
 
-  template<typename T> T StringMap<T>::Get(cstring key) {
+  template<typename T> T StringMap<T>::Get(QString key) {
     uint index = GetHash(key) % reserved_size;
     StringMapEntry<T>* entry;
     do {

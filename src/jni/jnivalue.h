@@ -18,7 +18,7 @@ class JNIValue {
   public:
     /**
      * @brief Constructs a generic JNIValue
-     * The type will be set to JINT and the value will be set to 0.
+     * The type will be set to JVOID, and as such has no defined value
      */
     JNIValue();
     /**
@@ -90,7 +90,7 @@ class JNIValue {
     /**
      * @brief Returns whether this JNIValue represents the NULL value
      * @return true if and only if this JNIValue is of the JOBJECT type and the
-     *         value of this JNIValue is NULL. false otherwise.
+     *         value of this JNIValue is NULL, or when the type is JVOID. false otherwise.
      */
     jboolean IsNull();
 
@@ -101,6 +101,8 @@ class JNIValue {
     jvalue_type GetType();
     /**
      * @brief Returns the jvalue belonging to this JNIValue
+     *
+     * This throws an jni_error when this JNIValue's type is JVOID
      * @return the jvalue of this JNIValue
      */
     jvalue Get();
@@ -162,5 +164,9 @@ class JNIValue {
 };
 
 }
+
+// We define void and NULL values for JNIValue objects to increase readability and usability
+#define JNI_VOID jni::JNIValue()
+#define JNI_NULL jni::JNIValue(JOBJECT, NULL)
 
 #endif // JNIVALUE_H

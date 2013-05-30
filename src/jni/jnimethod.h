@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "jni.h"
-#include "jnielement.h"
 #include "jnivalue.h"
 
 namespace jni {

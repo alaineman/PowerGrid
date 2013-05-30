@@ -47,6 +47,10 @@ FORMS    += mainwindow.ui
 RESOURCES += \
     resources.qrc
 
+# Set the application icon
+win32: RC_FILE = powergrid.rc
+macx:  ICON = images/powergrid.icns
+
 
 # Add the JVM library as a dependancy
 INCLUDEPATH += $$PWD/../External/JNI/include
@@ -60,12 +64,10 @@ win32 {
     LIBS += -L$$PWD/../External/JNI/lib -ljvm
 }
 
-# Mac  specific headers for JNI
+# Mac specific headers for JNI
 macx {
     INCLUDEPATH += $$PWD/../External/JNI/include/darwin
     DEPENDPATH += $$PWD/../External/JNI/include/darwin
 
     LIBS += -framework JavaVM
 }
-
-# Add the Unit++ testing framework as a dependancy

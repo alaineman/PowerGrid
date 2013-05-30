@@ -3,7 +3,7 @@
 Name "PowerGrid v${VERSION}"
 OutFile "PowerGrid v${VERSION} Setup.exe"
 InstallDir $PROGRAMFILES\PowerGrid
-Icon "setup.ico"
+Icon "..\src\images\setup.ico"
 InstallColors /windows
 
 InstallDirRegKey HKLM "Software\PowerGrid" "Install_Dir"

@@ -65,10 +65,12 @@ namespace jni {
     qDebug() << "Environment created";
 
     JNIClass* c = GetClass("jagexappletviewer");
-
+    if (c == NULL) qFatal("jagexappletviewer class not found");
     JNIMethod* m = c->GetMethod("main", "([Ljava/lang/String;)V");
+    if (c == NULL) qFatal("main method not found");
 
     jobjectArray args = env->NewObjectArray(1, env->FindClass("java/lang/String"), env->NewStringUTF("runescape"));
+    if (args == NULL) qFatal("Failed to create argument array");
 
     try {
       c->InvokeStaticMethod(m, args);

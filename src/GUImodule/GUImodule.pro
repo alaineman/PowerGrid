@@ -16,6 +16,9 @@ TEMPLATE    = app
 DESTDIR     = build/
 OBJECTS_DIR = build/
 
+win32:     RC_FILE = powergrid.rc
+else:macx: ICON    = images/PowerGrid.icns
+
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------

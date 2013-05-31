@@ -25,6 +25,3 @@ SUBDIRS += \
     Injectionmodule \
     Monitormodule \
     AImodule \
-
-DESTDIR = ../build/
-OBJECTS_DIR = ../build/

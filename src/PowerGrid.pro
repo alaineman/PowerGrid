@@ -1,73 +1,30 @@
-#-------------------------------------------------
+#------------------------------------------------
 #
-# Project created by QtCreator 2013-05-14T10:55:56
+# Global qmake project file for PowerGrid.
 #
-#-------------------------------------------------
+# This project file includes and builds each
+# subproject and links all modules together.
+#
+#------------------------------------------------
 
-QT       += core gui widgets concurrent
-
-QMAKE_CXXFLAGS += -std=c++11
-
-TARGET   = PowerGrid
-TEMPLATE = app
-
-SOURCES  += main.cpp\
-            mainwindow.cpp \
-        jni/javaenv.cpp \
-    jni/jnimethod.cpp \
-    jni/jnivalue.cpp \
-    jni/ongoinginvocation.cpp \
-    cache/worlddata.cpp \
-    cache/sector.cpp \
-    cache/stringmap.cpp \
-    world/point.cpp \
-    world/widget.cpp \
-    jni/updater.cpp \
-    jni/jniclass.cpp \
-    jni/jniobject.cpp
-
-HEADERS  += mainwindow.h \
-        jni/javaenv.h \
-            stdafx.h \
-    jni/jnimethod.h \
-    jni/ongoinginvocation.h \
-    jni/jnivalue.h \
-    cache/worlddata.h \
-    cache/sector.h \
-    cache/stringmap.h \
-    world/point.h \
-    world/widget.h \
-    jni/updater.h \
-    jni/jniclass.h \
-    jni/jniobject.h \
-    jni/jniexception.h
-
-FORMS    += mainwindow.ui
-
-RESOURCES += \
-    resources.qrc
-
-# Set the application icon
-win32: RC_FILE = powergrid.rc
-macx:  ICON = images/powergrid.icns
+TEMPLATE = subdirs
 
 
-# Add the JVM library as a dependancy
-INCLUDEPATH += $$PWD/../External/JNI/include
-DEPENDPATH += $$PWD/../External/JNI/include
+#------------------------------------------------
+# We need the projects to be ordered to prevent
+# dependancy loops.
+#------------------------------------------------
 
-# Win32 specific headers for JNI
-win32 {
-    INCLUDEPATH += $$PWD/../External/JNI/include/win32
-    DEPENDPATH += $$PWD/../External/JNI/include/win32
+CONFIG += ordered
 
-    LIBS += -L$$PWD/../External/JNI/lib -ljvm
-}
+SUBDIRS += \
+    world \
+    JNIModule \
+    GUImodule \
+    Cachemodule \
+    Injectionmodule \
+    Monitormodule \
+    AImodule \
 
-# Mac specific headers for JNI
-macx {
-    INCLUDEPATH += $$PWD/../External/JNI/include/darwin
-    DEPENDPATH += $$PWD/../External/JNI/include/darwin
-
-    LIBS += -framework JavaVM
-}
+DESTDIR = ../build/
+OBJECTS_DIR = ../build/

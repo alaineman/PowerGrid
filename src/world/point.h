@@ -1,34 +1,35 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include "stdafx.h"
+#include <cmath>
 
 namespace world {
-  class Point
-  {
+  class Point {
     private:
       int x, y;
       short z;
     public:
-      Point(int x_coordinate, int y_coordinate, short plane);
-      Point(const Point& orig);
-      Point(int x_coordinate, int y_coordinate);
+      Point(int x_coord, int y_coord, short plane = 0) {
+        x = x_coord;
+        y = y_coord;
+        z = plane;
+      }
 
-      int GetX();
-      int GetY();
-      short GetPlane();
+      int GetX() { return x; }
+      int GetY() { return y; }
+      short GetPlane() { return z; }
 
-      double GetAngle();
-      double GetRadius();
+      Point operator +(Point other) { return Point(x + other.GetX(), y + other.GetY(), z + other.GetPlane()); }
+      Point operator -(Point other) { return Point(x - other.GetX(), y - other.GetY(), z - other.GetPlane()); }
+      Point operator *(double scalar) { return Point(x * scalar, y * scalar, z * scalar); }
+      Point operator /(double scalar) { return Point(x / scalar, y / scalar, z / scalar); }
 
-      double GetDistance(Point other);
+      bool operator==(Point other) { return x == other.GetX() && y == other.GetY() && z == other.GetPlane(); }
 
-      Point operator +(Point other);
-      Point operator -(Point other);
-      Point operator *(double scalar);
-      Point operator /(double scalar);
+      double GetAngle() { return atan2(y, x); }
+      double GetRadius() { return sqrt(x*x + y*y); }
 
-      bool operator==(Point other);
+      double GetDistance(Point other) { Point diff = (*this - other); return diff.GetRadius(); }
   };
 }
 #endif // POINT_H

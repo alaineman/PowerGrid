@@ -5,7 +5,7 @@
 #------------------------------------------------
 
 # Set the base directory for JNI iff it was not already set (overwritten)
-isEmpty(JNI_BASE): JNI_BASE = ../../External/JNI
+isEmpty(JNI_BASE): JNI_BASE = $$PWD/../../External/JNI
 
 # Find the appropriate OS name for the platform-dependent include.
 win32:      OS_NAME     = win32
@@ -33,6 +33,7 @@ JNI_HEADERS = $$JNI_BASE/include $$JNI_BASE/include/$$OS_NAME
 
 # On Mac OS, Java should be linked as a framework instead of a library.
 # else (on windows and unix), the jvm is a normal (dynamic) library
+
 macx:  LIBS += -framework JavaVM
 else:  LIBS += -L$$JNI_BASE/lib -ljvm
 

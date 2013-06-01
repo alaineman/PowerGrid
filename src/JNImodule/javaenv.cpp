@@ -21,14 +21,14 @@ namespace jni {
     }
 
     QString classpath("-Djava.class.path=");
- #ifndef Q_OS_DARWIN
-    // In the case of Mac OS, the jagexappletviewer jar file is not accessible through the
-    // native Runescape loader and must be packaged along with the application.
-    QChar sep = QDir::separator();
-    QString home = QDir::homePath().replace("/", sep);
-    classpath.append(home).append(sep).append("jagexcache").append(sep)
-             .append("jagexlauncher").append(sep).append("bin").append(sep);
-#endif
+// #ifndef Q_OS_DARWIN
+//    // In the case of Mac OS, the jagexappletviewer jar file is not accessible through the
+//    // native Runescape loader and must be packaged along with the application.
+//    QChar sep = QDir::separator();
+//    QString home = QDir::homePath().replace("/", sep);
+//    classpath.append(home).append(sep).append("jagexcache").append(sep)
+//             .append("jagexlauncher").append(sep).append("bin").append(sep);
+//#endif
     classpath.append("jagexappletviewer.jar");
 
     // We need to store the intermediate QByteArray, since the char* is not copied and as such
@@ -90,7 +90,7 @@ namespace jni {
   JNIClass* JavaEnv::GetClass(const char* name) {
     jclass cls = env->FindClass(name);
     JNIClass* jnic = new JNIClass(cls, this);
-    // TODO: implement a caching system to speed up consecutive calls.
+    // MISSING: a caching system to speed up consecutive calls.
     return jnic;
   }
 
@@ -298,8 +298,8 @@ namespace jni {
       st = JNI_TRUE;
     }
     jvalue_type retType = ParseReturnValueFromSignature(signature);
-    // TODO: Store in internal cache
-    return new JNIMethod(name, c, retType, vector<jvalue_type>(), st, methodID); // << warning: potential memory leak here, which will be fixed when cache is implemented, though.
+    // MISSING: Store in internal cache to prevent memory leaks
+    return new JNIMethod(name, c, retType, vector<jvalue_type>(), st, methodID);
   }
 
   jstring JavaEnv::CreateString(const char* str) {

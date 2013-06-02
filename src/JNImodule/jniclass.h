@@ -100,7 +100,7 @@ namespace jni {
        * @param signature the signature of the method
        * @return the JNIMethod reference to the requested method, or @c NULL if no such method exists
        */
-      JNIMethod* GetMethod(QString name, QString signature);
+      JNIMethod* GetMethod(const char* name, const char* signature);
       /**
        * @brief Looks up the constructor with the specified signature
        * @param signature the signature of the constructor

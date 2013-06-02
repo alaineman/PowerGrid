@@ -21,14 +21,14 @@ namespace jni {
     }
 
     QString classpath("-Djava.class.path=");
-// #ifndef Q_OS_DARWIN
-//    // In the case of Mac OS, the jagexappletviewer jar file is not accessible through the
-//    // native Runescape loader and must be packaged along with the application.
-//    QChar sep = QDir::separator();
-//    QString home = QDir::homePath().replace("/", sep);
-//    classpath.append(home).append(sep).append("jagexcache").append(sep)
-//             .append("jagexlauncher").append(sep).append("bin").append(sep);
-//#endif
+#ifndef Q_OS_DARWIN
+    // In the case of Mac OS, the jagexappletviewer jar file is not accessible through the
+    // native Runescape loader and must be packaged along with the application.
+    QChar sep = QDir::separator();
+    QString home = QDir::homePath().replace("/", sep);
+    classpath.append(home).append(sep).append("jagexcache").append(sep)
+             .append("jagexlauncher").append(sep).append("bin").append(sep);
+#endif
     classpath.append("jagexappletviewer.jar");
 
     // We need to store the intermediate QByteArray, since the char* is not copied and as such
@@ -64,16 +64,17 @@ namespace jni {
     JNI_CreateJavaVM(&jvm, (void**)&env, &vmargs);
     qDebug() << "Environment created";
 
-    JNIClass* c = GetClass("jagexappletviewer");
+    jclass c = env->FindClass("jagexappletviewer");
     if (c == NULL) qFatal("jagexappletviewer class not found");
-    JNIMethod* m = c->GetMethod("main", "([Ljava/lang/String;)V");
-    if (c == NULL) qFatal("main method not found");
+    jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
+    if (main == NULL) qFatal("main method not found");
 
     jobjectArray args = env->NewObjectArray(1, env->FindClass("java/lang/String"), env->NewStringUTF("runescape"));
     if (args == NULL) qFatal("Failed to create argument array");
 
     try {
-      c->InvokeStaticMethod(m, args);
+      qDebug() << "Starting Runescape client";
+      env->CallStaticVoidMethod(c, main, args);
       qDebug() << "Runescape started and running";
     } catch (jni_error e) {
       qFatal(e.what());

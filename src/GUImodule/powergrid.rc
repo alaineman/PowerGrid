@@ -1,1 +1,43 @@
-IDI_ICON1       ICON        DISCARDABLE     "images/powergrid.ico"
+#include "winver.h"
+
+IDI_ICON1       ICON        "images/powergrid.ico"
+
+#define PG_VERSION      0,1,0,0
+#define PG_VERSION_STR  "0.1"
+#define PG_NAME         "PowerGrid"
+#define PG_DESCRIPTION  "Revolutionary Runescape bot"
+#define PG_FILENAME     "PowerGrid.exe"
+#define PG_COMPANY      "none"
+
+#ifdef DEBUG
+# define PG_DEBUG VS_FF_DEBUG
+#else
+# define PG_DEBUG 0
+#endif
+
+1               VERSIONINFO
+FILEVERSION     PG_VERSION
+PRODUCTVERSION  PG_VERSION
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       PG_DEBUG
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     0
+
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",        PG_COMPANY
+            VALUE "FileDescription",    PG_DESCRIPTION
+            VALUE "FileVersion",        PG_VERSION_STR
+            VALUE "InternalName",       PG_NAME
+            VALUE "OriginalFilename",   PG_FILENAME
+            VALUE "ProductName",        PG_NAME
+            VALUE "ProductVersion",     PG_VERSION_STR
+        END
+    END
+
+    BLOCK "VarFileInfo" { VALUE "Translation", 0x409, 1200 }
+END

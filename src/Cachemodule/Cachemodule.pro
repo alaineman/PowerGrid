@@ -20,8 +20,10 @@ OBJECTS_DIR = build/
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-SOURCES     = worlddata.cpp sector.cpp
-HEADERS     = worlddata.h     sector.h
+SOURCES     = worlddata.cpp sector.cpp \
+    basecomponent.cpp
+HEADERS     = worlddata.h     sector.h \
+    basecomponent.h
 
 #------------------------------------------------
 # The subprojects this project depends on

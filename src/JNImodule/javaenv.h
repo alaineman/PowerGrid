@@ -13,12 +13,14 @@ namespace jni {
    * The JavaEnv class is a C++ wrapper around the Java environment (JNIEnv struct).
    * The functions this class provides checks for illegal arguments, like NULL values.
    * The original JNI does not do this, and as such errors could occur when providing the
-   * JNI with such arguments. NULL value checking is enabled only when the PG_NULL_CHECK macro is defined.
+   * JNI with such arguments.
    */
   class JavaEnv : public QObject {
   private:
-    JNIEnv* env;
+    JavaVM* jvm;
     jboolean running;
+    QMap<QThread*, JNIEnv*> environments;
+
     QMap<QString, JNIClass*> classes;
 
   public:
@@ -28,12 +30,21 @@ namespace jni {
     JavaEnv();
 
     /**
-     * @brief Returns the JNI environment object
+     * @brief Returns the JNI environment object for the calling thread
      *
-     * Calling this before calling Setup does not give a valid JNIEnv object.
-     * @return the JNI environment
+     * Calling this before calling @c Start() does not give a valid JNIEnv object pointer.
+     * When a thread is not linked to the JVM, the thread is automatically linked to it, and
+     * the corresponding JNIEnv object is stored for future reference.
+     * @return a pointer to the JNI environment
      */
-    JNIEnv* GetEnv() { return env; }
+    JNIEnv* GetEnv();
+
+    /**
+     * @brief Returns the JavaVM object
+     * Calling this before calling @c Start() does not give a valid JavaVM object pointer.
+     * @return a pointer to the JavaVM
+     */
+    JavaVM* GetJVM() { return jvm; }
 
     /**
      * @brief Returns whether the JNI environment is running.
@@ -87,12 +98,12 @@ namespace jni {
      * This function call performs the following Java method invocation:
      *      System.getProperty("java.version");
      * and returns the result as a QString
+     *
      * @return the version of the JVM as a QString
      */
     QString GetEnvironmentVersion();
 
     // Safe versions of all (16) method invocation functions. They check NULL values and such
-    // as long as the PG_NULL_CHECK macro is defined.
     jobject  CallObjectMethod  (jobject obj, jmethodID method, uint n_args, ...);
     jint     CallIntMethod     (jobject obj, jmethodID method, uint n_args, ...);
     jdouble  CallDoubleMethod  (jobject obj, jmethodID method, uint n_args, ...);
@@ -157,6 +168,34 @@ namespace jni {
 
     jvalue_type ParseReturnValueFromSignature(const char* signature);
     vector<jvalue_type> ParseArgumentTypesFromSignature(const char* signature);
+
+    /**
+     * @brief Checks each registered thread - JNIEnv mapping for validity
+     * For each thread that has already finished, the corresponding JNIEnv object is removed.
+     *
+     * It is advised to use the @c unlinkThread() slot instead, because it prevents illegal references from remaining in the thread to JNIEnv mapping.
+     *
+     */
+    void syncJavaVMThreads();
+
+    /**
+     * @brief Checks if the given QThread is attached to the Java VM
+     * @param thread the QThread to check
+     * @return true if and only if the thread is still running and has a binding to a JNIEnv object, false otherwise.
+     */
+    bool isAttached(QThread* thread);
+
+  public slots:
+    /**
+     * @brief Unlinks the current thread from the Java VM
+     * After this method returns, the JNIEnv object associated with this thread has been removed.
+     * Note that calling any other JavaEnv function that requires a JNIEnv object, the JNIEnv object
+     * will be re-created.
+     *
+     * This function can be linked to QThread's finished() signal to cleanly detach the thread and the remove the JNIEnv.
+     * Alternatively, the syncJavaVMThreads() function can be called to check each registered thread and JNIEnv for validity.
+     */
+    void unlinkThread();
   };
 }
 

@@ -43,15 +43,15 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
       << " (" << context.function << ")" << endl
       << "         |>  " << qPrintable(msg) << endl;
   string logrecord = out.str();
-  cerr << logrecord;
   logStream << logrecord;
+  cerr << logrecord;
   if (type == QtFatalMsg) {
     abort();
   }
 }
 
-void RunJavaVM(JavaEnv* env) {
-    env = new JavaEnv();
+JavaEnv* RunJavaVM() {
+    JavaEnv* env = new JavaEnv();
     qDebug() << "Starting Java Virtual Machine";
     try {
         env->Start();
@@ -59,42 +59,18 @@ void RunJavaVM(JavaEnv* env) {
         qWarning() << e.what();
     }
     qDebug() << "Java Virtual Machine started";
-}
-
-void TerminateJavaVM(JavaEnv* env) {
-    if (env != NULL) {
-        if (env->IsRunning()) {
-            JNIEnv* e = env->GetEnv();
-            JavaVM* j = NULL;
-            jint res = JNI_OK;
-            if (e != NULL) {
-                res = e->GetJavaVM(&j);
-            }
-            if (res < 0 || j == NULL) {
-                qWarning() << "Could not get Java VM, error code" << res;
-                delete env;
-            } else {
-                delete env;
-                if (res < 0) {
-                    qWarning() << "Could not attach thread to terminate JavaVM, error code" << res;
-                } else {
-                    j->DestroyJavaVM();
-                }
-
-            }
-        }
-    }
+    return env;
 }
 
 int main(int argc, char *argv[]) {
   // Open the log file for writing
   logStream.open("PowerGrid.log", std::ofstream::out | std::ofstream::trunc);
-  logStream << "PowerGrid " << POWERGRID_VERSION << " log file" << endl;
+  logStream << "PowerGrid " << qPrintable(POWERGRID_VERSION) << " log file" << endl;
   // Install the message handler for Qt.
   qInstallMessageHandler(PGMessageHandler);
+  qDebug() << "Message Handler is set up";
 
-  JavaEnv* environment = NULL;
-  QFuture<void> futureRunJVM = QtConcurrent::run(RunJavaVM, environment);
+  QFuture<JavaEnv*> futureRunJVM = QtConcurrent::run(RunJavaVM);
 
   // << Add startup code here if it does not require the Java VM
 
@@ -104,29 +80,21 @@ int main(int argc, char *argv[]) {
   MainWindow w;
   w.setGeometry(40, 60, w.width(), w.height());
 
-  // Now we wait until the Java VM is started
-  futureRunJVM.waitForFinished();
+  // Now we wait until the Java VM is started and collect the resulting JavaEnv instance
+  JavaEnv* environment = futureRunJVM.result();
 
   if (environment == NULL) {
     qWarning() << "Could not detect running Java VM";
+    w.updateVersionInfo(QStringLiteral("No Java VM detected"));
   } else {
     // << Add startup code here if it does require the Java VM
+    QString version = environment->GetEnvironmentVersion();
+    qDebug() << "Java Version: " << version;
+    w.updateVersionInfo(version);
   }
-  // We set the version info and show the GUI after the Java VM was started.
-  w.updateVersionInfo(environment);
+
   w.show();
 
   // enter the Qt message loop
-  const int qtReturnValue = a.exec();
-
-  // << Add shutdown code here that does require the Java VM
-
-  // Once we leave the Qt message loop, we should assert the Java Virtual Machine is terminated.
-//  QFuture<void> futureStopJVM = QtConcurrent::run(TerminateJavaVM, environment);
-
-//  // << Add shutdown code here that does not require the Java VM
-
-//  futureStopJVM.waitForFinished();
-  // Exit the application;
-  return qtReturnValue;
+  return a.exec();
 }

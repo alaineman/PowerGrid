@@ -3,8 +3,9 @@
 
 #include "javaenv.h"
 #include <QMainWindow>
+#include <QString>
 
-#define POWERGRID_VERSION "0.1"
+#define POWERGRID_VERSION QStringLiteral("0.1")
 
 namespace Ui {
   class MainWindow;
@@ -18,7 +19,7 @@ public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
-  void updateVersionInfo(jni::JavaEnv* environment);
+  void updateVersionInfo(QString env_version);
   
   private slots:
   void on_travelHere_clicked();

@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include "jniexception.h"
 #include <QDir>
+#include <iostream>
 
 namespace jni {
   using namespace std;
@@ -9,9 +10,26 @@ namespace jni {
   class JNIMethod;
 
   JavaEnv::JavaEnv() : QObject() {
-    env = NULL;
     running = JNI_FALSE;
     setObjectName("JavaEnvironment");
+  }
+
+  JNIEnv* JavaEnv::GetEnv() {
+    QThread* current = QThread::currentThread();
+    QMap<QThread*,JNIEnv*>::const_iterator it = environments.find(current);
+    QMap<QThread*,JNIEnv*>::const_iterator end = environments.cend();
+    if (it == end) {
+      JNIEnv* env;
+      if (jvm == NULL) {
+        throw jni_error("JVM not started");
+      }
+      jvm->AttachCurrentThread(reinterpret_cast<void**>(&env), NULL);
+      environments.insert(current, env);
+      qDebug() << "Created JNIEnv for thread:" << current->objectName();
+      return env;
+    } else {
+      return it.value();
+    }
   }
 
   // Intialize and set up the environment
@@ -42,7 +60,7 @@ namespace jni {
     // the JVM options themselves. They are all used because these are the same
     // that the official Runescape loader uses. We also use them since we're trying
     // to mimic the Runescape loader as accurately as possible.
-    JavaVMOption options[9];    
+    JavaVMOption options[10];
     options[0].optionString  = const_cast<char*>(cpArray.data());
     options[1].optionString  = const_cast<char*>("-Dsun.java2d.noddraw=true");
     // The entire configuration for loading Runescape itself is stored on this link.
@@ -54,16 +72,22 @@ namespace jni {
     options[6].optionString  = const_cast<char*>("-Xincgc");
     options[7].optionString  = const_cast<char*>("-XX:+UseConcMarkSweepGC");
     options[8].optionString  = const_cast<char*>("-XX:+UseParNewGC");
+    options[9].optionString  = const_cast<char*>("-Xcheck:jni"); // debug; checks incoming JNI calls and its parameters
 
     vmargs.options = options;
-    vmargs.nOptions = 9;
+    vmargs.nOptions = 10;
 
-    JavaVM* jvm = NULL;
+    JNIEnv* env = NULL;
 
     qDebug() << "Creating Java Virtual Machine";
     JNI_CreateJavaVM(&jvm, (void**)&env, &vmargs);
-    qDebug() << "Environment created";
-
+    if (env != NULL) {
+      QThread* current = QThread::currentThread();
+      environments.insert(current, env);
+      qDebug() << "Environment created with JNI Version:" << env->GetVersion();
+    } else {
+      throw jni_error("Failed to create environment");
+    }
     jclass c = env->FindClass("jagexappletviewer");
     if (c == NULL) qFatal("jagexappletviewer class not found");
     jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
@@ -80,15 +104,12 @@ namespace jni {
       qFatal(e.what());
     }
 
-    if (jvm->DetachCurrentThread() < 0) {
-        qWarning() << "Could not detach startup thread from the Java VM";
-    }
-
     running = JNI_TRUE;
   }
 
   // Get basic JNI element types
   JNIClass* JavaEnv::GetClass(const char* name) {
+    JNIEnv* env = GetEnv();
     jclass cls = env->FindClass(name);
     JNIClass* jnic = new JNIClass(cls, this);
     // MISSING: a caching system to speed up consecutive calls.
@@ -96,30 +117,34 @@ namespace jni {
   }
 
   jmethodID JavaEnv::GetMethodID(JNIClass* c, const char* name, const char* signature) {
+    JNIEnv* env = GetEnv();
     jmethodID meth = env->GetMethodID(static_cast<jclass>(c->GetJObject()), name, signature);
     return meth;
   }
 
   jmethodID JavaEnv::GetStaticMethodID(JNIClass* c, const char* name, const char* signature) {
+    JNIEnv* env = GetEnv();
     jmethodID meth = env->GetStaticMethodID(static_cast<jclass>(c->GetJObject()), name, signature);
     return meth;
   }
 
   QString JavaEnv::GetEnvironmentVersion() {
     if (running) {
-      JNIClass* system = GetClass("java/lang/System");
+      JNIEnv* env = GetEnv();
+      jclass system = env->FindClass("java/lang/System");
       if (system == NULL) {
         throw jni_error("java.lang.System class not found");
       }
-      JNIMethod* getProperty = system->GetMethod("getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+      jmethodID getProperty = env->GetStaticMethodID(system, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
       if (getProperty == NULL) {
         throw jni_error("java.lang.System.getProperty method not found");
       }
-      JNIValue infoStr = system->InvokeStaticMethod(getProperty, env->NewStringUTF("java.version"));
-      QString info (env->GetStringUTFChars(static_cast<jstring>(infoStr.GetJObject()), NULL));
+
+      jstring infoStr = (jstring) env->CallStaticObjectMethod(system, getProperty, env->NewStringUTF("java.version"));
+      QString info (env->GetStringUTFChars(infoStr, NULL));
       return info;
     } else {
-      return QString();
+      return QStringLiteral("Java VM not running");
     }
   }
 
@@ -128,6 +153,7 @@ namespace jni {
   jobject JavaEnv::CallObjectMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jobject result = env->CallObjectMethodV(obj, method, args);
     va_end(args);
 
@@ -137,6 +163,7 @@ namespace jni {
   jint JavaEnv::CallIntMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jint result = env->CallIntMethodV(obj, method, args);
     va_end(args);
     return result;
@@ -145,6 +172,7 @@ namespace jni {
   jdouble JavaEnv::CallDoubleMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jdouble result = env->CallDoubleMethodV(obj, method, args);
     va_end(args);
     return result;
@@ -153,6 +181,7 @@ namespace jni {
   jboolean JavaEnv::CallBooleanMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jboolean result = env->CallBooleanMethodV(obj, method, args);
     va_end(args);
     return result;
@@ -161,6 +190,7 @@ namespace jni {
   jfloat JavaEnv::CallFloatMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jfloat result = env->CallFloatMethodV(obj, method, args);
     va_end(args);
     return result;
@@ -169,6 +199,7 @@ namespace jni {
   jbyte JavaEnv::CallByteMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jbyte result = env->CallByteMethodV(obj, method, args);
     va_end(args);
     return result;
@@ -177,6 +208,7 @@ namespace jni {
   jchar JavaEnv::CallCharMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jchar result = env->CallCharMethodV(obj, method, args);
     va_end(args);
     return result;
@@ -185,6 +217,7 @@ namespace jni {
   jlong JavaEnv::CallLongMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jlong result = env->CallLongMethodV(obj, method, args);
     va_end(args);
     return result;
@@ -193,6 +226,7 @@ namespace jni {
   jshort JavaEnv::CallShortMethod(jobject obj, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jshort result = env->CallShortMethodV(obj, method, args);
     va_end(args);
     return result;
@@ -204,6 +238,7 @@ namespace jni {
   jobject JavaEnv::CallStaticObjectMethod(jclass c, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jobject result = env->CallStaticObjectMethodV(c, method, args);
     va_end(args);
 
@@ -213,6 +248,7 @@ namespace jni {
   jint JavaEnv::CallStaticIntMethod(jclass c, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jint result = env->CallStaticIntMethodV(c, method, args);
     va_end(args);
 
@@ -222,6 +258,7 @@ namespace jni {
   jdouble JavaEnv::CallStaticDoubleMethod(jclass c, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jdouble result = env->CallStaticDoubleMethodV(c, method, args);
     va_end(args);
 
@@ -231,6 +268,7 @@ namespace jni {
   jboolean JavaEnv::CallStaticBooleanMethod(jclass c, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jboolean result = env->CallStaticBooleanMethodV(c, method, args);
     va_end(args);
 
@@ -240,6 +278,7 @@ namespace jni {
   jfloat JavaEnv::CallStaticFloatMethod(jclass c, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jfloat result = env->CallStaticFloatMethodV(c, method, args);
     va_end(args);
 
@@ -249,6 +288,7 @@ namespace jni {
   jbyte JavaEnv::CallStaticByteMethod(jclass c, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jbyte result = env->CallStaticByteMethodV(c, method, args);
     va_end(args);
 
@@ -258,6 +298,7 @@ namespace jni {
   jchar JavaEnv::CallStaticCharMethod(jclass c, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jchar result = env->CallStaticCharMethodV(c, method, args);
     va_end(args);
 
@@ -267,6 +308,7 @@ namespace jni {
   jlong JavaEnv::CallStaticLongMethod(jclass c, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jlong result = env->CallStaticLongMethodV(c, method, args);
     va_end(args);
 
@@ -276,6 +318,7 @@ namespace jni {
   jshort JavaEnv::CallStaticShortMethod(jclass c, jmethodID method, uint n_args, ...) {
     va_list args;
     va_start(args, n_args);
+    JNIEnv* env = GetEnv();
     jshort result = env->CallStaticShortMethodV(c, method, args);
     va_end(args);
 
@@ -283,11 +326,33 @@ namespace jni {
   }
 
   JNIValue JavaEnv::CallStatic(jvalue_type ret_type, jclass c, jmethodID method, va_list args) {
-    return JNIValue();
+    JNIEnv* env = GetEnv();
+    jvalue result;
+    switch (ret_type) {
+      case JBOOLEAN: result.z = env->CallStaticBooleanMethodV (c, method, args);
+      case JSHORT:   result.s = env->CallStaticShortMethodV   (c, method, args);
+      case JCHAR:    result.c = env->CallStaticCharMethodV    (c, method, args);
+      case JVOID:               env->CallStaticVoidMethodV    (c, method, args);
+      case JBYTE:    result.b = env->CallStaticByteMethodV    (c, method, args);
+      case JOBJECT:  result.l = env->CallStaticObjectMethodV  (c, method, args);
+      case JINT:     result.i = env->CallStaticIntMethodV     (c, method, args);
+      case JLONG:    result.j = env->CallStaticLongMethodV    (c, method, args);
+      case JDOUBLE:  result.d = env->CallStaticDoubleMethodV  (c, method, args);
+      case JFLOAT:   result.f = env->CallStaticFloatMethodV   (c, method, args);
+      default: throw jni_error("Unknown jvalue_type");
+    }
+    if (env->ExceptionCheck()) {
+      env->ExceptionDescribe();
+      jthrowable ex = env->ExceptionOccurred();
+      env->ExceptionClear();
+      throw java_exception(new JNIValue(ex), QStringLiteral("Exception in static method call"));
+    }
+    return JNIValue(ret_type, result);
   }
 
 
   JNIMethod* JavaEnv::GetMethod(jclass c, const char* name, const char* signature) {
+    JNIEnv* env = GetEnv();
     // TODO: Look up from internal cache
     jboolean st = JNI_FALSE;
     jmethodID methodID = env->GetMethodID(c, name, signature);
@@ -304,15 +369,18 @@ namespace jni {
   }
 
   jstring JavaEnv::CreateString(const char* str) {
+    JNIEnv* env = GetEnv();
     return env->NewStringUTF(str);
   }
 
   QString JavaEnv::GetString(JNIValue str) {
+    JNIEnv* env = GetEnv();
     jstring param = static_cast<jstring>(str.GetJObject());
     return QString(env->GetStringUTFChars(param, NULL));
   }
 
   QString JavaEnv::GetString(jstring str) {
+    JNIEnv* env = GetEnv();
     return QString(env->GetStringUTFChars(str, NULL));
   }
 
@@ -356,15 +424,37 @@ namespace jni {
         case 'J': arguments.push_back(JLONG); break;
         case 'D': arguments.push_back(JDOUBLE); break;
         case 'F': arguments.push_back(JFLOAT); break;
-        case 'L':
-            arguments.push_back(JOBJECT);
-            // For object types, the substring denoting the class should be skipped before continuing.
-            index = sig.find_first_of(';', index)+1;
-            break;       
+        case 'L': {
+              arguments.push_back(JOBJECT);
+              // For object types, the substring denoting the class should be skipped before continuing.
+              index = sig.find_first_of(';', index)+1;
+              break;
+            }
         default:
             qWarning() << "unrecognized type: " << c;
         }
     }
     return arguments;
+  }
+
+  bool JavaEnv::isAttached(QThread* thread) {
+    return thread->isRunning() && environments.contains(thread);
+  }
+
+  void JavaEnv::syncJavaVMThreads() {
+    QList<QThread*> threads = environments.keys();
+    for (QList<QThread*>::iterator it = threads.begin(); it != threads.end(); ++it) {
+      QThread* key = (*it);
+      if (key->isFinished()) {
+        environments.remove(key);
+      }
+    }
+  }
+
+  void JavaEnv::unlinkThread() {
+    QThread* current = QThread::currentThread();
+    if ( environments.remove(current) != 0) {
+      jvm->DetachCurrentThread();
+    }
   }
 }

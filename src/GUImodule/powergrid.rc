@@ -5,7 +5,7 @@ IDI_ICON1       ICON        "images/powergrid.ico"
 #define PG_VERSION      0,1,0,0
 #define PG_VERSION_STR  "0.1"
 #define PG_NAME         "PowerGrid"
-#define PG_DESCRIPTION  "Revolutionary Runescape bot"
+#define PG_DESCRIPTION  "PowerGrid - Revolutionary Runescape bot"
 #define PG_FILENAME     "PowerGrid.exe"
 #define PG_COMPANY      "none"
 

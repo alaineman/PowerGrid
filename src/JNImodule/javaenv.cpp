@@ -81,7 +81,6 @@ namespace jni {
     if (env != NULL) {
       QThread* current = QThread::currentThread();
       environments.insert(current, env);
-      qDebug() << "Environment created with JNI Version:" << env->GetVersion();
     } else {
       throw jni_error("Failed to create environment");
     }
@@ -92,7 +91,8 @@ namespace jni {
     if (system == NULL) throw jni_error("failed to get System class");
     jclass s = (jclass) system->GetJavaObject();
     jfieldID out = env->GetStaticFieldID(s, "out", "Ljava/io/PrintStream;");
-    if (out == NULL) throw jni_error("failed to get System.out field");
+    jfieldID err = env->GetStaticFieldID(s, "err", "Ljava/io/PrintStream;");
+    if (out == NULL || err == NULL) throw jni_error("failed to get System field");
 
     JNIClass* printstream = GetClass("java/io/PrintStream");
     if (printstream == NULL) throw jni_error("failed to get PrintStream class");
@@ -101,6 +101,7 @@ namespace jni {
     jstring file = env->NewStringUTF("runescape.log");
     jobject newout = env->NewObject(ps, initPrintStream, file);
     env->SetStaticObjectField(s, out, newout);
+    env->SetStaticObjectField(s, err, newout);
 
     // Now we start the Jagex Applet Viewer's main class.
     jclass c = env->FindClass("jagexappletviewer");

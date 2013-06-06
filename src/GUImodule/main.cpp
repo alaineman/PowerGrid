@@ -22,7 +22,7 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
   stringstream out;
   switch (type) {
     case QtDebugMsg:
-      out << "Debug    | ";
+      out << "Info     | ";
       break;
     case QtWarningMsg:
       out << "Warning  | ";
@@ -38,10 +38,13 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
   }
   // We add information from the QMessageLogContext object allowing us to
   // localize the origin of the message, also making it easier to trace
-  // bugs and errors.
+  // bugs and errors. We don't do this for release builds
+#ifdef DEBUG
   out << "At " << context.file << ":" << context.line
       << " (" << context.function << ")" << endl
-      << "         |>  " << qPrintable(msg) << endl;
+      << "         |>  ";
+#endif
+  out << qPrintable(msg) << endl;
   string logrecord = out.str();
   logStream << logrecord;
   cerr << logrecord;
@@ -62,6 +65,28 @@ JavaEnv* RunJavaVM() {
     return env;
 }
 
+bool openWindows = false;
+
+#ifdef Q_OS_WIN
+// On windows we can use the EnumWindows function to check the open windows
+BOOL CALLBACK EnumWindowsProc(HWND hWnd, long lParam) {
+  if (IsWindowVisible(hWnd)) {
+      openWindows = true;
+  }
+  return TRUE;
+}
+void WaitForShutdown() {
+  do {
+    openWindows = false;
+    EnumWindows(EnumWindowsProc, 0);
+    QThread::currentThread()->sleep(5);
+  } while (openWindows);
+  qDebug() << "PowerGrid terminating";
+}
+#else
+void WaitForShutdown() {}
+#endif
+
 int main(int argc, char *argv[]) {
   // Open the log file for writing
   logStream.open("PowerGrid.log", std::ofstream::out | std::ofstream::trunc);
@@ -69,9 +94,10 @@ int main(int argc, char *argv[]) {
   // Install the message handler for Qt.
   qInstallMessageHandler(PGMessageHandler);
 
-  QFuture<JavaEnv*> futureRunJVM = QtConcurrent::run(RunJavaVM);
+  QThread* current = QThread::currentThread();
+  current->setObjectName("PG-main");
 
-  // << Add startup code here if it does not require the Java VM
+  QFuture<JavaEnv*> futureRunJVM = QtConcurrent::run(RunJavaVM);
 
   QApplication a(argc, argv);
 
@@ -95,5 +121,11 @@ int main(int argc, char *argv[]) {
   w.show();
 
   // enter the Qt message loop
-  return a.exec();
+  int result = a.exec();
+
+  qDebug() << "PowerGrid window closed";
+
+  WaitForShutdown();
+
+  return result;
 }

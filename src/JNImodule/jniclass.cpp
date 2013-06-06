@@ -3,8 +3,26 @@
 #include "jniexception.h"
 
 namespace jni {
+  QString JNIClass::GetSigName() {
+    if (name == NULL) {
+      JNIClass* cls = GetClass();
+      jclass c = (jclass) cls->GetJavaObject();
+      JNIEnv* e = env->GetEnv();
+      jmethodID getName = e->GetMethodID(c, "getName", "()Ljava/lang/String;");
+      jstring n = (jstring) e->CallObjectMethod(c, getName);
+      name = new QString(env->GetString(n));
+    }
+    return *name;
+  }
+
+  QString JNIClass::GetSimpleName() {
+    QString signame = GetSigName();
+    int first = signame.lastIndexOf("/") + 1;
+    return signame.right(signame.length() - first);
+  }
+
   JNIMethod* JNIClass::GetMethod(const char* name, const char* signature) {
-    return NULL;
+    return env->GetMethod(clazz, name, signature);
   }
 
   JNIValue JNIClass::InvokeStaticMethod(JNIMethod *method, ...) {

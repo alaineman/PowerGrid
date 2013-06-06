@@ -68,7 +68,6 @@ int main(int argc, char *argv[]) {
   logStream << "PowerGrid " << qPrintable(POWERGRID_VERSION) << " log file" << endl;
   // Install the message handler for Qt.
   qInstallMessageHandler(PGMessageHandler);
-  qDebug() << "Message Handler is set up";
 
   QFuture<JavaEnv*> futureRunJVM = QtConcurrent::run(RunJavaVM);
 

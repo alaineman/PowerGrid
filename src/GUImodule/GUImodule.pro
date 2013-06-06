@@ -1,7 +1,10 @@
 #------------------------------------------------
 #
 # This project contains the GUI, and statically
-# links to the other subprojects.
+# links to the other subprojects. This is the
+# entry point for PowerGrid, and as such this
+# project file also contains the icon and
+# metadata such as productname and version.
 #
 #------------------------------------------------
 

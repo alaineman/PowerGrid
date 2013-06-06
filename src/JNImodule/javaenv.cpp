@@ -63,8 +63,6 @@ namespace jni {
     JavaVMOption options[10];
     options[0].optionString  = const_cast<char*>(cpArray.data());
     options[1].optionString  = const_cast<char*>("-Dsun.java2d.noddraw=true");
-    // The entire configuration for loading Runescape itself is stored on this link.
-    // The appletloader parses it by itself, so loading the client can be done completely native.
     options[2].optionString  = const_cast<char*>("-Dcom.jagex.config=http://www.runescape.com/k=3/l=$(language:0)/jav_config.ws");
     options[3].optionString  = const_cast<char*>("-Xmx256m");
     options[4].optionString  = const_cast<char*>("-Xss2m");
@@ -72,14 +70,13 @@ namespace jni {
     options[6].optionString  = const_cast<char*>("-Xincgc");
     options[7].optionString  = const_cast<char*>("-XX:+UseConcMarkSweepGC");
     options[8].optionString  = const_cast<char*>("-XX:+UseParNewGC");
-    options[9].optionString  = const_cast<char*>("-Xcheck:jni"); // debug; checks incoming JNI calls and its parameters
+    options[9].optionString  = const_cast<char*>("-Xcheck:jni"); // debug; checks incoming JNI calls and the parameters
 
     vmargs.options = options;
     vmargs.nOptions = 10;
 
     JNIEnv* env = NULL;
 
-    qDebug() << "Creating Java Virtual Machine";
     JNI_CreateJavaVM(&jvm, (void**)&env, &vmargs);
     if (env != NULL) {
       QThread* current = QThread::currentThread();
@@ -88,6 +85,24 @@ namespace jni {
     } else {
       throw jni_error("Failed to create environment");
     }
+
+    // We redirect log traffic from System.out to a logfile instead, to reduce the spam in the console window
+    // Runescape tends to print "Received command: _12" and similar all the time.
+    JNIClass* system = GetClass("java/lang/System");
+    if (system == NULL) throw jni_error("failed to get System class");
+    jclass s = (jclass) system->GetJavaObject();
+    jfieldID out = env->GetStaticFieldID(s, "out", "Ljava/io/PrintStream;");
+    if (out == NULL) throw jni_error("failed to get System.out field");
+
+    JNIClass* printstream = GetClass("java/io/PrintStream");
+    if (printstream == NULL) throw jni_error("failed to get PrintStream class");
+    jclass ps = (jclass)printstream->GetJavaObject();
+    jmethodID initPrintStream = env->GetMethodID(ps, "<init>", "(Ljava/lang/String;)V");
+    jstring file = env->NewStringUTF("runescape.log");
+    jobject newout = env->NewObject(ps, initPrintStream, file);
+    env->SetStaticObjectField(s, out, newout);
+
+    // Now we start the Jagex Applet Viewer's main class.
     jclass c = env->FindClass("jagexappletviewer");
     if (c == NULL) qFatal("jagexappletviewer class not found");
     jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
@@ -96,23 +111,30 @@ namespace jni {
     jobjectArray args = env->NewObjectArray(1, env->FindClass("java/lang/String"), env->NewStringUTF("runescape"));
     if (args == NULL) qFatal("Failed to create argument array");
 
-    try {
-      qDebug() << "Starting Runescape client";
-      env->CallStaticVoidMethod(c, main, args);
-      qDebug() << "Runescape started and running";
-    } catch (jni_error e) {
-      qFatal(e.what());
-    }
+    env->CallStaticVoidMethod(c, main, args);
 
     running = JNI_TRUE;
   }
 
   // Get basic JNI element types
   JNIClass* JavaEnv::GetClass(const char* name) {
-    JNIEnv* env = GetEnv();
-    jclass cls = env->FindClass(name);
-    JNIClass* jnic = new JNIClass(cls, this);
-    // MISSING: a caching system to speed up consecutive calls.
+    QString n (name);
+    QMap<QString,JNIClass*>::iterator it = classes.find(n);
+    QMap<QString,JNIClass*>::iterator end = classes.end();
+    JNIClass* jnic = NULL;
+    if (it == end) {
+      JNIEnv* env = GetEnv();
+      jclass cls = env->FindClass(name);
+      if (cls == NULL) {
+        qWarning() << "Request for non-existing class:" << n;
+        return NULL;
+      }
+      jnic = new JNIClass(cls, this);
+      classes.insert(n, jnic);
+      qDebug() << "Registered JNIClass with name:" << n;
+    } else {
+      jnic = it.value();
+    }
     return jnic;
   }
 

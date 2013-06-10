@@ -11,22 +11,45 @@ namespace jni {
   class JavaEnv;
   class JNIClass;
 
-  class JNIObject : public JNIValue {
+  /**
+   * @brief Representation of an object from the Java environment
+   */
+  class JNIObject : private JNIValue {
     protected:
-      JavaEnv* env;                     // The Java environment this object comes from
-      jobject object;                   // The jobject reference from the Java Environment
-      JNIClass* type;                   // The JNIClass object representing the type of this object
+      JavaEnv* env;                     /// The Java environment this object comes from
+      jobject object;                   /// The jobject reference from the Java Environment
+      JNIClass* type;                   /// The JNIClass object representing the type of this object
 
     public:
-      JNIObject() : JNIValue() {}
+      JNIObject() : JNIValue() { type = NULL; }
       JNIObject(JavaEnv* e, jobject o);
 
+      /**
+       * @brief Returns the JavaEnv object this object comes from
+       * @return the JavaEnv object this object comes from
+       */
       JavaEnv* GetJavaEnv() { return env; }
-      jobject GetJavaObject() { return object; }
+      /**
+       * @brief Returns the JNI jobject reference this object holds
+       * @return the JNI jobject reference this object holds
+       */
+      virtual jobject GetJObject() { return object; }
 
+      /**
+       * @brief Returns the class of this object
+       * @return the class of this object
+       */
       JNIClass* GetClass();
 
+      /**
+       * @brief Returns the contents of the field with the provided name.
+       * @param field the name of the field to look up
+       *
+       * Throws a jni_error if the field does not exist.
+       * @return the value of the field.
+       */
       JNIValue GetField(QString field);
+
       /**
        * @brief Invokes a method in the Java environment on this object
        * @param method the name of the method to invoke
@@ -38,6 +61,7 @@ namespace jni {
        * @return The result of the method call, or a JNIValue for NULL when the method's return type is void.
        */
       JNIValue Invoke(QString method, QString signature, ...);
+
       /**
        * @brief Invokes a method in the Java environment on this object
        * @param method the method to invoke

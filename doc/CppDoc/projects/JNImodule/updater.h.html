@@ -1,0 +1,48 @@
+<HTML>
+<HEAD>
+<TITLE>
+updater.h
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="blue">#ifndef</font> UPDATER_H
+<font color="blue">#define</font> UPDATER_H
+
+<font color="blue">#include</font> <font color="maroon">"jniexception.h"</font>
+<font color="blue">#include</font> <font color="maroon">"javaenv.h"</font>
+<font color="blue">#include</font> <font color="maroon">"jniclass.h"</font>
+<font color="blue">#include</font> <font color="maroon">&#60;QHash&#62;</font>
+
+<font color="blue">namespace</font> jni <font color="black">{</font>
+
+  <font color="green">/**
+   * @brief represents an error that occurred because a Java class could not be identified.
+   */</font>
+  <font color="blue">class</font> class_id_error <font color="black">:</font> <font color="blue">public</font> jni_error <font color="black">{</font>
+    <font color="blue">public</font><font color="black">:</font>
+      <font color="green">/**
+       * @brief Constructs a class_id_error with the given message
+       * @param msg the message describing this class_id_error
+       */</font>
+      class_id_error<font color="black">(</font><font color="blue">const</font> string<font color="black">&</font> msg<font color="black">)</font> <font color="black">:</font> jni_error<font color="black">(</font>msg<font color="black">)</font> <font color="black">{</font><font color="black">}</font>
+  <font color="black">}</font>;
+
+  <font color="blue">class</font> Updater <font color="black">{</font>
+    <font color="blue">protected</font><font color="black">:</font>
+      JavaEnv<font color="black">*</font> env;
+      QHash<font color="black">&#60;</font>QString, JNIClass<font color="black">*</font><font color="black">&#62;</font> bindings;
+    <font color="blue">public</font><font color="black">:</font>
+      Updater<font color="black">(</font>JavaEnv<font color="black">*</font> environment<font color="black">)</font>;
+
+      JavaEnv<font color="black">*</font> Env<font color="black">(</font><font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> env; <font color="black">}</font>
+
+      JNIClass<font color="black">*</font> GetClass<font color="black">(</font>QString identifier<font color="black">)</font>;
+      QString Identify<font color="black">(</font>jclass cls<font color="black">)</font>;
+  <font color="black">}</font>;
+<font color="black">}</font>
+<font color="blue">#endif</font> <font color="green">// UPDATER_H</font>
+
+</PRE>
+</BODY>
+</HTML>

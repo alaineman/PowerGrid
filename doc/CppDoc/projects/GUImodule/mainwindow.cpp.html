@@ -1,0 +1,34 @@
+<HTML>
+<HEAD>
+<TITLE>
+mainwindow.cpp
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="blue">#include</font> <font color="maroon">"mainwindow.h"</font>
+<font color="blue">#include</font> <font color="maroon">"ui_mainwindow.h"</font>
+
+MainWindow<font color="black">:</font><font color="black">:</font>MainWindow<font color="black">(</font>QWidget <font color="black">*</font>parent<font color="black">)</font> <font color="black">:</font>
+            QMainWindow<font color="black">(</font>parent<font color="black">)</font>,
+            ui<font color="black">(</font><font color="blue">new</font> Ui<font color="black">:</font><font color="black">:</font>MainWindow<font color="black">)</font> <font color="black">{</font>
+
+  ui<font color="black">-</font><font color="black">&#62;</font>setupUi<font color="black">(</font><font color="blue">this</font><font color="black">)</font>;
+<font color="black">}</font>
+
+MainWindow<font color="black">:</font><font color="black">:</font>~MainWindow<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+  <font color="blue">delete</font> ui;
+<font color="black">}</font>
+
+<font color="blue">void</font> MainWindow<font color="black">:</font><font color="black">:</font>updateVersionInfo<font color="black">(</font>QString env_version<font color="black">)</font> <font color="black">{</font>
+  ui<font color="black">-</font><font color="black">&#62;</font>jvmversion<font color="black">-</font><font color="black">&#62;</font>setText<font color="black">(</font>env_version<font color="black">)</font>;
+  ui<font color="black">-</font><font color="black">&#62;</font>PGversion<font color="black">-</font><font color="black">&#62;</font>setText<font color="black">(</font>POWERGRID_VERSION<font color="black">)</font>;
+<font color="black">}</font>
+
+<font color="blue">void</font> MainWindow<font color="black">:</font><font color="black">:</font>on_travelHere_clicked<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+  qDebug<font color="black">(</font><font color="black">)</font> <font color="black">&#60;</font><font color="black">&#60;</font> <font color="maroon">"TravelHere button clicked"</font>;
+<font color="black">}</font>
+
+</PRE>
+</BODY>
+</HTML>

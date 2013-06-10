@@ -1,0 +1,33 @@
+<HTML>
+<HEAD>
+<TITLE>
+basecomponent.h
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="blue">#ifndef</font> BASECOMPONENT_H
+<font color="blue">#define</font> BASECOMPONENT_H
+
+<font color="blue">#include</font> <font color="maroon">&#60;QMap&#62;</font>
+<font color="blue">#include</font> <font color="maroon">"widget.h"</font>
+
+<font color="blue">using</font> <font color="blue">namespace</font> world;
+
+<font color="blue">namespace</font> cache<font color="black">{</font>
+
+    <font color="blue">class</font> BaseComponent <font color="black">:</font> <font color="blue">public</font> QObject<font color="black">{</font>
+      <font color="blue">public</font><font color="black">:</font>
+        explicit BaseComponent<font color="black">(</font>QObject<font color="black">*</font> parent <font color="black">=</font> NULL<font color="black">)</font><font color="black">:</font>QObject<font color="black">(</font>parent<font color="black">)</font><font color="black">{</font><font color="black">}</font>
+        Widget getWidget<font color="black">(</font><font color="blue">int</font> n1, <font color="blue">int</font> n2 <font color="black">=</font> <font color="maroon">-1</font>, <font color="blue">int</font> n3 <font color="black">=</font> <font color="maroon">-1</font>, <font color="blue">int</font> n4 <font color="black">=</font> <font color="maroon">-1</font><font color="black">)</font>;
+        <font color="blue">bool</font> containsWidget<font color="black">(</font><font color="blue">int</font> n1, <font color="blue">int</font> n2 <font color="black">=</font> <font color="maroon">-1</font>, <font color="blue">int</font> n3 <font color="black">=</font> <font color="maroon">-1</font>, <font color="blue">int</font> n4 <font color="black">=</font> <font color="maroon">-1</font><font color="black">)</font><font color="black">{</font><font color="blue">return</font> getWidget<font color="black">(</font>n1,n2,n3,n4<font color="black">)</font><font color="black">!</font><font color="black">=</font> NULL;<font color="black">}</font>
+    <font color="blue">public</font> slots<font color="black">:</font>
+        <font color="blue">void</font> clearWidget<font color="black">(</font>Widget widget<font color="black">)</font>;
+        <font color="blue">void</font> clearAll<font color="black">(</font><font color="black">)</font>;
+    <font color="black">}</font>;
+<font color="black">}</font>
+<font color="blue">#endif</font>
+
+</PRE>
+</BODY>
+</HTML>

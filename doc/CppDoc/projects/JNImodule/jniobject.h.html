@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+<TITLE>
+jniobject.h
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="blue">#ifndef</font> JNIOBJECT_H
+<font color="blue">#define</font> JNIOBJECT_H
+
+<font color="blue">#include</font> <font color="maroon">"jnivalue.h"</font>
+<font color="blue">#include</font> <font color="maroon">"jnimethod.h"</font>
+
+<font color="blue">using</font> <font color="blue">namespace</font> std;
+
+<font color="blue">namespace</font> jni <font color="black">{</font>
+
+  <font color="blue">class</font> JavaEnv;
+  <font color="blue">class</font> JNIClass;
+
+  <font color="green">/**
+   * @brief Representation of an object from the Java environment
+   */</font>
+  <font color="blue">class</font> JNIObject <font color="black">:</font> <font color="blue">private</font> JNIValue <font color="black">{</font>
+    <font color="blue">protected</font><font color="black">:</font>
+      JavaEnv<font color="black">*</font> env;                     <font color="green">/// The Java environment this object comes from</font>
+      jobject object;                   <font color="green">/// The jobject reference from the Java Environment</font>
+      JNIClass<font color="black">*</font> type;                   <font color="green">/// The JNIClass object representing the type of this object</font>
+
+    <font color="blue">public</font><font color="black">:</font>
+      JNIObject<font color="black">(</font><font color="black">)</font> <font color="black">:</font> JNIValue<font color="black">(</font><font color="black">)</font> <font color="black">{</font> type <font color="black">=</font> NULL; <font color="black">}</font>
+      JNIObject<font color="black">(</font>JavaEnv<font color="black">*</font> e, jobject o<font color="black">)</font>;
+
+      <font color="green">/**
+       * @brief Returns the JavaEnv object this object comes from
+       * @return the JavaEnv object this object comes from
+       */</font>
+      JavaEnv<font color="black">*</font> GetJavaEnv<font color="black">(</font><font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> env; <font color="black">}</font>
+      <font color="green">/**
+       * @brief Returns the JNI jobject reference this object holds
+       * @return the JNI jobject reference this object holds
+       */</font>
+      virtual jobject GetJObject<font color="black">(</font><font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> object; <font color="black">}</font>
+
+      <font color="green">/**
+       * @brief Returns the class of this object
+       * @return the class of this object
+       */</font>
+      JNIClass<font color="black">*</font> GetClass<font color="black">(</font><font color="black">)</font>;
+
+      <font color="green">/**
+       * @brief Returns the contents of the field with the provided name.
+       * @param field the name of the field to look up
+       *
+       * Throws a jni_error if the field does not exist.
+       * @return the value of the field.
+       */</font>
+      JNIValue GetField<font color="black">(</font>QString field<font color="black">)</font>;
+
+      <font color="green">/**
+       * @brief Invokes a method in the Java environment on this object
+       * @param method the name of the method to invoke
+       * @param signature the signature of the method to invoke
+       *
+       * If the method does not exist for this object, a jni_error is thrown.
+       * If the method throws an exception, a java_exception is thrown.
+       *
+       * @return The result of the method call, or a JNIValue for NULL when the method's return type is void.
+       */</font>
+      JNIValue Invoke<font color="black">(</font>QString method, QString signature, ...<font color="black">)</font>;
+
+      <font color="green">/**
+       * @brief Invokes a method in the Java environment on this object
+       * @param method the method to invoke
+       *
+       * If method is NULL or the method cannot be invoked on this object, a jni_error is thrown.
+       * If the method throws an exception, a java_exception is thrown.
+       *
+       * @return the result of the method call, or a JNIValue for NULL when the method's return type is void.
+       */</font>
+      JNIValue Invoke<font color="black">(</font>JNIMethod<font color="black">*</font> method, ...<font color="black">)</font>;
+  <font color="black">}</font>;
+
+<font color="black">}</font>
+
+<font color="blue">#endif</font> <font color="green">// JNIOBJECT_H</font>
+
+</PRE>
+</BODY>
+</HTML>

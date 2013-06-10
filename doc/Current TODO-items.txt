@@ -21,14 +21,16 @@ Milestone planning:
 	X [REQ] Discuss caching model design.
 	
 Chronio:
-	- [REQ] Implement reflection layer
+	X [REQ] Implement reflection layer
+	- [REQ] Re-implement high-end part of the JNI layer
 
 Alaineman:
-	- [REQ] Implement caching model
+	X [REQ] Implement caching model
+	- [REQ] Check all caches for missing or inefficient functionality
+	- [REQ] Check cache system for bugs
 
 Milestone clean-up:
 	- [REQ] Check reflection layer for bugs
-	- [REQ] Check cache system for bugs
 
 <<< Milestone: version 0.2 >>>
 

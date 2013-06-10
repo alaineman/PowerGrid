@@ -36,19 +36,19 @@ HEADERS += \
     jniobject.h \
     jnimethod.h \
     jniexception.h \
-    jnievent.h \
     jniclass.h \
     javaenv.h \
-    jnimodule.h
+    jnimodule.h \
+    classmodelbuilder.h
 
 SOURCES += \
     jnivalue.cpp \
     jnistring.cpp \
     jniobject.cpp \
     jnimethod.cpp \
-    jnievent.cpp \
     jniclass.cpp \
-    javaenv.cpp
+    javaenv.cpp \
+    classmodelbuilder.cpp
 
 OTHER_FILES = includeJNI.pro
 

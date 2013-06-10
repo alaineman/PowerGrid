@@ -1,0 +1,158 @@
+<HTML>
+<HEAD>
+<TITLE>
+jnivalue.cpp
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="blue">#include</font> <font color="maroon">"jnivalue.h"</font>
+<font color="blue">#include</font> <font color="maroon">"jniexception.h"</font>
+
+<font color="blue">using</font> <font color="blue">namespace</font> std;
+
+<font color="blue">namespace</font> jni <font color="black">{</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jvalue_type t, jvalue val<font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>t <font color="black">!</font><font color="black">=</font> JVOID<font color="black">)</font> <font color="black">{</font>
+      <font color="green">// If the type is JVOID we don't save the jvalue, since we don't retrieve it anyway.</font>
+      value <font color="black">=</font> val;
+    <font color="black">}</font>
+    type  <font color="black">=</font> t;
+  <font color="black">}</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jobject o<font color="black">)</font> <font color="black">{</font>
+    value.l <font color="black">=</font> o;
+    type <font color="black">=</font> JOBJECT;
+  <font color="black">}</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jboolean z<font color="black">)</font> <font color="black">{</font>
+    value.z <font color="black">=</font> z;
+    type <font color="black">=</font> JBOOLEAN;
+  <font color="black">}</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jbyte b<font color="black">)</font> <font color="black">{</font>
+    value.b <font color="black">=</font> b;
+    type <font color="black">=</font> JBYTE;
+  <font color="black">}</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jchar c<font color="black">)</font> <font color="black">{</font>
+    value.c <font color="black">=</font> c;
+    type <font color="black">=</font> JCHAR;
+  <font color="black">}</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jdouble d<font color="black">)</font> <font color="black">{</font>
+    value.d <font color="black">=</font> d;
+    type <font color="black">=</font> JDOUBLE;
+  <font color="black">}</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jfloat f<font color="black">)</font> <font color="black">{</font>
+    value.f <font color="black">=</font> f;
+    type <font color="black">=</font> JFLOAT;
+  <font color="black">}</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jint i<font color="black">)</font> <font color="black">{</font>
+    value.i <font color="black">=</font> i;
+    type <font color="black">=</font> JINT;
+  <font color="black">}</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jlong l<font color="black">)</font> <font color="black">{</font>
+    value.j <font color="black">=</font> l;
+    type <font color="black">=</font> JLONG;
+  <font color="black">}</font>
+
+  JNIValue<font color="black">:</font><font color="black">:</font>JNIValue<font color="black">(</font>jshort s<font color="black">)</font> <font color="black">{</font>
+    value.s <font color="black">=</font> s;
+    type <font color="black">=</font> JSHORT;
+  <font color="black">}</font>
+
+  jboolean JNIValue<font color="black">:</font><font color="black">:</font><font color="blue">operator</font> <font color="black">=</font><font color="black">=</font><font color="black">(</font>JNIValue other<font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> other.GetType<font color="black">(</font><font color="black">)</font><font color="black">)</font> <font color="black">{</font>
+      <font color="blue">return</font> JNI_FALSE;
+    <font color="black">}</font> <font color="blue">else</font> <font color="black">{</font>
+      jvalue val2 <font color="black">=</font> other.Get<font color="black">(</font><font color="black">)</font>;
+      <font color="blue">switch</font><font color="black">(</font>type<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">case</font> JVOID<font color="black">:</font>    <font color="blue">return</font> JNI_TRUE; <font color="green">// void type == void type regardless of actual content.</font>
+        <font color="blue">case</font> JBOOLEAN<font color="black">:</font> <font color="blue">return</font> value.z <font color="black">=</font><font color="black">=</font> val2.z;
+        <font color="blue">case</font> JSHORT<font color="black">:</font>   <font color="blue">return</font> value.s <font color="black">=</font><font color="black">=</font> val2.s;
+        <font color="blue">case</font> JBYTE<font color="black">:</font>    <font color="blue">return</font> value.b <font color="black">=</font><font color="black">=</font> val2.b;
+        <font color="blue">case</font> JCHAR<font color="black">:</font>    <font color="blue">return</font> value.c <font color="black">=</font><font color="black">=</font> val2.c;
+        <font color="blue">case</font> JINT<font color="black">:</font>     <font color="blue">return</font> value.i <font color="black">=</font><font color="black">=</font> val2.i;
+        <font color="blue">case</font> JOBJECT<font color="black">:</font>  <font color="blue">return</font> value.l <font color="black">=</font><font color="black">=</font> val2.l;
+        <font color="blue">case</font> JLONG<font color="black">:</font>    <font color="blue">return</font> value.j <font color="black">=</font><font color="black">=</font> val2.j;
+        <font color="blue">case</font> JDOUBLE<font color="black">:</font>  <font color="blue">return</font> value.d <font color="black">=</font><font color="black">=</font> val2.d;
+        <font color="blue">case</font> JFLOAT<font color="black">:</font>   <font color="blue">return</font> value.f <font color="black">=</font><font color="black">=</font> val2.f;
+        <font color="blue">default</font><font color="black">:</font>       <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid or unknown JNIValue"</font><font color="black">)</font>; <font color="green">// should not happen</font>
+      <font color="black">}</font>
+    <font color="black">}</font>
+  <font color="black">}</font>
+
+
+  jboolean JNIValue<font color="black">:</font><font color="black">:</font>GetBoolean<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> JBOOLEAN<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid Get request"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">return</font> value.z;
+  <font color="black">}</font>
+
+  jshort JNIValue<font color="black">:</font><font color="black">:</font>GetShort<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> JSHORT<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid Get request"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">return</font> value.s;
+  <font color="black">}</font>
+
+  jbyte JNIValue<font color="black">:</font><font color="black">:</font>GetByte<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> JBYTE<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid Get request"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">return</font> value.b;
+  <font color="black">}</font>
+
+  jchar JNIValue<font color="black">:</font><font color="black">:</font>GetChar<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> JCHAR<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid Get request"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">return</font> value.c;
+  <font color="black">}</font>
+
+  jint JNIValue<font color="black">:</font><font color="black">:</font>GetInt<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> JINT<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid Get request"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">return</font> value.i;
+  <font color="black">}</font>
+
+  jobject JNIValue<font color="black">:</font><font color="black">:</font>GetJObject<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> JOBJECT<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid Get request"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">return</font> value.l;
+  <font color="black">}</font>
+
+  jlong JNIValue<font color="black">:</font><font color="black">:</font>GetLong<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> JLONG<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid Get request"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">return</font> value.j;
+  <font color="black">}</font>
+
+  jdouble JNIValue<font color="black">:</font><font color="black">:</font>GetDouble<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> JDOUBLE<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid Get request"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">return</font> value.d;
+  <font color="black">}</font>
+
+  jfloat JNIValue<font color="black">:</font><font color="black">:</font>GetFloat<font color="black">(</font><font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>type <font color="black">!</font><font color="black">=</font> JFLOAT<font color="black">)</font> <font color="black">{</font>
+        <font color="blue">throw</font> logic_error<font color="black">(</font><font color="maroon">"Invalid Get request"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">return</font> value.f;
+  <font color="black">}</font>
+
+<font color="black">}</font>
+
+</PRE>
+</BODY>
+</HTML>

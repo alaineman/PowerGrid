@@ -1,0 +1,41 @@
+<HTML>
+<HEAD>
+<TITLE>
+updater.cpp
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="blue">#include</font> <font color="maroon">"updater.h"</font>
+
+<font color="blue">namespace</font> jni <font color="black">{</font>
+  Updater<font color="black">:</font><font color="black">:</font>Updater<font color="black">(</font>JavaEnv <font color="black">*</font>environment<font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>environment <font color="black">=</font><font color="black">=</font> NULL<font color="black">)</font> <font color="black">{</font>
+      <font color="blue">throw</font> invalid_argument<font color="black">(</font><font color="maroon">"JavaEnv argument cannot be NULL"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    env <font color="black">=</font> environment;
+  <font color="black">}</font>
+
+  JNIClass<font color="black">*</font> Updater<font color="black">:</font><font color="black">:</font>GetClass<font color="black">(</font>QString identifier<font color="black">)</font> <font color="black">{</font>
+    try <font color="black">{</font>
+      <font color="blue">return</font> bindings.take<font color="black">(</font>identifier<font color="black">)</font>;
+    <font color="black">}</font> <font color="blue">catch</font> <font color="black">(</font>logic_error e<font color="black">)</font> <font color="black">{</font>
+      qWarning<font color="black">(</font><font color="black">)</font> <font color="black">&#60;</font><font color="black">&#60;</font> <font color="maroon">"Got request for unidentified class: "</font> <font color="black">&#60;</font><font color="black">&#60;</font> identifier;
+      <font color="blue">return</font> NULL;
+    <font color="black">}</font>
+  <font color="black">}</font>
+
+  QString Updater<font color="black">:</font><font color="black">:</font>Identify<font color="black">(</font>jclass cls<font color="black">)</font> <font color="black">{</font>
+    <font color="blue">if</font> <font color="black">(</font>cls <font color="black">=</font><font color="black">=</font> NULL<font color="black">)</font> <font color="black">{</font>
+      <font color="blue">throw</font> invalid_argument<font color="black">(</font><font color="maroon">"class reference cannot be NULL"</font><font color="black">)</font>;
+    <font color="black">}</font>
+    <font color="blue">const</font> <font color="blue">char</font><font color="black">*</font> id <font color="black">=</font> NULL;
+    <font color="green">// perform the id algorithm on the class.</font>
+
+    <font color="blue">return</font> id;
+  <font color="black">}</font>
+<font color="black">}</font>
+
+</PRE>
+</BODY>
+</HTML>

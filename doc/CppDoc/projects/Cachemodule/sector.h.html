@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+<TITLE>
+sector.h
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="blue">#ifndef</font> SECTOR_H
+<font color="blue">#define</font> SECTOR_H
+
+<font color="blue">#include</font> <font color="maroon">"jniobject.h"</font>
+<font color="blue">#include</font> <font color="maroon">&#60;QtCore&#62;</font>
+
+<font color="blue">using</font> <font color="blue">namespace</font> std;
+<font color="blue">using</font> <font color="blue">namespace</font> jni;
+
+<font color="blue">namespace</font> cache<font color="black">{</font>
+
+  <font color="blue">typedef</font> <font color="blue">unsigned</font> <font color="blue">char</font> coll_flag;
+
+  <font color="blue">class</font> Sector <font color="black">{</font>
+    <font color="blue">private</font><font color="black">:</font>
+      QList<font color="black">&#60;</font>coll_flag<font color="black">*</font><font color="black">&#62;</font> collision_maps;
+      QList<font color="black">&#60;</font>JNIObject<font color="black">&#62;</font> objects;
+      uint getIndexForPlane<font color="black">(</font><font color="blue">int</font> z<font color="black">)</font>;
+    <font color="blue">public</font><font color="black">:</font>
+      ~Sector<font color="black">(</font><font color="black">)</font>;
+      JNIObject getObject<font color="black">(</font><font color="black">)</font>;
+      byte getObjectCount<font color="black">(</font><font color="black">)</font>;
+      <font color="blue">void</font> setObject<font color="black">(</font><font color="black">)</font>;
+      <font color="blue">void</font> removeCollisionMap<font color="black">(</font><font color="blue">int</font> z<font color="black">)</font>;
+      byte getCollision<font color="black">(</font>byte x,byte y, <font color="blue">int</font> z<font color="black">)</font>;
+      <font color="blue">void</font> setCollision<font color="black">(</font>byte x,byte y, <font color="blue">int</font> z, byte value<font color="black">)</font>;
+      <font color="blue">void</font> ensurePlane<font color="black">(</font><font color="blue">int</font> z<font color="black">)</font>;
+  <font color="black">}</font>;
+<font color="black">}</font>
+<font color="blue">#endif</font> <font color="green">// SECTOR_H</font>
+
+</PRE>
+</BODY>
+</HTML>

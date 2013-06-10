@@ -20,13 +20,9 @@ namespace jni {
     JavaVM* jvm;
     jboolean running;
     QMap<QThread*, JNIEnv*> environments;
-
     QMap<QString, JNIClass*> classes;
-
   public:
-    /**
-     * @brief Constructs a new JavaEnv object.
-     */
+    /// Constructs a new JavaEnv object.
     JavaEnv();
 
     /**
@@ -96,37 +92,70 @@ namespace jni {
      * @brief Returns the Java Virtual machine version
      *
      * This function call performs the following Java method invocation:
-     *      System.getProperty("java.version");
+     * <pre>
+     *     System.getProperty("java.version");
+     * </pre>
      * and returns the result as a QString
      *
      * @return the version of the JVM as a QString
      */
     QString GetEnvironmentVersion();
 
-    // Safe versions of all (16) method invocation functions. They check NULL values and such
+    /// Safe version of the object method invocation function from JNI.
     jobject  CallObjectMethod  (jobject obj, jmethodID method, uint n_args, ...);
+    /// Safe version of the int method invocation function from JNI.
     jint     CallIntMethod     (jobject obj, jmethodID method, uint n_args, ...);
+    /// Safe version of the double method invocation function from JNI.
     jdouble  CallDoubleMethod  (jobject obj, jmethodID method, uint n_args, ...);
+    /// Safe version of the boolean method invocation function from JNI.
     jboolean CallBooleanMethod (jobject obj, jmethodID method, uint n_args, ...);
+    /// Safe version of the float method invocation function from JNI.
     jfloat   CallFloatMethod   (jobject obj, jmethodID method, uint n_args, ...);
+    /// Safe version of the byte method invocation function from JNI.
     jbyte    CallByteMethod    (jobject obj, jmethodID method, uint n_args, ...);
+    /// Safe version of the char method invocation function from JNI.
     jchar    CallCharMethod    (jobject obj, jmethodID method, uint n_args, ...);
+    /// Safe version of the long method invocation function from JNI.
     jlong    CallLongMethod    (jobject obj, jmethodID method, uint n_args, ...);
+    /// Safe version of the short method invocation function from JNI.
     jshort   CallShortMethod   (jobject obj, jmethodID method, uint n_args, ...);
 
+    /// Safe version of the static object method invocation function from JNI.
     jobject  CallStaticObjectMethod  (jclass c, jmethodID method, uint n_args, ...);
+    /// Safe version of the static int method invocation function from JNI.
     jint     CallStaticIntMethod     (jclass c, jmethodID method, uint n_args, ...);
+    /// Safe version of the static double method invocation function from JNI.
     jdouble  CallStaticDoubleMethod  (jclass c, jmethodID method, uint n_args, ...);
+    /// Safe version of the static boolean method invocation function from JNI.
     jboolean CallStaticBooleanMethod (jclass c, jmethodID method, uint n_args, ...);
+    /// Safe version of the static float method invocation function from JNI.
     jfloat   CallStaticFloatMethod   (jclass c, jmethodID method, uint n_args, ...);
+    /// Safe version of the static byte method invocation function from JNI.
     jbyte    CallStaticByteMethod    (jclass c, jmethodID method, uint n_args, ...);
+    /// Safe version of the static char method invocation function from JNI.
     jchar    CallStaticCharMethod    (jclass c, jmethodID method, uint n_args, ...);
+    /// Safe version of the static long method invocation function from JNI.
     jlong    CallStaticLongMethod    (jclass c, jmethodID method, uint n_args, ...);
+    /// Safe version of the static short method invocation function from JNI.
     jshort   CallStaticShortMethod   (jclass c, jmethodID method, uint n_args, ...);
 
-    // generalized versions of the method invocation functions. They delegate to the
-    // specific version based on the provided jvalue_type.
+    /**
+     * @brief Calls the provided (non-static) method
+     * @param ret_type the expected return type
+     * @param c the object to perform the method call on
+     * @param method the id of the method to invoke
+     * @param args the arguments to the method call
+     * @return a JNIValue with the result of the performed method call.
+     */
     JNIValue Call(jvalue_type ret_type, jobject c, jmethodID method, va_list args);
+    /**
+     * @brief Calls the provided static method
+     * @param ret_type the expected return type
+     * @param c the class to perform the static method call on
+     * @param method the id of the static method to invoke
+     * @param args the arguments to the static method call
+     * @return a JNIValue with the result of the performed static method call.
+     */
     JNIValue CallStatic(jvalue_type ret_type, jclass c, jmethodID method, va_list args);
 
     /**
@@ -166,7 +195,18 @@ namespace jni {
      */
     QString GetString(JNIValue str);
 
+    /**
+     * @brief Parses the return value from a Java method signature
+     * @param signature the signture to parse
+     * @return the jvalue_type of the return value of the given method signature
+     */
     jvalue_type ParseReturnValueFromSignature(const char* signature);
+
+    /**
+     * @brief Parses the argument types
+     * @param signature
+     * @return
+     */
     vector<jvalue_type> ParseArgumentTypesFromSignature(const char* signature);
 
     /**
@@ -184,6 +224,12 @@ namespace jni {
      * @return true if and only if the thread is still running and has a binding to a JNIEnv object, false otherwise.
      */
     bool isAttached(QThread* thread);
+
+  signals:
+    /// Signal that the JNI environment has started
+    void started();
+    /// Signal that the JNI environment has stopped.
+    void stopped();
 
   public slots:
     /**

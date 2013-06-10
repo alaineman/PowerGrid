@@ -21,6 +21,14 @@ namespace jni {
     return signame.right(signame.length() - first);
   }
 
+  jboolean JNIClass::IsInstance(JNIObject o) {
+    return IsInstance(o.GetJObject());
+  }
+
+  jboolean JNIClass::IsInstance(jobject o) {
+    return env->GetEnv()->IsInstanceOf(o, clazz);
+  }
+
   JNIMethod* JNIClass::GetMethod(const char* name, const char* signature) {
     return env->GetMethod(clazz, name, signature);
   }

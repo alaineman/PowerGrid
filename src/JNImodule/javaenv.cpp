@@ -115,6 +115,8 @@ namespace jni {
     env->CallStaticVoidMethod(c, main, args);
 
     running = JNI_TRUE;
+
+    emit started();
   }
 
   // Get basic JNI element types
@@ -376,7 +378,7 @@ namespace jni {
 
   JNIMethod* JavaEnv::GetMethod(jclass c, const char* name, const char* signature) {
     JNIEnv* env = GetEnv();
-    // TODO: Look up from internal cache
+    // TODO: Look up from internal cache => decentralized as children of JNIClass objects.
     jboolean st = JNI_FALSE;
     jmethodID methodID = env->GetMethodID(c, name, signature);
     if (methodID == NULL) {
@@ -387,8 +389,8 @@ namespace jni {
       st = JNI_TRUE;
     }
     jvalue_type retType = ParseReturnValueFromSignature(signature);
-    // MISSING: Store in internal cache to prevent memory leaks
-    return new JNIMethod(name, c, retType, vector<jvalue_type>(), st, methodID);
+    vector<jvalue_type> paramTypes = ParseArgumentTypesFromSignature(signature);
+    return new JNIMethod(name, c, retType, paramTypes, st, methodID);
   }
 
   jstring JavaEnv::CreateString(const char* str) {
@@ -461,7 +463,12 @@ namespace jni {
   }
 
   bool JavaEnv::isAttached(QThread* thread) {
-    return thread->isRunning() && environments.contains(thread);
+    if(thread->isRunning()) {
+      return environments.contains(thread);
+    } else {
+      environments.remove(thread);
+      return false;
+    }
   }
 
   void JavaEnv::syncJavaVMThreads() {

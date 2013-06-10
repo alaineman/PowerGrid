@@ -62,6 +62,8 @@ namespace jni {
 
       ~JNIClass() {}
 
+      virtual jclass GetJObject() { return clazz; }
+
       /**
        * @brief Returns the simple name (without package) of the class
        * @return the simple name of the class
@@ -75,13 +77,12 @@ namespace jni {
       QString GetSigName();
 
       /**
-       * @brief Returns whether the given JNIValue represents an instance of this JNIClass
-       * @param v the JNIValue to check
+       * @brief Returns whether the given JNIObject represents an instance of this JNIClass
+       * @param o the JNIObject to check
        *
-       * This method always returns false if the type of the JNIValue is not @c JOBJECT.
-       * @return true if the provided JNIValue is an @c JOBJECT of this JNIClass, false otherwise
+       * @return true if the provided JNIObject is an @c JOBJECT of this JNIClass, false otherwise
        */
-      jboolean IsInstance(JNIValue v);
+      jboolean IsInstance(JNIObject o);
       /**
        * @brief Returns whether the given jobject is an instance of this JNIClass
        * @param o the jobject to check

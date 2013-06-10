@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+<TITLE>
+point.h
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="blue">#ifndef</font> POINT_H
+<font color="blue">#define</font> POINT_H
+
+<font color="blue">#include</font> <font color="maroon">&#60;cmath&#62;</font>
+
+<font color="blue">namespace</font> world <font color="black">{</font>
+  <font color="green">/**
+   * @brief a 3D Point representation
+   *
+   * The Point class can be used as unique identifier for a tile in the Runescape environment.
+   * This class supports various arithmetic operations, and can be used as a 3D vector using the provided operator overloads.
+   */</font>
+  <font color="blue">class</font> Point <font color="black">{</font>
+    <font color="blue">private</font><font color="black">:</font>
+      <font color="blue">int</font> x, y;
+      <font color="blue">short</font> z;
+    <font color="blue">public</font><font color="black">:</font>
+      <font color="green">/**
+       * @brief Constructs a Point at the given coordinates
+       * @param x_coord the x coordinate
+       * @param y_coord the y coordinate
+       * @param plane the z coordinate, also the plane in the runescape environment.
+       */</font>
+      explicit Point<font color="black">(</font><font color="blue">int</font> x_coord <font color="black">=</font> <font color="maroon">0</font>, <font color="blue">int</font> y_coord <font color="black">=</font> <font color="maroon">0</font>, <font color="blue">short</font> plane <font color="black">=</font> <font color="maroon">0</font><font color="black">)</font> <font color="black">{</font>
+        x <font color="black">=</font> x_coord;
+        y <font color="black">=</font> y_coord;
+        z <font color="black">=</font> plane;
+      <font color="black">}</font>
+
+      <font color="green">/**
+       * @brief Returns the x coordinate of this Point
+       * @return the x coordinate of this Point
+       */</font>
+      <font color="blue">int</font> GetX<font color="black">(</font><font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> x; <font color="black">}</font>
+      <font color="green">/**
+       * @brief Returns the y coordinate of this Point
+       * @return the y coordinate of this Point
+       */</font>
+      <font color="blue">int</font> GetY<font color="black">(</font><font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> y; <font color="black">}</font>
+      <font color="green">/**
+       * @brief Returns the z coordinate (aka the plane) of this Point
+       * @return the z coordinate of this Point
+       */</font>
+      <font color="blue">short</font> GetPlane<font color="black">(</font><font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> z; <font color="black">}</font>
+
+      <font color="green">/// performs a basic vector addition between the two Points</font>
+      Point <font color="blue">operator</font> <font color="black">+</font><font color="black">(</font>Point other<font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> Point<font color="black">(</font>x <font color="black">+</font> other.GetX<font color="black">(</font><font color="black">)</font>, y <font color="black">+</font> other.GetY<font color="black">(</font><font color="black">)</font>, z <font color="black">+</font> other.GetPlane<font color="black">(</font><font color="black">)</font><font color="black">)</font>; <font color="black">}</font>
+      <font color="green">/// performs a besic vector subtraction between the two Points</font>
+      Point <font color="blue">operator</font> <font color="black">-</font><font color="black">(</font>Point other<font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> Point<font color="black">(</font>x <font color="black">-</font>other.GetX<font color="black">(</font><font color="black">)</font>, y <font color="black">-</font>other.GetY<font color="black">(</font><font color="black">)</font>, z <font color="black">-</font>other.GetPlane<font color="black">(</font><font color="black">)</font><font color="black">)</font>; <font color="black">}</font>
+      <font color="green">/// performs a multiplication with a scalar like a vector</font>
+      Point <font color="blue">operator</font> <font color="black">*</font><font color="black">(</font><font color="blue">double</font> scalar<font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> Point<font color="black">(</font>x <font color="black">*</font> scalar, y <font color="black">*</font> scalar, z <font color="black">*</font> scalar<font color="black">)</font>; <font color="black">}</font>
+      <font color="green">/// performs a division by a scalar like a vector</font>
+      Point <font color="blue">operator</font> <font color="black">/</font><font color="black">(</font><font color="blue">double</font> scalar<font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> Point<font color="black">(</font>x <font color="black">/</font> scalar, y <font color="black">/</font> scalar, z <font color="black">/</font> scalar<font color="black">)</font>; <font color="black">}</font>
+
+      <font color="green">/// Returns true if and only if the two Points represent the same position</font>
+      <font color="blue">bool</font> <font color="blue">operator</font><font color="black">=</font><font color="black">=</font><font color="black">(</font>Point other<font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> x <font color="black">=</font><font color="black">=</font> other.GetX<font color="black">(</font><font color="black">)</font> <font color="black">&</font><font color="black">&</font> y <font color="black">=</font><font color="black">=</font> other.GetY<font color="black">(</font><font color="black">)</font> <font color="black">&</font><font color="black">&</font> z <font color="black">=</font><font color="black">=</font> other.GetPlane<font color="black">(</font><font color="black">)</font>; <font color="black">}</font>
+
+      <font color="green">/// Returns the angle of this Point as a vector in the (x,y) plane</font>
+      <font color="blue">double</font> GetAngle<font color="black">(</font><font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> atan2<font color="black">(</font>y, x<font color="black">)</font>; <font color="black">}</font>
+      <font color="green">/// Returns the length of this Point as a vector in the (x,y) plane</font>
+      <font color="blue">double</font> GetRadius<font color="black">(</font><font color="black">)</font> <font color="black">{</font> <font color="blue">return</font> sqrt<font color="black">(</font>x<font color="black">*</font>x <font color="black">+</font> y<font color="black">*</font>y<font color="black">)</font>; <font color="black">}</font>
+
+      <font color="green">/**
+       * @brief Returns the distance between this Point and the given Point
+       * @param other the other Point
+       *
+       * Note that this is the same as computing the difference between this and the other Point and then
+       * taking the Radius of the resulting Point.
+       * @return the distance between this Point and the given Point
+       */</font>
+      <font color="blue">double</font> GetDistance<font color="black">(</font>Point other<font color="black">)</font> <font color="black">{</font> Point diff <font color="black">=</font> <font color="black">(</font><font color="black">*</font><font color="blue">this</font> <font color="black">-</font>other<font color="black">)</font>; <font color="blue">return</font> diff.GetRadius<font color="black">(</font><font color="black">)</font>; <font color="black">}</font>
+  <font color="black">}</font>;
+<font color="black">}</font>
+<font color="blue">#endif</font> <font color="green">// POINT_H</font>
+
+</PRE>
+</BODY>
+</HTML>

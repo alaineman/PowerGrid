@@ -11,6 +11,10 @@ namespace Ui {
   class MainWindow;
 }
 
+typedef enum {
+  DISABLED, LOW, HIGH
+} ActivityLevel;
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -21,10 +25,13 @@ public:
 
   void updateVersionInfo(QString env_version);
   
-  private slots:
+signals:
+  void activitySet(ActivityLevel level);
+
+private slots:
   void on_travelHere_clicked();
 
-  private:
+private:
   Ui::MainWindow *ui;
 };
 

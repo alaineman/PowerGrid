@@ -15,6 +15,11 @@ namespace jni {
   };
 
   /**
+   * @brief Returns the name of the given @c jvalue_type as a QString
+   */
+  QString GetJValueTypeName(jvalue_type type);
+
+  /**
    * @brief Wrapper class around jvalue
    * This class also contains its own type and allows for safe access of
    * values through the GetXXX member functions.
@@ -150,7 +155,7 @@ namespace jni {
        * @throws runtime_error when the value does not have the required type
        * @return the jobject value of this JNIValue
        */
-      jobject GetJObject();
+      virtual jobject GetJObject();
       /**
        * @brief Returns the value of this JNIValue as a jlong.
        * @throws runtime_error when the value does not have the required type

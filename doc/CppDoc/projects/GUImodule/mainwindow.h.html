@@ -1,0 +1,50 @@
+<HTML>
+<HEAD>
+<TITLE>
+mainwindow.h
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="blue">#ifndef</font> MAINWINDOW_H
+<font color="blue">#define</font> MAINWINDOW_H
+
+<font color="blue">#include</font> <font color="maroon">"javaenv.h"</font>
+<font color="blue">#include</font> <font color="maroon">&#60;QMainWindow&#62;</font>
+<font color="blue">#include</font> <font color="maroon">&#60;QString&#62;</font>
+
+<font color="blue">#define</font> POWERGRID_VERSION QStringLiteral<font color="black">(</font><font color="maroon">"0.1"</font><font color="black">)</font>
+
+<font color="blue">namespace</font> Ui <font color="black">{</font>
+  <font color="blue">class</font> MainWindow;
+<font color="black">}</font>
+
+<font color="blue">typedef</font> <font color="blue">enum</font> <font color="black">{</font>
+  DISABLED, LOW, HIGH
+<font color="black">}</font> ActivityLevel;
+
+<font color="blue">class</font> MainWindow <font color="black">:</font> <font color="blue">public</font> QMainWindow
+<font color="black">{</font>
+  Q_OBJECT
+  
+<font color="blue">public</font><font color="black">:</font>
+  explicit MainWindow<font color="black">(</font>QWidget <font color="black">*</font>parent <font color="black">=</font> <font color="maroon">0</font><font color="black">)</font>;
+  ~MainWindow<font color="black">(</font><font color="black">)</font>;
+
+  <font color="blue">void</font> updateVersionInfo<font color="black">(</font>QString env_version<font color="black">)</font>;
+  
+signals<font color="black">:</font>
+  <font color="blue">void</font> activitySet<font color="black">(</font>ActivityLevel level<font color="black">)</font>;
+
+<font color="blue">private</font> slots<font color="black">:</font>
+  <font color="blue">void</font> on_travelHere_clicked<font color="black">(</font><font color="black">)</font>;
+
+<font color="blue">private</font><font color="black">:</font>
+  Ui<font color="black">:</font><font color="black">:</font>MainWindow <font color="black">*</font>ui;
+<font color="black">}</font>;
+
+<font color="blue">#endif</font> <font color="green">// MAINWINDOW_H</font>
+
+</PRE>
+</BODY>
+</HTML>

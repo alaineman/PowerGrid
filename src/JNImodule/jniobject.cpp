@@ -6,4 +6,8 @@ namespace jni {
     object = o;
     setObjectName(QStringLiteral("JNIObject"));
   }
+
+  jobject JNIObject::GetJObject() {
+    return object;
+  }
 }

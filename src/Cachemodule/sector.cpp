@@ -21,7 +21,7 @@ uint Sector::getIndexForPlane(int z){
 }
 
 JNIObject Sector::getObject(){
-  return JNIObject();
+  return JNIObject::Null();
 }
 
 void Sector::setObject(){

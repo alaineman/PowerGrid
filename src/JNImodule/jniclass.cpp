@@ -4,15 +4,16 @@
 
 namespace jni {
   QString JNIClass::GetSigName() {
-    if (name == NULL) {
+    if (name.isEmpty()) {
+      JavaEnv* env = JavaEnv::instance();
       JNIClass* cls = GetClass();
-      jclass c = (jclass) cls->GetJavaObject();
+      jclass c = (jclass) cls->GetJNIObject();
       JNIEnv* e = env->GetEnv();
       jmethodID getName = e->GetMethodID(c, "getName", "()Ljava/lang/String;");
       jstring n = (jstring) e->CallObjectMethod(c, getName);
-      name = new QString(env->GetString(n));
+      name = e->GetStringUTFChars(n, NULL);
     }
-    return *name;
+    return name;
   }
 
   QString JNIClass::GetSimpleName() {
@@ -22,15 +23,15 @@ namespace jni {
   }
 
   jboolean JNIClass::IsInstance(JNIObject o) {
-    return IsInstance(o.GetJObject());
+    return IsInstance(o.GetJNIObject());
   }
 
   jboolean JNIClass::IsInstance(jobject o) {
-    return env->GetEnv()->IsInstanceOf(o, clazz);
+    return JavaEnv::instance()->GetEnv()->IsInstanceOf(o, clazz);
   }
 
   JNIMethod* JNIClass::GetMethod(const char* name, const char* signature) {
-    return env->GetMethod(clazz, name, signature);
+    return JavaEnv::instance()->GetMethod(clazz, name, signature);
   }
 
   JNIValue JNIClass::InvokeStaticMethod(JNIMethod *method, ...) {
@@ -41,7 +42,7 @@ namespace jni {
     va_list args;
     int count = static_cast<int>(method->GetArgumentCount());
     va_start(args, count);
-    JNIValue result = env->CallStatic(type, clazz, method->GetMethodID(), args);
+    JNIValue result = JavaEnv::instance()->CallStatic(type, clazz, method->GetMethodID(), args);
     va_end(args);
     return result;
   }

@@ -17,18 +17,26 @@ namespace jni {
    */
   class JavaEnv : public QObject {
   private:
+    static JavaEnv* theEnvironment;
+
+    /// Constructs a new JavaEnv object. Made private to ensure only one instance exists.
+    JavaEnv();
+
     JavaVM* jvm;
     jboolean running;
     QMap<QThread*, JNIEnv*> environments;
     QMap<QString, JNIClass*> classes;
   public:
-    /// Constructs a new JavaEnv object.
-    JavaEnv();
+
+    /// Returns the global JavaEnv instance.
+    static JavaEnv* instance() { return theEnvironment; }
+    /// Creates a new global JavaEnv instance if one did not yet exist
+    static JavaEnv* createInstance() { return (theEnvironment == NULL ? theEnvironment = new JavaEnv() : theEnvironment); }
 
     /**
-     * @brief Returns the JNI environment object for the calling thread
+     * Returns the JNI environment object for the calling thread
      *
-     * Calling this before calling @c Start() does not give a valid JNIEnv object pointer.
+     * Calling this before calling Start() does not give a valid JNIEnv object pointer.
      * When a thread is not linked to the JVM, the thread is automatically linked to it, and
      * the corresponding JNIEnv object is stored for future reference.
      * @return a pointer to the JNI environment
@@ -36,20 +44,20 @@ namespace jni {
     JNIEnv* GetEnv();
 
     /**
-     * @brief Returns the JavaVM object
-     * Calling this before calling @c Start() does not give a valid JavaVM object pointer.
+     * Returns the JavaVM object.
+     * Calling this before calling Start() does not give a valid JavaVM object pointer.
      * @return a pointer to the JavaVM
      */
     JavaVM* GetJVM() { return jvm; }
 
     /**
-     * @brief Returns whether the JNI environment is running.
+     * Returns whether the JNI environment is running.
      * @return true if the JNI environment is running, false otherwise.
      */
     jboolean IsRunning() { return running; }
 
     /**
-     * @brief Starts the JNI environment
+     * Starts the JNI environment
      *
      * Calling this function results in the JNI environment being set up. This function then calls the main method
      * of the jagexappletviewer jar file afterwards. This function returns when the main method in the JVM returns.
@@ -58,14 +66,21 @@ namespace jni {
     void Start();
 
     /**
-     * @brief Returns the class with the given name
+     * Returns the class with the given name
      * @param name the name of the requested class
      * @return a pointer to the JNIClass object with the requested name, or NULL if no class exists with the given name.
      */
     JNIClass* GetClass(const char* name);
 
     /**
-     * @brief Returns the method ID with the given requirements.
+     * Returns the class of the given object
+     * @param obj the object to return the class for
+     * @return the JNIClass representing the class of the object
+     */
+    JNIClass* GetClassForObject(jobject obj);
+
+    /**
+     * Returns the method ID with the given requirements.
      * @param c the class in which the method is declared
      * @param name the name of the method
      * @param signature the signature of the method
@@ -77,7 +92,7 @@ namespace jni {
     jmethodID GetMethodID(JNIClass* c, const char* name, const char* signature);
 
     /**
-     * @brief Returns the static method ID with the given requirements.
+     * Returns the static method ID with the given requirements.
      * @param c the class in which the static method is declared
      * @param name the name of the static method
      * @param signature the signature of the static method
@@ -89,7 +104,7 @@ namespace jni {
     jmethodID GetStaticMethodID(JNIClass* c, const char* name, const char* signature);
 
     /**
-     * @brief Returns the Java Virtual machine version
+     * Returns the Java Virtual machine version
      *
      * This function call performs the following Java method invocation:
      * <pre>
@@ -140,7 +155,7 @@ namespace jni {
     jshort   CallStaticShortMethod   (jclass c, jmethodID method, uint n_args, ...);
 
     /**
-     * @brief Calls the provided (non-static) method
+     * Calls the provided (non-static) method
      * @param ret_type the expected return type
      * @param c the object to perform the method call on
      * @param method the id of the method to invoke
@@ -149,7 +164,7 @@ namespace jni {
      */
     JNIValue Call(jvalue_type ret_type, jobject c, jmethodID method, va_list args);
     /**
-     * @brief Calls the provided static method
+     * Calls the provided static method
      * @param ret_type the expected return type
      * @param c the class to perform the static method call on
      * @param method the id of the static method to invoke
@@ -159,7 +174,7 @@ namespace jni {
     JNIValue CallStatic(jvalue_type ret_type, jclass c, jmethodID method, va_list args);
 
     /**
-     * @brief Retrieves information on the method specified by the given parameters
+     * Retrieves information on the method specified by the given parameters
      *
      * @param c the class the method is declared in
      * @param name the name of the method
@@ -171,29 +186,6 @@ namespace jni {
      *         requested method, or NULL if the method does not exist in the JVM.
      */
     JNIMethod* GetMethod(jclass c, const char* name, const char* signature);
-
-    /**
-     * @brief Creates a String in the Java environment's  String pool
-     * @param str the string to create
-     * @return a jstring object that references the created Java String.
-     */
-    jstring CreateString(const char* str);
-
-    /**
-     * @brief Collects the given jstring from the Java environment and returns it as a QString
-     * @param str the jstring to collect
-     * @return the QString with the contents of the provided jstring
-     */
-    QString GetString(jstring str);
-
-    /**
-     * @brief Collects the given JNIValue from the Java environment and returns it as a QString
-     *
-     * If the provided JNIValue is not of the JOBJECT type, this function throws a runtime_error.
-     * @param str the JNIValue to collect
-     * @return the QString with the contents of the provided jstring
-     */
-    QString GetString(JNIValue str);
 
     /**
      * @brief Parses the return value from a Java method signature
@@ -210,30 +202,29 @@ namespace jni {
     vector<jvalue_type> ParseArgumentTypesFromSignature(const char* signature);
 
     /**
-     * @brief Checks each registered thread - JNIEnv mapping for validity
-     * For each thread that has already finished, the corresponding JNIEnv object is removed.
+     * Checks each registered thread - JNIEnv mapping for validity
      *
-     * It is advised to use the @c unlinkThread() slot instead, because it prevents illegal references from remaining in the thread to JNIEnv mapping.
+     * For each thread that has already finished, the corresponding JNIEnv object is removed.
+     * It is advised to use the unlinkThread() slot instead, because it prevents illegal references from remaining in the thread to JNIEnv mapping.
      *
      */
     void syncJavaVMThreads();
 
     /**
-     * @brief Checks if the given QThread is attached to the Java VM
+     * Checks if the given QThread is attached to the Java VM
      * @param thread the QThread to check
      * @return true if and only if the thread is still running and has a binding to a JNIEnv object, false otherwise.
      */
     bool isAttached(QThread* thread);
 
   signals:
-    /// Signal that the JNI environment has started
+    /// Signal that the JNI environment has started, emitted just before the Start function returns.
     void started();
-    /// Signal that the JNI environment has stopped.
-    void stopped();
 
   public slots:
     /**
-     * @brief Unlinks the current thread from the Java VM
+     * Unlinks the current thread from the Java VM
+     *
      * After this method returns, the JNIEnv object associated with this thread has been removed.
      * Note that calling any other JavaEnv function that requires a JNIEnv object, the JNIEnv object
      * will be re-created.

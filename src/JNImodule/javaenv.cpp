@@ -9,6 +9,8 @@ namespace jni {
 
   class JNIMethod;
 
+  JavaEnv* JavaEnv::theEnvironment = NULL;
+
   JavaEnv::JavaEnv() : QObject() {
     running = JNI_FALSE;
     setObjectName("JavaEnvironment");
@@ -39,13 +41,10 @@ namespace jni {
     }
 
     QString classpath("-Djava.class.path=");
-#ifndef Q_OS_DARWIN
-    // In the case of Mac OS, the jagexappletviewer jar file is not accessible through the
-    // native Runescape loader and must be packaged along with the application.
-    QChar sep = QDir::separator();
-    QString home = QDir::homePath().replace("/", sep);
-    classpath.append(home).append(sep).append("jagexcache").append(sep)
-             .append("jagexlauncher").append(sep).append("bin").append(sep);
+#ifdef Q_OS_WIN
+    // In the case of Windows, the jagexappletviewer jar file is accessible through the
+    // native Runescape loader and can be loaded from there.
+    classpath.append(QDir::homePath()).append("/jagexcache/jagexlauncher/bin/");
 #endif
     classpath.append("jagexappletviewer.jar");
 
@@ -61,7 +60,7 @@ namespace jni {
     // that the official Runescape loader uses. We also use them since we're trying
     // to mimic the Runescape loader as accurately as possible.
     JavaVMOption options[10];
-    options[0].optionString  = const_cast<char*>(cpArray.data());
+    options[0].optionString  = cpArray.data();
     options[1].optionString  = const_cast<char*>("-Dsun.java2d.noddraw=true");
     options[2].optionString  = const_cast<char*>("-Dcom.jagex.config=http://www.runescape.com/k=3/l=$(language:0)/jav_config.ws");
     options[3].optionString  = const_cast<char*>("-Xmx256m");
@@ -89,14 +88,14 @@ namespace jni {
     // Runescape tends to print "Received command: _12" and similar all the time.
     JNIClass* system = GetClass("java/lang/System");
     if (system == NULL) throw jni_error("failed to get System class");
-    jclass s = (jclass) system->GetJavaObject();
+    jclass s = (jclass) system->GetJNIObject();
     jfieldID out = env->GetStaticFieldID(s, "out", "Ljava/io/PrintStream;");
     jfieldID err = env->GetStaticFieldID(s, "err", "Ljava/io/PrintStream;");
     if (out == NULL || err == NULL) throw jni_error("failed to get System field");
 
     JNIClass* printstream = GetClass("java/io/PrintStream");
     if (printstream == NULL) throw jni_error("failed to get PrintStream class");
-    jclass ps = (jclass)printstream->GetJavaObject();
+    jclass ps = (jclass)printstream->GetJNIObject();
     jmethodID initPrintStream = env->GetMethodID(ps, "<init>", "(Ljava/lang/String;)V");
     jstring file = env->NewStringUTF("runescape.log");
     jobject newout = env->NewObject(ps, initPrintStream, file);
@@ -116,7 +115,7 @@ namespace jni {
 
     running = JNI_TRUE;
 
-    emit started();
+    emit SIGNAL(started());
   }
 
   // Get basic JNI element types
@@ -132,13 +131,28 @@ namespace jni {
         qWarning() << "Request for non-existing class:" << n;
         return NULL;
       }
-      jnic = new JNIClass(cls, this);
+      jnic = new JNIClass(cls);
       classes.insert(n, jnic);
       qDebug() << "Registered JNIClass with name:" << n;
     } else {
       jnic = it.value();
     }
     return jnic;
+  }
+
+  JNIClass* JavaEnv::GetClassForObject(jobject obj) {
+    JNIEnv* env = GetEnv();
+    jclass cls = env->GetObjectClass(obj);
+    QMap<QString,JNIClass*>::iterator it;
+    for (it = classes.begin(); it != classes.end(); ++it) {
+      if ((*it) != NULL) {
+        JNIClass* c = (*it);
+        if (c->GetJNIObject() == cls) {
+          return c;
+        }
+      }
+    }
+    return NULL;
   }
 
   jmethodID JavaEnv::GetMethodID(JNIClass* c, const char* name, const char* signature) {
@@ -391,22 +405,6 @@ namespace jni {
     jvalue_type retType = ParseReturnValueFromSignature(signature);
     vector<jvalue_type> paramTypes = ParseArgumentTypesFromSignature(signature);
     return new JNIMethod(name, c, retType, paramTypes, st, methodID);
-  }
-
-  jstring JavaEnv::CreateString(const char* str) {
-    JNIEnv* env = GetEnv();
-    return env->NewStringUTF(str);
-  }
-
-  QString JavaEnv::GetString(JNIValue str) {
-    JNIEnv* env = GetEnv();
-    jstring param = static_cast<jstring>(str.GetJObject());
-    return QString(env->GetStringUTFChars(param, NULL));
-  }
-
-  QString JavaEnv::GetString(jstring str) {
-    JNIEnv* env = GetEnv();
-    return QString(env->GetStringUTFChars(str, NULL));
   }
 
   jvalue_type JavaEnv::ParseReturnValueFromSignature(const char* signature) {

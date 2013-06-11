@@ -14,7 +14,6 @@ namespace world {
 
       widget_id id;
     public:
-      Widget( const Widget& original) : QObject(original.parent()){ id = original.id; }
       Widget(widget_id w_id, Widget* parent = NULL) : QObject(parent) { id = w_id; }
       widget_id GetID() { return id; }
       bool isNull() { return id==0; }

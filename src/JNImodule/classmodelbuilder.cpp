@@ -3,19 +3,15 @@
 
 namespace jni {
 
-  ClassModelBuilder::ClassModelBuilder(JavaEnv *e, QFile source) {
-    if (e == NULL) {
-      throw jni_error("NULL value for JavaEnv");
+  ClassModelBuilder::ClassModelBuilder(const char* source) {
+    if (source == NULL || source[0] == 0) {
+      throw jni_error("undefined source");
     }
-    if (!source.exists()) {
-      throw jni_error("Source file does not exist");
-    }
-    if (!source.isReadable()) {
-      throw jni_error("Unreadable file");
-    }
+    file.setFileName(source);
 
-    env = e;
-    file = source;
+    if (!file.exists()) {
+      throw jni_error("File does not exist");
+    }
   }
 
   QMap<QString, JNIClass*> ClassModelBuilder::ParseFile() {

@@ -14,7 +14,7 @@
 using namespace std;
 using namespace jni;
 
-std::ofstream logStream;
+ofstream logStream;
 
 // Custom message handler for Qt messages. It prints the message to the
 // standard error stream prepended with the appropriate level identifier.
@@ -54,7 +54,7 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
 }
 
 JavaEnv* RunJavaVM() {
-    JavaEnv* env = new JavaEnv();
+    JavaEnv* env = JavaEnv::createInstance();
     qDebug() << "Starting Java Virtual Machine";
     try {
         env->Start();
@@ -69,7 +69,7 @@ bool openWindows = false;
 
 #ifdef Q_OS_WIN
 // On windows we can use the EnumWindows function to check the open windows
-BOOL CALLBACK EnumWindowsProc(HWND hWnd, long lParam) {
+BOOL CALLBACK EnumWindowsProc(HWND hWnd, long) {
   if (IsWindowVisible(hWnd)) {
       openWindows = true;
   }

@@ -46,8 +46,8 @@ namespace jni {
 
       // cached values
       JNIClass* superClass;       // This JNIClass' superclass
-      QString* name;              // The fully qualified name (with '/' as separator) for use in signatures of functions.
-      QString* semantic_name;     // The semantic name given to this JNIClass object for easy identification.
+      QString name;              // The fully qualified name (with '/' as separator) for use in signatures of functions.
+      QString semantic_name;     // The semantic name given to this JNIClass object for easy identification.
       jint modifiers;             // The modifiers of the class (a combination of public, protected, private, final, static, abstract and interface, encoded in an integer)
       map<JNIClass*, JNIValue*> anns;    // Map of annotations this JNIClass contains
       map<QString, JNIMethod*> methods; // Map of methods that this class provides.
@@ -58,7 +58,7 @@ namespace jni {
        * @param c the jclass this JNIClass object represents
        * @param e the Java environment
        */
-      JNIClass(jclass c, JavaEnv *e) : JNIObject(e, c) {}
+      JNIClass(jclass c) : JNIObject(c) {}
 
       ~JNIClass() {}
 

@@ -16,7 +16,6 @@ namespace jni {
    */
   class ClassModelBuilder {
     private:
-      JavaEnv* env;
       QFile file;
 
       QMap<QString, JNIClass*> mappings;
@@ -24,10 +23,9 @@ namespace jni {
     public:
       /**
        * @brief creates a new ClassModelBuilder
-       * @param e the JavaEnv object with the required classes loaded.
        * @param source the source containing the mapping.
        */
-      ClassModelBuilder(JavaEnv* e, QFile source);
+      ClassModelBuilder(const char* source);
 
       /**
        * @brief Parses the source and creates the mapping

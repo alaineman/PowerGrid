@@ -11,10 +11,10 @@ namespace cache{
     class BaseComponent : public QObject{
       public:
         explicit BaseComponent(QObject* parent = NULL):QObject(parent){}
-        Widget getWidget(int n1, int n2 = -1, int n3 = -1, int n4 = -1);
-        bool containsWidget(int n1, int n2 = -1, int n3 = -1, int n4 = -1){return getWidget(n1,n2,n3,n4)!= NULL;}
+        Widget* getWidget(int n1, int n2 = -1, int n3 = -1, int n4 = -1);
+        bool containsWidget(int n1, int n2 = -1, int n3 = -1, int n4 = -1);
     public slots:
-        void clearWidget(Widget widget);
+        void clearWidget(Widget* widget);
         void clearAll();
     };
 }

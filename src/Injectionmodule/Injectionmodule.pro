@@ -21,10 +21,21 @@ OBJECTS_DIR = build/
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-SOURCES     =
-HEADERS     =
+SOURCES     = \
+    mouse.cpp \
+    keyboard.cpp
+HEADERS     = \
+    mouse.h \
+    keyboard.h
 
 #------------------------------------------------
 # The subprojects this project depends on
 #------------------------------------------------
 include (../JNIModule/includeJNI.pro)
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../world/release/ -lworld
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../world/debug/ -lworld
+else:unix: LIBS += -L$$OUT_PWD/../world/ -lworld
+
+INCLUDEPATH += $$PWD/../world
+DEPENDPATH += $$PWD/../world

@@ -33,19 +33,22 @@ namespace jni {
     return JavaEnv::instance()->GetEnv()->IsInstanceOf(o, clazz);
   }
 
-  JNIMethod* JNIClass::GetMethod(const char* name, const char* signature) {
-    return JavaEnv::instance()->GetMethod(this, name, signature);
+  JNIClass* JNIClass::GetSuperClass() {
+    jclass c = JNIENV->GetSuperclass(clazz);
+    return JAVAENV->GetClass(c);
   }
 
-  JNIValue JNIClass::InvokeStaticMethod(JNIMethod *method, ...) {
-    if (method == NULL || !method->Exists()) {
-      throw jni_error("Method is NULL");
-    }
-    jmethodID m_id = method->GetMethodID();
-    va_list args;
-    va_start(args, m_id);
-    JNIValue result = JavaEnv::instance()->CallStatic(type, clazz, method->GetMethodID(), args);
-    va_end(args);
-    return result;
+  JNIMethod* JNIClass::GetMethod(QString name, QString signature) {
+    return JAVAENV->GetMethod(this, name, signature);
+  }
+
+  JNIMethod* JNIClass::GetConstructor(QString signature) {
+    return GetMethod("<init>", signature);
+  }
+
+  void JNIClass::emptyCache() {
+    methods.clear();
+    fields.clear();
+    modifiers = 0;
   }
 }

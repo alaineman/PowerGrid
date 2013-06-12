@@ -23,10 +23,11 @@ namespace jni {
     private:
       static JNIObject sharedNull;
     protected:
-      JNIObject() : JNIValue() { clazz = NULL; }
 
-      jobject object;                   /// The jobject reference from the Java Environment
-      JNIClass* clazz;                   /// The JNIClass object representing the type of this object
+      JNIObject() : JNIValue() { object = NULL; clazz = NULL; }
+
+      jobject object;    /// The jobject reference from the Java Environment
+      JNIClass* clazz;   /// The JNIClass object representing the type of this object
 
       /// Verifies that this object is not null (and throws a jni_error when it is)
       void nullCheck() { if (IsNull()) throw jni_error("dereferencing null"); }
@@ -46,7 +47,7 @@ namespace jni {
        * @brief Returns the JNI jobject reference this object holds
        * @return the JNI jobject reference this object holds
        */
-      jobject GetJNIObject() { return object; }
+      virtual jobject GetJNIObject() { return object; }
 
       /**
        * @brief Returns the class of this object
@@ -74,8 +75,10 @@ namespace jni {
        */
       int J_hashCode();
 
+      /// Returns the jfieldID with the specified name and type
       jfieldID GetFieldID(QString fieldName, QString type);
 
+      /// Returns the JNIMethod with the specified name and signature
       JNIMethod* GetMethod(QString methodName, QString signature);
   };
 

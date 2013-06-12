@@ -45,13 +45,13 @@ namespace jni {
       jclass clazz;
 
       // cached values
-      JNIClass* superClass;       // This JNIClass' superclass
+      JNIClass* superClass;      // This JNIClass' superclass
       QString name;              // The fully qualified name (with '/' as separator) for use in signatures of functions.
       QString semantic_name;     // The semantic name given to this JNIClass object for easy identification.
-      jint modifiers;             // The modifiers of the class (a combination of public, protected, private, final, static, abstract and interface, encoded in an integer)
-      map<JNIClass*, JNIValue*> anns;    // Map of annotations this JNIClass contains
-      map<QString, JNIMethod*> methods; // Map of methods that this class provides.
-      map<QString, jfieldID> fields;    // Map of field that this class provides.
+      jint modifiers;            // The modifiers of the class (a combination of public, protected, private, final, static, abstract and interface, encoded in an integer)
+
+      map<QString, JNIMethod*> methods;  // Map of methods that this class provides.
+      map<QString, jfieldID> fields;     // Map of field that this class provides.
 
       friend class JavaEnv;
 
@@ -63,11 +63,11 @@ namespace jni {
        * @param c the jclass this JNIClass object represents
        * @param e the Java environment
        */
-      JNIClass(jclass c) : JNIObject(c) {}
+      JNIClass(jclass c) : JNIObject(c) { clazz = c; }
 
       ~JNIClass() {}
 
-      virtual jclass GetJObject() { return clazz; }
+      virtual jclass GetJNIObject() { return clazz; }
 
       /**
        * @brief Returns the simple name (without package) of the class
@@ -106,7 +106,7 @@ namespace jni {
        * @param signature the signature of the method
        * @return the JNIMethod reference to the requested method, or @c NULL if no such method exists
        */
-      JNIMethod* GetMethod(const char* name, const char* signature);
+      JNIMethod* GetMethod(QString name, QString signature);
       /**
        * @brief Looks up the constructor with the specified signature
        * @param signature the signature of the constructor
@@ -115,23 +115,17 @@ namespace jni {
       JNIMethod* GetConstructor(QString signature);
 
       /**
-       * @brief Returns the signature of the field with the given name
-       * @param fieldname the fieldname to look up
-       * @return the signature of the requested fieldname if it exists, or an empty QString otherwise
-       */
-      QString GetFieldSignature(QString fieldname);
-      /**
        * @brief Returns the type of the field as a jvalue_type id
        * @param fieldname the name of the field to look up
        * @return the jvalue_type representing the field's type
        */
       jvalue_type GetFieldType(QString fieldname);
       /**
-       * @brief Returns the contents of the field with the given name
+       * @brief Returns the contents of the object field with the given name
        * @param fieldName the name of the field
        * @return the JNIValue with this field's contents.
        */
-      JNIValue GetFieldContents(QString fieldName);
+      JNIObject* GetObjectField(QString fieldName);
 
       /**
        * @brief Retrieves the Access modifiers for this class
@@ -159,12 +153,7 @@ namespace jni {
        */
       jboolean HasAnnotation(JNIClass* annotationClass) { return !GetAnnotation(annotationClass).IsNull(); }
 
-      JNIValue InvokeStaticMethod(QString name, QString signature, ...);
-      JNIValue InvokeStaticMethod(JNIMethod* method, ...);
-
       void emptyCache();
-
-
   };
 }
 

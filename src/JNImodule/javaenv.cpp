@@ -139,6 +139,30 @@ namespace jni {
     return jnic;
   }
 
+  JNIClass* JavaEnv::GetClass(jclass c) {
+    if (c == NULL) {
+      return NULL;
+    }
+
+    QMap<QString,JNIClass*>::iterator it = classes.begin();
+    QMap<QString,JNIClass*>::iterator end = classes.end();
+    JNIClass* jnic;
+
+    while (it != end) {
+      jnic = it.value();
+      if (jnic->GetJNIObject() == c) {
+        return jnic;
+      }
+      ++it;
+    }
+
+    jnic = new JNIClass(c);
+    jmethodID getName = GetMethodID(jnic, "getName", "()Ljava/lang/String;");
+    JNIString result (GetEnv()->CallObjectMethod(jnic->GetJNIObject(), getName));
+    classes.insert(result.GetStringValue(), jnic);
+    return jnic;
+  }
+
   JNIClass* JavaEnv::GetClassForObject(jobject obj) {
     if (obj == NULL) {
       return NULL;
@@ -164,13 +188,13 @@ namespace jni {
   jmethodID JavaEnv::GetMethodID(JNIClass* c, QString name, QString signature) {
     JNIEnv* env = GetEnv();
 
-    jmethodID meth = env->GetMethodID(static_cast<jclass>(c->GetJObject()), qPrintable(name), qPrintable(signature));
+    jmethodID meth = env->GetMethodID(static_cast<jclass>(c->GetJNIObject()), qPrintable(name), qPrintable(signature));
     return meth;
   }
 
   jmethodID JavaEnv::GetStaticMethodID(JNIClass* c, const char* name, const char* signature) {
     JNIEnv* env = GetEnv();
-    jmethodID meth = env->GetStaticMethodID(static_cast<jclass>(c->GetJObject()), name, signature);
+    jmethodID meth = env->GetStaticMethodID(static_cast<jclass>(c->GetJNIObject()), name, signature);
     return meth;
   }
 

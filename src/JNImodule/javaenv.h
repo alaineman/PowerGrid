@@ -81,6 +81,12 @@ namespace jni {
     JNIClass* GetClass(QString name);
 
     /**
+     * Returns the JNIClass representing the given jclass object
+     * @param c the jclass reference
+     * @return the JNIClass object representing the provided jclass
+     */
+    JNIClass* GetClass(jclass c);
+    /**
      * Returns the class of the given object
      * @param obj the object to return the class for
      * @return the JNIClass representing the class of the object

@@ -11,13 +11,6 @@ namespace jni {
     string_ref = (jstring) obj;
   }
 
-  JNIString::JNIString(jstring str) : JNIObject(str) {
-    string_ref = str;
-  }
-  JNIString::JNIString(const char *str) {
-    string_val = str;
-  }
-
   jstring JNIString::toJString() {
     QByteArray arr = string_val.toLocal8Bit();
     char* data = arr.data();

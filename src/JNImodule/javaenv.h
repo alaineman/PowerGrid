@@ -5,10 +5,16 @@
 #include "jnimethod.h"
 #include <QMap>
 #include <QHash>
-#include "jniclass.h"
 
 namespace jni {
   using namespace std;
+
+  class JNIClass;
+  class JNIMethod;
+
+#define JAVAENV jni::JavaEnv::instance()
+#define JNIENV JAVAENV->GetEnv()
+
   /**
    * The JavaEnv class is a C++ wrapper around the Java environment (JNIEnv struct).
    * The functions this class provides checks for illegal arguments, like NULL values.
@@ -17,6 +23,8 @@ namespace jni {
    */
   class JavaEnv : public QObject {
   private:
+    Q_DISABLE_COPY(JavaEnv)
+
     static JavaEnv* theEnvironment;
 
     /// Constructs a new JavaEnv object. Made private to ensure only one instance exists.
@@ -70,7 +78,7 @@ namespace jni {
      * @param name the name of the requested class
      * @return a pointer to the JNIClass object with the requested name, or NULL if no class exists with the given name.
      */
-    JNIClass* GetClass(const char* name);
+    JNIClass* GetClass(QString name);
 
     /**
      * Returns the class of the given object
@@ -89,7 +97,7 @@ namespace jni {
      *
      * @return the jmethodID object representing the method with the given requirements, or NULL is the method was not found.
      */
-    jmethodID GetMethodID(JNIClass* c, const char* name, const char* signature);
+    jmethodID GetMethodID(JNIClass* c, QString name, QString signature);
 
     /**
      * Returns the static method ID with the given requirements.
@@ -176,7 +184,7 @@ namespace jni {
     /**
      * Retrieves information on the method specified by the given parameters
      *
-     * @param c the class the method is declared in
+     * @param c the name of the class the method is declared in
      * @param name the name of the method
      * @param signature the signature of the method
      *
@@ -185,21 +193,23 @@ namespace jni {
      * @return a pointer to the JNIMethod object containing the method information of the
      *         requested method, or NULL if the method does not exist in the JVM.
      */
-    JNIMethod* GetMethod(jclass c, const char* name, const char* signature);
+    JNIMethod* GetMethod(QString className, QString name, QString signature, bool stat = false);
+
+    JNIMethod* GetMethod(JNIClass* cls, QString name, QString signature, bool stat = false);
 
     /**
      * @brief Parses the return value from a Java method signature
      * @param signature the signture to parse
      * @return the jvalue_type of the return value of the given method signature
      */
-    jvalue_type ParseReturnValueFromSignature(const char* signature);
+    jvalue_type ParseReturnValueFromSignature(QString signature);
 
     /**
      * @brief Parses the argument types
      * @param signature
      * @return
      */
-    vector<jvalue_type> ParseArgumentTypesFromSignature(const char* signature);
+    vector<jvalue_type> ParseArgumentTypesFromSignature(QString signature);
 
     /**
      * Checks each registered thread - JNIEnv mapping for validity

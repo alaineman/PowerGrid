@@ -1,6 +1,8 @@
 #include "javaenv.h"
 #include <stdexcept>
 #include "jniexception.h"
+#include "jniclass.h"
+#include "jnistring.h"
 #include <QDir>
 #include <iostream>
 
@@ -114,19 +116,16 @@ namespace jni {
     env->CallStaticVoidMethod(c, main, args);
 
     running = JNI_TRUE;
-
-    emit SIGNAL(started());
   }
 
   // Get basic JNI element types
-  JNIClass* JavaEnv::GetClass(const char* name) {
-    QString n (name);
+  JNIClass* JavaEnv::GetClass(QString n) {
     QMap<QString,JNIClass*>::iterator it = classes.find(n);
     QMap<QString,JNIClass*>::iterator end = classes.end();
     JNIClass* jnic = NULL;
     if (it == end) {
       JNIEnv* env = GetEnv();
-      jclass cls = env->FindClass(name);
+      jclass cls = env->FindClass(qPrintable(n));
       if (cls == NULL) {
         qWarning() << "Request for non-existing class:" << n;
         return NULL;
@@ -141,6 +140,9 @@ namespace jni {
   }
 
   JNIClass* JavaEnv::GetClassForObject(jobject obj) {
+    if (obj == NULL) {
+      return NULL;
+    }
     JNIEnv* env = GetEnv();
     jclass cls = env->GetObjectClass(obj);
     QMap<QString,JNIClass*>::iterator it;
@@ -152,12 +154,17 @@ namespace jni {
         }
       }
     }
-    return NULL;
+    JNIClass* c = new JNIClass(cls);
+    jmethodID getName = GetMethodID(c, "getName", "()Ljava/lang/String;");
+    JNIString result (env->CallObjectMethod(c->GetJNIObject(), getName));
+    classes.insert(result.GetStringValue(),c);
+    return c;
   }
 
-  jmethodID JavaEnv::GetMethodID(JNIClass* c, const char* name, const char* signature) {
+  jmethodID JavaEnv::GetMethodID(JNIClass* c, QString name, QString signature) {
     JNIEnv* env = GetEnv();
-    jmethodID meth = env->GetMethodID(static_cast<jclass>(c->GetJObject()), name, signature);
+
+    jmethodID meth = env->GetMethodID(static_cast<jclass>(c->GetJObject()), qPrintable(name), qPrintable(signature));
     return meth;
   }
 
@@ -390,25 +397,20 @@ namespace jni {
   }
 
 
-  JNIMethod* JavaEnv::GetMethod(jclass c, const char* name, const char* signature) {
-    JNIEnv* env = GetEnv();
-    // TODO: Look up from internal cache => decentralized as children of JNIClass objects.
-    jboolean st = JNI_FALSE;
-    jmethodID methodID = env->GetMethodID(c, name, signature);
-    if (methodID == NULL) {
-      methodID = env->GetStaticMethodID(c, name, signature);
-      if (methodID == NULL) {
-        return NULL;
-      }
-      st = JNI_TRUE;
-    }
-    jvalue_type retType = ParseReturnValueFromSignature(signature);
-    vector<jvalue_type> paramTypes = ParseArgumentTypesFromSignature(signature);
-    return new JNIMethod(name, c, retType, paramTypes, st, methodID);
+  JNIMethod* JavaEnv::GetMethod(QString className, QString name, QString signature, bool stat) {
+    JNIClass* cls = GetClass(className);
+
+    JNIMethod* m = new JNIMethod(cls, name, signature, stat);
+
+    return m;
   }
 
-  jvalue_type JavaEnv::ParseReturnValueFromSignature(const char* signature) {
-    std::string sig (signature);
+  JNIMethod* JavaEnv::GetMethod(JNIClass* cls, QString name, QString signature, bool stat) {
+    return new JNIMethod(cls, name, signature, stat);
+  }
+
+  jvalue_type JavaEnv::ParseReturnValueFromSignature(QString signature) {
+    std::string sig = signature.toStdString();
     uint index = sig.find_last_of(')') + 1;
     if (index < sig.length()) {
       char c = sig.at(index);
@@ -428,8 +430,8 @@ namespace jni {
     throw runtime_error("Invalid signature");
   }
 
-  vector<jvalue_type> JavaEnv::ParseArgumentTypesFromSignature(const char* signature) {
-    std::string sig (signature);
+  vector<jvalue_type> JavaEnv::ParseArgumentTypesFromSignature(QString signature) {
+    std::string sig = signature.toStdString();
     vector<jvalue_type> arguments;
     uint index = 0;
     uint end = sig.find_last_of(')');

@@ -38,7 +38,6 @@ HEADERS += \
     jniexception.h \
     jniclass.h \
     javaenv.h \
-    jnimodule.h \
     classmodelbuilder.h
 
 SOURCES += \

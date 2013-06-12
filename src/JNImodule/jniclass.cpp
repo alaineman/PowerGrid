@@ -1,9 +1,10 @@
 #include "jniclass.h"
 #include "javaenv.h"
 #include "jniexception.h"
+#include "jnistring.h"
 
 namespace jni {
-  QString JNIClass::GetSigName() {
+  QString JNIClass::J_GetName() {
     if (name.isEmpty()) {
       JavaEnv* env = JavaEnv::instance();
       JNIClass* cls = GetClass();
@@ -11,13 +12,15 @@ namespace jni {
       JNIEnv* e = env->GetEnv();
       jmethodID getName = e->GetMethodID(c, "getName", "()Ljava/lang/String;");
       jstring n = (jstring) e->CallObjectMethod(c, getName);
+      QString result = JNIString(n).GetStringValue();
+      name = result.replace(".", "/");
       name = e->GetStringUTFChars(n, NULL);
     }
     return name;
   }
 
   QString JNIClass::GetSimpleName() {
-    QString signame = GetSigName();
+    QString signame = J_GetName();
     int first = signame.lastIndexOf("/") + 1;
     return signame.right(signame.length() - first);
   }
@@ -31,17 +34,16 @@ namespace jni {
   }
 
   JNIMethod* JNIClass::GetMethod(const char* name, const char* signature) {
-    return JavaEnv::instance()->GetMethod(clazz, name, signature);
+    return JavaEnv::instance()->GetMethod(this, name, signature);
   }
 
   JNIValue JNIClass::InvokeStaticMethod(JNIMethod *method, ...) {
-    if (method == NULL) {
+    if (method == NULL || !method->Exists()) {
       throw jni_error("Method is NULL");
     }
-    jvalue_type type = method->GetReturnType();
+    jmethodID m_id = method->GetMethodID();
     va_list args;
-    int count = static_cast<int>(method->GetArgumentCount());
-    va_start(args, count);
+    va_start(args, m_id);
     JNIValue result = JavaEnv::instance()->CallStatic(type, clazz, method->GetMethodID(), args);
     va_end(args);
     return result;

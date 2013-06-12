@@ -1,35 +1,60 @@
 #include "jnimethod.h"
+#include "jniexception.h"
 
 namespace jni {
-  JNIMethod::JNIMethod(const char* nm, jclass c, jvalue_type ret, const vector<jvalue_type> args,
-                       jboolean stat, jmethodID meth) {
-    name = nm;
-    cls = c;
-    return_type = ret;
-    argument_types = vector<jvalue_type>(args);
-    isStatic = stat;
-    method = meth;
-  }
-
-  jvalue_type JNIMethod::GetArgumentType(uint n) {
-    if (n >= argument_types.size()) {
-      return JVOID;
-    } else {
-      return argument_types.at(n);
+  jmethodID JNIMethod::GetMethodID() {
+    if (method == NULL && canExist) {
+      method = JAVAENV->GetMethodID(cls, name, signature);
+      if (method == NULL) canExist = false;
     }
+    return method;
   }
 
-  jboolean JNIMethod::ValidateInput(vector<JNIValue> arguments) {
-    if (argument_types.size() != arguments.size()) {
-      return JNI_FALSE;
-    } else {\
-      uint len = arguments.size();
-      for (uint i = 0; i < len; i++) {
-        if (arguments.at(i).GetType() != argument_types.at(i)) {
-          return JNI_FALSE;
-        }
+  QString JNIMethod::GetReturnType() {
+    return signature.right(signature.length() - signature.lastIndexOf(")") + 1);
+  }
+
+  QList<QString> JNIMethod::GetArgumentTypes() {
+    QList<QString> args;
+    int end = signature.lastIndexOf(")");
+    for (int i = 1; i < end; ++i) {
+      QChar c = signature.at(i);
+      if (c == 'L') {
+        int j = signature.indexOf(";", i);
+        args.append(signature.mid(i, j-i));
+        i = j;
+      } else {
+        args.append(c);
       }
-      return JNI_TRUE;
     }
+    return args;
+  }
+
+  // --- JNIObjectMethod --------------------------------------
+
+  JNIClass* JNIObjectMethod::GetReturnTypeClass() {
+    int begin = signature.lastIndexOf(")L") + 1;
+    int end = signature.lastIndexOf(";") - 1;
+    return JAVAENV->GetClass(signature.mid(begin, end - begin));
+  }
+
+  jobject JNIObjectMethod::Invoke(jobject obj, ...) {
+    va_list args;
+    jmethodID m = GetMethodID();
+    if (m == NULL) {
+      throw jni_error("non-existing method");
+    }
+    va_start(args, m);
+    jobject result = JNIENV->CallObjectMethodV(obj, m, args);
+    va_end(args);
+    return result;
+  }
+
+  jobject JNIObjectMethod::InvokeV(jobject obj, va_list args) {
+    jmethodID m = GetMethodID();
+    if (m == NULL) {
+      throw jni_error("non-existing method");
+    }
+    return JNIENV->CallObjectMethodV(obj, m, args);
   }
 }

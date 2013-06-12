@@ -5,19 +5,20 @@
 
 namespace jni {
 
-  class JNIString : JNIObject {
+  class JNIString : public JNIObject {
     private:
       jstring string_ref;
       QString string_val;
+
+      QString toQString();
+      jstring toJString();
     public:
-      JNIString();
+      JNIString(jobject obj);
       JNIString(jstring str);
       JNIString(const char* str);
 
-      ~JNIString();
-
-      jstring GetStringRef();
-      QString GetStringValue();
+      jstring GetStringRef() { return string_ref == NULL ? toJString() : string_ref; }
+      QString GetStringValue() { return string_val == NULL ? toQString() : string_val; }
   };
 
 }

@@ -52,6 +52,11 @@ namespace jni {
       map<JNIClass*, JNIValue*> anns;    // Map of annotations this JNIClass contains
       map<QString, JNIMethod*> methods; // Map of methods that this class provides.
       map<QString, jfieldID> fields;    // Map of field that this class provides.
+
+      friend class JavaEnv;
+
+      bool LoadMethod(JNIMethod* method);
+      bool LoadField(QString name, jfieldID f_id);
     public:
       /**
        * @brief Creates a JNIClass based on the given jclass reference
@@ -70,11 +75,11 @@ namespace jni {
        */
       QString GetSimpleName();
       /**
-       * @brief Returns the signature name of the class.
+       * @brief Returns the name of the class.
        * The signature name contains the full package (separated by '/').
        * @return the signature name of this class
        */
-      QString GetSigName();
+      QString J_GetName();
 
       /**
        * @brief Returns whether the given JNIObject represents an instance of this JNIClass
@@ -158,6 +163,7 @@ namespace jni {
       JNIValue InvokeStaticMethod(JNIMethod* method, ...);
 
       void emptyCache();
+
 
   };
 }

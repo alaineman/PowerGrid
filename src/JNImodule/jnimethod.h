@@ -14,9 +14,11 @@ namespace jni {
 
   // These #defines allow for more compact code in parameter lists.
   // JNIP is especially for pointer types and JNI for non-pointer types.
+  // They bascially "unwrap" a JNIObject and leave the jobject reference, or
+  // NULL if the object is NULL.
   // TO can be used for explicit casting of types when required
-#define JNI(obj) obj.GetJNIObject()
-#define JNIP(obj) obj->GetJNIObject()
+#define JNI(obj) (obj.IsNull() ? NULL : obj.GetJNIObject())
+#define JNIP(obj) (obj == NULL || obj->IsNull() ? NULL : obj->GetJNIObject())
 #define TO(value, type) static_cast<type>(value)
 
   /// The JNIMethod class represents a method in the Java Environment.

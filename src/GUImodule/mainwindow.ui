@@ -165,7 +165,7 @@
          <x>10</x>
          <y>20</y>
          <width>271</width>
-         <height>99</height>
+         <height>81</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -337,7 +337,7 @@
      <attribute name="title">
       <string>Settings</string>
      </attribute>
-     <widget class="QGroupBox" name="groupBox_2">
+     <widget class="QGroupBox" name="CoreSettings">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -363,7 +363,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_3">
+     <widget class="QGroupBox" name="Performance">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -375,34 +375,34 @@
       <property name="title">
        <string>Performance</string>
       </property>
-      <widget class="QCheckBox" name="mappingCheck">
+      <widget class="QWidget" name="">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>141</width>
-         <height>20</height>
+         <width>271</width>
+         <height>51</height>
         </rect>
        </property>
-       <property name="text">
-        <string>Continuous mapping</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="mouseCheck">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>141</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Realistic mouse</string>
-       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="mappingCheck">
+          <property name="text">
+           <string>Continuous mapping</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="mouseCheck">
+          <property name="text">
+           <string>Realistic mouse</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_4">
+     <widget class="QGroupBox" name="Security">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -414,35 +414,35 @@
       <property name="title">
        <string>Security</string>
       </property>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QWidget" name="">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>231</width>
-         <height>20</height>
+         <width>271</width>
+         <height>51</height>
         </rect>
        </property>
-       <property name="text">
-        <string>Enable smart account management</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="checkBox_2">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>231</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Clear cache on close</string>
-       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QCheckBox" name="accManagementCheck">
+          <property name="text">
+           <string>Enable smart account management</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="cacheClearCheck">
+          <property name="text">
+           <string>Clear cache on close</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab">
+    <widget class="QWidget" name="DeveloperTab">
      <attribute name="title">
       <string>Developer</string>
      </attribute>

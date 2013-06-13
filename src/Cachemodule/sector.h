@@ -18,7 +18,7 @@ namespace cache{
       uint getIndexForPlane(int z);
     public:
       ~Sector();
-      JNIObject getObject();
+      JNIObject* getObject();
       byte getObjectCount();
       void setObject();
       void removeCollisionMap(int z);

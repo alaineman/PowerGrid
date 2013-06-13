@@ -14,6 +14,8 @@ namespace jni {
 
 #define JAVAENV jni::JavaEnv::instance()
 #define JNIENV JAVAENV->GetEnv()
+#define S_JAVAENV(env) JavaEnv* env = JAVAENV
+#define S_JNIENV(env) JNIEnv* env = JNIENV
 
   /**
    * The JavaEnv class is a C++ wrapper around the Java environment (JNIEnv struct).
@@ -232,6 +234,9 @@ namespace jni {
      * @return true if and only if the thread is still running and has a binding to a JNIEnv object, false otherwise.
      */
     bool isAttached(QThread* thread);
+
+    /// Checks for a thrown Java Exception and throws a java_exception object when there is one
+    void exceptionCheck();
 
   signals:
     /// Signal that the JNI environment has started, emitted just before the Start function returns.

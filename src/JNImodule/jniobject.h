@@ -21,19 +21,20 @@ namespace jni {
    */
   class JNIObject : public JNIValue {
     private:
+      Q_DISABLE_COPY(JNIObject)
+
       static JNIObject sharedNull;
     protected:
-
       JNIObject() : JNIValue() { object = NULL; clazz = NULL; }
 
       jobject object;    /// The jobject reference from the Java Environment
       JNIClass* clazz;   /// The JNIClass object representing the type of this object
 
       /// Verifies that this object is not null (and throws a jni_error when it is)
-      void nullCheck() { if (IsNull()) throw jni_error("dereferencing null"); }
+      void nullCheck();
     public:
       /// Returns the shared value for Null
-      static JNIObject Null() { return sharedNull; }
+      static JNIObject* Null() { return &sharedNull; }
 
       virtual ~JNIObject();
 
@@ -41,7 +42,7 @@ namespace jni {
        * @brief Creates an JNIObject representing the specified jobject
        * @param o the object reference from the JNI environment
        */
-      JNIObject(jobject o) : JNIValue(o) { if (o == NULL) throw jni_error("creating null object"); object = o; }
+      explicit JNIObject(jobject o) : JNIValue(o) { if (o == NULL) throw jni_error("creating null object"); object = o; }
 
       /**
        * @brief Returns the JNI jobject reference this object holds

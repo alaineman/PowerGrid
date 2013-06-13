@@ -20,7 +20,7 @@ uint Sector::getIndexForPlane(int z){
     }    
 }
 
-JNIObject Sector::getObject(){
+JNIObject* Sector::getObject(){
   return JNIObject::Null();
 }
 

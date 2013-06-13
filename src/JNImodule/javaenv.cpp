@@ -411,12 +411,7 @@ namespace jni {
       case JFLOAT:   result.f = env->CallStaticFloatMethodV   (c, method, args);
       default: throw jni_error("Unknown jvalue_type");
     }
-    if (env->ExceptionCheck()) {
-      env->ExceptionDescribe();
-      jthrowable ex = env->ExceptionOccurred();
-      env->ExceptionClear();
-      throw java_exception(new JNIValue(ex), QStringLiteral("Exception in static method call"));
-    }
+
     return JNIValue(ret_type, result);
   }
 
@@ -492,6 +487,18 @@ namespace jni {
     } else {
       environments.remove(thread);
       return false;
+    }
+  }
+
+  void JavaEnv::exceptionCheck() {
+    JNIEnv* env = GetEnv();
+    jthrowable thrown = env->ExceptionOccurred();
+    if (thrown != NULL) {
+#ifdef DEBUG
+      env->ExceptionDescribe();
+#endif
+      env->ExceptionClear();
+      throw java_exception(thrown, "Exception in static method call");
     }
   }
 

@@ -49,7 +49,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="OverviewTab">
      <attribute name="title">
@@ -165,7 +165,7 @@
          <x>10</x>
          <y>20</y>
          <width>271</width>
-         <height>81</height>
+         <height>84</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -375,7 +375,7 @@
       <property name="title">
        <string>Performance</string>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -414,7 +414,7 @@
       <property name="title">
        <string>Security</string>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>

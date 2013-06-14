@@ -2,7 +2,7 @@
 #define BASECOMPONENT_H
 
 #include <QMap>
-#include "widget.h"
+#include "Local/widget.h"
 
 using namespace world;
 
@@ -18,4 +18,5 @@ namespace cache{
         void clearAll();
     };
 }
+
 #endif

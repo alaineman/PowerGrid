@@ -1,10 +1,20 @@
 #include "mouse.h"
+#include "jniclass.h"
+
+//java.awt.EventQueue
+//postEvent() AWTEvent
+
+//java.awt.event.MouseEvent
+
+using namespace jni;
 
 namespace injection {
 
 Mouse* Mouse::mouse = NULL;
 
-Mouse::Mouse(){
+void Mouse::postEvent(jni::JNIObject* event){
+    //JNIClass* eventQueue = JAVAENV->GetClass("java/awt/EventQueue");
+    //JNIMethod* sendEvent = JAVAENV->GetStaticMethodID(eventQueue, "postEvent", "(Ljava/awt/AWTEvent;)V");
 }
 
 Point Mouse::getPosition(){
@@ -12,7 +22,6 @@ Point Mouse::getPosition(){
     int x = 0;
     int y = 0;
     return Point(x,y);
-
 }
 
 bool Mouse::isDown(MouseButton button){
@@ -52,5 +61,3 @@ void Mouse::mouseUp(MouseButton button){
 }
 
 }
-
-

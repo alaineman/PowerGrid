@@ -2,6 +2,7 @@
 #define MOUSE_H
 #include <QObject>
 #include "point.h"
+#include "jniobject.h"
 
 using namespace world;
 
@@ -18,8 +19,9 @@ enum ScrollWheel{
 class Mouse : public QObject {
 private:
     Q_DISABLE_COPY(Mouse)
+    void postEvent(jni::JNIObject* event);
     static Mouse* mouse;
-    Mouse();
+    Mouse(){ setObjectName("Mouse");}
 public:    
     static Mouse* instance() { return (mouse == NULL ? mouse = new Mouse() : mouse); }
     Point getPosition();

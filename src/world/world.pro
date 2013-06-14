@@ -70,7 +70,11 @@ SOURCES += \
     Entity/entity.cpp \
     Cache/cache.cpp \
     DataStructure/objectnode.cpp \
-    Local/widget.cpp
+    Local/widget.cpp \
+    Graphic/openglmodel.cpp \
+    Graphic/opengltoolkit.cpp \
+    Entity/projectile.cpp \
+    Entity/projectilenode.cpp
 
 HEADERS += \    
     point.h \    
@@ -127,7 +131,11 @@ HEADERS += \
     Entity/entitydata.h \
     Entity/entity.h \
     Cache/cache.h \
-    DataStructure/objectnode.h
+    DataStructure/objectnode.h \
+    Graphic/openglmodel.h \
+    Graphic/opengltoolkit.h \
+    Entity/projectile.h \
+    Entity/projectilenode.h
 
 OTHER_FILES += \
     includeWorld.pro

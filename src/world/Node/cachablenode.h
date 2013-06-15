@@ -8,8 +8,12 @@ namespace world{
 class CachableNode : public Node {
 private:
     Q_DISABLE_COPY(CachableNode)
+    CachableNode* previous;
+    CachableNode* next;
 public:
     CachableNode(jobject obj) : Node(obj){}
+    CachableNode* getPreviousCachable(bool useCache = true);
+    CachableNode* getNextCachable(bool useCache = true);
 };
 }
 

@@ -38,7 +38,6 @@ SOURCES += \
     engine.cpp \
     DataStructure/deque.cpp \
     Node/dequenode.cpp \
-    Local/skilldata.cpp \
     Local/playerfacade.cpp \
     Local/widgetcomponent.cpp \
     Local/varps.cpp \
@@ -74,7 +73,16 @@ SOURCES += \
     Graphic/openglmodel.cpp \
     Graphic/opengltoolkit.cpp \
     Entity/projectile.cpp \
-    Entity/projectilenode.cpp
+    Entity/projectilenode.cpp \
+    Entity/Character/combatbar.cpp \
+    Entity/Character/combatbardata.cpp \
+    Node/itemnode.cpp \
+    Entity/itempile.cpp \
+    Entity/itemdefinition.cpp \
+    Graphic/javamodel.cpp \
+    Graphic/javatoolkit.cpp \
+    Local/skill.cpp \
+    Local/skillcomposite.cpp
 
 HEADERS += \    
     point.h \    
@@ -99,7 +107,6 @@ HEADERS += \
     engine.h \
     DataStructure/deque.h \
     Node/dequenode.h \    
-    Local/skilldata.h \
     Local/playerfacade.h \
     Local/widgetcomponent.h \
     Local/widget.h \
@@ -135,7 +142,16 @@ HEADERS += \
     Graphic/openglmodel.h \
     Graphic/opengltoolkit.h \
     Entity/projectile.h \
-    Entity/projectilenode.h
+    Entity/projectilenode.h \
+    Entity/Character/combatbar.h \
+    Entity/Character/combatbardata.h \
+    Node/itemnode.h \
+    Entity/itempile.h \
+    Entity/itemdefinition.h \
+    Graphic/javamodel.h \
+    Graphic/javatoolkit.h \
+    Local/skill.h \
+    Local/skillcomposite.h
 
 OTHER_FILES += \
     includeWorld.pro

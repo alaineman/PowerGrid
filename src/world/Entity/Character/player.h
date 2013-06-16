@@ -17,7 +17,10 @@ private:
     PlayerComposite* composite;
 public:
     Player(jobject obj) : Character(obj) {}
-    jbyte getGender(bool useCache = true);
+    jbyte getGender(bool useCache = true);    
+    jint getTotalLevel(bool useCache = true);
+    jint getF2PCombatLevel(bool useCache = true);
+    jint getP2PCombatLevel(bool useCache = true);
     jint getWildernessDepth(bool useCache = true);
     jni::JNIString* getTitle(bool useCache = true);
     jni::JNIString* getName(bool useCache = true);

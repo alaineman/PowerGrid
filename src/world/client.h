@@ -33,6 +33,7 @@ private:
     jint destinationx;
     jint destinationy;
     jboolean spellselected;
+    //vector<Rectangle*> widgetbounds;
     Cache* playermodelcache;
     Deque* loadedprojectiles;
     vector<HintArrow*> hintarrows;
@@ -42,6 +43,7 @@ private:
     vector<ObjectNode*> loadednpcs;
     HashTable* loadednpctable;
     HashTable* loadedgrounditems;
+    HashTable* itemstoragetable;
     vector<Widget*> loadedwidgets;
     PlayerFacade* playerfacade;
     LandscapeData* landscapedata;
@@ -62,6 +64,7 @@ public:
     jint getDestinationX(bool useCache = true);
     jint getDestinationY(bool useCache = true);
     jboolean isSpellSelected(bool useCache = true);
+    //vector<Rectangle*> getWidgetBounds(bool useCache = true);
     Cache* getPlayerModelCache(bool useCache = true);
     Deque* getLoadedProjectiles(bool useCache = true);
     vector<HintArrow*> getHintArrows(bool useCache = true);
@@ -71,6 +74,7 @@ public:
     vector<ObjectNode*> getLoadedNpcArray(bool useCache = true);
     HashTable* getLoadedNpcTable(bool useCache = true);
     HashTable* getLoadedGroundItems(bool useCache = true);
+    HashTable* getItemStorageTable(bool useCache = true);
     vector<Widget*> getLoadedWidgets(bool useCache = true);
     PlayerFacade* getPlayerFacade(bool useCache = true);
     LandscapeData* getLandscapeData(bool useCache = true);

@@ -1,20 +1,20 @@
-#ifndef MAPBASE_H
-#define MAPBASE_H
+#ifndef REGIONBASE_H
+#define REGIONBASE_H
 
 #include "jniobject.h"
 
 namespace world{
 
-class MapBase : public jni::JNIObject{
+class RegionBase : public jni::JNIObject{
 private:
-    Q_DISABLE_COPY(MapBase)
+    Q_DISABLE_COPY(RegionBase)
     jint globalx;
     jint globaly;
 public:
-    MapBase(jobject obj) : JNIObject(obj){}
+    RegionBase(jobject obj) : JNIObject(obj){}
     jint getGlobalX(bool useCache = true);
     jint getGlobalY(bool useCache = true);
 };
 
 }
-#endif // MAPBASE_H
+#endif // REGIONBASE_H

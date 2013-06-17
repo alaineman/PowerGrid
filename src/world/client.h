@@ -15,7 +15,7 @@
 #include "Cache/npccacheloader.h"
 #include "Cache/itemcacheloader.h"
 #include "Cache/graphiccacheloader.h"
-#include "Landscape/landscapedata.h"
+#include "Landscape/region.h"
 
 namespace world {
 
@@ -46,7 +46,7 @@ private:
     HashTable* itemstoragetable;
     vector<Widget*> loadedwidgets;
     PlayerFacade* playerfacade;
-    LandscapeData* landscapedata;
+    Region* region;
     NpcCacheLoader* npccacheloader;
     ItemCacheLoader* itemcacheloader;
     GraphicCacheLoader* graphicsloader;
@@ -77,7 +77,7 @@ public:
     HashTable* getItemStorageTable(bool useCache = true);
     vector<Widget*> getLoadedWidgets(bool useCache = true);
     PlayerFacade* getPlayerFacade(bool useCache = true);
-    LandscapeData* getLandscapeData(bool useCache = true);
+    Region* getLoadedRegion(bool useCache = true);
     NpcCacheLoader* getNpcCacheLoader(bool useCache = true);
     ItemCacheLoader* getItemCacheLoader(bool useCache = true);
     GraphicCacheLoader* getGraphicCacheLoader(bool useCache = true);

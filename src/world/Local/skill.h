@@ -1,5 +1,5 @@
-#ifndef SKILLDATA_H
-#define SKILLDATA_H
+#ifndef SKILL_H
+#define SKILL_H
 
 #include "jniobject.h"
 #include "skillcomposite.h"
@@ -24,4 +24,4 @@ public:
 
 }
 
-#endif // SKILLDATA_H
+#endif // SKILL_H

@@ -7,6 +7,7 @@ namespace world {
 
 class PlayerComposite : public jni::JNIObject {
 private:
+    Q_DISABLE_COPY(PlayerComposite)
     jint npcId;
     jboolean female;
     jlong modelhash;

@@ -1,22 +1,22 @@
-#ifndef LANDSCAPEDETAILS_H
-#define LANDSCAPEDETAILS_H
+#ifndef REGIONGRID_H
+#define REGIONGRID_H
 
 #include "jniobject.h"
 #include "tile.h"
 #include "tileheights.h"
 
-namespace world{
+namespace world {
 
-class LandscapeDetails : public jni::JNIObject{
+class RegionGrid : public jni::JNIObject{
 private:
-    Q_DISABLE_COPY(LandscapeDetails)
+    Q_DISABLE_COPY(RegionGrid)
     jint width;
     jint height;
     jint topplane;
     vector<vector<vector<Tile*> > > tiles;
     vector<TileHeights*> tileheights;
 public:
-    LandscapeDetails(jobject obj) : JNIObject(obj){}
+    RegionGrid(jobject obj) : JNIObject(obj){}
     jint getWidth(bool useCache = true);
     jint getHeight(bool useCache = true);
     jint getTopPlane(bool useCache = true);
@@ -25,4 +25,4 @@ public:
 };
 
 }
-#endif // LANDSCAPEDETAILS_H
+#endif // REGIONGRID_H

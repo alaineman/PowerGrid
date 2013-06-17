@@ -1,15 +1,17 @@
 #ifndef SOFTREFERENCE_H
 #define SOFTREFERENCE_H
 
-#include "reference.h"
+#include "Node/cachablenode.h"
 
 namespace world{
 
-class SoftReference : public Reference {
+class SoftReference : public CachableNode {
 private:
     Q_DISABLE_COPY(SoftReference)
 public:
-    SoftReference(jobject obj) : Reference(obj){}
+    SoftReference(jobject obj) : CachableNode(obj){}
+    SoftReference* getReferent(bool useCache = true);
+
 };
 
 }

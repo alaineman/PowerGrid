@@ -10,11 +10,9 @@ class Deque : public jni::JNIObject {
 private:
     Q_DISABLE_COPY(Deque)
     Node* sentinel;
-    Node* current;
 public:
     Deque(jobject obj) : JNIObject(obj){}
     Node* getSentinel(bool useCache = true);
-    Node* getCurrent(bool useCache = true);
 };
 
 }

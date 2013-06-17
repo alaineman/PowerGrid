@@ -13,6 +13,7 @@ private:
     Node* next;
 public:
     Node(jobject obj) : JNIObject(obj){}
+    jlong getUid(bool useCache = true);
     Node* getPrevious(bool useCache = true);
     Node* getNext(bool useCache = true);
 };

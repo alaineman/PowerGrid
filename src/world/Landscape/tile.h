@@ -3,7 +3,7 @@
 
 #include "jniobject.h"
 #include "Entity/animableentitynode.h"
-#include "Entity/groundentity.h"
+#include "Entity/itempile.h"
 
 namespace world{
 
@@ -11,11 +11,11 @@ class Tile : public jni::JNIObject {
 private:
     Q_DISABLE_COPY(Tile)
     AnimableEntityNode* animableobjects;
-    GroundEntity* itempile;
+    ItemPile* itempile;
 public:
     Tile(jobject obj) : JNIObject(obj){}
     AnimableEntityNode* getAnimableObjects(bool useCache = true);
-    GroundEntity* getItemPile(bool useCache = true);
+    ItemPile* getItemPile(bool useCache = true);
 };
 
 }

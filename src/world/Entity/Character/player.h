@@ -9,8 +9,11 @@ namespace world{
 
 class Player : public Character {
 private:
-    Q_DISABLE_COPY(Player)
+    Q_DISABLE_COPY(Player)    
     jbyte gender;
+    jint totallevel;
+    jint f2pcombatlevel;
+    jint p2pcombatlevel;
     jint wildernessdepth;
     jni::JNIString* title;
     jni::JNIString* name;

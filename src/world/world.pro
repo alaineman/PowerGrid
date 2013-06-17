@@ -29,7 +29,6 @@ SOURCES += \
     Entity/Character/character.cpp \
     Entity/Character/characteranimator.cpp \
     Entity/Character/playercomposite.cpp \
-    Entity/Character/overheadmessage.cpp \
     Entity/Character/npccomposite.cpp \    
     Entity/animableentitynode.cpp \
     Node/cachablenode.cpp \    
@@ -47,20 +46,15 @@ SOURCES += \
     Cache/npccacheloader.cpp \
     Cache/itemcacheloader.cpp \
     Cache/graphiccacheloader.cpp \
-    Landscape/landscapedata.cpp \
-    Landscape/mapbase.cpp \
-    Landscape/landscapedetails.cpp \
     Landscape/collisiondata.cpp \
     Landscape/tile.cpp \
     Landscape/tileheights.cpp \
-    Entity/groundentity.cpp \
     Graphic/model.cpp \
     Graphic/directxmodel.cpp \
     Graphic/graphicstoolkit.cpp \
     Graphic/matrix4f.cpp \
     Graphic/directxtoolkit.cpp \
     Graphic/graphic.cpp \
-    reference.cpp \
     softreference.cpp \
     hardreference.cpp \
     DataStructure/queue.cpp \
@@ -82,7 +76,14 @@ SOURCES += \
     Graphic/javamodel.cpp \
     Graphic/javatoolkit.cpp \
     Local/skill.cpp \
-    Local/skillcomposite.cpp
+    Local/skillcomposite.cpp \
+    Entity/Character/chatmessage.cpp \
+    Node/itemstorage.cpp \
+    Entity/SceneObject/floordecoration.cpp \
+    Entity/SceneObject/animatedfloordecoration.cpp \
+    Landscape/regionbase.cpp \
+    Landscape/regiongrid.cpp \
+    Landscape/region.cpp
 
 HEADERS += \    
     point.h \    
@@ -98,7 +99,6 @@ HEADERS += \
     Entity/Character/character.h \
     Entity/Character/characteranimator.h \
     Entity/Character/playercomposite.h \
-    Entity/Character/overheadmessage.h \
     Entity/Character/npccomposite.h \
     Entity/animableentitynode.h \
     Node/cachablenode.h \    
@@ -117,20 +117,15 @@ HEADERS += \
     Cache/npccacheloader.h \
     Cache/itemcacheloader.h \
     Cache/graphiccacheloader.h \
-    Landscape/landscapedata.h \
-    Landscape/mapbase.h \
-    Landscape/landscapedetails.h \
     Landscape/collisiondata.h \
     Landscape/tile.h \
     Landscape/tileheights.h \
-    Entity/groundentity.h \
     Graphic/model.h \
     Graphic/directxmodel.h \
     Graphic/graphicstoolkit.h \
     Graphic/matrix4f.h \
     Graphic/directxtoolkit.h \
     Graphic/graphic.h \
-    reference.h \
     softreference.h \
     hardreference.h \
     DataStructure/queue.h \
@@ -151,7 +146,14 @@ HEADERS += \
     Graphic/javamodel.h \
     Graphic/javatoolkit.h \
     Local/skill.h \
-    Local/skillcomposite.h
+    Local/skillcomposite.h \
+    Entity/Character/chatmessage.h \
+    Node/itemstorage.h \
+    Entity/SceneObject/floordecoration.h \
+    Entity/SceneObject/animatedfloordecoration.h \
+    Landscape/region.h \
+    Landscape/regiongrid.h \
+    Landscape/regionbase.h
 
 OTHER_FILES += \
     includeWorld.pro

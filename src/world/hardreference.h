@@ -1,15 +1,17 @@
 #ifndef HARDREFERENCE_H
 #define HARDREFERENCE_H
 
-#include "reference.h"
+#include "Node/cachablenode.h"
 
 namespace world{
 
-class HardReference : public Reference {
+class HardReference : public CachableNode {
 private:
     Q_DISABLE_COPY(HardReference)
+    jni::JNIObject* referent;
 public:
-    HardReference(jobject obj) : Reference(obj){}
+    HardReference(jobject obj) : CachableNode(obj){}
+    JNIObject* getReferent(bool useCache = true);
 };
 
 }

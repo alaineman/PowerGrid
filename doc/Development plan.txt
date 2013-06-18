@@ -4,11 +4,11 @@ X create and finish JavaEnv class
 X create and test loading and running the environment.
 X version 0.1: client loader
 
-- implement JNI model for safe access to the Java environment.
-- implement caching model to store RS data.
-- version 0.2: reflection enabled client
+X implement JNI model for safe access to the Java environment.
+X implement caching model to store RS data.
+X version 0.2: reflection enabled client
 
-- implement reflection engine to collect RS data.
+= implement reflection engine to collect RS data.
 - build an event injection system that can inject various input events into the client
 - version 0.3: working reflection client
 

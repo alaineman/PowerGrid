@@ -20,3 +20,7 @@ build*/
 # Shortcuts (Windows lnk-files won't work cross-workstation anyway)
 *.lnk
 
+# compiled or private loader project data
+loader/build/
+loader/dist/
+loader/nbproject/private/

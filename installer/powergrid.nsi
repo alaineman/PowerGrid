@@ -44,6 +44,7 @@ VIAddVersionKey LegalCopyright  "it is licensed under GPL"
 
 ; Set the install section itself
 ; This is mainly PowerGrid and any DLL files in the installer directory.
+; Any jar files are also included.
 ; Uninstall info is also included. 
 Section "PowerGrid"
 
@@ -52,6 +53,7 @@ Section "PowerGrid"
     SetOutPath $INSTDIR
     File PowerGrid.exe
     File *.dll
+    File *.jar
     File license.txt
 
     WriteRegStr HKLM SOFTWARE\PowerGrid "Install_Dir" "$INSTDIR"

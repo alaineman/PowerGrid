@@ -44,8 +44,8 @@ public class ClassMapDownloader implements Runnable {
             return;
         }
         try {
-            Socket sock = new Socket("98.206.157.139", 6739);
-            Logger.log("UPDATER: Connection created");
+            Socket sock = new Socket("205.234.152.103", 6739);
+            Logger.log("UPDATER: Connection established");
             
             OutputStream out = sock.getOutputStream();
             InputStream in = sock.getInputStream();
@@ -80,8 +80,8 @@ public class ClassMapDownloader implements Runnable {
             FileOutputStream fos = new FileOutputStream("mapData.hex");
             FileChannel outChannel = fos.getChannel();
             ReadableByteChannel inChannel = Channels.newChannel(in);
-            outChannel.transferFrom(inChannel, 0, 1 << 31);
-
+            outChannel.transferFrom(inChannel, 0, Integer.MAX_VALUE);
+            Logger.log("UPDATER: mapData stored");
             ready = true;
         } catch (IOException e) {
             Logger.describe(e);

@@ -24,3 +24,7 @@ build*/
 loader/build/
 loader/dist/
 loader/nbproject/private/
+
+# data grabbed by the loader
+*/client.jar
+*/mapData.hex

@@ -76,7 +76,7 @@ public class AppletFrame extends JFrame implements AppletStub {
         } catch (IOException e) {
             Logger.describe(e);
         }
-        getToolkit().setDynamicLayout(false);
+        getToolkit().setDynamicLayout(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Insets in = getInsets();

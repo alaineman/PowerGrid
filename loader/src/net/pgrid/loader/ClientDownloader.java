@@ -27,6 +27,7 @@ public class ClientDownloader {
      * from.
      */
     public static final String CONFIG_LINK = "http://www.runescape.com/k=3/l=0/jav_config.ws";
+    
     /**
      * the Runescape gamepack. Is null unless config was downloaded.
      */
@@ -58,7 +59,7 @@ public class ClientDownloader {
             configURL = new URL(CONFIG_LINK);
             parameters = new HashMap<>(32);
         } catch (MalformedURLException e) {
-            InternalError err = new InternalError("Invalid Default Config");
+            InternalError err = new InternalError("Invalid Config");
             err.initCause(e);
             throw err;
         }
@@ -70,6 +71,10 @@ public class ClientDownloader {
      */
     public String getCodebase() {
         return codebase;
+    }
+    
+    public String getDownloadLink() {
+        return codebase + gamepack;
     }
 
     /**

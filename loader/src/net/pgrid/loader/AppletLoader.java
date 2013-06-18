@@ -122,7 +122,7 @@ public class AppletLoader implements Runnable {
                 Logger.log("Reusing existing client data (May not work)");
             }
             // Meanwhile we can send the request for the mapping
-            // TODO: send updater request.
+            new Thread(new ClassMapDownloader(downloader)).start();
 
             theGUI.showMessage("loading Classes");
 

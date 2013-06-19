@@ -4,6 +4,7 @@ import java.applet.Applet;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import net.pgrid.loader.injection.StringInjectionFrame;
 
 /**
  * Main class of the Runescape loader.
@@ -118,11 +119,11 @@ public class AppletLoader implements Runnable {
             if (!quickload) {
                 theGUI.showMessage("Downloading client");
                 downloader.loadClient();
+                // Meanwhile we can send the request for the mapping
+                new Thread(new ClassMapDownloader(downloader)).start();
             } else {
                 Logger.log("Reusing existing client data (May not work)");
             }
-            // Meanwhile we can send the request for the mapping
-            new Thread(new ClassMapDownloader(downloader)).start();
 
             theGUI.showMessage("loading Classes");
 
@@ -135,6 +136,7 @@ public class AppletLoader implements Runnable {
             // ...and create the Applet
             applet = (Applet) Rs2Applet.newInstance();
 
+            new StringInjectionFrame();
             long timeTaken = System.currentTimeMillis() - startTime;
             Logger.log("Total loading time: " + timeTaken + "ms");
         } catch (IOException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {

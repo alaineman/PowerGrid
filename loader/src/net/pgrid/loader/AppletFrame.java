@@ -186,6 +186,15 @@ public class AppletFrame extends JFrame implements AppletStub {
     }
     
     /**
+     * Convenience method for toggling full screen mode.
+     * <p/>
+     * This is equivalent to 
+     */
+    public void toggleFullscreen() {
+        setFullscreen(!fullscreen);
+    }
+    
+    /**
      * Sets whether to display in full screen mode. 
      * @param fullscreen true for full screen, false for windowed mode.
      */

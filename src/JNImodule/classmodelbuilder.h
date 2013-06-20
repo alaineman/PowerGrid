@@ -16,11 +16,14 @@ namespace jni {
    */
   class ClassModelBuilder {
     private:
+      short reversion;
+      QString gamepack;
       QFile file;
-
       QMap<QString, JNIClass*> mappings;
+      QMap<QString, long> constants;
 
     public:
+
       /**
        * @brief creates a new ClassModelBuilder
        * @param source the source containing the mapping.
@@ -32,6 +35,9 @@ namespace jni {
        * @return a QMap containing all mapped JNIClass objects.
        */
       QMap<QString, JNIClass*> ParseFile();
+
+      short getReversion();
+      QString getGamepack();
   };
 
 }

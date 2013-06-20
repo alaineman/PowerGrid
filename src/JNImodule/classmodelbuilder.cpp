@@ -18,15 +18,47 @@ namespace jni {
     if (!file.isOpen()) {
       file.open(QIODevice::ReadOnly);
     }
-    qWarning("Calling unimplemented function");
-    // implementation here depends on representation of data in input file
-    // AKA it is dependant on updater implementation
+    QByteArray bytedump = file.readAll();
+    if(bytedump.isNull() || bytedump.isEmpty() || bytedump.size()<4){
+        throw logic_error("invalid file");
+    }
 
-    // TODO: create ParseFile() function based on updater output format
+    int indextracker = 0;
 
-    file.close();
+    reversion = (short)((bytedump[indextracker]) << 8) + (short)(bytedump[indextracker++]);
 
-    return mappings;
+    int bytelenght = (int) bytedump[indextracker++];
+    if(bytedump.size()<=bytedump[indextracker]){
+        throw logic_error("invalid file");
+    }
+    QByteArray gamepack_bytes = QByteArray(bytelenght, NULL); //FIX THIS
+    for(int i = 0; i<bytelenght; i++){
+        gamepack_bytes[i]=bytedump[i+indextracker];
+        indextracker++;
+    }
+    const char* cString = gamepack_bytes.constData();
+    gamepack = QString::fromUtf8(cString);
+
+    //Implement while loop and find way to ParseString as method
+    while( bytedump.size()>indextracker && bytedump[indextracker]==0 ){
+
+    switch ( bytedump[indextracker++] ){
+        case 0: //class
+        break;
+        case 1: //method
+        break;
+        case 2: //constant
+        break;
+
+        default: throw logic_error("invalid file - parsing error");
+    }
+    indextracker++;
   }
+     file.close();
+     return mappings;
+  }
+
+
+
 
 }

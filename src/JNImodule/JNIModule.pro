@@ -38,7 +38,7 @@ HEADERS += \
     jniexception.h \
     jniclass.h \
     javaenv.h \
-    classmodelbuilder.h
+    classmodelbuilder.h \
 
 SOURCES += \
     jnivalue.cpp \
@@ -47,7 +47,7 @@ SOURCES += \
     jnimethod.cpp \
     jniclass.cpp \
     javaenv.cpp \
-    classmodelbuilder.cpp
+    classmodelbuilder.cpp \
 
 OTHER_FILES = includeJNI.pro
 

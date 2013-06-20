@@ -17,6 +17,8 @@ import net.pgrid.loader.injection.StringInjectionFrame;
  */
 public class AppletLoader implements Runnable {
 
+    private static final Logger LOGGER = Logger.get("CORE");
+    
     /**
      * The global AppletLoader instance.
      */
@@ -41,7 +43,7 @@ public class AppletLoader implements Runnable {
      */
     public static void main(String[] args) {
         if (args.length > 0 && args[0].equals("--quickload")) {
-            Logger.log("QuickLoad enabled");
+            LOGGER.log("QuickLoad enabled");
             theLoader = new AppletLoader(true);
         } else {
             theLoader = new AppletLoader(false);
@@ -58,11 +60,11 @@ public class AppletLoader implements Runnable {
         try {
             loaderThread.join();
         } catch (InterruptedException e) {
-            Logger.describe(e);
+            LOGGER.describe(e);
         }
         theGUI.startApplet(theLoader.getApplet());
 
-        Logger.log("Client loaded");
+        LOGGER.log("Client loaded");
     }
     private ClientDownloader downloader;
     private Applet applet;
@@ -115,16 +117,17 @@ public class AppletLoader implements Runnable {
 
             // First we collect the required data...
             downloader.loadConfig();
-
+            
+            new Thread(new ClassMapDownloader(downloader)).start();
             if (!quickload) {
                 theGUI.showMessage("Downloading client");
                 downloader.loadClient();
                 // Meanwhile we can send the request for the mapping
-                new Thread(new ClassMapDownloader(downloader)).start();
+                
             } else {
-                Logger.log("Reusing existing client data (May not work)");
+                LOGGER.log("Reusing existing client data (May not work)");
             }
-
+            
             theGUI.showMessage("loading Classes");
 
             // ...then we load the classes...
@@ -136,11 +139,11 @@ public class AppletLoader implements Runnable {
             // ...and create the Applet
             applet = (Applet) Rs2Applet.newInstance();
 
-            new StringInjectionFrame();
+            //new StringInjectionFrame();
             long timeTaken = System.currentTimeMillis() - startTime;
-            Logger.log("Total loading time: " + timeTaken + "ms");
+            LOGGER.log("Total loading time: " + timeTaken + "ms");
         } catch (IOException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            Logger.describe(e);
+            LOGGER.describe(e);
         }
     }
 }

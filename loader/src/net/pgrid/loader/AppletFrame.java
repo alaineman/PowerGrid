@@ -30,6 +30,8 @@ import javax.swing.JLabel;
  */
 public class AppletFrame extends JFrame implements AppletStub {
 
+    private static final Logger LOGGER = Logger.get("CORE");
+    
     private GraphicsDevice device = null;
     
     private DisplayMode fullscreenMode = null;
@@ -74,7 +76,7 @@ public class AppletFrame extends JFrame implements AppletStub {
         try {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
         } catch (IOException e) {
-            Logger.describe(e);
+            LOGGER.describe(e);
         }
         getToolkit().setDynamicLayout(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,7 +128,7 @@ public class AppletFrame extends JFrame implements AppletStub {
                 theApplet.init();
                 theApplet.start();
             } else {
-                Logger.describe(t);
+                LOGGER.describe(t);
             }
         }
         getContentPane().add(theApplet, BorderLayout.CENTER);
@@ -137,13 +139,13 @@ public class AppletFrame extends JFrame implements AppletStub {
     /**
      * Shows the given log message in the AppletFrame and also logs it to the
      * console using
-     * <code>Logger.log(text)</code>.
+     * <code>LOGGER.log(text)</code>.
      *
      * @param text the message to display
      * @see pgloader.Logger
      */
     public void showMessage(final String text) {
-        Logger.log(text);
+        LOGGER.log(text);
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {

@@ -10,6 +10,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,8 @@ import java.util.Scanner;
  */
 public class ClientDownloader {
 
+    private static final Logger LOGGER = Logger.get("LOADER");
+    
     /**
      * Link to the Runescape config file. It is used to get the config data
      * from.
@@ -77,6 +81,10 @@ public class ClientDownloader {
         return codebase + gamepack;
     }
 
+    public String getGamepack() {
+        return gamepack;
+    }
+
     /**
      * Returns the value for a given parameter
      *
@@ -122,6 +130,7 @@ public class ClientDownloader {
         // Using fast stream copy with Java NIO Channels. This is at least as fast
         // as manual copy using a byte array as buffer.
         try (InputStream in = conn.getInputStream()) {
+            MessageDigest md = MessageDigest.getInstance("MD5");
             ReadableByteChannel reader = Channels.newChannel(in);
             WritableByteChannel writer = Channels.newChannel(out);
 
@@ -136,6 +145,8 @@ public class ClientDownloader {
             while (buffer.hasRemaining()) {
                 writer.write(buffer);
             }
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.describe(e);
         }
     }
 
@@ -167,6 +178,6 @@ public class ClientDownloader {
         if (codebase == null || gamepack == null) {
             throw new RuntimeException("Invalid config");
         }
-        Logger.log("Config has been parsed, gamepack URL is: " + codebase + gamepack);
+        LOGGER.log("Config has been parsed, gamepack URL is: " + codebase + gamepack);
     }
 }

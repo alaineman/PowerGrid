@@ -9,7 +9,7 @@ using namespace jni;
 
 namespace cache{
 
-  typedef unsigned char coll_flag;
+  typedef jbyte coll_flag;
 
   class Sector {
     private:
@@ -19,11 +19,11 @@ namespace cache{
     public:
       ~Sector();
       JNIObject* getObject();
-      byte getObjectCount();
+      jbyte getObjectCount();
       void setObject();
       void removeCollisionMap(int z);
-      byte getCollision(byte x,byte y, int z);
-      void setCollision(byte x,byte y, int z, byte value);
+      jbyte getCollision(jbyte x,jbyte y, int z);
+      void setCollision(jbyte x,jbyte y, int z, jbyte value);
       void ensurePlane(int z);
   };
 }

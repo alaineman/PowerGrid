@@ -11,21 +11,21 @@ WorldData::~WorldData(){
 
 }
 
-byte WorldData::getCollisionFlag(Point p){
+jbyte WorldData::getCollisionFlag(Point p){
     return getCollisionFlag(p.GetX(),p.GetY(),p.GetPlane());
 }
 
-byte WorldData::getCollisionFlag(int x, int y){
+jbyte WorldData::getCollisionFlag(int x, int y){
     return getCollisionFlag(x,y,0);
 }
 
-byte WorldData::getCollisionFlag(int x, int y, int z){
+jbyte WorldData::getCollisionFlag(int x, int y, int z){
     Sector* s = getSector(x,y);
     if(s == NULL){
         return 0;
     }
-    byte localX = (byte) x%64;
-    byte localY = (byte) y%64;
+    jbyte localX = (jbyte) x%64;
+    jbyte localY = (jbyte) y%64;
     return s->getCollision(localX,localY,z);
 }
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>
+	<string>PowerGrid</string>
+	<key>CFBundleIdentifier</key>
+	<string>net.pgrid.PowerGrid</string>
+	<key>CFBundleVersion</key>
+	<string>0.2</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>
+	<key>CFBundleExecutable</key>
+	<string>PowerGrid</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>pgrd</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleIconFile</key>
+	<string>PowerGrid.icns</string>
+	<key>Java</key>
+	<dict>
+		<key>Arguments</key>
+		<string>$JAVAROOT/</string>
+		<key>MainClass</key>
+		<string>net.pgrid.loader.AppletLoader</string>
+		<key>JVMVersion</key>
+		<string>1.7+</string>
+		<key>ClassPath</key>
+		<string>$JAVAROOT/PowerGridLoader.jar</string>
+		<key>VMOptions</key>
+		<string>-Xmx256m -Xss2m</string>
+	</dict>
+</dict>
+</plist>

@@ -18,10 +18,10 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += \
-    world \
     JNIModule \
+    world \
     GUImodule \
     Cachemodule \
     Injectionmodule \
-    Monitormodule \
-    AImodule \
+#    Monitormodule \
+#    AImodule \

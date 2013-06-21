@@ -4,7 +4,6 @@ import java.applet.Applet;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import net.pgrid.loader.injection.StringInjectionFrame;
 
 /**
  * Main class of the Runescape loader.
@@ -142,7 +141,7 @@ public class AppletLoader implements Runnable {
             //new StringInjectionFrame();
             long timeTaken = System.currentTimeMillis() - startTime;
             LOGGER.log("Total loading time: " + timeTaken + "ms");
-        } catch (IOException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             LOGGER.describe(e);
         }
     }

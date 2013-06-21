@@ -9,8 +9,8 @@ isEmpty(JNI_BASE): JNI_BASE = $$PWD/../../External/JNI
 
 # Find the appropriate OS name for the platform-dependent include.
 win32:      OS_NAME     = win32
-else:unix:  OS_NAME     = unix
 else:macx:  OS_NAME     = darwin
+else:unix:  OS_NAME     = unix
 else:       error ("Unsupported OS")
 
 # verify the directories and files exist and give an error when it doesn't
@@ -18,7 +18,7 @@ else:       error ("Unsupported OS")
 !exists($$JNI_BASE/include):           error("Missing JNI header directory")
 !exists($$JNI_BASE/include/$$OS_NAME): error("Target OS has no platform-dependent JNI headers")
 !exists($$JNI_BASE/lib):               error("Missing JNI lib directory")
-macx {} # Mac OS has the JavaVM framework built-in and as such needs no additional files.
+macx {}
 else: win32 {
     # On windows, verify the dll and lib file exist for linking.
     !exists($$JNI_BASE/lib/jvm.dll):   error("(Windows) Missing jvm.dll")

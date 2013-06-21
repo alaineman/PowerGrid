@@ -49,47 +49,45 @@ public class ClassMapDownloader implements Runnable {
         try {
             Socket sock = new Socket("205.234.152.103", 6739);
             LOGGER.log("Connection established");
-            
-            OutputStream out = sock.getOutputStream();
-            InputStream in = sock.getInputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
-            
-            out.write(0x0);
-            out.write(0x3);
-            
-            String hString = bytesToHex(hash);
-            writer.append(hString + "\n");
-            LOGGER.log("Client hash: " + hString);
-            writer.flush();
-            
-            int response = in.read();
-
-            if (response == 1) {
-                LOGGER.log("Keys not required, Collecting data");
-            } else if (response == 0) {
-                LOGGER.log("Sending client encryption keys");
-                String gamepackURL = dl.getGamepack();
-                writer.append(gamepackURL + "\n");
-                String key_m1 = dl.getParameter("-1");
-                writer.append(key_m1 + "\n");
-                String key_0 = dl.getParameter("0");
-                writer.append(key_0 + "\n");
-
+            try (OutputStream out = sock.getOutputStream(); 
+                   InputStream in = sock.getInputStream()) {
+                
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
+                
+                out.write(0x0);
+                out.write(0x3);
+                
+                String hString = bytesToHex(hash);
+                writer.append(hString + "\n");
+                LOGGER.log("Client hash: " + hString);
                 writer.flush();
-                LOGGER.log("Keys sent, waiting for response");
-            } else {
-                LOGGER.log("Got invalid response: " + response);
-                return;
+                
+                int response = in.read();
+
+                if (response == 1) {
+                    LOGGER.log("Keys not required, Collecting data");
+                } else if (response == 0) {
+                    LOGGER.log("Sending client encryption keys");
+                    String gamepackURL = dl.getGamepack();
+                    writer.append(gamepackURL + "\n");
+                    String key_m1 = dl.getParameter("-1");
+                    writer.append(key_m1 + "\n");
+                    String key_0 = dl.getParameter("0");
+                    writer.append(key_0 + "\n");
+
+                    writer.flush();
+                    LOGGER.log("Keys sent, waiting for response");
+                } else {
+                    LOGGER.log("Got invalid response: " + response);
+                    return;
+                }
+                
+                FileOutputStream fos = new FileOutputStream("mapdata.hex");
+                FileChannel outChannel = fos.getChannel();
+                ReadableByteChannel inChannel = Channels.newChannel(in);
+                long amountOfBytes = outChannel.transferFrom(inChannel, 0, Long.MAX_VALUE);
+                LOGGER.log("mapData stored (" + amountOfBytes + " bytes)");
             }
-            
-            FileOutputStream fos = new FileOutputStream("mapdata.hex");
-            FileChannel outChannel = fos.getChannel();
-            ReadableByteChannel inChannel = Channels.newChannel(in);
-            long amountOfBytes = outChannel.transferFrom(inChannel, 0, Long.MAX_VALUE);
-            LOGGER.log("mapData stored (" + amountOfBytes + " bytes)");
-            
-            in.close();
-            out.close();
             
             ready = true;
         } catch (IOException e) {

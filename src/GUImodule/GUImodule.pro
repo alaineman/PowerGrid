@@ -20,7 +20,10 @@ DESTDIR     = build/
 OBJECTS_DIR = build/
 
 win32:     RC_FILE = powergrid.rc
-else:macx: ICON    = images/PowerGrid.icns
+else:macx {
+  ICON    = images/PowerGrid.icns
+  QMAKE_INFO_PLIST = PowerGrid.plists
+}
 
 #------------------------------------------------
 # The files in this project

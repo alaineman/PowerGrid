@@ -4,7 +4,7 @@ namespace cache {
 
 Sector::~Sector(){
     while (! collision_maps.empty()) {
-        byte* elem = collision_maps.back();
+        jbyte* elem = collision_maps.back();
         collision_maps.pop_back();
         delete elem;
     }
@@ -27,35 +27,35 @@ JNIObject* Sector::getObject(){
 void Sector::setObject(){
 }
 
-byte Sector::getObjectCount(){
+jbyte Sector::getObjectCount(){
     return objects.size();
 }
 
 void Sector::removeCollisionMap(int z){
     int index = static_cast<int>(getIndexForPlane(z));
     while(collision_maps.size()>= index){
-        byte* elem = collision_maps.back();
+        jbyte* elem = collision_maps.back();
         delete elem;
         collision_maps.pop_back();
     }
 }
 
-byte Sector::getCollision(byte x,byte y, int z){    
+jbyte Sector::getCollision(jbyte x,jbyte y, int z){
     ensurePlane(z);
-    byte* map = collision_maps.at(z);
+    jbyte* map = collision_maps.at(z);
     return map[64*x + y];
 }
 
-void Sector::setCollision(byte x,byte y, int z, byte value){
+void Sector::setCollision(jbyte x,jbyte y, int z, jbyte value){
     ensurePlane(z);
-    byte* map = collision_maps.at(z);
+    jbyte* map = collision_maps.at(z);
     map[64*x + y] = value;
 }
 
 void Sector::ensurePlane(int z){
     int index = static_cast<int>(getIndexForPlane(z));
     while(collision_maps.size()<=index){
-        collision_maps.push_back(new byte[64*64]);
+        collision_maps.push_back(new jbyte[64*64]);
     }
 }
 

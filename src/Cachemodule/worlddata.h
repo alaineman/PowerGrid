@@ -14,9 +14,9 @@ namespace cache {
       QHash<int, Sector*> sectors;
     public:
       ~WorldData();
-      byte getCollisionFlag(Point p);
-      byte getCollisionFlag(int x, int y);
-      byte getCollisionFlag(int x, int y, int z);
+      jbyte getCollisionFlag(Point p);
+      jbyte getCollisionFlag(int x, int y);
+      jbyte getCollisionFlag(int x, int y, int z);
       Sector* getSector(int x, int y);
       Sector* getSector(Point p);
       Sector* allocate(int sectorX, int sectorY);

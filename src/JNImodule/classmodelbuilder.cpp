@@ -27,12 +27,12 @@ namespace jni {
 
     reversion = (short)((bytedump[indextracker]) << 8) + (short)(bytedump[indextracker++]);
 
-    int bytelenght = (int) bytedump[indextracker++];
+    int bytelength = (int) bytedump[indextracker++];
     if(bytedump.size()<=bytedump[indextracker]){
         throw logic_error("invalid file");
     }
-    QByteArray gamepack_bytes = QByteArray(bytelenght, NULL); //FIX THIS
-    for(int i = 0; i<bytelenght; i++){
+    QByteArray gamepack_bytes = QByteArray(bytelength, '\0'); //FIX THIS
+    for(int i = 0; i<bytelength; i++){
         gamepack_bytes[i]=bytedump[i+indextracker];
         indextracker++;
     }
@@ -40,7 +40,7 @@ namespace jni {
     gamepack = QString::fromUtf8(cString);
 
     //Implement while loop and find way to ParseString as method
-    while( bytedump.size()>indextracker && bytedump[indextracker]==0 ){
+    while( bytedump.size()>indextracker && bytedump[indextracker]==(char)(0) ){
 
     switch ( bytedump[indextracker++] ){
         case 0: //class

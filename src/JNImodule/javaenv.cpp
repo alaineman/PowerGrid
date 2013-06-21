@@ -42,41 +42,24 @@ namespace jni {
       throw logic_error("JVM already running.");
     }
 
-    QString classpath("-Djava.class.path=");
-#ifdef Q_OS_WIN
-    // In the case of Windows, the jagexappletviewer jar file is accessible through the
-    // native Runescape loader and can be loaded from there.
-    classpath.append(QDir::homePath()).append("/jagexcache/jagexlauncher/bin/");
-#endif
-    classpath.append("jagexappletviewer.jar");
-
-    // We need to store the intermediate QByteArray, since the char* is not copied and as such
-    // the pointer becomes invalid after the data() function returns.
-    QByteArray cpArray = classpath.toUtf8();
-
     JavaVMInitArgs vmargs;
     vmargs.version            = JNI_VERSION_1_6;
     vmargs.ignoreUnrecognized = JNI_FALSE;
 
 #ifdef DEBUG
-    int nOptions = 10;
+    int nOptions = 4;
 #else
-    int nOptions = 9;
+    int nOptions = 3;
 #endif
-    JavaVMOption options[nOptions];
-    options[0].optionString  = cpArray.data();
-    options[1].optionString  = const_cast<char*>("-Dsun.java2d.noddraw=true");
-    options[2].optionString  = const_cast<char*>("-Dcom.jagex.config=http://www.runescape.com/k=3/l=$(language:0)/jav_config.ws");
-    options[3].optionString  = const_cast<char*>("-Xmx256m");
-    options[4].optionString  = const_cast<char*>("-Xss2m");
-    options[5].optionString  = const_cast<char*>("-XX:CompileThreshold=1500");
-    options[6].optionString  = const_cast<char*>("-Xincgc");
-    options[7].optionString  = const_cast<char*>("-XX:+UseConcMarkSweepGC");
-    options[8].optionString  = const_cast<char*>("-XX:+UseParNewGC");
 
+    JavaVMOption options[nOptions];
+    options[0].optionString  = const_cast<char*>("-Djava.class.path=PowerGridLoader.jar");
+    options[1].optionString  = const_cast<char*>("-Xmx256m");
+    options[2].optionString  = const_cast<char*>("-Xss2m");;
 #ifdef DEBUG
-    options[9].optionString  = const_cast<char*>("-Xcheck:jni");
+    options[3].optionString  = const_cast<char*>("-Xcheck:jni");
 #endif
+
     vmargs.nOptions = nOptions;
     vmargs.options = options;
     JNIEnv* env = NULL;
@@ -89,31 +72,32 @@ namespace jni {
       throw jni_error("Failed to create environment");
     }
 
-    // We redirect log traffic from System.out and System.err to a logfile instead, to reduce the spam in the console window
-    // Runescape tends to print "Received command: _12" and similar all the time.
+    // We redirect log traffic from System.err to a logfile instead, to prevent the usual Runescape Exception
+    // stack traces from showing up in the console window.
     JNIClass* system = GetClass("java/lang/System");
-    if (system == NULL) throw jni_error("failed to get System class");
-    jclass s = system->GetJNIObject();
-    jfieldID out = env->GetStaticFieldID(s, "out", "Ljava/io/PrintStream;");
-    jfieldID err = env->GetStaticFieldID(s, "err", "Ljava/io/PrintStream;");
-    if (out == NULL || err == NULL) throw jni_error("failed to get System field");
+    if (system != NULL) {
+      jclass s = system->GetJNIObject();
+      jfieldID err = env->GetStaticFieldID(s, "err", "Ljava/io/PrintStream;");
 
-    JNIClass* printstream = GetClass("java/io/PrintStream");
-    if (printstream == NULL) throw jni_error("failed to get PrintStream class");
-    jclass ps = printstream->GetJNIObject();
-    jmethodID initPrintStream = env->GetMethodID(ps, "<init>", "(Ljava/lang/String;)V");
-    jstring file = env->NewStringUTF("runescape.log");
-    jobject newout = env->NewObject(ps, initPrintStream, file);
-    env->SetStaticObjectField(s, out, newout);
-    env->SetStaticObjectField(s, err, newout);
+      if (err != NULL) {
+        JNIClass* printstream = GetClass("java/io/PrintStream");
 
+        if (printstream != NULL) {
+          jclass ps = printstream->GetJNIObject();
+          jmethodID initPrintStream = env->GetMethodID(ps, "<init>", "(Ljava/lang/String;)V");
+          jstring file = env->NewStringUTF("runescape.log");
+          jobject newout = env->NewObject(ps, initPrintStream, file);
+          env->SetStaticObjectField(s, err, newout);
+        }
+      }
+    }
     // Now we start the Jagex Applet Viewer's main class.
-    jclass c = env->FindClass("jagexappletviewer");
-    if (c == NULL) qFatal("jagexappletviewer class not found");
+    jclass c = env->FindClass("net.pgrid.loader.AppletLoader");
+    if (c == NULL) qFatal("Cannot start client: Main class not found, does PowerGridLoader.jar exist?");
     jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
-    if (main == NULL) qFatal("main method not found");
+    if (main == NULL) qFatal("Cannot start client: main method not found");
 
-    jobjectArray args = env->NewObjectArray(1, env->FindClass("java/lang/String"), env->NewStringUTF("runescape"));
+    jobjectArray args = env->NewObjectArray(0, env->FindClass("java/lang/String"), NULL);
     if (args == NULL) qFatal("Failed to create argument array");
 
     env->CallStaticVoidMethod(c, main, args);

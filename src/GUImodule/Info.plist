@@ -15,7 +15,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
-	<string>pgrd</string>
+        <string>PGRD</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleIconFile</key>
@@ -29,7 +29,7 @@
 		<key>JVMVersion</key>
 		<string>1.7+</string>
 		<key>ClassPath</key>
-		<string>$JAVAROOT/PowerGridLoader.jar</string>
+                <string>PowerGridLoader.jar</string>
 		<key>VMOptions</key>
 		<string>-Xmx256m -Xss2m</string>
 	</dict>

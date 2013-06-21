@@ -20,8 +20,8 @@ CONFIG += ordered
 SUBDIRS += \
     JNIModule \
     world \
-    GUImodule \
     Cachemodule \
     Injectionmodule \
+    GUImodule \
 #    Monitormodule \
 #    AImodule \

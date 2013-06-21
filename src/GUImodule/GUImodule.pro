@@ -20,9 +20,9 @@ DESTDIR     = build/
 OBJECTS_DIR = build/
 
 win32:     RC_FILE = powergrid.rc
-else:macx {
-  ICON    = images/PowerGrid.icns
-  QMAKE_INFO_PLIST = PowerGrid.plists
+else:macx  {
+    ICON = powergrid.icns
+    QMAKE_INFO_PLIST = Info.plist
 }
 
 #------------------------------------------------
@@ -33,7 +33,7 @@ SOURCES     = main.cpp \
 HEADERS     = mainwindow.h
 FORMS       = mainwindow.ui
 RESOURCES   = resources.qrc
-OTHER_FILES = powergrid.rc
+OTHER_FILES = powergrid.rc Info.plist
 
 #------------------------------------------------
 # The subprojects this project depends on

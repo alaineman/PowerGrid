@@ -42,6 +42,10 @@ namespace jni {
       throw logic_error("JVM already running.");
     }
 
+    if (!QFile("PowerGridLoader.jar").exists()) {
+        qFatal("Cannot find loader jar file, verify PowerGridLoader.jar is located in the application's working directory.");
+    }
+
     JavaVMInitArgs vmargs;
     vmargs.version            = JNI_VERSION_1_6;
     vmargs.ignoreUnrecognized = JNI_FALSE;
@@ -92,8 +96,8 @@ namespace jni {
       }
     }
     // Now we start the Jagex Applet Viewer's main class.
-    jclass c = env->FindClass("net.pgrid.loader.AppletLoader");
-    if (c == NULL) qFatal("Cannot start client: Main class not found, does PowerGridLoader.jar exist?");
+    jclass c = env->FindClass("net/pgrid/loader/AppletLoader");
+    if (c == NULL) qFatal("Cannot start client: AppletLoader class not found");
     jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
     if (main == NULL) qFatal("Cannot start client: main method not found");
 

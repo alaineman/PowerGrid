@@ -29,8 +29,10 @@ else:macx  {
 # The files in this project
 #------------------------------------------------
 SOURCES     = main.cpp \
-              mainwindow.cpp
-HEADERS     = mainwindow.h
+              mainwindow.cpp \
+    descriptivecheckbox.cpp
+HEADERS     = mainwindow.h \
+    descriptivecheckbox.h
 FORMS       = mainwindow.ui
 RESOURCES   = resources.qrc
 OTHER_FILES = powergrid.rc Info.plist

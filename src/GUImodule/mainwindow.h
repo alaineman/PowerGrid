@@ -5,7 +5,7 @@
 #include <QMainWindow>
 #include <QString>
 
-#define POWERGRID_VERSION QStringLiteral("0.1")
+#define POWERGRID_VERSION QStringLiteral("0.2")
 
 namespace Ui {
   class MainWindow;
@@ -15,8 +15,7 @@ typedef enum {
   DISABLED, LOW, HIGH
 } ActivityLevel;
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
   Q_OBJECT
   
 public:

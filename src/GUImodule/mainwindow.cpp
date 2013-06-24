@@ -6,6 +6,11 @@ MainWindow::MainWindow(QWidget *parent) :
             ui(new Ui::MainWindow) {
 
   ui->setupUi(this);
+
+  ui->JNIsafetyCheck->setDescription("Enabled JNI safety checks. Prevents weird error messages "
+                                     "and sudden crashes, but also slows down interaction between PowerGrid and Runescape a lot.\n\n"
+                                     "If you are unsure, leave this option unchecked.");
+  connect(ui->JNIsafetyCheck, SIGNAL(descriptionSet(QString)), ui->SettingDescription, SLOT(setText(QString)));
 }
 
 MainWindow::~MainWindow() {

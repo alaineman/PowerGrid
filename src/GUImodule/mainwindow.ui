@@ -49,7 +49,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="OverviewTab">
      <attribute name="title">
@@ -343,102 +343,115 @@
         <x>10</x>
         <y>30</y>
         <width>291</width>
-        <height>81</height>
+        <height>71</height>
        </rect>
       </property>
       <property name="title">
-       <string>Core Settings</string>
+       <string>Safety</string>
       </property>
-      <widget class="QCheckBox" name="JNIsafetyCheck">
+      <widget class="QWidget" name="">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>141</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>JNI safety checks</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="Performance">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>120</y>
-        <width>291</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Performance</string>
-      </property>
-      <widget class="QWidget" name="layoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
+         <x>11</x>
+         <y>21</y>
          <width>271</width>
-         <height>51</height>
+         <height>42</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QCheckBox" name="mappingCheck">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="DescriptiveCheckBox" name="JNIsafetyCheck">
           <property name="text">
-           <string>Continuous mapping</string>
+           <string>JNI safety checks</string>
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QCheckBox" name="mouseCheck">
+        <item row="0" column="1">
+         <widget class="DescriptiveCheckBox" name="accManagementCheck">
+          <property name="text">
+           <string>Account management</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="DescriptiveCheckBox" name="mouseCheck">
           <property name="text">
            <string>Realistic mouse</string>
           </property>
          </widget>
         </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="Security">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>220</y>
-        <width>291</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Security</string>
-      </property>
-      <widget class="QWidget" name="layoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>271</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QCheckBox" name="accManagementCheck">
-          <property name="text">
-           <string>Enable smart account management</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="cacheClearCheck">
+        <item row="1" column="1">
+         <widget class="DescriptiveCheckBox" name="cacheClearCheck">
           <property name="text">
            <string>Clear cache on close</string>
           </property>
          </widget>
         </item>
        </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="Performance">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>110</y>
+        <width>291</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Performance</string>
+      </property>
+      <widget class="DescriptiveCheckBox" name="mappingCheck">
+       <property name="geometry">
+        <rect>
+         <x>11</x>
+         <y>22</y>
+         <width>120</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Continuous mapping</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="Security">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>240</y>
+        <width>291</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Description</string>
+      </property>
+      <widget class="QLabel" name="SettingDescription">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>271</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="whatsThis">
+        <string>Hover over a setting to see its description here</string>
+       </property>
+       <property name="accessibleName">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
       </widget>
      </widget>
     </widget>
@@ -451,6 +464,13 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>DescriptiveCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>descriptivecheckbox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

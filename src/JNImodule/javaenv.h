@@ -5,6 +5,7 @@
 #include "jnimethod.h"
 #include <QMap>
 #include <QHash>
+#include <QtCore>
 
 namespace jni {
   using namespace std;
@@ -24,19 +25,22 @@ namespace jni {
    * JNI with such arguments.
    */
   class JavaEnv : public QObject {
+    Q_OBJECT
   private:
     Q_DISABLE_COPY(JavaEnv)
 
     static JavaEnv* theEnvironment;
 
     /// Constructs a new JavaEnv object. Made private to ensure only one instance exists.
-    JavaEnv();
+    JavaEnv(QObject* parent = NULL);
 
     JavaVM* jvm;
     jboolean running;
     QMap<QThread*, JNIEnv*> environments;
     QMap<QString, JNIClass*> classes;
   public:
+
+    virtual ~JavaEnv() {}
 
     /// Returns the global JavaEnv instance.
     static JavaEnv* instance() { return theEnvironment; }

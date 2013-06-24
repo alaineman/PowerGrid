@@ -13,7 +13,7 @@ namespace jni {
 
   JavaEnv* JavaEnv::theEnvironment = NULL;
 
-  JavaEnv::JavaEnv() : QObject() {
+  JavaEnv::JavaEnv(QObject* parent) : QObject(parent) {
     running = JNI_FALSE;
     setObjectName("JavaEnvironment");
   }
@@ -112,6 +112,8 @@ namespace jni {
     }
 
     running = JNI_TRUE;
+
+    emit started();
   }
 
   // Get basic JNI element types

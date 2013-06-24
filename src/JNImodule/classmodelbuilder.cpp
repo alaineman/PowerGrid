@@ -13,7 +13,7 @@ namespace jni {
     }
   }
 
-  uint ClassModelBuilder::ParseFile() {
+  int ClassModelBuilder::ParseFile() {
     if (!file.isOpen()) {
       file.open(QIODevice::ReadOnly);
     }
@@ -50,7 +50,7 @@ namespace jni {
       indextracker++;
     }
     file.close();
-    return (uint) mappings.size();
+    return mappings.size();
   }
 
   QString ClassModelBuilder::parseString() {

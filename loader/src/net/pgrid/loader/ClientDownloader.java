@@ -12,7 +12,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -45,6 +44,10 @@ public class ClientDownloader {
      */
     private URL configURL;
     /**
+     * the codebase URL, is null unless requested.
+     */
+    private URL codebaseURL;
+    /**
      * Parameters of the
      * <code>Applet</code> as a Map. Empty if config was not downloaded.
      */
@@ -75,6 +78,20 @@ public class ClientDownloader {
      */
     public String getCodebase() {
         return codebase;
+    }
+    
+    public URL getCodeBaseUrl() {
+        if (codebase == null) {
+            return null;
+        }
+        if (codebaseURL == null) {
+            try {
+                codebaseURL = new URL(codebase);
+            } catch (MalformedURLException e) {
+                LOGGER.describe(e);
+            }
+        }
+        return codebaseURL;
     }
     
     public String getDownloadLink() {

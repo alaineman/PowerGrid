@@ -2,6 +2,7 @@ package net.pgrid.loader.injection.keyboard;
 
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.Window;
 import java.awt.event.KeyEvent;
 
 /**
@@ -12,7 +13,7 @@ import java.awt.event.KeyEvent;
  */
 public class AWTKeyInjector implements KeyInjector {
 
-    private Component target;
+    private Window target;
     private EventQueue queue;
     
     /**
@@ -56,7 +57,7 @@ public class AWTKeyInjector implements KeyInjector {
     }
 
     @Override
-    public void setTargetComponent(Component comp) {
+    public void setTargetComponent(Window comp) {
         target = comp;
         queue = target.getToolkit().getSystemEventQueue();
     }

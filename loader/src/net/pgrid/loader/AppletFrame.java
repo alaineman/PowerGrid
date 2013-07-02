@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
@@ -42,6 +43,8 @@ public class AppletFrame extends JFrame implements AppletStub {
     private JLabel label;
     private Applet theApplet = null;
     private ClientDownloader dloader = null;
+    
+    private AppletPainter painter = null;
 
     /**
      * Initializes the AppletFrame with the specified the ClientDownloader.
@@ -108,32 +111,37 @@ public class AppletFrame extends JFrame implements AppletStub {
 
     /**
      * Takes the provided Applet instance and starts it in this Window.
-     *
+     * <p/>
+     * If for any reason the Applet throws an Exception, this method tries to load the client using the AppletLoader's runSafe method.
      * @param a the Applet to start (should not be null)
+     * @return true if the Applet started without Exceptions, false if an Exception occurred.
+     * @throws NullPointerException if the provided Applet is null.
      */
-    public void startApplet(Applet a) {
+    public boolean startApplet(Applet a) {
         showMessage("Starting Applet");
         theApplet = a;
         theApplet.setStub(this);
         try {
+//            setIgnoreRepaint(true);
+//            painter = new AppletPainter();
+//            painter.start();
+            
             theApplet.init();
             theApplet.start();
+            getContentPane().add(theApplet, BorderLayout.CENTER);
+            getContentPane().remove(label);
+            revalidate();
+            LOGGER.log("Applet started");
+            return true;
         } catch (Throwable t) {
-            if (AppletLoader.theLoader.isQuickload()) {
-                // Might need to reload the client data...
-                AppletLoader.theLoader = new AppletLoader(false);
-                AppletLoader.theLoader.run();
-                theApplet = AppletLoader.theLoader.getApplet();
-                theApplet.setStub(this);
-                theApplet.init();
-                theApplet.start();
-            } else {
-                LOGGER.describe(t);
-            }
+            LOGGER.log("Failed to start client.");
+            LOGGER.describe(t);
+//            if (painter != null) {
+//                painter.done();
+//            }
+            setIgnoreRepaint(false);
+            return false;
         }
-        getContentPane().add(theApplet, BorderLayout.CENTER);
-        getContentPane().remove(label);
-        revalidate();
     }
 
     /**
@@ -160,26 +168,17 @@ public class AppletFrame extends JFrame implements AppletStub {
 
     @Override
     public final String getParameter(String name) {
-        String value = dloader.getParameter(name);
-        return value;
+        return dloader.getParameter(name);
     }
 
     @Override
     public final URL getDocumentBase() {
-        try {
-            return new URL(dloader.getCodebase());
-        } catch (MalformedURLException e) {
-            return null;
-        }
+        return dloader.getCodeBaseUrl();
     }
 
     @Override
     public final URL getCodeBase() {
-        try {
-            return new URL(dloader.getCodebase());
-        } catch (MalformedURLException e) {
-            return null;
-        }
+        return dloader.getCodeBaseUrl();
     }
 
     @Override
@@ -196,32 +195,84 @@ public class AppletFrame extends JFrame implements AppletStub {
         setFullscreen(!fullscreen);
     }
     
+    public boolean isFullScreenSupported() {
+        return device.isFullScreenSupported();
+    }
+    
     /**
      * Sets whether to display in full screen mode. 
      * @param fullscreen true for full screen, false for windowed mode.
      */
     public void setFullscreen(boolean fullscreen) {
         if (this.fullscreen != fullscreen) {
-            this.fullscreen = fullscreen;
             if (fullscreen) {
+                if (!isFullScreenSupported()) {
+                    LOGGER.log("Fullscreen mode not supported in this Virtual Machine");
+                    return;
+                }
                 setVisible(false);
                 dispose();
                 
                 setUndecorated(true);
                 device.setFullScreenWindow(this);
                 device.setDisplayMode(fullscreenMode);
+                setResizable(false);
             } else {
+                setResizable(true);
                 device.setDisplayMode(windowedMode);
+                device.setFullScreenWindow(null);
                 setVisible(false);
                 dispose();
                 
                 setUndecorated(false);
                 setSize(1056, 600);
+                
                 setLocationRelativeTo(null);
                 
                 setVisible(true);
             }
+            this.fullscreen = fullscreen;
             repaint();
         }
+    }
+    
+    public class AppletPainter extends Thread {
+        
+        private volatile boolean stopping;
+        
+        public AppletPainter() {
+            super("AppletPainer");
+            stopping = false;
+        }
+        
+        public void done() {
+            stopping = true;
+        }
+        
+        public void reset() {
+            if (isAlive()) {
+                done();
+                try {
+                    synchronized (this) {
+                        join();
+                    }
+                } catch (InterruptedException e) {}
+            }
+            stopping = false;
+        }
+        
+        @Override
+        public void run() {
+            while (!stopping) {
+                Graphics g = getBufferStrategy().getDrawGraphics();
+                try {
+                    theApplet.paint(g);
+                } catch (Throwable t) {
+                    LOGGER.describe(t);
+                }
+                g.dispose();
+            }
+        }
+        
     }
 }

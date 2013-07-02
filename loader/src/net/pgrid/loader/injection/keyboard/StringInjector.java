@@ -1,8 +1,15 @@
 package net.pgrid.loader.injection.keyboard;
 
-import java.awt.Component;
-import static java.awt.event.KeyEvent.*;
+import java.awt.AWTKeyStroke;
+import java.awt.Window;
+import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashMap;
+import javax.swing.KeyStroke;
+import net.pgrid.loader.Logger;
 
 /**
  * This class wraps a KeyInjector to write a String as a series of key presses.
@@ -15,8 +22,58 @@ import java.util.HashMap;
  */
 public class StringInjector implements KeyInjector {
     
+    private static Logger LOGGER = Logger.get("INJECT");
+    
     private KeyInjector injector;
-    private static HashMap<Character, Integer> charBindings;
+    private static HashMap<Character, KeyStroke> keyStrokes;
+    private static volatile boolean loadedCharDefinitions = false;
+    
+    public static synchronized KeyStroke getKeyStroke(char c) {
+        KeyStroke stroke = keyStrokes.get(c);
+        if (stroke == null) {
+            if (c >= 'a' && c <= 'z' || c >= '1' && c <= '0') {
+                stroke = KeyStroke.getKeyStroke(c);
+            } else if (c >= 'A' && c <= 'Z') {
+                stroke = KeyStroke.getKeyStroke(Character.toLowerCase(c), KeyEvent.SHIFT_DOWN_MASK);
+            } else {
+                // trial-and-error mode for finding the correct puntuation:
+                // first try simply the key itself.
+                stroke = KeyStroke.getKeyStroke(c);
+                
+                // if that fails, try to load the external definitions (in the keybindings file)
+                loadDefinitions();
+                
+            }
+            if (stroke != null) {
+                keyStrokes.put(c, stroke);
+            } else {
+                LOGGER.log("Cannot detect keystroke for character " + c);
+            }
+        }
+        return stroke;
+    }
+    
+    public static synchronized void loadDefinitions() {
+        if (!loadedCharDefinitions) {
+            URL u = ClassLoader.getSystemResource("net/pgrid/loader/injection/keyboard/keybindings");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(u.openStream()))) {
+                while (reader.ready()) {
+                    String line = reader.readLine();
+                    if (!line.isEmpty() && !line.startsWith("//")) {
+                        char c = line.charAt(0);
+                        KeyStroke kStroke = KeyStroke.getKeyStroke(line.substring(2).trim());
+                        if (kStroke != null) {
+                            keyStrokes.put(c, kStroke);
+                        } else {
+                            LOGGER.log("WARNING: definition for " + c + " is no valid KeyStroke");
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                LOGGER.describe(e);
+            }
+        }
+    }
     
     /**
      * Creates a new StringInjector that delegates to the given KeyInjector
@@ -25,26 +82,9 @@ public class StringInjector implements KeyInjector {
     public StringInjector(KeyInjector injector) {
         assert injector != null;
         this.injector = injector;
-        charBindings = new HashMap<>(128);
-    }
-    
-    /**
-     * Populates the map with the character data.
-     * <p/>
-     * This is called automatically by the typeString method when called for the 
-     * first time, but can be called on beforehand to save time later.
-     */
-    public static void populateMap() {
-        for (int code = 0x00; code <= 0x300; code++) {
-            char c = getCharFromKeyCode(code);
-            if (c != CHAR_UNDEFINED) {
-                charBindings.put(c, code);
-            }
+        if (keyStrokes == null) {
+            keyStrokes = new HashMap<>(128);
         }
-    }
-    
-    public static Integer getFromMap(Character c) {
-        return charBindings.get(c);
     }
 
     /**
@@ -58,18 +98,14 @@ public class StringInjector implements KeyInjector {
      * Types the given String using this StringInjector's KeyInjector.
      * <p/>
      * If there are undefined or unknown characters in the String, these may 
-     * not be typed correctly. Only the Shift-modifier is used and only for 
-     * alphabetic characters. All other characters are typed without modifier 
-     * keys.
+     * not be typed correctly. If a character cannot be typed, it is ignored and
+     * this method continues with the next character without any warning.
      * <p/>
      * This method simply calls typeChar for each character in the String.
      * <p/>
      * @param s the String to type
      */
     public void typeString(String s) {
-        if (charBindings.isEmpty()) {
-            populateMap();
-        }
         for (char c : s.toCharArray()) {
             typeChar(c);
         }
@@ -82,78 +118,18 @@ public class StringInjector implements KeyInjector {
      * implementation when they cannot type the character themselves.
      * <p/>
      * This method should not throw Exceptions when the character cannot be typed.
-     * Instead, this method should do nothing as to not interrupt the typing of the possible remainder of a String typed by the typeString method
+     * Instead, this method should do nothing as to not interrupt the typing of 
+     * the possible remainder of a String typed by the typeString method.
      * @param c the character to type.
      */
     public void typeChar(char c) {
-        Integer code = getFromMap(c);
-        int modifiers;
-        if (code == null) {
-            return;
+        KeyStroke stroke = getKeyStroke(c);
+        if (stroke != null) {
+            getInjector().keyTyped(
+                    stroke.getKeyChar(), 
+                    KeyEvent.getExtendedKeyCodeForChar(stroke.getKeyChar()), 
+                    stroke.getModifiers());
         }
-        if (Character.isUpperCase(c)) {
-            modifiers = SHIFT_DOWN_MASK;
-        } else {
-            modifiers = 0;
-        }
-        keyTyped(c, code, modifiers);
-    }
-    
-    public static char getCharFromKeyCode(int keyCode) {
-        if (keyCode >= VK_0 && keyCode <= VK_9 ||
-            keyCode >= VK_A && keyCode <= VK_Z) {
-            return (char)keyCode;
-        }
-        switch (keyCode) {
-            case VK_SPACE: return ' ';
-            case VK_TAB: return '\t';
-            case VK_ENTER: return '\n';
-                
-            case VK_COMMA: return ',';
-            case VK_PERIOD: return '.';
-            case VK_SLASH: return '/';
-            case VK_SEMICOLON: return ';';
-            case VK_EQUALS: return '=';
-            case VK_OPEN_BRACKET: return '[';
-            case VK_CLOSE_BRACKET: return ']';
-            case VK_BACK_SLASH: return '\\';
-                
-            case VK_MULTIPLY: return '*';
-            case VK_ADD: return '+';
-            case VK_SEPARATOR: return ',';
-            case VK_SUBTRACT: return '-';
-            case VK_DECIMAL: return '.';
-            case VK_DIVIDE: return '/';
-                
-            case VK_AMPERSAND: return '&';
-            case VK_ASTERISK: return '*';
-            case VK_QUOTE: return '\'';
-            case VK_QUOTEDBL: return '"';
-            case VK_LESS: return '<';
-            case VK_GREATER: return '>';
-            case VK_BRACELEFT: return '{';
-            case VK_BRACERIGHT: return '}';
-            case VK_AT: return '@';
-            case VK_COLON: return ':';
-            case VK_CIRCUMFLEX: return '^';
-            case VK_DOLLAR: return '$';
-            case VK_EURO_SIGN: return '€';
-            case VK_EXCLAMATION_MARK: return '!';
-            case VK_INVERTED_EXCLAMATION_MARK: return '¡';
-            case VK_LEFT_PARENTHESIS: return '(';
-            case VK_RIGHT_PARENTHESIS: return ')';
-            case VK_MINUS: return '-';
-            case VK_PLUS: return '+';
-            case VK_UNDERSCORE: return '_';
-            case VK_NUMBER_SIGN: return '#';
-        }
-        if (keyCode >= VK_NUMPAD0 && keyCode <= VK_NUMPAD9) {
-            return (char)(keyCode - VK_NUMPAD0 + '0');
-        }
-        if ((keyCode & 0x01000000) != 0) {
-            return (char)(keyCode ^ 0x01000000);
-        }
-        return CHAR_UNDEFINED;
     }
 
     @Override
@@ -172,7 +148,7 @@ public class StringInjector implements KeyInjector {
     }
 
     @Override
-    public void setTargetComponent(Component comp) {
+    public void setTargetComponent(Window comp) {
         getInjector().setTargetComponent(comp);
     }
 }

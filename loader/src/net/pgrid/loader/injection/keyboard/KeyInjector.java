@@ -1,13 +1,13 @@
 package net.pgrid.loader.injection.keyboard;
 
-import java.awt.Component;
+import java.awt.Window;
 
 /**
  * Interface for classes that can inject keystrokes into the virtual machine.
  * <p/>
  * Implementing classes need not be Thread-safe, since AWT/Swing event handling 
  * is not Thread-safe either. Implementing classes must assert that their 
- * implementations are re-entrant, since multiple events can happen at the 
+ * implementations are re-entrant, since multiple events may happen at the 
  * same time.
  * <p/>
  * @author Chronio
@@ -15,19 +15,22 @@ import java.awt.Component;
 public interface KeyInjector {
 
     /**
-     * Sets the target Component for future keystrokes.
+     * Sets the target Window for future keystrokes.
      * <p/>
      * Any keyPressed, keyReleased or keyTyped method call done after this 
-     * invocation should use the new Component (if applicable).
+     * invocation should use the new Window's focused component (if applicable).
      * <p/>
      * When calling this method, please assert beforehand that the provided 
-     * component is not null. Similarly, implementing classes need not check for
-     * null values here, the behavior of calling this method with null as 
-     * parameter is undefined.
+     * Window object is not null. Similarly, implementing classes need not 
+     * check for null values here, the behavior of calling this method with null as 
+     * parameter is undefined and as such may leave the KeyInjector in an 
+     * non-working state.
      * <p/>
      * @param comp the target component.
+     * 
+     * @throws NullPointerException when the component is null (optional)
      */
-    public void setTargetComponent(Component comp);
+    public void setTargetComponent(Window comp);
     
     /**
      * Presses the key given by the specified key code. These key codes are all

@@ -65,9 +65,9 @@ public class AppletLoader implements Runnable {
      */
     public static void main(String[] args) {
         // default arguments for standalone
-        boolean quickload = false, 
-                standalone = true,
-                update = false;
+        boolean quickload = false,
+                update = false,
+                devel = false;
         // the PowerGrid C++ client calls main with null, while Java default 
         // passes an empty array if there are no arguments. This way we can 
         // a) distinct between the two startup modes.
@@ -75,7 +75,6 @@ public class AppletLoader implements Runnable {
         //    having to create a String array through JNI.
         if (args == null) {
             // default arguments for non-standalone
-            standalone = false;
             update = true;
         } else {
             // parse the actual arguments to override 
@@ -87,9 +86,8 @@ public class AppletLoader implements Runnable {
                     case "--update": 
                         update = true; 
                         break;
-                    case "--no-standalone":
-                        update = true;
-                        standalone = false;
+                    case "--devmode":
+                        devel = true;
                         break;
                     default:
                         LOGGER.log("Unknown parameter found: \"" + s + "\"");
@@ -99,16 +97,16 @@ public class AppletLoader implements Runnable {
         // Report the used parameters to the Logger
         if (quickload)  LOGGER.log("Quickload enabled");
         if (update)     LOGGER.log("Updater enabled");
-        if (standalone) LOGGER.log("Stand-alone mode enabled");
+        if (devel)      LOGGER.log("DevMode enabled");
         
-        theLoader = new AppletLoader(quickload, update, standalone);
+        theLoader = new AppletLoader(quickload, update, devel);
+        theGUI = new AppletFrame();
         
         // First load the client.
         Thread loaderThread = new Thread(theLoader, "AppletLoader");
         loaderThread.start();
 
         // Meanwhile start and show the AppletFrame.
-        theGUI = new AppletFrame();
         theGUI.init(theLoader.getDownloader());
 
         // And start the Applet once the client is loaded
@@ -123,7 +121,7 @@ public class AppletLoader implements Runnable {
     }
     private ClientDownloader downloader;
     private Applet applet;
-    private boolean quickload, update, standalone; 
+    private boolean quickload, update, devel; 
     
 
     /**
@@ -132,16 +130,14 @@ public class AppletLoader implements Runnable {
      * @param quickload true to skip reloading the client, false to always
      * download it.
      * @param update true to enable updater, false to disable it.
-     * @param standalone true to disable anything not related to loading the 
-     *                   client itself. It speeds up performance without negative 
-     *                   effects when using the client in a stand alone setting.
+     * @param devel true to enable development tools, false to disable. 
      */
-    public AppletLoader(boolean quickload, boolean update, boolean standalone) {
+    public AppletLoader(boolean quickload, boolean update, boolean devel) {
         downloader = new ClientDownloader();
         applet = null;
         this.quickload = quickload;
         this.update = update;
-        this.standalone = standalone;
+        this.devel = devel;
     }
 
     /**
@@ -168,12 +164,13 @@ public class AppletLoader implements Runnable {
         return quickload;
     }
     
+    
     /**
      * Safe version of the run method. It first disables quickload and provides 
      * more detailed logging in the event something goes wrong.
      * <p/>
      * It also creates a new ClientDownloader to use and any existing Applet 
-     * instance is removed.
+     * instance is removed to prevent possible issues with that.
      */
     public void runSafe() {
         LOGGER.log("Attempting to start Applet in safe mode");
@@ -233,8 +230,7 @@ public class AppletLoader implements Runnable {
     }
 
     /**
-     * Downloads the client and creates a new
-     * <code>Applet</code> instance.
+     * Downloads the client and creates a new <code>Applet</code> instance.
      */
     @Override
     public void run() {
@@ -268,7 +264,7 @@ public class AppletLoader implements Runnable {
             // ...and create the Applet
             applet = (Applet) Rs2Applet.getConstructor().newInstance();
 
-            //if (!standalone) {
+            if (devel) {
                 try {
                     new ControlFrame(new RobotKeyInjector(theGUI));
                 } catch (AWTException e) {
@@ -276,7 +272,7 @@ public class AppletLoader implements Runnable {
                 }
                 long timeTaken = System.currentTimeMillis() - startTime;
                 LOGGER.log("Total loading time: " + timeTaken + "ms");
-            //}
+            }
         } catch (IOException | ClassNotFoundException | InstantiationException | 
                 IllegalAccessException | NoSuchMethodException | 
                 InvocationTargetException e) {

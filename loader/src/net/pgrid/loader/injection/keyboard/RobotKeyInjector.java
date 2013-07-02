@@ -93,7 +93,8 @@ public class RobotKeyInjector implements KeyInjector {
             } catch (InterruptedException e) {}
             rob.keyRelease(keyCode);
         } catch (IllegalArgumentException e) {
-            System.out.println("Warning: Invalid keyCode (" + keyCode + ")");
+            String modifierString = (use_shift ? "shift " : "") + (use_ctrl ? "ctrl " : "") + (use_alt ? "alt " : "");
+            System.out.println("Warning: Invalid keyCode (" + keyCode + "), supposed char: " + c + ", modifiers (" + modifierString + ")");
         }
         if (use_shift) {
             rob.keyRelease(KeyEvent.VK_SHIFT);

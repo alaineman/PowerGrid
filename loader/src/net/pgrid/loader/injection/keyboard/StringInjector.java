@@ -25,24 +25,27 @@ public class StringInjector implements KeyInjector {
     private static Logger LOGGER = Logger.get("INJECT");
     
     private KeyInjector injector;
+    private static URL keyboardFile = ClassLoader.getSystemResource("net/pgrid/loader/injection/keyboard/international.keys");
     private static HashMap<Character, KeyStroke> keyStrokes;
     private static volatile boolean loadedCharDefinitions = false;
     
     public static synchronized KeyStroke getKeyStroke(char c) {
         KeyStroke stroke = keyStrokes.get(c);
         if (stroke == null) {
-            if (c >= 'a' && c <= 'z' || c >= '1' && c <= '0') {
+            if (Character.isLowerCase(c) || Character.isDigit(c)) {
                 stroke = KeyStroke.getKeyStroke(c);
-            } else if (c >= 'A' && c <= 'Z') {
-                stroke = KeyStroke.getKeyStroke(Character.toLowerCase(c), KeyEvent.SHIFT_DOWN_MASK);
+            } else if (Character.isUpperCase(c)) {
+                stroke = KeyStroke.getKeyStroke("shift typed " + Character.toLowerCase(c));
             } else {
                 // trial-and-error mode for finding the correct puntuation:
                 // first try simply the key itself.
-                stroke = KeyStroke.getKeyStroke(c);
+                stroke = KeyStroke.getKeyStroke("typed " + c);
                 
                 // if that fails, try to load the external definitions (in the keybindings file)
-                loadDefinitions();
-                
+                if (stroke == null) {
+                    loadDefinitions();
+                    stroke = keyStrokes.get(c);
+                }
             }
             if (stroke != null) {
                 keyStrokes.put(c, stroke);
@@ -55,8 +58,7 @@ public class StringInjector implements KeyInjector {
     
     public static synchronized void loadDefinitions() {
         if (!loadedCharDefinitions) {
-            URL u = ClassLoader.getSystemResource("net/pgrid/loader/injection/keyboard/keybindings");
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(u.openStream()))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(keyboardFile.openStream()))) {
                 while (reader.ready()) {
                     String line = reader.readLine();
                     if (!line.isEmpty() && !line.startsWith("//")) {

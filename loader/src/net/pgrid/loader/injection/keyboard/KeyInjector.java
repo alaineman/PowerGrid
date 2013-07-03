@@ -30,7 +30,7 @@ public interface KeyInjector {
      * 
      * @throws NullPointerException when the component is null (optional)
      */
-    public void setTargetComponent(Window comp);
+    public void setTarget(Window comp);
     
     /**
      * Presses the key given by the specified key code. These key codes are all

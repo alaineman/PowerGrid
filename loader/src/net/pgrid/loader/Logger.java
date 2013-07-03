@@ -6,7 +6,11 @@ import java.util.Objects;
 /**
  * Logger class containing logging methods for exceptions and messages.
  * <p/>
- * Instances of this Class 
+ * Instances of this Class are managed in the static context of this Class.
+ * Subclasses should register their instances using this Class' static 
+ * <code>provide(Logger)</code> method, to allow externally created Loggers to 
+ * be used and called in the same way.
+ * <p/>
  * @author Chronio
  */
 public class Logger {
@@ -40,7 +44,7 @@ public class Logger {
      * <p/>
      * The provided Logger is added to the Collection of Loggers if and only if 
      * the provided Logger is not null, and no Logger is yet provided or created 
-     * with that name. In that case this method returns null. Otherwise this 
+     * with that name. In that case this method returns true. Otherwise this 
      * method does nothing and returns false.
      * <p/>
      * @param logger the Logger to provide
@@ -97,6 +101,8 @@ public class Logger {
     /**
      * @return a non-null String with the prefix of this Logger, which is 
      * prepended before log messages to indicate the context of the message.
+     * This prefix should have a length of precisely 10 to blend in with 
+     * the prefixes given by the default Logger implementation.
      */
     protected String getPrefix() {
         return prefix;

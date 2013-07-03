@@ -1,6 +1,5 @@
 package net.pgrid.loader.injection.keyboard;
 
-import java.awt.AWTKeyStroke;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -20,7 +19,7 @@ import net.pgrid.loader.Logger;
  * 
  * @author Chronio
  */
-public class StringInjector implements KeyInjector {
+public class StringInjector extends AbstractKeyInjector {
     
     private static Logger LOGGER = Logger.get("INJECT");
     
@@ -150,7 +149,25 @@ public class StringInjector implements KeyInjector {
     }
 
     @Override
-    public void setTargetComponent(Window comp) {
-        getInjector().setTargetComponent(comp);
+    public void setTarget(Window comp) {
+        getInjector().setTarget(comp);
+    }
+
+    @Override
+    public Window getTarget() {
+        if (getInjector() instanceof AbstractKeyInjector) {
+            return ((AbstractKeyInjector)getInjector()).getTarget();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean isDurationSupported() {
+        if (getInjector() instanceof AbstractKeyInjector) {
+            return ((AbstractKeyInjector)getInjector()).isDurationSupported();
+        } else {
+            return false;
+        }
     }
 }

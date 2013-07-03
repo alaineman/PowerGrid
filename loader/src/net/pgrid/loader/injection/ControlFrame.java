@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.pgrid.loader.AppletFrame;
 import net.pgrid.loader.AppletLoader;
+import net.pgrid.loader.injection.keyboard.AbstractKeyInjector;
 import net.pgrid.loader.injection.keyboard.KeyInjector;
 import net.pgrid.loader.injection.keyboard.RobotKeyInjector;
 import net.pgrid.loader.injection.keyboard.StringInjector;
@@ -40,49 +41,46 @@ public class ControlFrame extends JFrame {
         submit.setPreferredSize(new Dimension(100, 32));
         delayField.setPreferredSize(new Dimension(600, 32));
         
-        add(new JLabel("Type a String and click send to send it to the Applet. "
-                + "You can change the character delay using the lower field"), "North");
         add(textField,  "West");
         add(submit,     "East");
-        add(delayField, "South");
-        
-        pack();
-        final AppletFrame frame = AppletLoader.theGUI;
-        if (frame == null) {
-            setLocationRelativeTo(null);
-        } else {
-            setLocation(frame.getX() + frame.getWidth(), frame.getY());
-        }
         
         submit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Hmm... Anonymus inner class inside an anonymus inner class...
+                // might need to refactor this for readability...
                 new Thread( new Runnable() {
                     @Override
                     public void run() {
-                        int i = 0;
-                        try {
-                            i = Integer.parseInt(delayField.getText());
-                        } catch (NumberFormatException e) {}
-                        RobotKeyInjector inj = (RobotKeyInjector) injector.getInjector();
-                        inj.setCharacterDelay(i);
+                        KeyInjector ki = injector.getInjector();
+                        if (ki instanceof AbstractKeyInjector) {
+                            int n = 0;
+                            try {
+                                n = Integer.parseInt(delayField.getText());
+                            } catch (NumberFormatException e) {}
+                            AbstractKeyInjector robInjector = (AbstractKeyInjector) ki;
+                            robInjector.setDuration(n);
+                        }
                         injector.typeString(textField.getText());
                     }
                 }, "StringInjector").start();
             }
         });
         
-        if (frame != null) {
-            delayField.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    frame.toggleFullscreen();
-                    frame.revalidate();
-                }
-            });
+        // Setting the typing duration only works if our Injector supports it.
+        if (injector.isDurationSupported()) {
+            add (delayField, "South");
+        }
+        
+        pack();
+        AppletFrame frame = AppletLoader.theGUI;
+        if (frame == null) {
+            setLocationRelativeTo(null);
         } else {
-            delayField.setEnabled(false);
+            setLocation(frame.getX() + frame.getWidth(), frame.getY());
         }
         setVisible(true);
     }
+    
+    
 }

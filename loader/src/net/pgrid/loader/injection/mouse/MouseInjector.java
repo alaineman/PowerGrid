@@ -1,6 +1,6 @@
 package net.pgrid.loader.injection.mouse;
 
-import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 
 /**
@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
  * virtual machine.
  * <p/>
  * All coordinates given are window coordinates, meaning that the top-left
- * corner of the target Component is taken as (0,0) and the bottom and right 
+ * corner of the target Window is taken as (0,0) and the bottom and right 
  * directions are positive.
  * <p/>
  * Implementing classes need not be Thread-safe, since AWT/Swing event handling 
@@ -34,19 +34,19 @@ public interface MouseInjector {
     public static final int BUTTON3 = MouseEvent.BUTTON3;
 
     /**
-     * Sets the target Component for future mouse events.
+     * Sets the target Window for future mouse events.
      * <p/>
      * Any event-related method call done after this 
-     * invocation should use the new Component (if applicable).
+     * invocation should use the new Window (if applicable).
      * <p/>
      * When calling this method, please assert beforehand that the provided 
      * component is not null. Similarly, implementing classes need not check for
      * null values here, the behavior of calling this method with null as 
      * parameter is undefined.
      * <p/>
-     * @param comp the target component.
+     * @param comp the target Window.
      */
-    public void setTargetComponent(Component comp);
+    public void setTarget(Window comp);
     
     /**
      * Moves the mouse to the position (x,y).

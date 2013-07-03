@@ -9,13 +9,11 @@ import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -43,8 +41,6 @@ public class AppletFrame extends JFrame implements AppletStub {
     private JLabel label;
     private Applet theApplet = null;
     private ClientDownloader dloader = null;
-    
-    private AppletPainter painter = null;
 
     /**
      * Initializes the AppletFrame with the specified the ClientDownloader.
@@ -62,6 +58,7 @@ public class AppletFrame extends JFrame implements AppletStub {
     public void init(ClientDownloader dl) {
         assert dloader == null;
         dloader = dl;
+        label = new JLabel();
         createAndShowFrame();
         device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -73,16 +70,13 @@ public class AppletFrame extends JFrame implements AppletStub {
      * Sets up the AppletFrame and shows it.
      */
     private void createAndShowFrame() {
-        label = new JLabel();
-
         setTitle("Runescape (running through PowerGrid)");
         try {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
         } catch (IOException e) {
             LOGGER.describe(e);
         }
-        getToolkit().setDynamicLayout(true);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         Insets in = getInsets();
         int bHeight = in.top + in.bottom;
@@ -94,14 +88,12 @@ public class AppletFrame extends JFrame implements AppletStub {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         getContentPane().setBackground(Color.BLACK);
-
 
         label.setForeground(Color.GRAY.brighter());
         label.setFont(new Font("Consolas", Font.BOLD, 21));
         label.setHorizontalAlignment(JLabel.CENTER);
-        getContentPane().add(label);
+        add(label, "Center");
         showMessage("Loading client...");
 
         setVisible(true);
@@ -122,10 +114,6 @@ public class AppletFrame extends JFrame implements AppletStub {
         theApplet = a;
         theApplet.setStub(this);
         try {
-//            setIgnoreRepaint(true);
-//            painter = new AppletPainter();
-//            painter.start();
-            
             theApplet.init();
             theApplet.start();
             getContentPane().add(theApplet, BorderLayout.CENTER);
@@ -136,9 +124,6 @@ public class AppletFrame extends JFrame implements AppletStub {
         } catch (Throwable t) {
             LOGGER.log("Failed to start client.");
             LOGGER.describe(t);
-//            if (painter != null) {
-//                painter.done();
-//            }
             setIgnoreRepaint(false);
             return false;
         }
@@ -188,8 +173,6 @@ public class AppletFrame extends JFrame implements AppletStub {
     
     /**
      * Convenience method for toggling full screen mode.
-     * <p/>
-     * This is equivalent to 
      */
     public void toggleFullscreen() {
         setFullscreen(!fullscreen);
@@ -234,45 +217,5 @@ public class AppletFrame extends JFrame implements AppletStub {
             this.fullscreen = fullscreen;
             repaint();
         }
-    }
-    
-    public class AppletPainter extends Thread {
-        
-        private volatile boolean stopping;
-        
-        public AppletPainter() {
-            super("AppletPainer");
-            stopping = false;
-        }
-        
-        public void done() {
-            stopping = true;
-        }
-        
-        public void reset() {
-            if (isAlive()) {
-                done();
-                try {
-                    synchronized (this) {
-                        join();
-                    }
-                } catch (InterruptedException e) {}
-            }
-            stopping = false;
-        }
-        
-        @Override
-        public void run() {
-            while (!stopping) {
-                Graphics g = getBufferStrategy().getDrawGraphics();
-                try {
-                    theApplet.paint(g);
-                } catch (Throwable t) {
-                    LOGGER.describe(t);
-                }
-                g.dispose();
-            }
-        }
-        
     }
 }

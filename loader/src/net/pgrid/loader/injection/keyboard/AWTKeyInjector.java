@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
+import static java.awt.event.KeyEvent.*;
 
 /**
  * Simple KeyInjector that works by pushing KeyEvent objects onto the 
@@ -24,7 +25,7 @@ public class AWTKeyInjector implements KeyInjector {
     }
     
     /**
-     * @return the Component previously set with the setTargetComponent method.
+     * @return the Component previously set with the setTarget method.
      */
     public Component getTargetComponent() {
         return target;
@@ -43,21 +44,27 @@ public class AWTKeyInjector implements KeyInjector {
     
     @Override
     public void keyPressed(int keyCode, int modifiers) {
-        //TODO: this
+        KeyEvent ev = new KeyEvent(target.getFocusOwner(), KEY_PRESSED, 
+                System.currentTimeMillis(), modifiers, keyCode, (char)keyCode);
+        postKeyEvent(ev);
     }
 
     @Override
     public void keyReleased(int keyCode, int modifiers) {
-        //TODO: this
+        KeyEvent ev = new KeyEvent(target.getFocusOwner(), KEY_RELEASED, 
+                System.currentTimeMillis(), modifiers, keyCode, (char)keyCode);
+        postKeyEvent(ev);
     }
 
     @Override
     public void keyTyped(char c, int keyCode, int modifiers) {
-        //TODO: this
+        KeyEvent ev = new KeyEvent(target.getFocusOwner(), KEY_TYPED, 
+                System.currentTimeMillis(), modifiers, VK_UNDEFINED, c);
+        postKeyEvent(ev);
     }
 
     @Override
-    public void setTargetComponent(Window comp) {
+    public void setTarget(Window comp) {
         target = comp;
         queue = target.getToolkit().getSystemEventQueue();
     }

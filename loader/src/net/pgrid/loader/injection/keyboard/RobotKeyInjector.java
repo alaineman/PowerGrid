@@ -3,35 +3,21 @@ package net.pgrid.loader.injection.keyboard;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.Window;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 
 /**
  *
- * @author Patrick Kramer
+ * @author Chronio
  */
-public class RobotKeyInjector implements KeyInjector {
+public class RobotKeyInjector extends AbstractKeyInjector {
 
     private Window target;
     private Robot rob;
-    private volatile int characterDelay = 0;
-    private final FocusWaiter waiter;
     
     public RobotKeyInjector(Window comp) throws AWTException {
         rob = new Robot();
         target = comp;
-        waiter = new FocusWaiter();
-        target.addFocusListener(waiter);
-    }
-
-    public void setCharacterDelay(int characterDelay) {
-        this.characterDelay = (characterDelay < 0 ? 0 : characterDelay);
-    }
-
-    public int getCharacterDelay() {
-        return characterDelay;
     }
     
     /**
@@ -53,10 +39,8 @@ public class RobotKeyInjector implements KeyInjector {
     }
     
     @Override 
-    public void setTargetComponent(Window comp) {
-        target.removeFocusListener(waiter);
+    public void setTarget(Window comp) {
         target = comp;
-        target.addFocusListener(waiter);
     }
 
     @Override
@@ -89,12 +73,12 @@ public class RobotKeyInjector implements KeyInjector {
         try {
             rob.keyPress(keyCode);
             try {
-                Thread.sleep(getCharacterDelay());
+                Thread.sleep(getDuration());
             } catch (InterruptedException e) {}
             rob.keyRelease(keyCode);
         } catch (IllegalArgumentException e) {
             String modifierString = (use_shift ? "shift " : "") + (use_ctrl ? "ctrl " : "") + (use_alt ? "alt " : "");
-            System.out.println("Warning: Invalid keyCode (" + keyCode + "), supposed char: " + c + ", modifiers (" + modifierString + ")");
+            System.out.println("Warning: Invalid keyCode (" + keyCode + "), supposed char: " + c + ", modifiers = { " + modifierString + "}");
         }
         if (use_shift) {
             rob.keyRelease(KeyEvent.VK_SHIFT);
@@ -106,19 +90,9 @@ public class RobotKeyInjector implements KeyInjector {
             rob.keyRelease(KeyEvent.VK_CONTROL);
         }
     }
-    
-    protected class FocusWaiter implements FocusListener {
 
-        @Override
-        public void focusGained(FocusEvent e) {
-            synchronized (this) {
-                notifyAll();
-            }
-        }
-
-        @Override
-        public void focusLost(FocusEvent e) {
-        }
-        
+    @Override
+    public boolean isDurationSupported() {
+        return true;
     }
 }

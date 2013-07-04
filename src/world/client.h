@@ -7,7 +7,7 @@
 #include "Entity/Character/player.h"
 #include "DataStructure/hashtable.h"
 #include "DataStructure/deque.h"
-#include "DataStructure/objectnode.h"
+#include "Node/objectnode.h"
 #include "Local/widget.h"
 #include "Local/playerfacade.h"
 #include "Local/grandexchangeoffer.h"

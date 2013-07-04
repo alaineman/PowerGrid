@@ -1,16 +1,16 @@
 #ifndef OBJECTNODE_H
 #define OBJECTNODE_H
 
-#include "jniobject.h"
+#include "Node/node.h"
 
 namespace world{
 
-class ObjectNode : public jni::JNIObject {
+class ObjectNode : public Node {
 private:
     Q_DISABLE_COPY(ObjectNode)
     JNIObject* object;
 public:
-    ObjectNode(jobject obj) : JNIObject(obj){}
+    ObjectNode(jobject obj) : Node(obj){}
     JNIObject* getObject();
 };
 

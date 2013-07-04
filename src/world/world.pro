@@ -62,7 +62,6 @@ SOURCES += \
     Entity/entitydata.cpp \
     Entity/entity.cpp \
     Cache/cache.cpp \
-    DataStructure/objectnode.cpp \
     Local/widget.cpp \
     Graphic/openglmodel.cpp \
     Graphic/opengltoolkit.cpp \
@@ -83,7 +82,16 @@ SOURCES += \
     Entity/SceneObject/animatedfloordecoration.cpp \
     Landscape/regionbase.cpp \
     Landscape/regiongrid.cpp \
-    Landscape/region.cpp
+    Landscape/region.cpp \
+    Entity/boundary.cpp \
+    Entity/SceneObject/eventobject.cpp \
+    Entity/SceneObject/animatedwalldecoration.cpp \
+    Entity/SceneObject/animatedeventobject.cpp \
+    Entity/SceneObject/animatedboundary.cpp \
+    Entity/SceneObject/objectcomposite.cpp \
+    Entity/SceneObject/objectdefinition.cpp \
+    Node/objectnode.cpp \
+    Entity/SceneObject/walldecoration.cpp
 
 HEADERS += \    
     point.h \    
@@ -153,7 +161,19 @@ HEADERS += \
     Entity/SceneObject/animatedfloordecoration.h \
     Landscape/region.h \
     Landscape/regiongrid.h \
-    Landscape/regionbase.h
+    Landscape/regionbase.h \
+    Entity/animatedboundary.h \
+    Entity/animatedeventobject.h \
+    Entity/animatedwalldecoration.h \
+    Entity/boundary.h \
+    Entity/SceneObject/eventobject.h \
+    Entity/SceneObject/animatedwalldecoration.h \
+    Entity/SceneObject/animatedeventobject.h \
+    Entity/SceneObject/animatedboundary.h \
+    Entity/SceneObject/objectcomposite.h \
+    Entity/SceneObject/objectdefinition.h \
+    Node/objectnode.h \
+    Entity/SceneObject/walldecoration.h
 
 OTHER_FILES += \
     includeWorld.pro

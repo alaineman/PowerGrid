@@ -1,8 +1,8 @@
-package net.pgrid.loader.injection;
+package net.pgrid.loader.bridge.injection;
 
 import java.awt.Window;
-import net.pgrid.loader.injection.keyboard.KeyInjector;
-import net.pgrid.loader.injection.mouse.MouseInjector;
+import net.pgrid.loader.bridge.injection.keyboard.KeyInjector;
+import net.pgrid.loader.bridge.injection.mouse.MouseInjector;
 
 /**
  * Relatively Thread-safe implementation of a wrapper around both a KeyInjector 

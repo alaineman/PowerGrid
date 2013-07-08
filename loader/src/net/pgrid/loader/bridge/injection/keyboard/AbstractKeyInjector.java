@@ -1,4 +1,4 @@
-package net.pgrid.loader.injection.keyboard;
+package net.pgrid.loader.bridge.injection.keyboard;
 
 import java.awt.Window;
 import java.util.Objects;

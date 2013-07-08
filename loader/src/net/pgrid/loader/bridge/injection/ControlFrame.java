@@ -1,4 +1,4 @@
-package net.pgrid.loader.injection;
+package net.pgrid.loader.bridge.injection;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -10,10 +10,10 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.pgrid.loader.AppletFrame;
 import net.pgrid.loader.AppletLoader;
-import net.pgrid.loader.injection.keyboard.AbstractKeyInjector;
-import net.pgrid.loader.injection.keyboard.KeyInjector;
-import net.pgrid.loader.injection.keyboard.RobotKeyInjector;
-import net.pgrid.loader.injection.keyboard.StringInjector;
+import net.pgrid.loader.bridge.injection.keyboard.AbstractKeyInjector;
+import net.pgrid.loader.bridge.injection.keyboard.KeyInjector;
+import net.pgrid.loader.bridge.injection.keyboard.RobotKeyInjector;
+import net.pgrid.loader.bridge.injection.keyboard.StringInjector;
 
 /**
  * Frame providing various functions to directly control the various components 

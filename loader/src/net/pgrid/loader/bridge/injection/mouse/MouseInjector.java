@@ -1,4 +1,4 @@
-package net.pgrid.loader.injection.mouse;
+package net.pgrid.loader.bridge.injection.mouse;
 
 import java.awt.Window;
 import java.awt.event.MouseEvent;

@@ -1,5 +1,6 @@
 package net.pgrid.loader.bridge;
 
+import net.pgrid.loader.ClientDownloader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -1,6 +1,5 @@
 package net.pgrid.loader;
 
-import net.pgrid.loader.bridge.ClientDownloader;
 import java.applet.Applet;
 import java.applet.AppletContext;
 import java.applet.AppletStub;

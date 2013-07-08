@@ -1,7 +1,6 @@
 package net.pgrid.loader;
 
 import net.pgrid.loader.bridge.ClassMapDownloader;
-import net.pgrid.loader.bridge.ClientDownloader;
 import java.applet.Applet;
 import java.awt.AWTException;
 import java.io.IOException;
@@ -9,8 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import net.pgrid.loader.injection.ControlFrame;
-import net.pgrid.loader.injection.keyboard.RobotKeyInjector;
+import net.pgrid.loader.bridge.injection.ControlFrame;
+import net.pgrid.loader.bridge.injection.keyboard.RobotKeyInjector;
 
 /**
  * Main class of the Runescape loader.

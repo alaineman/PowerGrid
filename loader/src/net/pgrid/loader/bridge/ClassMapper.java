@@ -1,6 +1,7 @@
-package net.pgrid.loader;
+package net.pgrid.loader.bridge;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -27,15 +28,15 @@ public class ClassMapper {
     }
     
     public Map<String, String> getClassMapper() {
-        return classMap;
+        return Collections.unmodifiableMap(classMap);
     }
 
     public Map<String, ObfuscatedField> getFieldMap() {
-        return fieldMap;
+        return Collections.unmodifiableMap(fieldMap);
     }
 
     public Map<String, Long> getConstMap() {
-        return constMap;
+        return Collections.unmodifiableMap(constMap);
     }
 
     public String getGamepack() {

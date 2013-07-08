@@ -1,4 +1,4 @@
-package net.pgrid.loader;
+package net.pgrid.loader.bridge;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import net.pgrid.loader.Logger;
 
 /**
  * Downloads the client files from the Runescape servers.

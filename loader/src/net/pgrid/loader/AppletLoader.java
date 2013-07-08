@@ -1,5 +1,7 @@
 package net.pgrid.loader;
 
+import net.pgrid.loader.bridge.ClassMapDownloader;
+import net.pgrid.loader.bridge.ClientDownloader;
 import java.applet.Applet;
 import java.awt.AWTException;
 import java.io.IOException;

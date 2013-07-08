@@ -147,7 +147,6 @@ public class ClientDownloader {
         // Using fast stream copy with Java NIO Channels. This is at least as fast
         // as manual copy using a byte array as buffer.
         try (InputStream in = conn.getInputStream()) {
-            MessageDigest md = MessageDigest.getInstance("MD5");
             ReadableByteChannel reader = Channels.newChannel(in);
             WritableByteChannel writer = Channels.newChannel(out);
 
@@ -162,8 +161,6 @@ public class ClientDownloader {
             while (buffer.hasRemaining()) {
                 writer.write(buffer);
             }
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.describe(e);
         }
     }
 

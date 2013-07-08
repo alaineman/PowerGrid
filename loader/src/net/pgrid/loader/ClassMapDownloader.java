@@ -1,16 +1,17 @@
 package net.pgrid.loader;
 
-import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,84 +22,124 @@ import java.security.NoSuchAlgorithmException;
  */
 public class ClassMapDownloader implements Runnable {
     
+    public static final String DEFAULT_SERVER = "205.234.152.103";
+    public static final int DEFAULT_PORT = 6739;
+    
     private static final Logger LOGGER = Logger.get("UPDATER");
     
     private ClientDownloader dl;
-    private byte[] hash;
+    private byte[] hash = null;
     private volatile boolean ready = false;
+    private byte[] classMapData = null;
+    private String server;
+    private int serverPort;
 
     public ClassMapDownloader(ClientDownloader downloader) {
         dl = downloader;
     }
+    
+    public ClassMapDownloader(ClientDownloader downloader, String updaterServer, int port) {
+        dl = downloader;
+        server = updaterServer;
+        serverPort = port;
+    }
 
     @Override
     public void run() {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            try (InputStream in = new FileInputStream("client.jar")) {
-                DigestInputStream dis = new DigestInputStream(in, digest);
-                while (dis.read() != -1) {
-                }
-            }
-            hash = digest.digest();
-
-        } catch (NoSuchAlgorithmException | IOException e) {
-            LOGGER.describe(e);
-            return;
-        }
-        try {
-            Socket sock = new Socket("205.234.152.103", 6739);
-            LOGGER.log("Connection established");
-            try (OutputStream out = sock.getOutputStream(); 
-                   InputStream in = sock.getInputStream()) {
-                
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
-                
-                out.write(0x0);
-                out.write(0x3);
-                
-                String hString = bytesToHex(hash);
-                writer.append(hString + "\n");
-                LOGGER.log("Client hash: " + hString);
-                writer.flush();
-                
-                int response = in.read();
-
-                if (response == 1) {
-                    LOGGER.log("Keys not required, Collecting data");
-                } else if (response == 0) {
-                    LOGGER.log("Sending client encryption keys");
-                    String gamepackURL = dl.getGamepack();
-                    writer.append(gamepackURL + "\n");
-                    String key_m1 = dl.getParameter("-1");
-                    writer.append(key_m1 + "\n");
-                    String key_0 = dl.getParameter("0");
-                    writer.append(key_0 + "\n");
-
-                    writer.flush();
-                    LOGGER.log("Keys sent, waiting for response");
-                } else {
-                    LOGGER.log("Got invalid response: " + response);
-                    return;
-                }
-                
-                FileOutputStream fos = new FileOutputStream("mapdata.hex");
-                FileChannel outChannel = fos.getChannel();
-                ReadableByteChannel inChannel = Channels.newChannel(in);
-                long amountOfBytes = outChannel.transferFrom(inChannel, 0, Long.MAX_VALUE);
-                LOGGER.log("mapData stored (" + amountOfBytes + " bytes)");
-            }
-            
-            ready = true;
-        } catch (IOException e) {
-            LOGGER.describe(e);
-        }
+        getData();
     }
 
+    protected byte[] computeHash() throws IOException {
+        if (hash == null) {
+            try {
+                MessageDigest digest = MessageDigest.getInstance("MD5");
+                try (InputStream in = new FileInputStream("client.jar")) {
+                    DigestInputStream dis = new DigestInputStream(in, digest);
+                    while (dis.read() != -1) {}
+                }
+                hash = digest.digest();
+            } catch (NoSuchAlgorithmException e) {
+                LOGGER.describe(e);
+                throw new InternalError("Failed to compute checksum due to unsupported algorithm");
+            }
+        }
+        return hash;
+    }
+    
     public boolean isReady() {
         return ready;
     }
+    
+    public byte[] getData() {
+        if (classMapData == null) {
+            try {
+                Socket s = openConnection();
+                try (InputStream   in = s.getInputStream();
+                     OutputStream out = s.getOutputStream()) {
+                    LOGGER.log("Connection to \"" + s.getInetAddress().getHostName() + ":" + s.getPort() + "\" established");
+                    
+                    out.write(0x0);
+                    out.write(0x3);
+                    
+                    OutputStreamWriter writer = new OutputStreamWriter(out);
+                    writer.append(bytesToHex(computeHash())).append("\n");
+                    writer.flush();
+                    
+                    LOGGER.log("Waiting for updater server");
+                    
+                    int response = in.read();
+                    
+                    switch(response) {
+                        case 0x0: // the keys are required
+                            writer.append(dl.getGamepack()).append("\n");
+                            writer.append(dl.getParameter("-1")).append("\n");
+                            writer.append(dl.getParameter("0")).append("\n");
+                            writer.flush();
+                            LOGGER.log("Keys sent, waiting for response");
+                            break;
+                        case 0x1: // the keys are not required
+                            LOGGER.log("Waiting for server response");
+                            break;
+                        default:  // something went wrong
+                            throw new IOException("Unexpected response from server: " + response);
+                    }
+                    
+                    ByteArrayOutputStream bOut = new ByteArrayOutputStream(4096);
+                    ReadableByteChannel rbc = Channels.newChannel(in);
+                    WritableByteChannel wbc = Channels.newChannel(bOut);
+                    ByteBuffer buf = ByteBuffer.allocateDirect(1024);
+                    while (rbc.read(buf) != -1) {
+                        buf.flip();
+                        wbc.write(buf);
+                        buf.compact();
+                    }
+                    buf.flip();
+                    while (buf.hasRemaining()) {
+                        wbc.write(buf);
+                    }
+                    classMapData = bOut.toByteArray();
+                }
+                
+            } catch (UnknownHostException e) {
+                LOGGER.log("Server \"" + getServer() + "\" cannot be found: " + e.getLocalizedMessage());
+            } catch (IOException e) {
+                LOGGER.describe(e);
+            }
+        }
+        return classMapData;
+    }
+    
+    protected Socket openConnection() throws IOException {
+        return new Socket(getServer(), getServerPort());
+    }
 
+    public String getServer() {
+        return server;
+    }
+
+    public int getServerPort() {
+        return serverPort;
+    }
     
     private static final char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
     private static String bytesToHex(byte[] bytes) {

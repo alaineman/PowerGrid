@@ -1,6 +1,6 @@
 // Key bindings for the Injectors. These map symbols to their corresponding key presses.
-// Note that these apply on an US (international) keyboard only, and may be different on
-// other keyboards. (Note: the used keyboard has € for altGraph+5)
+// Note that these apply on an US (international) windows keyboard only, and may 
+// be different on other keyboards. (Note: the used keyboard has € for altGraph+5)
 
 // However, it is possible to define custom keyboard strokes using the same format as this file.
 // It is advised to store them as <name>.keys, where <name> is a descriptive and unique name 

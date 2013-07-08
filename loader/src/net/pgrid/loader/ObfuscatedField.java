@@ -10,13 +10,13 @@ public class ObfuscatedField {
     String signature;
     byte staticStatus;
     String owner;
-    long flags;
+    long multiplier;
     
     public ObfuscatedField(String name,String sign,byte state,String parent,long flagInfo){
         obfuscatedName = name;
         signature = sign;
         owner = parent;
-        flags = flagInfo;
+        multiplier = flagInfo;
     }
 
     public String getRealName() {
@@ -52,11 +52,11 @@ public class ObfuscatedField {
     }
 
     public long getFlags() {
-        return flags;
+        return multiplier;
     }
 
     public void setFlags(long flags) {
-        this.flags = flags;
+        this.multiplier = flags;
     }    
     
 }

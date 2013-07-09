@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.pgrid.loader.bridge;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * The bridge core used to aid the JNI porting and reduce the load between java and c++.
  * @author Vincent W
  */
 public class RSAccessor {    
@@ -121,8 +117,6 @@ public class RSAccessor {
     public Object getStaticObjectField(){
         return null;
         
-    }
-            
-    
+    } 
           
 }

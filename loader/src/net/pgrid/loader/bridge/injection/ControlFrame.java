@@ -1,6 +1,7 @@
 package net.pgrid.loader.bridge.injection;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,11 +38,11 @@ public class ControlFrame extends JFrame {
     
     private void createAndShowFrame() {
         setLayout(new BorderLayout(12,12));
-        textField.setPreferredSize(new Dimension(500, 32));
-        submit.setPreferredSize(new Dimension(100, 32));
-        delayField.setPreferredSize(new Dimension(600, 32));
+        textField.setPreferredSize(new Dimension(300, 32));
+        submit.setPreferredSize(new Dimension(70, 32));
+        delayField.setPreferredSize(new Dimension(370, 32));
         
-        add(textField,  "West");
+        add(textField,  "North");
         add(submit,     "East");
         
         submit.addActionListener(new ActionListener() {
@@ -69,7 +70,12 @@ public class ControlFrame extends JFrame {
         
         // Setting the typing duration only works if our Injector supports it.
         if (injector.isDurationSupported()) {
-            add (delayField, "South");
+            add (delayField, "West");
+        } else {
+            // we add a filler component to ensure the correct layout
+            Container c = new Container();
+            c.setSize(delayField.getSize());
+            add(c, "West");
         }
         
         pack();

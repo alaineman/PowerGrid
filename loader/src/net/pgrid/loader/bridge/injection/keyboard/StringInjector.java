@@ -150,6 +150,7 @@ public class StringInjector extends AbstractKeyInjector {
         if (!loadedCharDefinitions) {
             try {
                 loadDefinitions(keyboardFile.openStream());
+                LOGGER.log("Character definitions have been loaded");
             } catch (IOException e) {
                 LOGGER.describe(e);
             }
@@ -207,7 +208,7 @@ public class StringInjector extends AbstractKeyInjector {
         KeyStroke stroke = getKeyStroke(c);
         if (stroke != null) {
             getInjector().keyTyped(
-                    stroke.getKeyChar(), 
+                    c, 
                     KeyEvent.getExtendedKeyCodeForChar(stroke.getKeyChar()), 
                     stroke.getModifiers());
         }

@@ -64,9 +64,7 @@ public class ClientDownloader {
             configURL = new URL(CONFIG_LINK);
             parameters = new HashMap<>(32);
         } catch (MalformedURLException e) {
-            InternalError err = new InternalError("Invalid Config");
-            err.initCause(e);
-            throw err;
+            // should not be thrown
         }
     }
 
@@ -119,6 +117,8 @@ public class ClientDownloader {
     public void loadConfig() throws IOException {
         if (gamepack == null) {
             try (InputStream in = configURL.openStream()) {
+                // using a Scanner with the right delimiter provides the entire 
+                // content of the stream at once in only a few lines.
                 Scanner out = new Scanner(in).useDelimiter("\\A");
                 if (out.hasNext()) {
                     configData = out.next();

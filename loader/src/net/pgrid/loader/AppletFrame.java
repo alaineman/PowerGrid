@@ -4,7 +4,9 @@ import java.applet.Applet;
 import java.applet.AppletContext;
 import java.applet.AppletStub;
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
@@ -108,7 +110,6 @@ public class AppletFrame extends JFrame implements AppletStub {
     /**
      * Takes the provided Applet instance and starts it in this Window.
      * <p/>
-     * If for any reason the Applet throws an Exception, this method tries to load the client using the AppletLoader's runSafe method.
      * @param a the Applet to start (should not be null)
      * @return true if the Applet started without Exceptions, false if an Exception occurred.
      * @throws NullPointerException if the provided Applet is null.
@@ -131,6 +132,22 @@ public class AppletFrame extends JFrame implements AppletStub {
             setIgnoreRepaint(false);
             return false;
         }
+    }
+    
+    public Canvas getCanvas() {
+        if (applet != null) {
+            // The Applet has one child component, namely the Canvas instance that
+            // the RS Applet draws on.
+            synchronized (applet.getTreeLock()) {
+                for (Component c : applet.getComponents()) {
+                    if (c instanceof Canvas) {
+                        return (Canvas) c;
+                    }
+                }
+            }
+        }
+        LOGGER.log("No Canvas found in applet.");
+        return null;
     }
 
     /**
@@ -182,6 +199,9 @@ public class AppletFrame extends JFrame implements AppletStub {
         setFullscreen(!fullscreen);
     }
     
+    /**
+     * @return true if Fullscreen mode is supported in this Virtual Machine, false otherwise.
+     */
     public boolean isFullScreenSupported() {
         return device.isFullScreenSupported();
     }

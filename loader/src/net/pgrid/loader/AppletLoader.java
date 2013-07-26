@@ -121,7 +121,7 @@ public class AppletLoader implements Runnable {
         theGUI.startApplet(a);
         
         try {
-            Thread.sleep(10000);
+            Thread.sleep(20000);
         } catch (InterruptedException ex) {}
         
         
@@ -274,9 +274,10 @@ public class AppletLoader implements Runnable {
             applet = (Applet) Rs2Applet.getConstructor().newInstance();
             
             if (devel) {
+                // We set up a ControlPanel to simulate actions from the Bot.
                 KeyInjector injector = new AWTKeyInjector();
                 injector.setTarget(theGUI);
-                new ControlFrame(injector);
+                ControlFrame f = new ControlFrame(injector);
                 
                 // In order to get feedback on loading times with different settings,
                 // the loading time is reported when development mode is enabled.

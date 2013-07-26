@@ -72,10 +72,9 @@ public class ClassMapDownloader implements Runnable {
         return ready;
     }
     
-    public byte[] getData() {
+    protected byte[] getData(Socket s) {
         if (classMapData == null) {
             try {
-                Socket s = openConnection();
                 try (InputStream   in = s.getInputStream();
                      OutputStream out = s.getOutputStream()) {
                     LOGGER.log("Connection to \"" + s.getInetAddress().getHostName() + ":" + s.getPort() + "\" established");
@@ -129,6 +128,15 @@ public class ClassMapDownloader implements Runnable {
             }
         }
         return classMapData;
+    }
+    
+    public byte[] getData() {
+        try {
+            return getData(openConnection());
+        } catch (IOException e) {
+            LOGGER.describe(e);
+            return null;
+        }
     }
     
     protected Socket openConnection() throws IOException {

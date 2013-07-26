@@ -1,6 +1,6 @@
 package net.pgrid.loader.bridge.injection.keyboard;
 
-import java.awt.Window;
+import java.awt.Component;
 import java.util.Objects;
 
 /**
@@ -13,26 +13,18 @@ import java.util.Objects;
  */
 public abstract class AbstractKeyInjector implements KeyInjector {
 
-    private Window target = null;
+    private Component target = null;
     private int duration = 0;
 
     /**
      * @return this KeyInjector's target
      */
-    public Window getTarget() {
+    public Component getTarget() {
         return target;
     }
     
-    /**
-     * Sets this KeyInjector's target. 
-     * <p/>
-     * Subclasses may override this method and throw an IllegalArgumentException
-     * when the given Window is not valid.
-     * @param comp the new target component.
-     * @throws IllegalArgumentException when the provided Window is invalid.
-     */
     @Override
-    public void setTarget(Window comp) {
+    public void setTarget(Component comp) {
         target = comp;
     }
 
@@ -69,7 +61,8 @@ public abstract class AbstractKeyInjector implements KeyInjector {
      * method invocation. It is possible to change this value by calling the 
      * <code>setDuration(int)</code> method.
      * <p/>
-     * If this method returns false, 
+     * If this method returns false, all KeyEvents are sent in sequence without
+     * any delay.
      * @return true if this AbstractKeyInjector supports durations, false otherwise.
      */
     public abstract boolean isDurationSupported();

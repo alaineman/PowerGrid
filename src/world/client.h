@@ -81,6 +81,37 @@ public:
     NpcCacheLoader* getNpcCacheLoader(bool useCache = true);
     ItemCacheLoader* getItemCacheLoader(bool useCache = true);
     GraphicCacheLoader* getGraphicCacheLoader(bool useCache = true);
+
+    enum Fields {
+      MAJORVERSION,
+      MINORVERSION,
+      FPS,
+      HUDINDEX,
+      MOUSECROSSHAIRSTATE,
+      MOUSECROSSHAIREXPANSIONSTATE,
+      CAMERAYAW,
+      CAMERAPITCH,
+      DESTINATIONX,
+      DESTINATIONY,
+      SPELLSELECTED,
+      // WIDGETBOUNDS,
+      PLAYERMODELCACHE,
+      LOADEDPROJECTILES,
+      HINTARROWS,
+      GRANDEXCHANGEOFFERS,
+      LOCALPLAYER,
+      LOADEDPLAYERS,
+      LOADEDNPCARRAY,
+      LOADEDNPCTABLE,
+      LOADEDGROUNDITEMS,
+      ITEMSTORAGETABLE,
+      LOADEDWIDGETS,
+      PLAYERFACADE,
+      LOADEDREGION,
+      NPCCACHELOADER,
+      ITEMCACHELOADER,
+      GRAPHICCACHELOADER
+    };
 };
 
 }

@@ -1,7 +1,6 @@
 package net.pgrid.loader;
 
 import java.applet.Applet;
-import java.awt.AWTException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -9,7 +8,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import net.pgrid.loader.bridge.ClassMapDownloader;
 import net.pgrid.loader.bridge.injection.ControlFrame;
-import net.pgrid.loader.bridge.injection.keyboard.RobotKeyInjector;
+import net.pgrid.loader.bridge.injection.keyboard.AWTKeyInjector;
+import net.pgrid.loader.bridge.injection.keyboard.KeyInjector;
 
 /**
  * Main class of the Runescape loader.
@@ -69,9 +69,10 @@ public class AppletLoader implements Runnable {
         boolean quickload = false,
                 update = false,
                 devel = false;
+        
         // the PowerGrid C++ client calls main with null, while Java default 
         // passes an empty array if there are no arguments. This way we can 
-        // a) distinct between the two startup modes.
+        // a) easily distinct between the two startup modes.
         // b) get the settings right for the PowerGrid C++ client without 
         //    having to create a String array through JNI.
         if (args == null) {
@@ -116,10 +117,17 @@ public class AppletLoader implements Runnable {
         } catch (InterruptedException e) {
             LOGGER.describe(e);
         }
-        theGUI.startApplet(theLoader.getApplet());
-
+        Applet a = theLoader.getApplet();
+        theGUI.startApplet(a);
+        
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException ex) {}
+        
+        
         LOGGER.log("Client loaded");
     }
+    
     private ClientDownloader downloader;
     private Applet applet;
     private boolean quickload, update, devel; 
@@ -264,13 +272,14 @@ public class AppletLoader implements Runnable {
 
             // ...and create the Applet
             applet = (Applet) Rs2Applet.getConstructor().newInstance();
-
+            
             if (devel) {
-                try {
-                    new ControlFrame(new RobotKeyInjector(theGUI));
-                } catch (AWTException e) {
-                    LOGGER.describe(e);
-                }
+                KeyInjector injector = new AWTKeyInjector();
+                injector.setTarget(theGUI);
+                new ControlFrame(injector);
+                
+                // In order to get feedback on loading times with different settings,
+                // the loading time is reported when development mode is enabled.
                 long timeTaken = System.currentTimeMillis() - startTime;
                 LOGGER.log("Total loading time: " + timeTaken + "ms");
             }

@@ -1,13 +1,23 @@
 package net.pgrid.loader.bridge;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.pgrid.loader.Logger;
+
 
 /**
- * The bridge core used to aid the JNI porting and reduce the load between java and c++.
+ * The bridge core used to aid the JNI porting and reduce the load between java 
+ * and c++.
  * @author Vincent W
  */
-public class RSAccessor {    
+public class RSAccessor {
+    
+    private static final Logger LOGGER = Logger.get("BRIDGE");
+    
+    private ClassMapper map;
+    
+    public RSAccessor (ClassMapper mapData) {
+        assert mapData != null;
+        map = mapData;
+    }
             
 //    public XXX getXXXField(Object o, int classID, int fieldID) {
 //    get class with classID
@@ -20,13 +30,12 @@ public class RSAccessor {
 //   get field data from field using Object o
 //  return field data    
     
-    public byte getByteField(){        
+    public byte getByteField(String name){        
         
         try {
-            Class<?> forName;
-            forName = Class.forName("");
+            Class<?> forName = Class.forName("");
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(RSAccessor.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.describe(ex);
         }
         return 0;
         

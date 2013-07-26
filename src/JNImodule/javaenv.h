@@ -242,6 +242,9 @@ namespace jni {
     /// Checks for a thrown Java Exception and throws a java_exception object when there is one
     void exceptionCheck();
 
+    /// deletes the local reference to the given java object.
+    void deleteLocalReference(jobject obj);
+
   signals:
     /// Signal that the JNI environment has started, emitted just before the Start function returns.
     void started();

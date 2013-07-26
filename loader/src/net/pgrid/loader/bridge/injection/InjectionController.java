@@ -1,5 +1,6 @@
 package net.pgrid.loader.bridge.injection;
 
+import java.awt.Component;
 import java.awt.Window;
 import net.pgrid.loader.bridge.injection.keyboard.KeyInjector;
 import net.pgrid.loader.bridge.injection.mouse.MouseInjector;
@@ -17,7 +18,7 @@ public class InjectionController implements KeyInjector, MouseInjector{
 
     private KeyInjector keyDelegate;
     private MouseInjector mouseDelegate;
-    private Window target;
+    private Component target;
     
     // Locks used to synchronize on the fields.
     private final Object keyboardLock, mouseLock;
@@ -62,7 +63,7 @@ public class InjectionController implements KeyInjector, MouseInjector{
     }
     
     @Override
-    public void setTarget(Window comp) {
+    public void setTarget(Component comp) {
         synchronized (keyboardLock) {
             keyDelegate.setTarget(comp);
         }
@@ -72,13 +73,13 @@ public class InjectionController implements KeyInjector, MouseInjector{
             }
             target = comp;
         } catch (IllegalArgumentException e) {
-            synchronized (keyDelegate) {
+            synchronized (keyboardLock) {
                 keyDelegate.setTarget(target);
             }
         }
     }
 
-    public Window getTarget() {
+    public Component getTarget() {
         return target;
     }
 

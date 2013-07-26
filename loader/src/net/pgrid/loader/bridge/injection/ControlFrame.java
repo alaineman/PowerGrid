@@ -31,7 +31,7 @@ public class ControlFrame extends JFrame {
     
     public ControlFrame(KeyInjector ki) {
         super("PowerGrid development Control Panel");
-        injector = new StringInjector(ki);
+        injector = StringInjector.wrap(ki);
         createAndShowFrame();
     }
     

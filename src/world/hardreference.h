@@ -12,6 +12,10 @@ private:
 public:
     HardReference(jobject obj) : CachableNode(obj){}
     JNIObject* getReferent(bool useCache = true);
+
+    enum Fields {
+      REFERENT
+    };
 };
 
 }

@@ -1,9 +1,10 @@
 package net.pgrid.loader.bridge.injection.keyboard;
 
-import java.awt.Window;
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
@@ -14,9 +15,13 @@ import net.pgrid.loader.Logger;
  * This class wraps a KeyInjector to write a String as a series of key presses.
  * <p/>
  * It does so by using a Map containing the character mappings. For each 
- * character in the String to be typed, the StringInjector calls the keyTyped method 
- * of the KeyInjector with the appropriate arguments.
- * 
+ * character in the String to be typed, the StringInjector calls the keyTyped 
+ * method of the underlying KeyInjector with the appropriate arguments.
+ * <p/>
+ * The StringInjector can act as a perfectly valid KeyInjector, delegating the 
+ * methods defined in the KeyInjector interface to the underlying KeyInjector
+ * instance.
+ * <p/>
  * @author Chronio
  */
 public class StringInjector extends AbstractKeyInjector {
@@ -24,10 +29,58 @@ public class StringInjector extends AbstractKeyInjector {
     private static Logger LOGGER = Logger.get("INJECT");
     
     private KeyInjector injector;
-    private static URL keyboardFile = ClassLoader.getSystemResource("net/pgrid/loader/injection/keyboard/international.keys");
+    /**
+     * The standard keyboard layout file to load.
+     * <p/>
+     * It is loaded automatically when the StringInjector's typeString or typeChar 
+     * method is called for the first time.
+     * <p/>
+     * The same keyStroke map is shared between all StringInjector instances,
+     * so once it is loaded for one StringInjector, it is also loaded for every 
+     * other StringInjector instance.
+     */
+    public static final URL keyboardFile = ClassLoader.getSystemResource("net/pgrid/loader/bridge/injection/keyboard/international.keys");
+    
+    /**
+     * Map containing the KeyStroke objects for each individual character.
+     * <p/>
+     * It is filled automatically and through calling the loadDefinitions methods.
+     */
     private static HashMap<Character, KeyStroke> keyStrokes;
+    
+    /**
+     * Indicates if the default keyboard File has been loaded.
+     * @see StringInjector#keyboardFile
+     */
     private static volatile boolean loadedCharDefinitions = false;
     
+    /**
+     * Convenience method that wraps the given KeyInjector in a StringInjector
+     * unless the KeyInjector already was a StringInjector, in which case the
+     * parameter is returned as a StringInjector.
+     * <p/>
+     * This prevents redundant StringInjectors wrapping other StringInjectors.
+     * <p/>
+     * @param ki the KeyInjector
+     * @return a StringInjector delegating to the given KeyInjector, or the 
+     *         KeyInjector cast to StringInjector is it is already an instance
+     *         of StringInjector.
+     */
+    public static StringInjector wrap(KeyInjector ki) {
+        if (ki instanceof StringInjector) {
+            return (StringInjector) ki;
+        } else {
+            return new StringInjector(ki);
+        }
+    }
+    
+    /**
+     * Returns a KeyStroke object for typing the given character.
+     * <p/>
+     * If the KeyStroke is unknown, this method returns null.
+     * @param c the character to type
+     * @return the KeyStroke corresponding to the typed character
+     */
     public static synchronized KeyStroke getKeyStroke(char c) {
         KeyStroke stroke = keyStrokes.get(c);
         if (stroke == null) {
@@ -36,40 +89,67 @@ public class StringInjector extends AbstractKeyInjector {
             } else if (Character.isUpperCase(c)) {
                 stroke = KeyStroke.getKeyStroke("shift typed " + Character.toLowerCase(c));
             } else {
-                // trial-and-error mode for finding the correct puntuation:
-                // first try simply the key itself.
-                stroke = KeyStroke.getKeyStroke("typed " + c);
-                
-                // if that fails, try to load the external definitions (in the keybindings file)
+                loadDefinitions();
+                stroke = keyStrokes.get(c);
                 if (stroke == null) {
-                    loadDefinitions();
-                    stroke = keyStrokes.get(c);
+                    stroke = KeyStroke.getKeyStroke("typed " + c);
                 }
             }
             if (stroke != null) {
                 keyStrokes.put(c, stroke);
             } else {
-                LOGGER.log("Cannot detect keystroke for character " + c);
+                LOGGER.log("Cannot create keystroke for character " + c);
             }
         }
         return stroke;
     }
     
-    public static synchronized void loadDefinitions() {
-        if (!loadedCharDefinitions) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(keyboardFile.openStream()))) {
-                while (reader.ready()) {
-                    String line = reader.readLine();
-                    if (!line.isEmpty() && !line.startsWith("//")) {
-                        char c = line.charAt(0);
-                        KeyStroke kStroke = KeyStroke.getKeyStroke(line.substring(2).trim());
-                        if (kStroke != null) {
-                            keyStrokes.put(c, kStroke);
-                        } else {
-                            LOGGER.log("WARNING: definition for " + c + " is no valid KeyStroke");
-                        }
+    /**
+     * Loads Character definitions from the specified InputStream.
+     * <p/>
+     * This method overwrites all key bindings that were already defined and are 
+     * also defined in the data from the InputStream parameter.
+     * <p/>
+     * This method does not throw Exceptions upon failure, but instead parses 
+     * the entire InputStream for usable data. Any incorrectly formatted data is 
+     * ignored, and a warning is printed to the Logger labeled "INJECT".
+     * <p/>
+     * @param in the InputStream to read from.
+     */
+    public static synchronized void loadDefinitions(InputStream in) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            while (reader.ready()) {
+                String line = reader.readLine();
+                if (!line.isEmpty() && !line.startsWith("//")) {
+                    char c = line.charAt(0);
+                    KeyStroke kStroke = KeyStroke.getKeyStroke(line.substring(2).trim());
+                    if (kStroke == null) {
+                        LOGGER.log("WARNING: definition for " + c + " is no valid KeyStroke");
+                    } else {
+                        keyStrokes.put(c, kStroke);
                     }
                 }
+            }
+        } catch (IOException e) {
+            LOGGER.describe(e);
+        }
+    }
+    
+    /**
+     * Loads Character definitions from the default Keyboard File.
+     * <p/>
+     * If the default keyboard File has been loaded before, this method does 
+     * nothing.
+     * <p/>
+     * This method delegates to <code>loadDefinitions(InputStream)</code>.
+     * <p/>
+     * @see StringInjector#keyboardFile
+     * @see StringInjector#loadDefinitions(java.io.InputStream) 
+     */
+    public static synchronized void loadDefinitions() {
+        if (!loadedCharDefinitions) {
+            try {
+                loadDefinitions(keyboardFile.openStream());
             } catch (IOException e) {
                 LOGGER.describe(e);
             }
@@ -149,12 +229,21 @@ public class StringInjector extends AbstractKeyInjector {
     }
 
     @Override
-    public void setTarget(Window comp) {
+    public void setTarget(Component comp) {
         getInjector().setTarget(comp);
     }
 
+    /**
+     * Returns the wrapped KeyInjector's target Component.
+     * <p/>
+     * If the wrapped KeyInjector is an AbstractKeyInjector, this method returns
+     * the value returned by the AbstractKeyInjector's <code>getTarget()</code>
+     * method.
+     * Else, this method returns null.
+     * @return the target Component of this KeyInjector
+     */
     @Override
-    public Window getTarget() {
+    public Component getTarget() {
         if (getInjector() instanceof AbstractKeyInjector) {
             return ((AbstractKeyInjector)getInjector()).getTarget();
         } else {

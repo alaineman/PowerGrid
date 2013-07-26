@@ -483,7 +483,16 @@ namespace jni {
       env->ExceptionDescribe();
 #endif
       env->ExceptionClear();
-      throw java_exception(thrown, "Exception in static method call");
+      throw java_exception(thrown, "Exception in method call");
+    }
+  }
+
+  void JavaEnv::deleteLocalReference(jobject obj) {
+    if (obj != NULL) {
+      JNIEnv* env = GetEnv();
+      if (env != NULL) {
+        env->DeleteLocalRef(obj);
+      }
     }
   }
 

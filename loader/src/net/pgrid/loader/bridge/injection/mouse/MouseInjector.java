@@ -1,6 +1,6 @@
 package net.pgrid.loader.bridge.injection.mouse;
 
-import java.awt.Window;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 
 /**
@@ -34,19 +34,19 @@ public interface MouseInjector {
     public static final int BUTTON3 = MouseEvent.BUTTON3;
 
     /**
-     * Sets the target Window for future mouse events.
+     * Sets the target Component for future mouse events.
      * <p/>
      * Any event-related method call done after this 
-     * invocation should use the new Window (if applicable).
+     * invocation should use the new Component (if applicable).
      * <p/>
      * When calling this method, please assert beforehand that the provided 
      * component is not null. Similarly, implementing classes need not check for
      * null values here, the behavior of calling this method with null as 
      * parameter is undefined.
      * <p/>
-     * @param comp the target Window.
+     * @param comp the target Component.
      */
-    public void setTarget(Window comp);
+    public void setTarget(Component comp);
     
     /**
      * Moves the mouse to the position (x,y).

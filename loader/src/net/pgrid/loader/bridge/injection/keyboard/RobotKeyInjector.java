@@ -1,6 +1,7 @@
 package net.pgrid.loader.bridge.injection.keyboard;
 
 import java.awt.AWTException;
+import java.awt.Component;
 import java.awt.Robot;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
@@ -12,7 +13,7 @@ import javax.swing.JOptionPane;
  */
 public class RobotKeyInjector extends AbstractKeyInjector {
 
-    private Window target;
+    private Component target;
     private Robot rob;
     
     public RobotKeyInjector(Window comp) throws AWTException {
@@ -25,21 +26,25 @@ public class RobotKeyInjector extends AbstractKeyInjector {
      * the Robot starts sending keystrokes to other applications. 
      */
     protected void ensureFocus() {
-        if (target.getFocusOwner() == null) {
-            // if the FocusOwner of our target is null, it means the target window is not in focus.
-            // So we display a message that gives the user the oppertunity to set the focus correctly before printing.
-            // Later, this should happen automatically when required, but it's a stable solution for now.
-            JOptionPane.showMessageDialog(null, 
-                    "Please ensure the Applet window has focus\nAfter this dialog closes, printing will start in 3 seconds", 
-                    "Ensure correct focus", JOptionPane.INFORMATION_MESSAGE);
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {}
+        if (target instanceof Window) {
+            if (((Window)target).getFocusOwner() == null) {
+                // if the FocusOwner of our target is null, it means the target window is not in focus.
+                // So we display a message that gives the user the oppertunity to set the focus correctly before printing.
+                // Later, this should happen automatically when required, but it's a stable solution for now.
+                JOptionPane.showMessageDialog(null, 
+                        "Please ensure the Applet window has focus\nAfter this dialog closes, printing will start in 3 seconds", 
+                        "Ensure correct focus", JOptionPane.INFORMATION_MESSAGE);
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {}
+            }
+        } else {
+            throw new IllegalStateException("Target Component is no Window");
         }
     }
     
     @Override 
-    public void setTarget(Window comp) {
+    public void setTarget(Component comp) {
         target = comp;
     }
 

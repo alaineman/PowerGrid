@@ -1,5 +1,6 @@
 package net.pgrid.loader.bridge.injection.keyboard;
 
+import java.awt.Component;
 import java.awt.Window;
 
 /**
@@ -15,13 +16,13 @@ import java.awt.Window;
 public interface KeyInjector {
 
     /**
-     * Sets the target Window for future keystrokes.
+     * Sets the target Component for future keystrokes.
      * <p/>
      * Any keyPressed, keyReleased or keyTyped method call done after this 
-     * invocation should use the new Window's focused component (if applicable).
+     * invocation should use the new Component's focused component (if applicable).
      * <p/>
      * When calling this method, please assert beforehand that the provided 
-     * Window object is not null. Similarly, implementing classes need not 
+     * Component object is not null. Similarly, implementing classes need not 
      * check for null values here, the behavior of calling this method with null as 
      * parameter is undefined and as such may leave the KeyInjector in an 
      * non-working state.
@@ -30,7 +31,7 @@ public interface KeyInjector {
      * 
      * @throws NullPointerException when the component is null (optional)
      */
-    public void setTarget(Window comp);
+    public void setTarget(Component comp);
     
     /**
      * Presses the key given by the specified key code. These key codes are all

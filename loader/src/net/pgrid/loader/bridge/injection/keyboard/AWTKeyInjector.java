@@ -1,10 +1,11 @@
 package net.pgrid.loader.bridge.injection.keyboard;
 
+import java.awt.Canvas;
 import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.Window;
+import java.awt.Container;
 import java.awt.event.KeyEvent;
 import static java.awt.event.KeyEvent.*;
+import java.awt.event.KeyListener;
 
 /**
  * Simple KeyInjector that works by pushing KeyEvent objects onto the 
@@ -14,14 +15,38 @@ import static java.awt.event.KeyEvent.*;
  */
 public class AWTKeyInjector implements KeyInjector {
 
-    private Window target;
-    private EventQueue queue;
-    
+    private Component target;
+    private KeyListener listener;
+
     /**
-     * @return the EventQueue object for the target Component.
+     * @return the KeyListener on which KeyEvents are placed
      */
-    public EventQueue getEventQueue() {
-        return queue;
+    public KeyListener getListener() {
+        if (listener == null) {
+            Component c = getTargetComponent();
+            if (!(c instanceof Container)) {
+                throw new IllegalStateException("Target component must be a Container");
+            }
+            // Since we'll be iterating over the Container's children, we want to
+            // assert that the Container's structure does not change.
+            synchronized (c.getTreeLock()) {
+                Component[] comps = ((Container)c).getComponents();
+                for (int i = 0; i < comps.length; i++) {
+                    if (comps[i] instanceof Canvas) {
+                        KeyListener[] kls = comps[i].getKeyListeners();
+                        if (kls.length < 1) {
+                            throw new IllegalStateException("No KeyListener for the Canvas");
+                        }
+                        listener = kls[0];
+                        break;
+                    }
+                }
+                if (listener == null) {
+                    throw new IllegalStateException("Canvas not found in target Container");
+                }
+            }
+        }
+        return listener;
     }
     
     /**
@@ -32,41 +57,52 @@ public class AWTKeyInjector implements KeyInjector {
     }
     
     /**
-     * Posts the given KeyEvent on the AWT EventQueue given by 
+     * Forwards the given KeyEvent to the set listener given by 
      * <code>getEventQueue()</code>.
      * @param event the KeyEvent to post
      * 
      * @throws NullPointerException if the event is null
      */
     protected void postKeyEvent(KeyEvent event) {
-        getEventQueue().postEvent(event);
+        switch (event.getID()) {
+            case KEY_PRESSED:
+                getListener().keyPressed(event);
+                break;
+            case KEY_RELEASED:
+                getListener().keyReleased(event);
+                break;
+            case KEY_TYPED:
+                getListener().keyTyped(event);
+        }
     }
     
     @Override
     public void keyPressed(int keyCode, int modifiers) {
-        KeyEvent ev = new KeyEvent(target.getFocusOwner(), KEY_PRESSED, 
+        KeyEvent ev = new KeyEvent(target, KEY_PRESSED, 
                 System.currentTimeMillis(), modifiers, keyCode, (char)keyCode);
         postKeyEvent(ev);
     }
 
     @Override
     public void keyReleased(int keyCode, int modifiers) {
-        KeyEvent ev = new KeyEvent(target.getFocusOwner(), KEY_RELEASED, 
+        KeyEvent ev = new KeyEvent(target, KEY_RELEASED, 
                 System.currentTimeMillis(), modifiers, keyCode, (char)keyCode);
         postKeyEvent(ev);
     }
 
     @Override
     public void keyTyped(char c, int keyCode, int modifiers) {
-        KeyEvent ev = new KeyEvent(target.getFocusOwner(), KEY_TYPED, 
+        KeyEvent ev = new KeyEvent(target, KEY_TYPED, 
                 System.currentTimeMillis(), modifiers, VK_UNDEFINED, c);
         postKeyEvent(ev);
     }
 
     @Override
-    public void setTarget(Window comp) {
+    public void setTarget(Component comp) {
+        assert comp != null;
         target = comp;
-        queue = target.getToolkit().getSystemEventQueue();
+        // reset the listener, it is collected upon calling getListener()
+        listener = null; 
     }
     
 }

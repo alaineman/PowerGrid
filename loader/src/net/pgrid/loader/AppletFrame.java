@@ -39,7 +39,7 @@ public class AppletFrame extends JFrame implements AppletStub {
     private boolean fullscreen = false;
     
     private JLabel label;
-    private Applet theApplet = null;
+    private Applet applet = null;
     private ClientDownloader dloader = null;
 
     /**
@@ -66,11 +66,15 @@ public class AppletFrame extends JFrame implements AppletStub {
         windowedMode = device.getDisplayMode();
     }
 
+    public Applet getApplet() {
+        return applet;
+    }
+
     /**
      * Sets up the AppletFrame and shows it.
      */
     private void createAndShowFrame() {
-        setTitle("Runescape (running through PowerGrid)");
+        setTitle("Runescape (running through PowerGrid loader)");
         try {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
         } catch (IOException e) {
@@ -81,7 +85,7 @@ public class AppletFrame extends JFrame implements AppletStub {
         Insets in = getInsets();
         int bHeight = in.top + in.bottom;
         int bWidth = in.right + in.left;
-        setSize(1056 + bWidth, 600 + bHeight);
+        setSize(1056 + bWidth, 750 + bHeight);
         setMinimumSize(new Dimension(765 + bWidth, 540 + bHeight));
         setMaximumSize(new Dimension(3200 + bWidth, 1200 + bHeight));
 
@@ -111,12 +115,12 @@ public class AppletFrame extends JFrame implements AppletStub {
      */
     public boolean startApplet(Applet a) {
         showMessage("Starting Applet");
-        theApplet = a;
-        theApplet.setStub(this);
+        applet = a;
+        applet.setStub(this);
         try {
-            theApplet.init();
-            theApplet.start();
-            getContentPane().add(theApplet, BorderLayout.CENTER);
+            applet.init();
+            applet.start();
+            getContentPane().add(applet, BorderLayout.CENTER);
             getContentPane().remove(label);
             revalidate();
             LOGGER.log("Applet started");

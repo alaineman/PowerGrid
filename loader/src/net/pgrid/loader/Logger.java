@@ -66,6 +66,8 @@ public class Logger {
     private String prefix;
     private Logger parent = null;
     
+    
+    
     /**
      * Creates a new Logger with the specified name.
      * <p/>

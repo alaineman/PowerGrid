@@ -3,6 +3,7 @@ package net.pgrid.loader.bridge;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import net.pgrid.loader.Logger;
 
 /**
  * This class reads a byte array and maps the received data.
@@ -13,8 +14,8 @@ import java.util.Map;
  * <p/> 
  * There are three types of maps stored per ClassMapper. 
  * <ol>
- * <li>The class map; Stores the obfuscated name using the unobfuscated name as a key.</li>
- * <li>The field map; Stores the field info using the unobfuscated name as a key. </li>
+ * <li>The class map; Stores the obfuscated name using the de-obfuscated name as a key.</li>
+ * <li>The field map; Stores the field info using the de-obfuscated name as a key. </li>
  * <li>The constant map; Stores it's value using the obfuscated name as a key. </li>
  * </ol>
  * <p/>
@@ -22,10 +23,14 @@ import java.util.Map;
  */
 public class ClassMapper {
 
+    private static final Logger LOGGER = Logger.get("UPDATER");
+    
     private byte[] source;
-    private Map<String, String> classMap;
-    private Map<String, ObfuscatedField> fieldMap;
-    private Map<String, Long> constMap;
+    private Map<String, String> classes;
+    private Map<String, ObfuscatedFieldData> fieldData;
+    private Map<String, ObfuscatedField> fields;
+    private Map<String, Long> constants;
+    
     private short revision;
     private String gamepack;
     private int cursor;
@@ -51,7 +56,7 @@ public class ClassMapper {
      * @return Class map
      */
     public Map<String, String> getClassMapper() {
-        return Collections.unmodifiableMap(classMap);
+        return Collections.unmodifiableMap(classes);
     }
 
     /**
@@ -59,7 +64,7 @@ public class ClassMapper {
      * @return Field map
      */
     public Map<String, ObfuscatedField> getFieldMap() {
-        return Collections.unmodifiableMap(fieldMap);
+        return Collections.unmodifiableMap(fields);
     }
 
     /**
@@ -67,7 +72,7 @@ public class ClassMapper {
      * @return Constant map
      */
     public Map<String, Long> getConstMap() {
-        return Collections.unmodifiableMap(constMap);
+        return Collections.unmodifiableMap(constants);
     }
 
     /**
@@ -112,7 +117,7 @@ public class ClassMapper {
                 case 0x00:
                     String obfClassName = parseString();
                     String unobfClassName = parseString();
-                    classMap.put(unobfClassName, obfClassName);
+                    classes.put(unobfClassName, obfClassName);
                     break;
                 case 0x01:
                     String obfFieldName = parseString();
@@ -122,12 +127,17 @@ public class ClassMapper {
                     cursor++;
                     String owner = parseString();
                     long flag = parseLong(8);
-                    fieldMap.put(unobfFieldName, new ObfuscatedField(obfFieldName, sign, stat, owner, flag));
+                    ObfuscatedFieldData data = new ObfuscatedFieldData(obfFieldName, unobfFieldName, flag);
+                    try {
+                        fields.put(unobfFieldName, new ObfuscatedField(data));
+                    } catch (ClassNotFoundException | NoSuchFieldException e) {
+                        LOGGER.describe(e);
+                    }
                     break;
                 case 0x02:
                     String obfConstName = parseString();
                     long value = parseLong(8);
-                    constMap.put(obfConstName, value);
+                    constants.put(obfConstName, value);
                     break;
                 default:
                     throw new IOException("Parsing data failed - Unexpected token found.");

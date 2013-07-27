@@ -8,8 +8,8 @@ import java.awt.event.KeyListener;
 import net.pgrid.loader.AppletFrame;
 
 /**
- * Simple KeyInjector that works by pushing KeyEvent objects onto the 
- * target AWT Component's EventQueue.
+ * Simple KeyInjector that works by pushing KeyEvent objects into the target
+ * KeyListeners.
  * 
  * @author Chronio
  */

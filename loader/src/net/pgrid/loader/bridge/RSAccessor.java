@@ -18,7 +18,15 @@ public class RSAccessor {
         assert mapData != null;
         map = mapData;
     }
-            
+    
+    public Class<?> getClassByID(int id) {
+        return null;
+    }
+    
+    public ObfuscatedField<?> getFieldByID(int classID, int fieldID) {
+        return null;
+    }
+    
 //    public XXX getXXXField(Object o, int classID, int fieldID) {
 //    get class with classID
 //    if null: look up classID in map data
@@ -41,9 +49,15 @@ public class RSAccessor {
         
     }
     
-    public short getShortField(){
+    public short getShortField(Object o, int classID, int fieldID) {
+        Class<?> c = getClassByID(classID);
+        if (c == null) {
+            throw new RuntimeException("No such Class");
+        }
+        if (!c.isInstance(o)) {
+            throw new RuntimeException("Invalid Object");
+        }
         return 0;
-        
     }
     
     public int getIntegerField(){

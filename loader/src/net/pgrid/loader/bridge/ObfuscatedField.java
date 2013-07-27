@@ -34,10 +34,13 @@ public class ObfuscatedField<T> {
         this.multiplier = multiplier;
     }
     
+    @SuppressWarnings("unchecked")
     public ObfuscatedField(ObfuscatedFieldData data) throws ClassNotFoundException, NoSuchFieldException {
         assert data != null;
         this.semanticName = data.getSemanticName();
         reference = collectReference(data.getClassName(), data.getFieldName());
+        type = (Class<? extends T>) reference.getType();
+        multiplier = data.getFieldMultiplier();
     }
     
     private Field collectReference(String className, String fieldName) 

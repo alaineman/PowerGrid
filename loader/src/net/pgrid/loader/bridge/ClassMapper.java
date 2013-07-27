@@ -28,7 +28,7 @@ public class ClassMapper {
     private byte[] source;
     private Map<String, String> classes;
     private Map<String, ObfuscatedFieldData> fieldData;
-    private Map<String, ObfuscatedField> fields;
+    private Map<String, ObfuscatedField<?>> fields;
     private Map<String, Long> constants;
     
     private short revision;
@@ -63,7 +63,7 @@ public class ClassMapper {
      * Returns an unmodifiable version of the Field map.
      * @return Field map
      */
-    public Map<String, ObfuscatedField> getFieldMap() {
+    public Map<String, ObfuscatedField<?>> getFieldMap() {
         return Collections.unmodifiableMap(fields);
     }
 

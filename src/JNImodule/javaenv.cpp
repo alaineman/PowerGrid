@@ -4,6 +4,8 @@
 #include "jniclass.h"
 #include "jnistring.h"
 #include <QDir>
+#include <QLibrary>
+#include <QProcessEnvironment>
 #include <iostream>
 
 namespace jni {
@@ -42,9 +44,59 @@ namespace jni {
       throw logic_error("JVM already running.");
     }
 
-    if (!QFile("PowerGridLoader.jar").exists()) {
-        qFatal("Cannot find loader jar file, verify PowerGridLoader.jar is located in the application's working directory.");
+    QFile javaLib;
+
+#ifdef Q_OS_WIN
+    // Try to find the JVM library using Windows' where command
+    // first we find the location(s) of the Java executable.
+    QProcess where;
+    where.start("where", QStringList() << /*"/F" << */"java.exe");
+    uint entriesFound = 0;
+    where.waitForFinished();
+    // The output of the program consists of a list of paths,
+    // separated by '\n', on which the java command was found.
+    // we then look for the jvm library in each of these directories.
+    while (where.canReadLine()) {
+      QByteArray lineData = where.readLine(256);
+      QString line = QString::fromLocal8Bit(lineData);
+
+      if (!line.isEmpty()) {
+        entriesFound ++;
+        line.chop(line.size() - line.lastIndexOf('\\'));
+        QString directory = line;//.append("\"");
+        if (!directory.isEmpty()) {
+          qDebug() << "Searching " << directory << " for jvm.dll";
+          QProcess whereJVM;
+          whereJVM.start("where", QStringList() << "/R" << directory << "jvm.dll");
+          whereJVM.waitForFinished();
+          int exitCode = whereJVM.exitCode();
+          if (exitCode == 0) {
+            // We matched at least one entry, so we simply take the first one.
+            lineData = whereJVM.readLine(256);
+            line = QString::fromLatin1(lineData);
+            line.chop(1); // remove the unwanted \n char at the end.
+            qDebug() << "detected jvm.dll at" << line;
+            javaLib.setFileName(line.replace('\\', '/')); // Qt does not offically support Windows-style path separators ('\\').
+            break;
+          } else {
+            qDebug() << "Failed to find jvm.dll: exit code =" << exitCode;
+          }
+        }
+      }
     }
+    qDebug() << "Searched" << entriesFound << "entries for java.exe";
+    if (!javaLib.exists()) {
+      qDebug() << "Failed to find jvm.dll at" << javaLib.fileName();
+      qFatal("Could not find jvm library");
+    } else {
+      qDebug() << "jvm.dll found at " << javaLib.fileName();
+    }
+#else
+# ifdef Q_OS_MACX
+    // Find the jvm library in the JavaVM framework
+    javaLib.setFileName("");
+# endif
+#endif
 
     JavaVMInitArgs vmargs;
     vmargs.version            = JNI_VERSION_1_6;

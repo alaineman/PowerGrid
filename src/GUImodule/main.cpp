@@ -7,6 +7,10 @@
 #include <fstream>
 #include <sstream>
 
+#ifdef Q_OS_WIN
+# include <windows.h>
+#endif
+
 #include <QApplication>
 #include <QLabel>
 #include <QtConcurrent/QtConcurrent>

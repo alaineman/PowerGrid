@@ -19,25 +19,23 @@
 
 #------------------------------------------------
 #
-# .pro file for the JNI module.
+# .pro file for the Java bridge
 #
 # This module manages the connection with the
 # running Java Virtual Machine and is therefore
-# essential for starting Runescape. The JNI
-# module then acts as a gateway between the rest
+# essential for starting Runescape. The Java bridge
+# then acts as a gateway between the rest
 # of PowerGrid and Runescape.
 #
 #------------------------------------------------
 
 #------------------------------------------------
-# The JNI only needs the QtCore, not the QtGUI.
-# Furthermore, The JNI module should be built as
-# a static library with multi-threading support.
+# The bridge only needs the QtCore, not the QtGUI.
 #------------------------------------------------
 
 QT = core
 
-TARGET = JNIModule
+TARGET = Javabridge
 TEMPLATE = lib
 CONFIG += staticlib
 
@@ -67,10 +65,30 @@ SOURCES += \
     jniclass.cpp \
     javaenv.cpp \
 
-OTHER_FILES = includeJNI.pro
+OTHER_FILES = \
+    include.pro
 
 #------------------------------------------------
 # Add the dependency for jni
 #------------------------------------------------
-include (../JavaNI/JavaNI.pro)
 
+# Set the base directory for the Java Native Interface libraries
+JNI_BASE = $$PWD/../../External/JNI
+
+# Find the appropriate OS name for the platform-dependent include.
+win32:      OS_NAME     = win32
+else:macx:  OS_NAME     = darwin
+else:unix:  OS_NAME     = unix
+else:       error ("Unsupported OS")
+
+JNI_HEADERS = $$JNI_BASE/include \
+              $$JNI_BASE/include/$$OS_NAME
+
+# On Mac OS, Java should be linked as a framework instead of a library.
+# else (on windows and unix), the jvm is a normal (dynamic) library
+
+macx:  LIBS += -framework JavaVM
+else:  LIBS += -L$$JNI_BASE/lib -ljvm
+
+INCLUDEPATH += $$JNI_HEADERS
+DEPENDPATH  += $$JNI_HEADERS

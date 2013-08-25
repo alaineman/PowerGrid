@@ -37,10 +37,10 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += \
-    JNIModule \
+    Javabridge \
     world \
     Cachemodule \
     Injectionmodule \
     GUImodule \
-#    Monitormodule \
-#    AImodule \
+    Monitormodule \
+    AImodule \

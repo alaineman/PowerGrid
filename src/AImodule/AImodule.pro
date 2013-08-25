@@ -27,6 +27,3 @@ HEADERS     =
 # The subprojects this project depends on
 #------------------------------------------------
 # none #
-
-OTHER_FILES += \
-    includeAI.pro

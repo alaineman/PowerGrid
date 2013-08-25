@@ -19,17 +19,33 @@
 
 #------------------------------------------------
 #
-# Include project file for the JNI module.
+# Include project file for the Java bridge.
 #
 # Include this file into other .pro files that
-# depend on the JNImodule project.
+# depend on the Javabridge project.
 #
 #------------------------------------------------
-
-INCLUDEPATH    += $$PWD/../JNIModule
-DEPENDPATH     += $$PWD/../JNIModule
 
 LIBS           += $$OUT_PWD/../JNIModule/build/libJNIModule.a
 PRE_TARGETDEPS += $$OUT_PWD/../JNIModule/build/libJNIModule.a
 
-include (../JavaNI/JavaNI.pro)
+# We also need to explicitly link the JNI headers / libraries
+JNI_BASE = $$PWD/../../External/JNI
+
+# Find the appropriate OS name for the platform-dependent include.
+win32:      OS_NAME     = win32
+else:macx:  OS_NAME     = darwin
+else:unix:  OS_NAME     = unix
+else:       error ("Unsupported OS")
+
+JNI_HEADERS = $$JNI_BASE/include \
+              $$JNI_BASE/include/$$OS_NAME
+
+# On Mac OS, Java should be linked as a framework instead of a library.
+# else (on windows and unix), the jvm is a normal (dynamic) library
+
+macx:  LIBS += -framework JavaVM
+else:  LIBS += -L$$JNI_BASE/lib -ljvm
+
+INCLUDEPATH += $$JNI_HEADERS $$PWD/../JNIModule
+DEPENDPATH  += $$JNI_HEADERS $$PWD/../JNIModule

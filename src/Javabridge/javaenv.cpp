@@ -62,13 +62,14 @@ namespace jni {
       throw logic_error("JVM already running.");
     }
 
-    QFile javaLib;
+    QFile javaLib; // QFile denoting the jvm.dll file.
 
 #ifdef Q_OS_WIN
     // Try to find the JVM library using Windows' where command
     // first we find the location(s) of the Java executable.
-    QProcess where;
-    where.start("where", QStringList() << /*"/F" << */"java.exe");
+    QProcess where, whereJVM;
+
+    where.start("where", QStringList() << "java.exe");
     uint entriesFound = 0;
     where.waitForFinished();
     // The output of the program consists of a list of paths,
@@ -81,12 +82,15 @@ namespace jni {
       if (!line.isEmpty()) {
         entriesFound ++;
         line.chop(line.size() - line.lastIndexOf('\\'));
-        QString directory = line;//.append("\"");
+        QString directory = line;
         if (!directory.isEmpty()) {
           qDebug() << "Searching " << directory << " for jvm.dll";
-          QProcess whereJVM;
+
+          // Look recursively for jvm.dll in the directory of the java executable.
+          // This is guaranteed to work for normal Java installations on Windows.
           whereJVM.start("where", QStringList() << "/R" << directory << "jvm.dll");
           whereJVM.waitForFinished();
+
           int exitCode = whereJVM.exitCode();
           if (exitCode == 0) {
             // We matched at least one entry, so we simply take the first one.
@@ -103,18 +107,15 @@ namespace jni {
       }
     }
     qDebug() << "Searched" << entriesFound << "entries for java.exe";
-    if (!javaLib.exists()) {
-      qDebug() << "Failed to find jvm.dll at" << javaLib.fileName();
-      qFatal("Could not find jvm library");
-    } else {
-      qDebug() << "jvm.dll found at " << javaLib.fileName();
-    }
-#else
-# ifdef Q_OS_MACX
-    // Find the jvm library in the JavaVM framework
-    javaLib.setFileName("");
-# endif
+#elif defined Q_OS_MACX
+    //TODO Find the jvm library in the JavaVM framework
+    javaLib.setFileName("/Frameworks/JavaVM.framework/...");
+#else // any Unix OS (except Mac OS)
+    //TODO Find the jvm library by scanning possible locations
+    javaLib.setFileName("/usr/lib/...");
 #endif
+
+    qDebug() << "Identified jvm library at" << javaLib.fileName();
 
     JavaVMInitArgs vmargs;
     vmargs.version            = JNI_VERSION_1_6;
@@ -125,12 +126,15 @@ namespace jni {
 #else
     int nOptions = 3;
 #endif
-
+    // These arguments are practically the same as for the official Runescape loader.
+    // As such, the max heap size should be sufficient.
     JavaVMOption options[nOptions];
     options[0].optionString  = const_cast<char*>("-Djava.class.path=PowerGridLoader.jar");
     options[1].optionString  = const_cast<char*>("-Xmx256m");
     options[2].optionString  = const_cast<char*>("-Xss2m");;
 #ifdef DEBUG
+    // JNI calls are checked while debugging, in order to help tracing problems within the JNI.
+    // In release builds they are disabled for speed.
     options[3].optionString  = const_cast<char*>("-Xcheck:jni");
 #endif
 
@@ -143,26 +147,26 @@ namespace jni {
       QThread* current = QThread::currentThread();
       environments.insert(current, env);
     } else {
-      throw jni_error("Failed to create environment");
+      throw jni_error(tr("Failed to create environment"));
     }
 
     // We redirect log traffic from System.err to a logfile instead, to prevent the usual Runescape Exception
     // stack traces from showing up in the console window.
     JNIClass* system = GetClass("java/lang/System");
+    JNIClass* printstream = GetClass("java/io/PrintStream");
     if (system != NULL) {
       jclass s = system->GetJNIObject();
       jfieldID err = env->GetStaticFieldID(s, "err", "Ljava/io/PrintStream;");
 
-      if (err != NULL) {
-        JNIClass* printstream = GetClass("java/io/PrintStream");
-
-        if (printstream != NULL) {
-          jclass ps = printstream->GetJNIObject();
-          jmethodID initPrintStream = env->GetMethodID(ps, "<init>", "(Ljava/lang/String;)V");
-          jstring file = env->NewStringUTF("runescape.log");
-          jobject newout = env->NewObject(ps, initPrintStream, file);
-          env->SetStaticObjectField(s, err, newout);
-        }
+      if (err != NULL && printstream != NULL) {
+        // We replace the System.err field with another PrintStream that outputs to the file 'runescape.log'
+        jclass ps = printstream->GetJNIObject();
+        jmethodID initPrintStream = env->GetMethodID(ps, "<init>", "(Ljava/lang/String;)V");
+        jstring file = env->NewStringUTF("runescape.log");
+        jobject newout = env->NewObject(ps, initPrintStream, file);
+        env->SetStaticObjectField(s, err, newout);
+      } else {
+        qDebug() << tr("Failed to redirect log messages");
       }
     }
     // Now we start the Jagex Applet Viewer's main class.
@@ -171,22 +175,20 @@ namespace jni {
     jmethodID main = env->GetStaticMethodID(c, "main", "([Ljava/lang/String;)V");
     if (main == NULL) qFatal("Cannot start client: main method not found");
 
-    jobjectArray args = env->NewObjectArray(0, env->FindClass("java/lang/String"), NULL);
-    if (args == NULL) qFatal("Failed to create argument array");
-
-    env->CallStaticVoidMethod(c, main, args);
+    env->CallStaticVoidMethod(c, main, NULL);
     try {
       exceptionCheck();
     } catch (java_exception e) {
       qDebug() << "Exception occurred in main:" << e.what();
     }
 
+    env->DeleteLocalRef(c);
+
     running = JNI_TRUE;
 
     emit started();
   }
 
-  // Get basic JNI element types
   JNIClass* JavaEnv::GetClass(QString n) {
     QMap<QString,JNIClass*>::iterator it = classes.find(n);
     QMap<QString,JNIClass*>::iterator end = classes.end();

@@ -50,7 +50,7 @@ HEADERS     = \
 #------------------------------------------------
 # The subprojects this project depends on
 #------------------------------------------------
-include (../JNIModule/includeJNI.pro)
+include (../Javabridge/include.pro)
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../world/release/ -lworld
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../world/debug/ -lworld

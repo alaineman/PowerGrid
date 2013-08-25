@@ -198,4 +198,4 @@ OTHER_FILES += \
 #------------------------------------------------
 # The subprojects this project depends on
 #------------------------------------------------
-include (../JNIModule/includeJNI.pro)
+include (../Javabridge/include.pro)

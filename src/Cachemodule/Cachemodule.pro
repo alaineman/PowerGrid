@@ -45,5 +45,5 @@ HEADERS     = worlddata.h   sector.h   basecomponent.h
 #------------------------------------------------
 # The subprojects this project depends on
 #------------------------------------------------
-include (../JNIModule/includeJNI.pro)
+include (../Javabridge/includeJNI.pro)
 include (../world/includeWorld.pro)

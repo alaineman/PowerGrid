@@ -45,5 +45,10 @@ HEADERS     = worlddata.h   sector.h   basecomponent.h
 #------------------------------------------------
 # The subprojects this project depends on
 #------------------------------------------------
-include (../Javabridge/includeJNI.pro)
-include (../world/includeWorld.pro)
+include (../Javabridge/include.pro)
+
+INCLUDEPATH    += $$PWD/../world
+DEPENDPATH     += $$PWD/../world
+
+LIBS           += $$OUT_PWD/../world/build/libworld.a
+PRE_TARGETDEPS += $$OUT_PWD/../world/build/libworld.a

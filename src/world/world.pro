@@ -192,8 +192,7 @@ HEADERS += \
     Entity/SceneObject/walldecoration.h \
     rsobject.h
 
-OTHER_FILES += \
-    includeWorld.pro
+OTHER_FILES +=
 
 #------------------------------------------------
 # The subprojects this project depends on

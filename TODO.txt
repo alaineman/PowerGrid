@@ -1,0 +1,27 @@
+This file contains a list of issues and missing functionality that is being worked on.
+This list is ordered by importance, with the most important entries at the top. This 
+gives a good overview of what still has to be done.
+
+This file will be removed once PowerGrid is ready for release. After that, Github's issue
+tracker will be used instead.
+
+[I] indicates an issue, and [F] indicates new functionality. [O] indicates optional 
+functionality that will be implemented if it does not interfere with other entries, and
+there is enough time for it.
+----------------------------------------------------------------------------------------
+
+[I] The program fails to start if jvm.dll cannot be located.
+    - This has to do with the fact that jvm.dll is statically linked. This problem will 
+      be solved by using a 3rd party JNI-wrapper (JACE) to manage all JNI-related code.
+[F] PowerGrid currently cannot read data from the Runescape world.
+    - This will be added as soon as possible, once JACE has been taken in use (see above 
+      issue).
+[F] PowerGrid currently cannot push events to the Runescape world.
+    - This functionality relies on the Java bridge, and as such will be implemented once 
+      the JACE library has been successfully integrated.
+[F] PowerGrid cannot execute AI code, so it fails to work as a Runescape bot.
+    - This functionality relies on interfacing with the Runescape world, and as such will
+      be implemented once communication with the Runescape client is possible.
+[O] PowerGrid could make use of the new Runescape 3 HTML5 interface.
+    - This might be possible using Qt's HTML5 Canvas GUI component. More research needs to 
+      be done to find a working solution.

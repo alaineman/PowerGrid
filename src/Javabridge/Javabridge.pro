@@ -42,28 +42,18 @@ CONFIG += staticlib
 DESTDIR = build/
 OBJECTS_DIR = build/
 
+# this define is required to prevent the static VM loader
+# from trying to bind to a statically linked jvm.lib
+DEFINES += JACE_WANT_DYNAMIC_LOAD
 
 #------------------------------------------------
 # All headers and source files to include
 #------------------------------------------------
 
 HEADERS += \
-    jnivalue.h \
-    jnistring.h \
-    jniobject.h \
-    jnimethod.h \
-    jniexception.h \
-    jniclass.h \
-    javaenv.h \
-    rsclass.h
-
+    javaenvironment.h
 SOURCES += \
-    jnivalue.cpp \
-    jnistring.cpp \
-    jniobject.cpp \
-    jnimethod.cpp \
-    jniclass.cpp \
-    javaenv.cpp \
+    javaenvironment.cpp
 
 OTHER_FILES = \
     include.pro
@@ -75,7 +65,7 @@ OTHER_FILES = \
 # Set the base directory for the Java Native Interface libraries
 JNI_BASE = $$PWD/../../External/JNI
 
-# Find the appropriate OS name for the platform-dependent include.
+# Find the appropriate OS name for the platform-dependent JNI include.
 win32:      OS_NAME     = win32
 else:macx:  OS_NAME     = darwin
 else:unix:  OS_NAME     = unix
@@ -85,10 +75,20 @@ JNI_HEADERS = $$JNI_BASE/include \
               $$JNI_BASE/include/$$OS_NAME
 
 # On Mac OS, Java should be linked as a framework instead of a library.
-# else (on windows and unix), the jvm is a normal (dynamic) library
+# else (on windows and generic unix), the jvm is a normal (dynamic) library
 
 macx:  LIBS += -framework JavaVM
 else:  LIBS += -L$$JNI_BASE/lib -ljvm
 
 INCLUDEPATH += $$JNI_HEADERS
 DEPENDPATH  += $$JNI_HEADERS
+
+#------------------------------------------------
+# Add the dependency for JACE
+#------------------------------------------------
+
+JACE_BASE = $$PWD/../../External/JACE
+
+INCLUDEPATH += $$JACE_BASE/include
+DEPENDPATH  += $$JACE_BASE/include
+LIBS += -L$$JACE_BASE/lib -ljace

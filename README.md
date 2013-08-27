@@ -21,3 +21,21 @@ The loader itself is inspired by the official open-source loader for Runescape, 
 PowerGrid comes with its own control frame that is separate from the main Runescape frame.  This is because the Runescape frame is in reality a Java frame, and PowerGrid's control frame is not.
 
 Because of this feature, it is also possible to use PowerGrid to play Runescape normally, without PowerGrid getting in the way. Also, PowerGrid solely uses reflection to monitor the bot, which opens up more dynamic possibilities than when using injection. This is because Runescape's classes themselves are not modified, and this prevents many workarounds that other bot platforms have to make to get the injection to work.
+
+
+## Legal notices ##
+Copyright 2012-2013 Patrick Kramer, Vincent Wassenaar
+
+PowerGrid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+PowerGrid is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+The GNU General Public License (version 3) can be found in the file 
+called 'COPYING' in the root of the PowerGrid repository. It can 
+also be found at http://www.gnu.org/licenses.

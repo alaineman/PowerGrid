@@ -40,7 +40,5 @@ SUBDIRS += \
     Javabridge \
     world \
     Cachemodule \
-    Injectionmodule \
     GUImodule \
-    Monitormodule \
     AImodule \

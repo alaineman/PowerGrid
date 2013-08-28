@@ -48,7 +48,7 @@ SOURCES     = main.cpp mainwindow.cpp
 HEADERS     = mainwindow.h
 FORMS       = mainwindow.ui
 RESOURCES   = resources.qrc
-OTHER_FILES = powergrid.rc Info.plist
+OTHER_FILES = powergrid.rc
 
 #------------------------------------------------
 # The subprojects this project depends on

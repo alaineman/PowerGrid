@@ -3,53 +3,31 @@
 
 #include <QString>
 #include <QMap>
+#include <QObject>
+#include <stdexcept>
+#include <jace/JNIException.h>
 
-/**
- * This class loads and sets up the Java Virtual Machine using JACE.
- * It tries to find an installed JRE and then create the VM using
- * the appropriate functionality provided by JACE.
- */
-class JavaEnvironment {
+class JavaEnvironment : QObject {
   private:
-    bool jreLocated;
+    Q_DISABLE_COPY( JavaEnvironment )
+
     QString javaLibraryPath;
     QMap<QString, QString> configuration;
 
   public:
-    JavaEnvironment();
+    JavaEnvironment(QObject* parent = NULL) Q_DECL_NOTHROW;
 
-    /// Returns true if and only if a jre is located.
-    bool isJRELocated() const { return jreLocated; }
-    /** Returns the library path found by locateJRE(),
-     *  or an empty QString when locateJRE has not (yet) found a JRE.
-     */
-    QString getLibPath()  const { return QString(javaLibraryPath); }
+    bool isJRELocated()   const Q_DECL_NOTHROW { return !javaLibraryPath.isEmpty(); }
+    QString getLibPath()  const Q_DECL_NOTHROW { return QString(javaLibraryPath); }
 
-    /// Explicitly sets the path to the jvm library.
-    void setLibPath(QString path);
+    void setLibPath(QString path) Q_DECL_NOTHROW;
+    void parseConfigFile(QString fileName = QStringLiteral("java.conf"));
 
-    /// parses the configuration file and stores the key-value bindings.
-    void parseConfigFile(QString file = QStringLiteral("java.conf"));
-
-    /// validates the given path and returns true iff the path is a valid jvm library
     static bool validate(QString path);
+    bool validate() Q_DECL_NOTHROW;
 
-    /// overloaded method, equal to javaEnvironment.validate(getLibPath())
-    bool validate();
-
-    /**
-     * This function attempts to locate an installed JRE.
-     * It then stores the path to the jvm library.
-     *
-     * When the JRE cannot be found, this function throws an std::runtime_error
-     */
-    void locateJRE();
-    /**
-     * This function attempts to create a Java VM.
-     * To do so, it first calls locateJRE() if the path is not yet found.
-     * Then it creates a Java VM using JACE.
-     */
-    void start();
+    void locateJRE() throw(std::runtime_error);
+    void start()     throw(std::runtime_error, jace::JNIException);
 };
 
 #endif // JAVAENVIRONMENT_H

@@ -23,8 +23,6 @@
 # appropriate flags for your compiler to enable C++11 features.
 #------------------------------------------------------------------------
 
-PG_CXXFLAGS
-
 # The platform-compiler name is the filename (without path) that the
 # message below reports.
 message(QMake Spec: $$QMAKESPEC)
@@ -34,7 +32,6 @@ macx-clang {
     # We prefer using that library over the standard one (libstdc++)
     QMAKE_CXXFLAGS += -stdlib=stdc++ -std=c++11
 
-    # We also provide a message to assert the right platform-compiler combination is detected.
     message(Compiling using Clang compiler on Mac OS X)
 }
 else:win32-g++ {
@@ -45,7 +42,7 @@ else:win32-g++ {
 
     message(Compiling using g++ compiler on Windows)
 }
-# Add additional compiler definitions here
+# Add additional compiler definitions here as needed
 else {
     # We have no specific information. We assume -std=c++0x works (like for GCC).
     # However, we also provide a warning that specific compiler flags are not

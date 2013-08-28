@@ -81,7 +81,7 @@ JNI_HEADERS = $$JNI_BASE/include \
               $$JNI_BASE/include/$$OS_NAME
 
 # On Mac OS, Java should be linked as a framework instead of a library.
-# else (on windows and generic unix), the jvm is a normal (dynamic) library
+# else (on windows and generic unix), the jvm is a normal (shared) library
 
 macx:  LIBS += -framework JavaVM
 else:  LIBS += -L$$JNI_BASE/lib -ljvm

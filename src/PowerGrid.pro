@@ -28,17 +28,7 @@
 
 TEMPLATE = subdirs
 
+SUBDIRS += Javabridge UserInterface Bot
 
-#------------------------------------------------
-# We need the projects to be ordered to prevent
-# dependancy loops.
-#------------------------------------------------
-
-CONFIG += ordered
-
-SUBDIRS += \
-    Javabridge \
-    world \
-    Cachemodule \
-    GUImodule \
-    AImodule \
+# The Bot itself depends on the Java bridge for communication
+Bot.depends = Javabridge

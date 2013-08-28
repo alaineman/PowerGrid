@@ -37,15 +37,66 @@ using namespace std;
   this class takes the value of the "jvm_path" key and uses that path as jvm path. Note that
   this class will still try to find another jvm library if the one provided explicitly is invalid.
 
+  If the java.conf file mentioned above contains a "options" key, its value is used as additonal arguments
+  to the jvm being created. Examples of this are "-Xmx256M", for setting the max heap size, and "-X
  */
 
+
 /*!
+ *
  * \brief JavaEnvironment Constructor
  *
- * Creates a new JavaEnvironment object that is ready to locate a JRE and start a Java VM.
+ * Creates a new JavaEnvironment object that is ready to locate a JRE
+ * and start a Java VM.
  */
-JavaEnvironment::JavaEnvironment() {
-  jreLocated = false;
+JavaEnvironment::JavaEnvironment(QObject* parent) : QObject(parent) {}
+
+/*!
+ * \brief Explicitly sets the path to the Java library
+ * \param path the path to the jvm library
+ *
+ * If a JRE has already been found, calling this function
+ * will still override the found path. Additionally, if
+ * the path provided is an empty String, the JavaEnvironment
+ * will
+ */
+void JavaEnvironment::setLibPath(QString path) {
+  javaLibraryPath = path;
+}
+
+/*!
+ * \brief Parses the given config file.
+ * \param file the file to parse.
+ *
+ * The file should contain a key-value pair on each line in
+ * the format <key>=<value>.
+ */
+void JavaEnvironment::parseConfigFile(QString fileName) {
+  QFile file (fileName);
+  if (file.exists()) {
+    file.open(QFile.ReadWrite);
+
+    while (file.canReadLine()) {
+      QByteArray arr = file.readLine();
+      QString line = QString.fromLatin1(arr); // Note: might cause encoding issues.
+
+      if (!line.isEmpty()) {
+        int index = line.indexOf('=');
+        if (index < 0) {
+          qWarning() << "Invalid line found in config file:" << line;
+        } else {
+          QString key (line);
+          key.remove(index, key.size() - index);
+          QString value (line);
+          value.remove(0,index+1);
+
+          if (!key.isEmpty()) {
+            configuration.insert(key.toLower(), value);
+          }
+        }
+      }
+    }
+  }
 }
 
 /*!
@@ -66,7 +117,13 @@ JavaEnvironment::JavaEnvironment() {
  * altered to correctly include the java executable.
  */
 void JavaEnvironment::locateJRE() {
-  if (!jreLocated) {
+  if (!isJRELocated()) {
+    // We first take the value in the configuration, if it was specified
+    if (configuration.contains(QStringLiteral("jvm_path"))) {
+      javaLibraryPath = configuration.value(QStringLiteral("jvm_path"));
+      jreLocated = true;
+      return;
+    }
 #ifdef Q_OS_WIN32
     // On Windows, we can use the 'where' command to locate the Java executable.
     QProcess whereJava, whereJVM;
@@ -100,34 +157,51 @@ void JavaEnvironment::locateJRE() {
     // This executable exports all public JNI symbols, similar to the jvm library on
     // other platforms. This file is actually an alias pointing to the newest JavaVM
     // version, so it is always correct regardless of the installed Java version.
-    javaLibraryPath.setFileName("/System/Library/Frameworks/JavaVM.framework/JavaVM");
+    javaLibraryPath = QStringLiteral("/System/Library/Frameworks/JavaVM.framework/JavaVM");
 #else // assuming any Unix OS
     // Unix has many peculiarities which differ per distribution.
     // Because we cannot go over all possibilities, we require
     // other Unix builds to manually define the library path for the java runtime.
-    // Note that this also means most Unix users will have to manually compile as well.
-
+    parseConfigFile();
+    if (configuration.contains(QStringLiteral("jvm_path"))) {
+      javaLibraryPath = configuration.value(QStringLiteral("jvm_path"));
+    } else {
+      throw runtime_error("[Unix] failed to locate JRE. Please add the path to the config file");
+    }
 #endif
-    jreLocated = true;
   }
 }
 
+/*!
+ * \brief Starts the Java Virtual Machine.
+ *
+ * This function throws a runtime_error when the path to the
+ */
 void JavaEnvironment::start() {
-  // we need to ensure the lib and RT paths have been found.
+  // we need to ensure the library path has been found.
   locateJRE();
 
+  // if the path is invalid we throw a runtime error
+  if (!validate()) {
+    throw runtime_error("Failed to find jvm library, which is required to start");
+  }
   // Now we create the correct loader based on the operating system
 #ifdef Q_OS_WIN32
   Win32VmLoader loader (javaLibraryPath.toStdString().c_str(), JNI_VERSION_1_6);
-#else // assuming any Unix OS
+#else // any Unix OS, including Mac OS
   UnixVmLoader  loader (javaLibraryPath.toStdString().c_str(), JNI_VERSION_1_6);
 #endif
+
+  QStringList optionList = configuration.value(QStringLiteral("options")).split(' ');
 
   OptionList options;
 
   options.push_back( ClassPath("PowerGridLoader.jar") );
-  options.push_back( CustomOption("-Xmx256M") );
-  options.push_back( CustomOption("-Xss2M"));
+
+  for (QStringList::Iterator it = optionList.begin(); it != optionList.end(); it++) {
+    // we push_back each option as a CustomOption
+    options.push_back( CustomOption(it->toStdString()) );
+  }
 
   jace::helper::createVm( loader, options );
 

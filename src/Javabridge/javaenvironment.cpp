@@ -1,10 +1,13 @@
 #include "javaenvironment.h"
 
+#include <stdexcept>
+
 #include <QString>
 #include <QByteArray>
 #include <QStringList>
 #include <QProcess>
 #include <QFile>
+#include <QDebug>
 
 #include <jace/JNIHelper.h>
 #include <jace/OptionList.h>
@@ -16,6 +19,7 @@
 #endif
 
 using namespace jace;
+using namespace std;
 
 /*!
 
@@ -83,13 +87,13 @@ void JavaEnvironment::locateJRE() {
           line = QString::fromLocal8Bit(bytes);
 
           line.chop(1); // this removes the additional '\n' char at the end
-          javaLibraryPath.setFileName(line.replace('\\','/')); // in Qt, '/' should be used even for Win32
+          javaLibraryPath = line.replace('\\','/'); // in Qt, '/' should be used even for Win32
           break;
         }
       }
     }
-    if (javaLibraryPath.fileName().isEmpty()) {
-      throw runtime_exception( "[Windows] failed to locate JRE" );
+    if (javaLibraryPath.isEmpty()) {
+      throw runtime_error( "[Windows] failed to locate JRE" );
     }
 #elif defined(Q_OS_MACX)
     // On Mac OS X, we can find the jvm library in the JavaVM framework.
@@ -114,9 +118,9 @@ void JavaEnvironment::start() {
 
   // Now we create the correct loader based on the operating system
 #ifdef Q_OS_WIN32
-  Win32VmLoader loader (javaLibraryPath.fileName().toStdString().c_str(), JNI_VERSION_1_6);
+  Win32VmLoader loader (javaLibraryPath.toStdString().c_str(), JNI_VERSION_1_6);
 #else // assuming any Unix OS
-  UnixVmLoader  loader (javaLibraryPath.fileName().toStdString().c_str(), JNI_VERSION_1_6);
+  UnixVmLoader  loader (javaLibraryPath.toStdString().c_str(), JNI_VERSION_1_6);
 #endif
 
   OptionList options;

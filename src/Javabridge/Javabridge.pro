@@ -37,17 +37,20 @@ QT = core
 
 include (../cpp11enabler.pro) # enables C++11 and compiler-specific functionality
 
-TARGET = Javabridge
-TEMPLATE = lib
-CONFIG += staticlib
+TARGET      = Javabridge
+TEMPLATE    = lib
+CONFIG     += staticlib
 
-DESTDIR = build/
-OBJECTS_DIR = build/
+DESTDIR     = . # will become "build/<projectname>/"
+
+# Temporary files are placed in the "tmp" folder
+OBJECTS_DIR = tmp
+MOC_DIR     = tmp
 
 # this define is required to prevent the static VM loader
 # from trying to bind to a statically linked jvm.lib
 # We don't want this since we bind to the jvm library dynamically.
-DEFINES += JACE_WANT_DYNAMIC_LOAD
+DEFINES    += JACE_WANT_DYNAMIC_LOAD
 
 #------------------------------------------------
 # All headers and source files to include

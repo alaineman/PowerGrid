@@ -54,9 +54,10 @@ HEADERS     = mainwindow.h \
     descriptivecheckbox.h
 FORMS       = mainwindow.ui
 RESOURCES   = resources.qrc
-OTHER_FILES = powergrid.rc Info.plist
+OTHER_FILES = powergrid.rc Info.plist \
+    Powergrid.qdocconf
 
 #------------------------------------------------
 # The subprojects this project depends on
 #------------------------------------------------
-include (../Javabridge/includeJNI.pro)
+include (../Javabridge/include.pro)

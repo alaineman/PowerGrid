@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QStringList>
 #include <QProcess>
+#include <QFile>
 
 #include <jace/JNIHelper.h>
 #include <jace/OptionList.h>
@@ -16,10 +17,50 @@
 
 using namespace jace;
 
+/*!
+
+  \class JavaEnvironment
+
+  \brief Loader class for the Java Runtime Environment
+
+  This class locates a Java Runtime Environment (JRE) and then uses the
+  appropriate JACE dynamic VM loader to load and start the Java Virtual Machine.
+
+  This class can locate an already installed JRE, or one can be provided explicitly using the
+  setLibPath(QString) member function.
+
+  Alternatively, if a file called "java.conf" is found in the same directory as the executable,
+  this class takes the value of the "jvm_path" key and uses that path as jvm path. Note that
+  this class will still try to find another jvm library if the one provided explicitly is invalid.
+
+ */
+
+/*!
+ * \brief JavaEnvironment Constructor
+ *
+ * Creates a new JavaEnvironment object that is ready to locate a JRE and start a Java VM.
+ */
 JavaEnvironment::JavaEnvironment() {
   jreLocated = false;
 }
 
+/*!
+ * \brief Tries to find a valid Java Runtime Environment on the system.
+ *
+ * This function tries to locate an installed JRE using a method suitable
+ * for the OS it is running on. On Unix (except Mac OS), you will have to
+ * specify the path to the Java library explicitly in the file called
+ * "java.conf" in order for this class to locate it.
+ *
+ * On Mac OS, the jvm library is taken from the JavaVM framework.
+ *
+ * On Windows, the PATH environment variable is searched for a valid java
+ * installation. As such, under some circumstances, it may be possible that
+ * this class does not correctly detect the jvm library in some cases.
+ * If this is the case, the path to the jvm.dll file must be explicitly
+ * defined in the "java.conf" file, or the PATH environment variable must be
+ * altered to correctly include the java executable.
+ */
 void JavaEnvironment::locateJRE() {
   if (!jreLocated) {
 #ifdef Q_OS_WIN32
@@ -61,12 +102,8 @@ void JavaEnvironment::locateJRE() {
     // Because we cannot go over all possibilities, we require
     // other Unix builds to manually define the library path for the java runtime.
     // Note that this also means most Unix users will have to manually compile as well.
-# ifndef JAVA_LIB_PATH
-#  error JAVA_LIB_PATH needs to be defined when compiling on unix.
-# endif
-    javaLibraryPath.setFileName(JAVA_LIB_PATH);
-#endif
 
+#endif
     jreLocated = true;
   }
 }

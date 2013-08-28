@@ -35,6 +35,8 @@
 
 QT = core
 
+include (../cpp11enabler.pro) # enables C++11 and compiler-specific functionality
+
 TARGET = Javabridge
 TEMPLATE = lib
 CONFIG += staticlib
@@ -44,6 +46,7 @@ OBJECTS_DIR = build/
 
 # this define is required to prevent the static VM loader
 # from trying to bind to a statically linked jvm.lib
+# We don't want this since we bind to the jvm library dynamically.
 DEFINES += JACE_WANT_DYNAMIC_LOAD
 
 #------------------------------------------------

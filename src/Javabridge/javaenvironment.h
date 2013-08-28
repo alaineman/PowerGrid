@@ -2,6 +2,7 @@
 #define JAVAENVIRONMENT_H
 
 #include <QString>
+#include <QMap>
 
 /**
  * This class loads and sets up the Java Virtual Machine using JACE.
@@ -12,6 +13,7 @@ class JavaEnvironment {
   private:
     bool jreLocated;
     QString javaLibraryPath;
+    QMap<QString, QString> configuration;
 
   public:
     JavaEnvironment();
@@ -22,6 +24,18 @@ class JavaEnvironment {
      *  or an empty QString when locateJRE has not (yet) found a JRE.
      */
     QString getLibPath()  const { return QString(javaLibraryPath); }
+
+    /// Explicitly sets the path to the jvm library.
+    void setLibPath(QString path);
+
+    /// parses the configuration file and stores the key-value bindings.
+    void parseConfigFile(QString file = QStringLiteral("java.conf"));
+
+    /// validates the given path and returns true iff the path is a valid jvm library
+    static bool validate(QString path);
+
+    /// overloaded method, equal to javaEnvironment.validate(getLibPath())
+    bool validate();
 
     /**
      * This function attempts to locate an installed JRE.

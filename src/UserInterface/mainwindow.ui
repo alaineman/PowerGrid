@@ -349,7 +349,7 @@
       <property name="title">
        <string>Safety</string>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>11</x>
@@ -359,31 +359,31 @@
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="DescriptiveCheckBox" name="JNIsafetyCheck">
-          <property name="text">
-           <string>JNI safety checks</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="DescriptiveCheckBox" name="accManagementCheck">
-          <property name="text">
-           <string>Account management</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
-         <widget class="DescriptiveCheckBox" name="mouseCheck">
+         <widget class="QCheckBox" name="mouseCheck">
           <property name="text">
            <string>Realistic mouse</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="DescriptiveCheckBox" name="cacheClearCheck">
+         <widget class="QCheckBox" name="cacheClearCheck">
           <property name="text">
            <string>Clear cache on close</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QCheckBox" name="accManagementCheck">
+          <property name="text">
+           <string>Account management</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="JNIsafetyCheck">
+          <property name="text">
+           <string>JNI safety checks</string>
           </property>
          </widget>
         </item>
@@ -402,7 +402,7 @@
       <property name="title">
        <string>Performance</string>
       </property>
-      <widget class="DescriptiveCheckBox" name="mappingCheck">
+      <widget class="QCheckBox" name="mappingCheck">
        <property name="geometry">
         <rect>
          <x>11</x>
@@ -464,13 +464,6 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>DescriptiveCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>descriptivecheckbox.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

@@ -32,3 +32,4 @@ SUBDIRS += Javabridge UserInterface Bot
 
 # The Bot itself depends on the Java bridge for communication
 Bot.depends = Javabridge
+UserInterface.depends = Javabridge Bot

@@ -24,7 +24,7 @@
 #------------------------------------------------------------------------
 
 # The platform-compiler name is the filename (without path) that the
-# message below reports.
+# message below reports. It can be used for identification
 message(QMake Spec: $$QMAKESPEC)
 
 macx-clang {
@@ -32,7 +32,7 @@ macx-clang {
     # We prefer using that library over the standard one (libstdc++)
     QMAKE_CXXFLAGS += -stdlib=stdc++ -std=c++11
 
-    message(Compiling using Clang compiler on Mac OS X)
+    message(Compiling using clang compiler on Mac OS X)
 }
 else:win32-g++ {
     # GCC compiler version 4.3 and above use the C++11 standard when the standard is

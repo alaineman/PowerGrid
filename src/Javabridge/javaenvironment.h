@@ -15,19 +15,19 @@ class JavaEnvironment : QObject {
     QMap<QString, QString> configuration;
 
   public:
-    JavaEnvironment(QObject* parent = NULL) Q_DECL_NOTHROW;
+    JavaEnvironment(QObject* parent = NULL);
 
-    bool isJRELocated()   const Q_DECL_NOTHROW { return !javaLibraryPath.isEmpty(); }
-    QString getLibPath()  const Q_DECL_NOTHROW { return QString(javaLibraryPath); }
+    bool isJRELocated()   const { return !javaLibraryPath.isEmpty(); }
+    QString getLibPath()  const { return QString(javaLibraryPath); }
 
-    void setLibPath(QString path) Q_DECL_NOTHROW;
+    void setLibPath(QString path);
     void parseConfigFile(QString fileName = QStringLiteral("java.conf"));
 
     static bool validate(QString path);
-    bool validate() Q_DECL_NOTHROW;
+    bool validate();
 
-    void locateJRE() throw(std::runtime_error);
-    void start()     throw(std::runtime_error, jace::JNIException);
+    void locateJRE();
+    void start();
 };
 
 #endif // JAVAENVIRONMENT_H

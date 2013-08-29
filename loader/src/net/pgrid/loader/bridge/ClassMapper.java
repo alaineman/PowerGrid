@@ -31,11 +31,11 @@ import net.pgrid.loader.Logger;
  * objects to store in the mapper.
  * <p/> 
  * There are three types of maps stored per ClassMapper. 
- * <ol>
+ * <ul>
  * <li>The class map; Stores the obfuscated name using the de-obfuscated name as a key.</li>
  * <li>The field map; Stores the field info using the de-obfuscated name as a key. </li>
- * <li>The constant map; Stores it's value using the obfuscated name as a key. </li>
- * </ol>
+ * <li>The constant map; Stores its value using the obfuscated name as a key. </li>
+ * </ul>
  * <p/>
  * @author Alaineman
  */
@@ -147,7 +147,7 @@ public class ClassMapper {
                     long flag = parseLong(8);
                     ObfuscatedFieldData data = new ObfuscatedFieldData(obfFieldName, unobfFieldName, flag);
                     try {
-                        fields.put(unobfFieldName, new ObfuscatedField(data));
+                        fields.put(unobfFieldName, new ObfuscatedField<>(data));
                     } catch (ClassNotFoundException | NoSuchFieldException e) {
                         LOGGER.describe(e);
                     }
@@ -179,6 +179,7 @@ public class ClassMapper {
 
     /**
      * Protected method which is used to build Longs from the byte data.
+     * @param length 
      * @return a Long value
      * @throws IOException when the byte data is insufficient.
      */
@@ -193,7 +194,7 @@ public class ClassMapper {
         for (int i = 0; i < length; i++) {
             byte b = source[cursor];
             cursor++;
-            f = f << 8;
+            f <<= 8;
             f |= b;
         }
         return f;

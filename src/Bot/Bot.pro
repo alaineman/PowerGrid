@@ -32,3 +32,7 @@ QT         -= gui
 TARGET      = Bot
 TEMPLATE    = lib
 CONFIG     += staticlib
+
+# Temporary files are placed in the "tmp" folder
+OBJECTS_DIR = tmp
+MOC_DIR     = tmp

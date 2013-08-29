@@ -12,16 +12,12 @@ PowerGrid offers a full user interface to travel to any destination or location 
 
 PowerGrid is, unlike other bots, written in C++. While this causes a delay in transferring data from the Java environment to C++, the C++ functions themselves can be made much faster, and since most code will run outside the Java Virtual Machine, there is also less chance of the Runescape client detecting the bot. 
 
-The loader itself is inspired by the official open-source loader for Runescape, also written in C++. More specifically, PowerGrid uses the very same files as the Runescape loader (and as such requires that the loader is installed in order to work). Because of this, PowerGrid will appear to be a normal loader application, while in reality, PowerGrid monitors various settings, objects, and data structures to use for botting purposes.
-
-
+The loader itself is inspired by the official open-source loader for Runescape, also written in C++. Because of this, PowerGrid will appear to be a normal loader application, while in reality, PowerGrid monitors various settings, objects, and data structures to use for botting purposes.
 
 ## Using PowerGrid ##
-
 PowerGrid comes with its own control frame that is separate from the main Runescape frame.  This is because the Runescape frame is in reality a Java frame, and PowerGrid's control frame is not.
 
 Because of this feature, it is also possible to use PowerGrid to play Runescape normally, without PowerGrid getting in the way. Also, PowerGrid solely uses reflection to monitor the bot, which opens up more dynamic possibilities than when using injection. This is because Runescape's classes themselves are not modified, and this prevents many workarounds that other bot platforms have to make to get the injection to work.
-
 
 ## Legal notices ##
 Copyright 2012-2013 Patrick Kramer, Vincent Wassenaar
@@ -39,3 +35,36 @@ GNU General Public License for more details.
 The GNU General Public License (version 3) can be found in the file 
 called 'COPYING' in the root of the PowerGrid repository. It can 
 also be found at http://www.gnu.org/licenses.
+
+### External code and libraries ###
+
+To certain parts of the source, another license applies than the 
+GNU General Public License. These parts are mentioned here, along 
+with the appropriate license.
+
+#### JACE ####
+Copyright (c) 2002, Toby Reyelts
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
+Neither the name of Toby Reyelts nor the names of his contributors
+may be used to endorse or promote products derived from this software
+without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

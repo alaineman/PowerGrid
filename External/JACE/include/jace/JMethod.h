@@ -79,6 +79,11 @@
 
 BEGIN_NAMESPACE( jace )
 
+/**
+ * Transforms a JArguments to a vector of jvalue's.
+ */
+JACE_API std::vector<jvalue> toVector( const JArguments& arguments );
+
 
 /**
  * Represents a java method.
@@ -249,12 +254,6 @@ std::string mName;
 jmethodID mMethodID;
 
 };
-
-/**
- * Transforms a JArguments to a vector of jvalue's.
- */
-JACE_API std::vector<jvalue> toVector( const JArguments& arguments );
-
 
 END_NAMESPACE( jace )
 

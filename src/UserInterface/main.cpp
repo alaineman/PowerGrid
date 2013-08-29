@@ -17,7 +17,6 @@
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mainwindow.h"
-#include "javaenv.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -33,8 +32,14 @@
 #include <QLabel>
 #include <QtConcurrent/QtConcurrent>
 
+#include "javaenvironment.h"
+
+#include "jace/proxy/java/lang/String.h"
+#include "jace/proxy/java/lang/System.h"
+
+using namespace jace::proxy::java::lang;
+
 using namespace std;
-using namespace jni;
 
 ofstream logStream;
 
@@ -75,18 +80,6 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
   }
 }
 
-JavaEnv* RunJavaVM() {
-    JavaEnv* env = JavaEnv::createInstance();
-    qDebug() << "Starting Java Virtual Machine";
-    try {
-        env->Start();
-    } catch (runtime_error e) {
-        qWarning() << e.what();
-    }
-    qDebug() << "Java Virtual Machine started";
-    return env;
-}
-
 bool openWindows = false;
 
 #ifdef Q_OS_WIN
@@ -109,45 +102,17 @@ void WaitForShutdown() {
 void WaitForShutdown() {}
 #endif
 
+
 int main(int argc, char *argv[]) {
-  // Open the log file for writing
-  logStream.open("PowerGrid.log", std::ofstream::out | std::ofstream::trunc);
-  logStream << "PowerGrid " << qPrintable(POWERGRID_VERSION) << " log file" << endl;
-  // Install the message handler for Qt.
-  qInstallMessageHandler(PGMessageHandler);
-
-  QThread* current = QThread::currentThread();
-  current->setObjectName("PG-main");
-
-  QFuture<JavaEnv*> futureRunJVM = QtConcurrent::run(RunJavaVM);
-
-  QApplication a(argc, argv);
-
-  // Show our main window
-  MainWindow w;
-  w.setGeometry(40, 60, w.width(), w.height());
-
-  // Now we wait until the Java VM is started and collect the resulting JavaEnv instance
-  JavaEnv* environment = futureRunJVM.result();
-
-  if (environment == NULL) {
-    qWarning() << "Could not detect running Java VM";
-    w.updateVersionInfo(QStringLiteral("No Java VM detected"));
-  } else {
-    // << Add startup code here if it does require the Java VM
-    QString version = environment->GetEnvironmentVersion();
-    qDebug() << "Java Version: " << version;
-    w.updateVersionInfo(version);
+  JavaEnvironment env ();
+  try {
+    env.start();
+  } catch (std::runtime_error& err) {
+    qDebug() << "A runtime error occurred:" << err.what();
+    return EXIT_FAILURE;
   }
 
-  w.show();
-
-  // enter the Qt message loop
-  int result = a.exec();
-
-  qDebug() << "PowerGrid window closed";
-
-  WaitForShutdown();
-
-  return result;
+  String version = System.getProperty("java.version");
+  qDebug() << "Java Version: " << version;
+  return EXIT_SUCCESS;
 }

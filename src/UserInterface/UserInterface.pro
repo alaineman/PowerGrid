@@ -32,11 +32,14 @@
 #------------------------------------------------
 QT          = core gui widgets
 
+include (../cpp11enabler.pro) # enables C++11 and compiler-specific functionality
+
 TARGET      = PowerGrid
 TEMPLATE    = app
 
-DESTDIR     = build/
-OBJECTS_DIR = build/
+# Temporary files are placed in the "tmp" folder
+OBJECTS_DIR = tmp
+MOC_DIR     = tmp
 
 win32:     RC_FILE = powergrid.rc
 else:macx: ICON    = powergrid.icns
@@ -50,7 +53,14 @@ FORMS       = mainwindow.ui
 RESOURCES   = resources.qrc
 OTHER_FILES = powergrid.rc
 
-#------------------------------------------------
-# The subprojects this project depends on
-#------------------------------------------------
-include (../Javabridge/include.pro)
+# Depends for Javabridge
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Javabridge/Release/ -lJavabridge
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Javabridge/Debug/ -lJavabridge
+else:unix: LIBS += -L$$OUT_PWD/../Javabridge/ -lJavabridge
+
+INCLUDEPATH += $$PWD/../Javabridge
+DEPENDPATH += $$PWD/../Javabridge
+
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Javabridge/Release/libJavabridge.a
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Javabridge/Debug/libJavabridge.a
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Javabridge/libJavabridge.a

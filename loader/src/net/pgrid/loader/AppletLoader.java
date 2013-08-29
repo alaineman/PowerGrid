@@ -21,7 +21,6 @@ package net.pgrid.loader;
 import java.applet.Applet;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import net.pgrid.loader.bridge.ClassMapDownloader;
@@ -36,6 +35,8 @@ import net.pgrid.loader.bridge.injection.keyboard.KeyInjector;
  * instance to download the client, and to create an
  * <code>Applet</code> instance from the downloaded client.
  * <p/>
+ * An AppletLoader instance contains all required code to load the client.
+ * To actually 
  * @author Chronio
  */
 public class AppletLoader implements Runnable {
@@ -89,7 +90,7 @@ public class AppletLoader implements Runnable {
                 devel = false;
         
         // the PowerGrid C++ client calls main with null, while Java default 
-        // passes an empty array if there are no arguments. This way we can 
+        // passes an empty array if there are no arguments. This way we can: 
         // a) easily distinct between the two startup modes.
         // b) get the settings right for the PowerGrid C++ client without 
         //    having to create a String array through JNI.
@@ -108,6 +109,13 @@ public class AppletLoader implements Runnable {
                         break;
                     case "--devmode":
                         devel = true;
+                        break;
+                    case "--no-update":
+                        update = false;
+                        break;
+                    case "--no-standalone":
+                        update = true;
+                        quickload = false;
                         break;
                     default:
                         LOGGER.log("Unknown parameter found: \"" + s + "\"");
@@ -189,71 +197,6 @@ public class AppletLoader implements Runnable {
      */
     public boolean isQuickload() {
         return quickload;
-    }
-    
-    
-    /**
-     * Safe version of the run method. It first disables quickload and provides 
-     * more detailed logging in the event something goes wrong.
-     * <p/>
-     * It also creates a new ClientDownloader to use and any existing Applet 
-     * instance is removed to prevent possible issues with that.
-     */
-    public void runSafe() {
-        LOGGER.log("Attempting to start Applet in safe mode");
-        try {
-            downloader = new ClientDownloader();
-        } catch (InternalError e) {
-            LOGGER.log("The URL used by the ClientDownloader is invalid");
-            LOGGER.describe(e);
-            return;
-        }
-        applet = null;
-        quickload = false;
-        
-        theGUI.showMessage("Reloading client");
-        
-        try {
-            downloader.loadConfig();
-        } catch (IOException e) {
-            LOGGER.log("Error loading config");
-            LOGGER.describe(e);
-            return;
-        }
-        
-        if (update) {
-            new Thread(new ClassMapDownloader(downloader)).start();
-        }
-        
-        try {
-            downloader.loadClient();
-        } catch (IOException e) {
-            LOGGER.log("Error loading config");
-            LOGGER.describe(e);
-            return;
-        }
-        
-        Class<?> appletClass;
-        try {
-            ClassLoader loader = new URLClassLoader( 
-                    new URL[] { new URL("jar:file:client.jar!/") } );
-            appletClass = loader.loadClass("Rs2Applet");
-        } catch (MalformedURLException | ClassNotFoundException e) {
-            LOGGER.log("Error loading Rs2Applet class");
-            LOGGER.describe(e);
-            return;
-        }
-        if (appletClass == null) {
-            LOGGER.log("Error: Rs2Applet class == null");
-            return;
-        }
-        try {
-            applet = (Applet) appletClass.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            LOGGER.log("Cannot create Applet");
-            LOGGER.describe(e);
-        }
-        LOGGER.log("Loading done");
     }
 
     /**

@@ -74,11 +74,9 @@ void JavaEnvironment::setLibPath(QString path) {
 void JavaEnvironment::parseConfigFile(QString fileName) {
   QFile file (fileName);
   if (file.exists()) {
-    file.open(QFile.ReadWrite);
-
     while (file.canReadLine()) {
       QByteArray arr = file.readLine();
-      QString line = QString.fromLatin1(arr); // Note: might cause encoding issues.
+      QString line = QString::fromLatin1(arr); // Note: might cause encoding issues.
 
       if (!line.isEmpty()) {
         int index = line.indexOf('=');
@@ -121,7 +119,6 @@ void JavaEnvironment::locateJRE() {
     // We first take the value in the configuration, if it was specified
     if (configuration.contains(QStringLiteral("jvm_path"))) {
       javaLibraryPath = configuration.value(QStringLiteral("jvm_path"));
-      jreLocated = true;
       return;
     }
 #ifdef Q_OS_WIN32
@@ -170,6 +167,15 @@ void JavaEnvironment::locateJRE() {
     }
 #endif
   }
+}
+
+
+bool JavaEnvironment::validate(QString path) {
+  return true;
+}
+
+bool JavaEnvironment::validate() {
+  return validate(javaLibraryPath);
 }
 
 /*!

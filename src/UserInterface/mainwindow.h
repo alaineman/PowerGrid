@@ -19,7 +19,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "javaenv.h"
 #include <QMainWindow>
 #include <QString>
 

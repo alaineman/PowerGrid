@@ -14,7 +14,7 @@
 
 #ifdef Q_OS_WIN32
 # include <jace/Win32VmLoader.h>
-#else // we assume any Unix OS.
+#else // Unix OS.
 # include <jace/UnixVmLoader.h>
 #endif
 
@@ -170,7 +170,7 @@ void JavaEnvironment::locateJRE() {
 }
 
 
-bool JavaEnvironment::validate(QString path) {
+bool JavaEnvironment::validate(QString) {
   return true;
 }
 

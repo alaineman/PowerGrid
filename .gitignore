@@ -9,7 +9,7 @@
 # build-... folders (default location for storing compiled code)
 build*/
 
-# autosave and machine-dependant files of Qt Creator
+# autosave and workstation-dependant files of Qt Creator
 *.autosave
 *.pro.user
 

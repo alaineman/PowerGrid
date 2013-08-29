@@ -64,3 +64,7 @@ DEPENDPATH += $$PWD/../Javabridge
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Javabridge/Release/libJavabridge.a
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Javabridge/Debug/libJavabridge.a
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Javabridge/libJavabridge.a
+
+# Depends for JACE
+INCLUDEPATH += $$PWD/../JACE
+DEPENDPATH  += $$PWD/../JACE

@@ -45,7 +45,7 @@ ofstream logStream;
 
 // Custom message handler for Qt messages. It prints the message to the
 // standard error stream prepended with the appropriate level identifier.
-void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg) {
+void PGMessageHandler(QtMsgType type, const QMessageLogContext&, const QString& msg) {
   stringstream out;
   switch (type) {
     case QtDebugMsg:
@@ -103,8 +103,8 @@ void WaitForShutdown() {}
 #endif
 
 
-int main(int argc, char *argv[]) {
-  JavaEnvironment env ();
+int main(int, char*[]) {
+  JavaEnvironment env;
   try {
     env.start();
   } catch (std::runtime_error& err) {
@@ -112,7 +112,9 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  String version = System.getProperty("java.version");
-  qDebug() << "Java Version: " << version;
+  String key ("java.version");
+  String version = System::getProperty( key );
+  std::string versionStr = version.toStdString();
+  qDebug() << "Java Version: " << versionStr.c_str();
   return EXIT_SUCCESS;
 }

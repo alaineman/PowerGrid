@@ -28,8 +28,11 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += Javabridge UserInterface Bot
+SUBDIRS += Javabridge UserInterface Bot JACE
 
-# The Bot itself depends on the Java bridge for communication
+# The Javabridge depends on JACE for the actual connection
+# The Bot itself depends on the Javabridge for communication
+# And the UserInterface depends on both for collecting status
+Javabridge.depends = JACE
 Bot.depends = Javabridge
 UserInterface.depends = Javabridge Bot

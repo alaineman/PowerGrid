@@ -5,7 +5,6 @@
 #include <QMap>
 #include <QObject>
 #include <stdexcept>
-#include <jace/JNIException.h>
 
 class JavaEnvironment : QObject {
   private:

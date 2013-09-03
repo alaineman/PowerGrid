@@ -110,9 +110,9 @@ public class ClassMapDownloader implements Runnable {
                     
                     switch(response) {
                         case 0x0: // the keys are required
-                            writer.append(dl.getGamepack()).append("\n");
-                            writer.append(dl.getParameter("-1")).append("\n");
-                            writer.append(dl.getParameter("0")).append("\n");
+                            writer.append(dl.getClientParameter("initial_jar")).append("\n");
+                            writer.append(dl.getAppletParameter("-1")).append("\n");
+                            writer.append(dl.getAppletParameter("0")).append("\n");
                             writer.flush();
                             LOGGER.log("Keys sent, waiting for response");
                             break;

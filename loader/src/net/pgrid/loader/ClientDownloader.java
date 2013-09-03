@@ -48,14 +48,6 @@ public class ClientDownloader {
     public static final String CONFIG_LINK = "http://www.runescape.com/k=3/l=0/jav_config.ws";
     
     /**
-     * the Runescape gamepack. Is null unless config was downloaded.
-     */
-    private String gamepack = null;
-    /**
-     * the Runescape codebase. Is null unless config was downloaded.
-     */
-    private String codebase = null;
-    /**
      * URL of the Runescape config file. It is set in the constructor.
      */
     private URL configURL;
@@ -63,15 +55,8 @@ public class ClientDownloader {
      * the codebase URL, is null unless requested.
      */
     private URL codebaseURL;
-    /**
-     * Parameters of the
-     * <code>Applet</code> as a Map. Empty if config was not downloaded.
-     */
-    private Map<String, String> parameters;
-    /**
-     * The contents of the config file, or null if not downloaded.
-     */
-    private String configData = null;
+    
+    private ClientData clientData = new ClientData();
 
     /**
      * Creates a new ClientDownloader that uses the DEFAULT_CONFIG as config
@@ -80,25 +65,22 @@ public class ClientDownloader {
     public ClientDownloader() {
         try {
             configURL = new URL(CONFIG_LINK);
-            parameters = new HashMap<>(32);
         } catch (MalformedURLException e) {
             // should not be thrown
         }
     }
-
-    /**
-     * @return the codebase as defined in the config, or null if the config is
-     * not yet loaded
-     */
-    public String getCodebase() {
-        return codebase;
-    }
     
+    /**
+     * @return the codebase as an URL instance, or null if the config is not 
+     *         yet loaded or the URL is invalid.
+     */
     public URL getCodeBaseUrl() {
-        if (codebase == null) {
-            return null;
-        }
+        
         if (codebaseURL == null) {
+            String codebase = getClientParameter("codebase");
+            if (codebase == null) {
+                return null;
+            }
             try {
                 codebaseURL = new URL(codebase);
             } catch (MalformedURLException e) {
@@ -107,24 +89,45 @@ public class ClientDownloader {
         }
         return codebaseURL;
     }
-    
-    public String getDownloadLink() {
-        return codebase + gamepack;
-    }
 
-    public String getGamepack() {
-        return gamepack;
+    /**
+     * Returns the value for the Applet parameter with the given key.
+     * @param key the Applet parameter key
+     * @return the value for the given key, or null if the key does not exist.
+     */
+    public String getAppletParameter(String key) {
+        return clientData.getAppletParameter(key);
+    }
+    
+    /**
+     * Returns the value for the client parameter with the given key.
+     * @param key the client parameter key
+     * @return the value for the given key, or null if the key does not exist.
+     */
+    public String getClientParameter(String key) {
+        return clientData.getClientParameter(key);
+    }
+    
+    /**
+     * @return the client download link, or null if the config data has not yet
+     *         been parsed.
+     */
+    public String getDownloadLink() {
+        return clientData.getDownloadLink();
     }
 
     /**
-     * Returns the value for a given parameter
-     *
-     * @param param the requested parameter
-     * @return the value for the given parameter, or null if the parameter is
-     * not defined.
+     * Returns a ClientData instance with the data collected by this 
+     * ClientDownloader.
+     * <p/>
+     * This ClientDownloader is not backed by the returned ClientData, so changes
+     * in the ClientData instance are not reflected in this ClientDownloader.
+     * <p/>
+     * @return a ClientData instance containing the data collected by this 
+     *         ClientDownloader.
      */
-    public String getParameter(String param) {
-        return parameters.get(param);
+    public ClientData getClientData() {
+        return new ClientData(clientData);
     }
 
     /**
@@ -133,30 +136,32 @@ public class ClientDownloader {
      * @throws IOException if the download failed
      */
     public void loadConfig() throws IOException {
-        if (gamepack == null) {
+        if (!clientData.readyForDownload()) {
             try (InputStream in = configURL.openStream()) {
                 // using a Scanner with the right delimiter provides the entire 
                 // content of the stream at once in only a few lines.
                 Scanner out = new Scanner(in).useDelimiter("\\A");
                 if (out.hasNext()) {
-                    configData = out.next();
+                    parseConfig(out.next());
                 } else {
                     throw new RuntimeException("Empty response getting config file");
                 }
             }
-            parseConfig();
+            
         }
-        assert gamepack != null;
     }
 
     /**
      * Downloads the client using the previously downloaded config.
      *
      * @throws IOException if the download failed
+     * @throws IllegalStateException when the client data is not available
      */
     public void loadClient() throws IOException {
-        assert gamepack != null;
-        URL url = new URL(codebase + gamepack);
+        if (!clientData.readyForDownload()) {
+            throw new IllegalStateException();
+        }
+        URL url = new URL(clientData.getDownloadLink());
         URLConnection conn = url.openConnection();
         FileOutputStream out = new FileOutputStream("client.jar");
 
@@ -183,31 +188,45 @@ public class ClientDownloader {
     /**
      * Parses the required data from the downloaded config data.
      * <p/>
-     * All
-     * <code>Applet</code> parameters are parsed, as well as the "codebase",
-     * "initial_jar" and "download" values.
+     * All {@code Applet} parameters are parsed, as well as all client 
+     * parameters.
+     * <p/>
+     * @throws IllegalStateException when the configData is not yet loaded.
      */
-    private void parseConfig() {
-        assert configData != null;
-
+    private void parseConfig(String configData) {
+        if (configData == null) {
+            throw new IllegalStateException();
+        }
+        Map<String, String> appParams = new HashMap<>(32);
+        Map<String, String> cliParams = new HashMap<>(32);
         Scanner sc = new Scanner(configData);
+        
         while (sc.hasNext()) {
             String line = sc.nextLine();
             if (line.startsWith("param=")) {
                 int mid = line.indexOf('=', 6);
                 String key = line.substring(6, mid);
-                String value = line.substring(mid + 1, line.length());
-                parameters.put(key, value);
-            } else if (line.startsWith("initial_jar=")) {
-                gamepack = line.substring(12, line.length());
-            } else if (line.startsWith("codebase=")) {
-                codebase = line.substring(9, line.length());
+                String value = line.substring(mid + 1);
+                appParams.put(key, value);
+            } else {
+                int mid = line.indexOf('=');
+                String key = line.substring(0, mid);
+                String value = line.substring(mid + 1);
+                cliParams.put(key, value);
             }
         }
-
-        if (codebase == null || gamepack == null) {
-            throw new RuntimeException("Invalid config");
+        if (!clientData.hasAppletParameters()) {
+            clientData.setAppletParameters(appParams);
         }
-        LOGGER.log("Config has been parsed, gamepack URL is: " + codebase + gamepack);
+        if (!clientData.hasClientParameters()) {
+            clientData.setClientParameters(cliParams);
+        }
+
+        String dlLink = clientData.getClientParameter("codebase") + 
+                        clientData.getClientParameter("initial_jar");
+        
+        clientData.setDownloadLink(dlLink);
+        
+        LOGGER.log("Config has been parsed, gamepack URL is: " + dlLink);
     }
 }

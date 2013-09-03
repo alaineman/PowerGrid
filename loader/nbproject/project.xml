@@ -13,9 +13,11 @@
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>altGraph</word>
+            <word>Applet</word>
             <word>codebase</word>
             <word>config</word>
             <word>gamepack</word>
+            <word>Runescape</word>
         </spellchecker-wordlist>
     </configuration>
 </project>

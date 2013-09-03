@@ -26,13 +26,9 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
@@ -40,24 +36,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 /**
- * This class functions as the window in which the Runescape Applet can run.
+ * This class functions as the window in which the Applet can run.
  * <p/>
  * It implements AppletStub to provide the Applet with a valid environment and
  * sets up the itself as a JFrame in which the Applet can draw.
  * <p/>
- * @author Chronio
+ * @author Patrick Kramer
  */
 public class AppletFrame extends JFrame implements AppletStub {
 
     private static final Logger LOGGER = Logger.get("CORE");
-    
-    private GraphicsDevice device = null;
-    
-    private DisplayMode fullscreenMode = null;
-    private DisplayMode windowedMode = null;
-    
-    private boolean fullscreen = false;
-    
+        
     private JLabel label;
     private Applet applet = null;
     private ClientDownloader dloader = null;
@@ -80,12 +69,11 @@ public class AppletFrame extends JFrame implements AppletStub {
         dloader = dl;
         label = new JLabel();
         createAndShowFrame();
-        device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        fullscreenMode = new DisplayMode(screenSize.width, screenSize.height, 32, 60);
-        windowedMode = device.getDisplayMode();
     }
 
+    /**
+     * @return the loaded Applet, or null if no Applet is loaded.
+     */
     public Applet getApplet() {
         return applet;
     }
@@ -97,9 +85,8 @@ public class AppletFrame extends JFrame implements AppletStub {
         setTitle("Runescape (running through PowerGrid loader)");
         try {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
-        } catch (IOException e) {
-            LOGGER.describe(e);
-        }
+        } catch (IOException shouldNotHappen) {}
+        
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         Insets in = getInsets();
@@ -152,10 +139,18 @@ public class AppletFrame extends JFrame implements AppletStub {
         }
     }
     
+    /**
+     * Finds and returns the Applet's drawing Canvas.
+     * <p/>
+     * If either the Applet is null, or no Canvas is found, this method returns
+     * null.
+     * @return the Applet's Canvas, or null if t wasn't found.
+     */
     public Canvas getCanvas() {
         if (applet != null) {
-            // The Applet has one child component, namely the Canvas instance that
-            // the RS Applet draws on.
+            // We look for a Canvas instance inside the Applet's Component
+            // hierarchy. This makes the Canvas accessible to external 
+            // applications for drawing overlays, for example.
             synchronized (applet.getTreeLock()) {
                 for (Component c : applet.getComponents()) {
                     if (c instanceof Canvas) {
@@ -187,77 +182,28 @@ public class AppletFrame extends JFrame implements AppletStub {
     }
 
     @Override
-    public void appletResize(int width, int height) {
+    public void appletResize(int width, int height) {}
+
+    @Override
+    public String getParameter(String name) {
+        return dloader.getAppletParameter(name);
     }
 
     @Override
-    public final String getParameter(String name) {
-        return dloader.getParameter(name);
-    }
-
-    @Override
-    public final URL getDocumentBase() {
+    public URL getDocumentBase() {
         return dloader.getCodeBaseUrl();
     }
 
     @Override
-    public final URL getCodeBase() {
+    public URL getCodeBase() {
         return dloader.getCodeBaseUrl();
     }
 
     @Override
-    public final AppletContext getAppletContext() {
+    public AppletContext getAppletContext() {
+        // The AppletContext is not explicitly required to run the Applet, so 
+        // we can safely return null here.
         return null;
     }
     
-    /**
-     * Convenience method for toggling full screen mode.
-     */
-    public void toggleFullscreen() {
-        setFullscreen(!fullscreen);
-    }
-    
-    /**
-     * @return true if Fullscreen mode is supported in this Virtual Machine, false otherwise.
-     */
-    public boolean isFullScreenSupported() {
-        return device.isFullScreenSupported();
-    }
-    
-    /**
-     * Sets whether to display in full screen mode. 
-     * @param fullscreen true for full screen, false for windowed mode.
-     */
-    public void setFullscreen(boolean fullscreen) {
-        if (this.fullscreen != fullscreen) {
-            if (fullscreen) {
-                if (!isFullScreenSupported()) {
-                    LOGGER.log("Fullscreen mode not supported in this Virtual Machine");
-                    return;
-                }
-                setVisible(false);
-                dispose();
-                
-                setUndecorated(true);
-                device.setFullScreenWindow(this);
-                device.setDisplayMode(fullscreenMode);
-                setResizable(false);
-            } else {
-                setResizable(true);
-                device.setDisplayMode(windowedMode);
-                device.setFullScreenWindow(null);
-                setVisible(false);
-                dispose();
-                
-                setUndecorated(false);
-                setSize(1056, 600);
-                
-                setLocationRelativeTo(null);
-                
-                setVisible(true);
-            }
-            this.fullscreen = fullscreen;
-            repaint();
-        }
-    }
 }

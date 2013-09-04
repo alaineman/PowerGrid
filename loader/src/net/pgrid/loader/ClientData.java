@@ -40,8 +40,9 @@ public class ClientData {
     
     private Map<String,String> clientParameters;
     private Map<String,String> appletParameters;
-    private String downloadLink;
     private Applet applet;
+    
+    private byte[] client;
     
     /**
      * Creates an empty ClientData object.
@@ -58,7 +59,6 @@ public class ClientData {
         clientParameters = new HashMap<>(data.getClientParameters());
         appletParameters = new HashMap<>(data.getAppletParameters());
         
-        downloadLink = data.getDownloadLink();
         applet = data.getApplet();
     }
     
@@ -73,7 +73,6 @@ public class ClientData {
             String dlLink, Applet app) {
         clientParameters = cParams;
         appletParameters = aParams;
-        downloadLink = dlLink;
         applet = app;
     }
 
@@ -112,7 +111,12 @@ public class ClientData {
      * @return the client's download link, or null if none was set
      */
     public String getDownloadLink() {
-        return downloadLink;
+        String codebase = clientParameters.get("codebase");
+        String initial_jar = clientParameters.get("initial_jar");
+        if (codebase == null || initial_jar == null) {
+            return null;
+        }
+        return codebase + initial_jar;
     }
 
     /**
@@ -160,20 +164,6 @@ public class ClientData {
         }
         applet = a;
     }
-    
-    /**
-     * Sets the download link for the client.
-     * <p/>
-     * The provided String may be null, in which case this method does nothing.
-     * @param dlLink the download link
-     * @throws IllegalStateException when the download link was already set
-     */
-    public void setDownloadLink(String dlLink) {
-        if (downloadLink != null) {
-            throw new IllegalStateException();
-        }
-        downloadLink = dlLink;
-    }
 
     /**
      * Sets the parameters of the Applet instance.
@@ -203,13 +193,32 @@ public class ClientData {
         clientParameters = params;
     }
 
+    /**
+     * Returns whether this ClientData object contains the required information
+     * to download the client. 
+     * <p/>
+     * The client can be downloaded when the client parameters, the Applet 
+     * parameters, and the download link have been set.
+     * @return true if and only if this ClientData object contains the required
+     *         information for downloading the client, false otherwise.
+     */
     public boolean readyForDownload() {
         return (clientParameters != null && appletParameters != null && 
-                downloadLink != null);
+                getDownloadLink() != null);
     }
     
+    /**
+     * Returns whether this ClientData object contains the required information 
+     * to launch the client.
+     * <p/>
+     * The client can be launched when it is ready for download (as given by 
+     * {@code readyForDownload()}), and additionally the client data as well as 
+     * the Applet instance is set.
+     * @return true if and only if this ClientData object contains the required 
+     *         information for launching the client, false otherwise.
+     */
     public boolean readyForLaunch() {
-        return readyForDownload() && applet != null;
+        return readyForDownload() && client != null && applet != null;
     }
     
     @Override
@@ -228,8 +237,6 @@ public class ClientData {
     public int hashCode() {
         int hash = 3;
         hash = 67 * hash + Objects.hashCode(this.clientParameters);
-        hash = 67 * hash + Objects.hashCode(this.appletParameters);
-        hash = 67 * hash + Objects.hashCode(this.downloadLink);
         hash = 67 * hash + Objects.hashCode(this.applet);
         return hash;
     }
@@ -237,7 +244,8 @@ public class ClientData {
     @Override
     public String toString() {
         return "<ClientData[" + clientParameters + "," + appletParameters + ","
-             + downloadLink + "," + applet + "]>";
+             + applet + "," + (client == null ? "client not loaded" : 
+                "client loaded (" + client.length + " bytes)") + "]>";
     }
     
 }

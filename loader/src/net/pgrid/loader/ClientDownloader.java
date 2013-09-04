@@ -34,16 +34,23 @@ import java.util.Scanner;
 
 /**
  * Downloads the client files from the Runescape servers.
- *
+ * <p/>
+ * This class contains all functionality required to download the client and 
+ * all required parameters for launching it.
+ * 
  * @author Chronio
  */
 public class ClientDownloader {
 
+    /**
+     * The Logger instance this class logs to.
+     */
     private static final Logger LOGGER = Logger.get("LOADER");
     
     /**
-     * Link to the Runescape config file. It is used to get the config data
-     * from.
+     * Link to the Runescape config file. 
+     * <p/>
+     * It is used as the default link for the configuration data.
      */
     public static final String CONFIG_LINK = "http://www.runescape.com/k=3/l=0/jav_config.ws";
     
@@ -51,23 +58,66 @@ public class ClientDownloader {
      * URL of the Runescape config file. It is set in the constructor.
      */
     private URL configURL;
-    /**
-     * the codebase URL, is null unless requested.
-     */
-    private URL codebaseURL;
     
+    /**
+     * ClientData instance that holds all the client info.
+     * <p/>
+     * 
+     */
     private ClientData clientData = new ClientData();
 
     /**
-     * Creates a new ClientDownloader that uses the DEFAULT_CONFIG as config
+     * Creates a new ClientDownloader that uses the {@code CONFIG_LINK} as config
      * URL.
      */
     public ClientDownloader() {
         try {
             configURL = new URL(CONFIG_LINK);
-        } catch (MalformedURLException e) {
-            // should not be thrown
+        } catch (MalformedURLException shouldNotHappen) {}
+    }
+    
+    /**
+     * Creates a new ClientDownloader that uses the specified URL as config URL.
+     * @param configURL the config URL
+     * @throws IllegalArgumentException when {@code configURL == null}
+     */
+    public ClientDownloader(URL configURL) {
+        if (configURL == null) {
+            throw new IllegalArgumentException();
         }
+        this.configURL = configURL;
+    }
+    
+    /**
+     * Creates a new ClientDownloader that stores its information in the 
+     * specified ClientData object.
+     * @param clientData the ClientData object
+     * @throws IllegalArgumentException when {@code clientData == null}
+     */
+    public ClientDownloader(ClientData clientData) {
+        this(); // needed to set the configURL
+        
+        if (clientData == null) {
+            throw new IllegalArgumentException();
+        }
+        this.clientData = clientData;
+    }
+    
+    /**
+     * Creates a new ClientDownloader that stores its information in the 
+     * specified ClientData object, and gets the configuration info from the 
+     * specified configuration URL.
+     * @param clientData the ClientData object
+     * @param configURL the configuration URL
+     * @throws IllegalArgumentException when {@code clientData == null} or
+     *         {@code configURL == null}
+     */
+    public ClientDownloader(ClientData clientData, URL configURL) {
+        if (clientData == null || configURL == null) {
+            throw new IllegalArgumentException();
+        }
+        this.configURL  = configURL;
+        this.clientData = clientData;
     }
     
     /**
@@ -75,19 +125,13 @@ public class ClientDownloader {
      *         yet loaded or the URL is invalid.
      */
     public URL getCodeBaseUrl() {
-        
-        if (codebaseURL == null) {
-            String codebase = getClientParameter("codebase");
-            if (codebase == null) {
-                return null;
-            }
+        String codebase = clientData.getClientParameter("codebase");
+        if (codebase != null) {
             try {
-                codebaseURL = new URL(codebase);
-            } catch (MalformedURLException e) {
-                LOGGER.describe(e);
-            }
+                return new URL(codebase);
+            } catch (MalformedURLException e) {}
         }
-        return codebaseURL;
+        return null;
     }
 
     /**
@@ -197,6 +241,11 @@ public class ClientDownloader {
         if (configData == null) {
             throw new IllegalStateException();
         }
+        if (clientData.hasAppletParameters() && clientData.hasClientParameters()) {
+            // This method will do nothing useful in this case.
+            return;
+        }
+        
         Map<String, String> appParams = new HashMap<>(32);
         Map<String, String> cliParams = new HashMap<>(32);
         Scanner sc = new Scanner(configData);
@@ -221,12 +270,7 @@ public class ClientDownloader {
         if (!clientData.hasClientParameters()) {
             clientData.setClientParameters(cliParams);
         }
-
-        String dlLink = clientData.getClientParameter("codebase") + 
-                        clientData.getClientParameter("initial_jar");
         
-        clientData.setDownloadLink(dlLink);
-        
-        LOGGER.log("Config has been parsed, gamepack URL is: " + dlLink);
+        LOGGER.log("Config has been parsed");
     }
 }

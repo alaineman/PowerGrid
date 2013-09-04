@@ -140,11 +140,11 @@ public class AppletFrame extends JFrame implements AppletStub {
     }
     
     /**
-     * Finds and returns the Applet's drawing Canvas.
+     * Finds and returns the Applet drawing Canvas.
      * <p/>
      * If either the Applet is null, or no Canvas is found, this method returns
      * null.
-     * @return the Applet's Canvas, or null if t wasn't found.
+     * @return the Applet Canvas, or null if it wasn't found.
      */
     public Canvas getCanvas() {
         if (applet != null) {
@@ -159,7 +159,7 @@ public class AppletFrame extends JFrame implements AppletStub {
                 }
             }
         }
-        LOGGER.log("No Canvas found in applet.");
+        LOGGER.log("No Canvas found in Applet.");
         return null;
     }
 

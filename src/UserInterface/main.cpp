@@ -16,92 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "mainwindow.h"
 
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
-#include <fstream>
-#include <sstream>
-
-#ifdef Q_OS_WIN
-# include <windows.h>
-#endif
-
-#include <QApplication>
-#include <QLabel>
-#include <QtConcurrent/QtConcurrent>
 
 #include "javaenvironment.h"
 
-#include "jace/proxy/java/lang/String.h"
+#include "jace/proxy/types/JLong.h"
 #include "jace/proxy/java/lang/System.h"
 
 using namespace jace::proxy::java::lang;
-
-using namespace std;
-
-ofstream logStream;
-
-// Custom message handler for Qt messages. It prints the message to the
-// standard error stream prepended with the appropriate level identifier.
-void PGMessageHandler(QtMsgType type, const QMessageLogContext&, const QString& msg) {
-  stringstream out;
-  switch (type) {
-    case QtDebugMsg:
-      out << "Info     | ";
-      break;
-    case QtWarningMsg:
-      out << "Warning  | ";
-      break;
-    case QtCriticalMsg:
-      out << "Critical | ";
-      break;
-    case QtFatalMsg:
-      out << "Fatal    | ";
-      break;
-    default:
-      out << "         | ";
-  }
-  // We add information from the QMessageLogContext object allowing us to
-  // localize the origin of the message, also making it easier to trace
-  // bugs and errors. We don't do this for release builds
-#ifdef DEBUG
-  out << "At " << context.file << ":" << context.line
-      << " (" << context.function << ")" << endl
-      << "         |>  ";
-#endif
-  out << qPrintable(msg) << endl;
-  string logrecord = out.str();
-  logStream << logrecord;
-  cerr << logrecord;
-  if (type == QtFatalMsg) {
-    abort();
-  }
-}
-
-bool openWindows = false;
-
-#ifdef Q_OS_WIN
-// On windows we can use the EnumWindows function to check the open windows
-BOOL CALLBACK EnumWindowsProc(HWND hWnd, long) {
-  if (IsWindowVisible(hWnd)) {
-      openWindows = true;
-  }
-  return TRUE;
-}
-void WaitForShutdown() {
-  do {
-    openWindows = false;
-    EnumWindows(EnumWindowsProc, 0);
-    QThread::currentThread()->sleep(5);
-  } while (openWindows);
-  qDebug() << "PowerGrid terminating";
-}
-#else
-void WaitForShutdown() {}
-#endif
-
+using namespace jace::proxy::types::JLong;
 
 int main(int, char*[]) {
   JavaEnvironment env;
@@ -112,9 +38,10 @@ int main(int, char*[]) {
     return EXIT_FAILURE;
   }
 
-  String key ("java.version");
-  String version = System::getProperty( key );
-  std::string versionStr = version.toStdString();
-  qDebug() << "Java Version: " << versionStr.c_str();
+  JLong millis = System::currentTimeMillis(); // get a long from the Java environment
+  qint64 longMillis = static_cast<qint64> (millis.getLong()); // Java's long is a 64-bit integer (Qt defines it as qint64)
+
+  qDebug() << "Java System millisecond time: " << longMillis;
+
   return EXIT_SUCCESS;
 }

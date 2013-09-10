@@ -47,11 +47,11 @@ else:macx: ICON    = powergrid.icns
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-SOURCES     = main.cpp mainwindow.cpp
-HEADERS     = mainwindow.h
-FORMS       = mainwindow.ui
+SOURCES     = main.cpp
+HEADERS     =
+FORMS       =
 RESOURCES   = resources.qrc
-OTHER_FILES = powergrid.rc
+OTHER_FILES = powergrid.rc powergrid.icns
 
 # Depends for Javabridge
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Javabridge/Release/ -lJavabridge
@@ -61,10 +61,11 @@ else:unix: LIBS += -L$$OUT_PWD/../Javabridge/ -lJavabridge
 INCLUDEPATH += $$PWD/../Javabridge
 DEPENDPATH += $$PWD/../Javabridge
 
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Javabridge/Release/libJavabridge.a
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Javabridge/Debug/libJavabridge.a
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Javabridge/libJavabridge.a
-
 # Depends for JACE
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../JACE/release/ -lJACE
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../JACE/debug/ -lJACE
+else:unix: LIBS += -L$$OUT_PWD/../JACE/ -lJACE
+
 INCLUDEPATH += $$PWD/../JACE
-DEPENDPATH  += $$PWD/../JACE
+DEPENDPATH += $$PWD/../JACE

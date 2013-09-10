@@ -84,6 +84,8 @@ CONFIG     += warn_off
 OBJECTS_DIR = tmp
 MOC_DIR     = tmp
 
+QMAKE_CXXFLAGS += -fpic # Generate Position Independant Code for use in shared library
+
 DEFINES    += JACE_EXPORTS JACE_PROXY_EXPORTS # Needed to configure JACE for exporting dll symbols.
 
 #------------------------------------------------

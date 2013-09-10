@@ -30,7 +30,7 @@ message(QMake Spec: $$QMAKESPEC)
 macx-clang {
     # Clang has its own c++ library optimized for the Clang compiler (libc++).
     # We prefer using that library over the standard one (libstdc++)
-    QMAKE_CXXFLAGS += -stdlib=stdc++ -std=c++11
+    QMAKE_CXXFLAGS += -stdlib=libc++ -std=c++11
 
     message(Compiling using clang compiler on Mac OS X)
 }

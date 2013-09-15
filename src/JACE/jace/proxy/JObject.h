@@ -86,7 +86,7 @@ JACE_API virtual ~JObject() throw();
  * This is simply a convenience method for retrieving the jobject
  * member from the jvalue returned from getJavaJniValue.
  *
- * WARNING: The returned jobject is valid so long as its parent JObject is valid.
+ * The returned jobject is valid so long as its parent JObject is valid.
  * Given the code: <code>jobject myThread = Thread::currentThread.getJavaJniObject()</code>
  * the returned jobject will become invalid right after the assignment operation
  * because the enclosing Thread goes out of scope and destroys its associated jobject.

@@ -35,15 +35,16 @@
 
 QT = core
 
-include (../cpp11enabler.pro) # enables C++11 and compiler-specific functionality
-
 TARGET      = Javabridge
 TEMPLATE    = lib
 CONFIG     += static
 
-# Temporary files are placed in the "tmp" folder
-OBJECTS_DIR = tmp
-MOC_DIR     = tmp
+include (../global_def.pro)
+
+LIBS += -lJACE
+
+INCLUDEPATH += $$SOURCE_DIR/JACE
+DEPENDPATH  += $$SOURCE_DIR/JACE
 
 # this define is required to prevent the static VM loader
 # from trying to bind to a statically linked jvm.lib
@@ -56,11 +57,3 @@ DEFINES    += JACE_WANT_DYNAMIC_LOAD
 
 HEADERS    += javaenvironment.h
 SOURCES    += javaenvironment.cpp
-
-#depends for JACE
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../JACE/release/ -lJACE
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../JACE/debug/ -lJACE
-else:unix: LIBS += -L$$OUT_PWD/../JACE/ -lJACE
-
-INCLUDEPATH += $$PWD/../JACE
-DEPENDPATH += $$PWD/../JACE

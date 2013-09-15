@@ -26,7 +26,10 @@
 #
 #------------------------------------------------
 
+TARGET = PowerGrid
 TEMPLATE = subdirs
+
+include (global_def.pro)
 
 SUBDIRS += Javabridge UserInterface Bot JACE
 

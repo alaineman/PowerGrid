@@ -10,28 +10,37 @@
   #define PATH_SEPARATOR ":"
 #endif
 
-#ifdef _WIN32
+#ifdef JACE_STATIC
+/**
+ * JACE is built statically, so no __declspec is required.
+ */
+  #define JACE_API
+  #define JACE_PROXY_API
+#else
+
+  #ifdef _WIN32
 	/**
 	 * Macros used for importing and exporting DLL symbols.
 	 *
 	 */
-	#ifdef JACE_EXPORTS
-		#define JACE_API __declspec(dllexport)
-	#else
-    #define JACE_API __declspec(dllimport)
-	#endif
+    #ifdef JACE_EXPORTS
+      #define JACE_API __declspec(dllexport)
+    #else
+      #define JACE_API __declspec(dllimport)
+    #endif
 
 	/**
 	 * Macros used for importing and exporting proxy DLL symbols.
 	 *
 	 */
-	#ifdef JACE_PROXY_EXPORTS
-		#define JACE_PROXY_API __declspec(dllexport)
-	#else
-    #define JACE_PROXY_API __declspec(dllimport)
-	#endif
-#endif
+    #ifdef JACE_PROXY_EXPORTS
+      #define JACE_PROXY_API __declspec(dllexport)
+    #else
+      #define JACE_PROXY_API __declspec(dllimport)
+    #endif
+  #endif
 
+#endif
 /**
  * Deal with Visual C++'isms.
  *

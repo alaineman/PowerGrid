@@ -28,11 +28,8 @@
 # Basic properties of the project itself
 #------------------------------------------------
 QT         -= gui
-
 TARGET      = Bot
 TEMPLATE    = lib
-CONFIG     += staticlib
+CONFIG     += static
 
-# Temporary files are placed in the "tmp" folder
-OBJECTS_DIR = tmp
-MOC_DIR     = tmp
+include (../global_def.pro)

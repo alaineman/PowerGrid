@@ -19,29 +19,49 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <stdexcept>
 
-#include "javaenvironment.h"
+/* We require dynamic JVM loading instead of statically binding to the JVM library
+ * This prevents the StaticVMLoader class from trying to statically bind to jvm.lib
+ */
+#define JACE_WANT_DYNAMIC_LOAD
 
-#include "jace/proxy/types/JLong.h"
-#include "jace/proxy/java/lang/System.h"
+#include "jace/JNIHelper.h"
+#include "jace/Win32VmLoader.h"
 
-using namespace jace::proxy::java::lang;
-using namespace jace::proxy::types::JLong;
+using namespace jace;
 
 int main(int, char*[]) {
-  JavaEnvironment env;
+
+  // Create the loader instance with the appropriate configuration options.
+  Win32VmLoader loader ( Win32VmLoader::JVMV_SUN, Win32VmLoader::JVMT_DEFAULT, "", JNI_VERSION_1_6 );
+
+  OptionList options;
+
+  // Add the jar file to the classpath
+  options.push_back( ClassPath( "PowerGridLoader.jar" ) );
+
+  // create the JVM
   try {
-    env.start();
-  } catch (std::runtime_error& err) {
-    qDebug() << "A runtime error occurred:" << err.what();
+    helper::createVm( loader, options );
+  } catch (JNIException& e) {
+    qWarning() << "Creating VM failed:" << e.what();
     return EXIT_FAILURE;
   }
 
-  JLong millis = System::currentTimeMillis(); // get a long from the Java environment
-  qint64 longMillis = static_cast<qint64> (millis.getLong()); // Java's long is a 64-bit integer (Qt defines it as qint64)
-
-  qDebug() << "Java System millisecond time: " << longMillis;
+  // Test whether JACE delivers a valid JNIEnv pointer.
+  JNIEnv* jniEnv = NULL;
+  try {
+    jniEnv = helper::attach();
+  } catch (JNIException& e) {
+    qWarning() << "JNIException occurred:" << e.what();
+    return EXIT_FAILURE;
+  }
+  if ( jniEnv ) {
+    qDebug() << "Acquired non-NULL JNIEnv* from JACE";
+  } else {
+    qWarning() << "Failed to get valid JNIEnv* from JACE";
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }

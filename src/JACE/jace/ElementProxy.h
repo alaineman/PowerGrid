@@ -1,62 +1,23 @@
-
 #ifndef JACE_ELEMENT_PROXY_H
 #define JACE_ELEMENT_PROXY_H
 
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
-
-#ifndef JACE_NAMESPACE_H
 #include "jace/namespace.h"
-#endif
 
-#ifndef JACE_JNI_HELPER_H
 #include "jace/JNIHelper.h"
-#endif
-
-#ifndef JACE_ELEMENT_PROXY_HELPER
 #include "jace/ElementProxyHelper.h"
-#endif
 
-#ifndef JACE_JOBJECT_H
 #include "jace/proxy/JObject.h"
-#endif
-
-#ifndef JACE_JCLASS_H
 #include "jace/JClass.h"
-#endif
 
-#ifndef JACE_TYPES_JBOOLEAN_H
 #include "jace/proxy/types/JBoolean.h"
-#endif
-
-#ifndef JACE_TYPES_JBYTE_H
 #include "jace/proxy/types/JByte.h"
-#endif
-
-#ifndef JACE_TYPES_JCHAR_H
 #include "jace/proxy/types/JChar.h"
-#endif
-
-#ifndef JACE_TYPES_JDOUBLE_H
 #include "jace/proxy/types/JDouble.h"
-#endif
-
-#ifndef JACE_TYPES_JFLOAT_H
 #include "jace/proxy/types/JFloat.h"
-#endif
-
-#ifndef JACE_TYPES_JINT_H
 #include "jace/proxy/types/JInt.h"
-#endif
-
-#ifndef JACE_TYPES_JLONG_H
 #include "jace/proxy/types/JLong.h"
-#endif
-
-#ifndef JACE_TYPES_JSHORT_H
 #include "jace/proxy/types/JShort.h"
-#endif
 
 BEGIN_NAMESPACE( jace )
 

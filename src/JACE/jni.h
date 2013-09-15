@@ -2,30 +2,6 @@
  * Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
-/*
- * We used part of Netscape's Java Runtime Interface (JRI) as the starting
- * point of our design and implementation.
  */
 
 /******************************************************************************

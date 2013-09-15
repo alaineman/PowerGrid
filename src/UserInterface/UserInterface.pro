@@ -30,12 +30,17 @@
 #------------------------------------------------
 # Basic properties of the project itself
 #------------------------------------------------
-QT          = core gui widgets
-
-include (../cpp11enabler.pro) # enables C++11 and compiler-specific functionality
-
-TARGET      = PowerGrid
+QT          = core gui
 TEMPLATE    = app
+
+debug: TARGET = PowerGrid-Debug
+else : TARGET = PowerGrid-Release
+
+include (../global_def.pro)
+
+win32 {
+    QMAKE_POST_LINK = copy $$PROJECT_ROOT/loader/dist/*.jar $$INSTALL_DIR
+}
 
 # Temporary files are placed in the "tmp" folder
 OBJECTS_DIR = tmp
@@ -54,18 +59,10 @@ RESOURCES   = resources.qrc
 OTHER_FILES = powergrid.rc powergrid.icns
 
 # Depends for Javabridge
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Javabridge/Release/ -lJavabridge
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Javabridge/Debug/ -lJavabridge
-else:unix: LIBS += -L$$OUT_PWD/../Javabridge/ -lJavabridge
+LIBS += -lJavabridge -lJACE
 
 INCLUDEPATH += $$PWD/../Javabridge
 DEPENDPATH += $$PWD/../Javabridge
 
-# Depends for JACE
-
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../JACE/release/ -lJACE
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../JACE/debug/ -lJACE
-else:unix: LIBS += -L$$OUT_PWD/../JACE/ -lJACE
-
 INCLUDEPATH += $$PWD/../JACE
-DEPENDPATH += $$PWD/../JACE
+DEPENDPATH  += $$PWD/../JACE

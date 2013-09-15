@@ -117,6 +117,11 @@ void JavaEnvironment::parseConfigFile(QString fileName) {
 void JavaEnvironment::locateJRE() {
   if (!isJRELocated()) {
     // We first take the value in the configuration, if it was specified
+    if (configuration.isEmpty()) {
+      // if configuration is empty we first try to load it.
+      parseConfigFile(QStringLiteral("java.conf"));
+    }
+
     if (configuration.contains(QStringLiteral("jvm_path"))) {
       javaLibraryPath = configuration.value(QStringLiteral("jvm_path"));
       return;
@@ -142,6 +147,7 @@ void JavaEnvironment::locateJRE() {
 
           line.chop(1); // this removes the additional '\n' char at the end
           javaLibraryPath = line.replace('\\','/'); // in Qt, '/' should be used even for Win32
+          qDebug() << "Java library located at\n" << qPrintable(javaLibraryPath);
           break;
         }
       }
@@ -193,9 +199,9 @@ void JavaEnvironment::start() {
   }
   // Now we create the correct loader based on the operating system
 #ifdef Q_OS_WIN32
-  Win32VmLoader loader (javaLibraryPath.toStdString().c_str(), JNI_VERSION_1_6);
+  Win32VmLoader loader (javaLibraryPath.toStdString(), static_cast<jint>(JNI_VERSION_1_6));
 #else // any Unix OS, including Mac OS
-  UnixVmLoader  loader (javaLibraryPath.toStdString().c_str(), JNI_VERSION_1_6);
+  UnixVmLoader  loader (javaLibraryPath.toStdString(), (long) JNI_VERSION_1_6);
 #endif
 
   QStringList optionList = configuration.value(QStringLiteral("options")).split(' ');

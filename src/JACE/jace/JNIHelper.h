@@ -205,8 +205,8 @@ JACE_API jobject getClassLoader();
  * Java Webstart, Applets or any other framework that makes use
  * of custom ClassLoaders to load classes.
  *
- * NOTE: You must setClassLoader( 0 ) to release the ClassLoader
- *       reference or detach() will do it for you on thread shutdown.
+ * You must setClassLoader( 0 ) to release the ClassLoader
+ * reference or detach() will do it for you on thread shutdown.
  *
  */
 JACE_API void setClassLoader( jobject classLoader );

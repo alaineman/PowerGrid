@@ -18,7 +18,7 @@
 #
 # Note that the files contained in this project do NOT fall under the
 # terms of the GNU General Public License, but instead fall under a
-# different license as mentioned below. This file does fall under the
+# different license as mentioned below. This .pro file does fall under the
 # GNU General Public License.
 #------------------------------------------------------------------------
 
@@ -61,7 +61,6 @@
 # All rights reserved.
 #
 # They are modified for optimization within the context of the project
-# and to enhance the clarity of these files
 #------------------------------------------------------------------------
 
 #------------------------------------------------------------------------
@@ -72,19 +71,21 @@
 #------------------------------------------------------------------------
 
 TARGET      = JACE
-TEMPLATE    = lib
-CONFIG     += static # We tell QMake we're building a static lib
-CONFIG     -= qt     # JACE has nothing to do with QT, so we remove it from the config
+TEMPLATE    = app
+CONFIG     += thread # We tell QMake we're building a static lib
+# CONFIG     -= qt     # JACE has nothing to do with QT, so we remove it from the config
 
 # JACE uses .tsd and .tsp files as C++ header files
 QMAKE_EXT_H += .tsp .tsd
 
 include (../global_def.pro)
 
+TARGET = appJACE
+
 #------------------------------------------------
 # Add the dependency for jni
 #------------------------------------------------
-LIBS += -L$$PWD/../../lib -ljvm
+LIBS += -L$$LIB_DIR -ljvm
 
 # We include the JNI headers in the project directly, this also allows optimization of the JNI headers.
 HEADERS += \
@@ -97,6 +98,8 @@ HEADERS += \
     jawt_md.h \
     classfile_constants.h
 
+SOURCES += $$SOURCE_DIR/UserInterface/main.cpp
+
 win32 {
     DEFINES += JNI_WIN32
 }
@@ -105,8 +108,8 @@ else:macx {
 }
 
 #------------------------------------------------
-# Files in this project. This contains all JACE
-# classes as well as all generated proxy classes.
+# Files in this project. This contains all
+# default JACE classes.
 #------------------------------------------------
 
 HEADERS    += \

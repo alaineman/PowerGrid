@@ -41,6 +41,7 @@ SOURCE_DIR = $$PROJECT_ROOT/src
 DIST_DIR   = $$PROJECT_ROOT/dist
 DOC_DIR    = $$PROJECT_ROOT/doc
 LOADER_DIR = $$PROJECT_ROOT/loader
+LIB_DIR    = $$PROJECT_ROOT/lib
 
 # All intermediate build targets should go into build/[Debug|Release]/
 # The subproject root build path is $$TARGET_DIR/<project_name>
@@ -53,8 +54,6 @@ target.path = $$TARGET_DIR/$$TARGET
 INSTALLS += target
 
 DESTDIR = $$TARGET_DIR
-
-LIBS += -L$$TARGET_DIR
 
 OBJECTS_DIR = $$TARGET_DIR/$$TARGET/
 MOC_DIR     = $$OBJECTS_DIR

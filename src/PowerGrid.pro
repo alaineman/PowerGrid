@@ -31,7 +31,7 @@ TEMPLATE = subdirs
 
 include (global_def.pro)
 
-SUBDIRS += Javabridge UserInterface Bot JACE
+SUBDIRS += Javabridge Bot JACE # UserInterface
 
 # The Javabridge depends on JACE for the actual connection
 # The Bot itself depends on the Javabridge for communication

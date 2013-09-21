@@ -31,7 +31,8 @@
 # Basic properties of the project itself
 #------------------------------------------------
 QT          = core gui
-TEMPLATE    = app
+TEMPLATE    = lib
+CONFIG     += static
 
 debug: TARGET = PowerGrid-Debug
 else : TARGET = PowerGrid-Release
@@ -41,10 +42,6 @@ include (../global_def.pro)
 win32 {
     QMAKE_POST_LINK = copy $$PROJECT_ROOT/loader/dist/*.jar $$INSTALL_DIR
 }
-
-# Temporary files are placed in the "tmp" folder
-OBJECTS_DIR = tmp
-MOC_DIR     = tmp
 
 win32:     RC_FILE = powergrid.rc
 else:macx: ICON    = powergrid.icns
@@ -59,10 +56,10 @@ RESOURCES   = resources.qrc
 OTHER_FILES = powergrid.rc powergrid.icns
 
 # Depends for Javabridge
-LIBS += -lJavabridge -lJACE
+LIBS += -L$$TARGET_DIR -lJavabridge -lJACE
 
-INCLUDEPATH += $$PWD/../Javabridge
-DEPENDPATH += $$PWD/../Javabridge
+INCLUDEPATH += $$SOURCE_DIR/Javabridge
+DEPENDPATH  += $$SOURCE_DIR/Javabridge
 
-INCLUDEPATH += $$PWD/../JACE
-DEPENDPATH  += $$PWD/../JACE
+INCLUDEPATH += $$SOURCE_DIR/JACE
+DEPENDPATH  += $$SOURCE_DIR/JACE

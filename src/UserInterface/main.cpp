@@ -25,6 +25,8 @@
  */
 #define JACE_WANT_DYNAMIC_LOAD
 
+#include <QtCore>
+
 #include "jace/JNIHelper.h"
 #include "jace/Win32VmLoader.h"
 
@@ -32,19 +34,21 @@ using namespace jace;
 
 int main(int, char*[]) {
 
+  qDebug() << "Attempting to load JVM...";
+
   // Create the loader instance with the appropriate configuration options.
   Win32VmLoader loader ( Win32VmLoader::JVMV_SUN, Win32VmLoader::JVMT_DEFAULT, "", JNI_VERSION_1_6 );
 
   OptionList options;
 
-  // Add the jar file to the classpath
-  options.push_back( ClassPath( "PowerGridLoader.jar" ) );
+  // Add the PowerGrid jar file to the classpath
+  options.push_back( ClassPath( "../../loader/dist/PowerGridLoader.jar" ) );
 
   // create the JVM
   try {
     helper::createVm( loader, options );
   } catch (JNIException& e) {
-    qWarning() << "Creating VM failed:" << e.what();
+    qWarning() << "[FAILURE] Creating VM failed:" << e.what();
     return EXIT_FAILURE;
   }
 
@@ -53,15 +57,37 @@ int main(int, char*[]) {
   try {
     jniEnv = helper::attach();
   } catch (JNIException& e) {
-    qWarning() << "JNIException occurred:" << e.what();
+    qWarning() << "[FAILURE] JNIException occurred:" << e.what();
     return EXIT_FAILURE;
   }
   if ( jniEnv ) {
-    qDebug() << "Acquired non-NULL JNIEnv* from JACE";
+    qDebug() << "[SUCCESS] Acquired non-NULL JNIEnv* from JACE";
+
+    // Test whether JACE delivers a PowerGrid class
+    jclass appletLoader = jniEnv->FindClass("net/pgrid/loader/AppletLoader");
+
+    if (appletLoader) {
+      qDebug() << "[SUCCESS] Acquired PowerGrid class from JACE";
+    } else {
+      qWarning() << "[FAILURE] Could not get PowerGrid class from JACE";
+      return EXIT_FAILURE;
+    }
+
+    // Test whether JACE delivers a Java API class
+    jclass system = jniEnv->FindClass("java/lang/System");
+    if (system) {
+      qDebug() << "[SUCCESS] Acquired Java API class from JACE";
+    } else {
+      qWarning() << "[FAILURE] Could not get Java API class from JACE";
+      return EXIT_FAILURE;
+    }
+
   } else {
-    qWarning() << "Failed to get valid JNIEnv* from JACE";
+    qWarning() << "[FAILURE] Failed to get valid JNIEnv* from JACE";
     return EXIT_FAILURE;
   }
+
+  qDebug() << "All tests succeeded";
 
   return EXIT_SUCCESS;
 }

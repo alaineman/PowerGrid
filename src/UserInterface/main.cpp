@@ -52,42 +52,8 @@ int main(int, char*[]) {
     return EXIT_FAILURE;
   }
 
-  // Test whether JACE delivers a valid JNIEnv pointer.
-  JNIEnv* jniEnv = NULL;
-  try {
-    jniEnv = helper::attach();
-  } catch (JNIException& e) {
-    qWarning() << "[FAILURE] JNIException occurred:" << e.what();
-    return EXIT_FAILURE;
-  }
-  if ( jniEnv ) {
-    qDebug() << "[SUCCESS] Acquired non-NULL JNIEnv* from JACE";
+  // JVM created, start the client.
 
-    // Test whether JACE delivers a PowerGrid class
-    jclass appletLoader = jniEnv->FindClass("net/pgrid/loader/AppletLoader");
-
-    if (appletLoader) {
-      qDebug() << "[SUCCESS] Acquired PowerGrid class from JACE";
-    } else {
-      qWarning() << "[FAILURE] Could not get PowerGrid class from JACE";
-      return EXIT_FAILURE;
-    }
-
-    // Test whether JACE delivers a Java API class
-    jclass system = jniEnv->FindClass("java/lang/System");
-    if (system) {
-      qDebug() << "[SUCCESS] Acquired Java API class from JACE";
-    } else {
-      qWarning() << "[FAILURE] Could not get Java API class from JACE";
-      return EXIT_FAILURE;
-    }
-
-  } else {
-    qWarning() << "[FAILURE] Failed to get valid JNIEnv* from JACE";
-    return EXIT_FAILURE;
-  }
-
-  qDebug() << "All tests succeeded";
 
   return EXIT_SUCCESS;
 }

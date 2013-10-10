@@ -31,6 +31,7 @@ import java.nio.channels.WritableByteChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import net.pgrid.loader.bridge.ClassMapDownloader;
 
 /**
  * Downloads the client files from the Runescape servers.
@@ -73,7 +74,9 @@ public class ClientDownloader {
     public ClientDownloader() {
         try {
             configURL = new URL(CONFIG_LINK);
-        } catch (MalformedURLException shouldNotHappen) {}
+        } catch (MalformedURLException e) {
+            throw (InternalError) new InternalError("Invalid CONFIG_LINK constant").initCause(e);
+        }
     }
     
     /**
@@ -184,14 +187,13 @@ public class ClientDownloader {
             try (InputStream in = configURL.openStream()) {
                 // using a Scanner with the right delimiter provides the entire 
                 // content of the stream at once in only a few lines.
-                Scanner out = new Scanner(in).useDelimiter("\\A");
+                Scanner out = new Scanner(Channels.newChannel(in), ClassMapDownloader.CHARSET.name()).useDelimiter("\\A");
                 if (out.hasNext()) {
                     parseConfig(out.next());
                 } else {
                     throw new RuntimeException("Empty response getting config file");
                 }
             }
-            
         }
     }
 
@@ -207,11 +209,12 @@ public class ClientDownloader {
         }
         URL url = new URL(clientData.getDownloadLink());
         URLConnection conn = url.openConnection();
-        FileOutputStream out = new FileOutputStream("client.jar");
 
         // Using fast stream copy with Java NIO Channels. This is at least as fast
         // as manual copy using a byte array as buffer.
-        try (InputStream in = conn.getInputStream()) {
+        try (InputStream in = conn.getInputStream(); 
+             FileOutputStream out = new FileOutputStream("client.jar")) {
+            
             ReadableByteChannel reader = Channels.newChannel(in);
             WritableByteChannel writer = Channels.newChannel(out);
 
@@ -259,6 +262,10 @@ public class ClientDownloader {
                 appParams.put(key, value);
             } else {
                 int mid = line.indexOf('=');
+                if (mid < 0) {
+                    // invalid line; skip
+                    continue;
+                }
                 String key = line.substring(0, mid);
                 String value = line.substring(mid + 1);
                 cliParams.put(key, value);

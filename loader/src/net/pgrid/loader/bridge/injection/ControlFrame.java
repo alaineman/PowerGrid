@@ -25,13 +25,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.pgrid.loader.AppletFrame;
-import net.pgrid.loader.AppletLoader;
 import net.pgrid.loader.bridge.injection.keyboard.AbstractKeyInjector;
 import net.pgrid.loader.bridge.injection.keyboard.KeyInjector;
-import net.pgrid.loader.bridge.injection.keyboard.RobotKeyInjector;
 import net.pgrid.loader.bridge.injection.keyboard.StringInjector;
 
 /**
@@ -42,15 +39,23 @@ import net.pgrid.loader.bridge.injection.keyboard.StringInjector;
  */
 public class ControlFrame extends JFrame {
 
-    private StringInjector injector;
+    protected StringInjector injector;
+    private AppletFrame frame;
     
-    private JTextField textField = new JTextField();
+    protected JTextField textField = new JTextField();
     private JButton submit = new JButton("Send");
-    private JTextField delayField = new JTextField("0");
+    protected JTextField delayField = new JTextField("0");
     
-    public ControlFrame(KeyInjector ki) {
+    /**
+     * Creates a new ControlFrame that injects keystrokes using the given 
+     * KeyInjector.
+     * @param ki the KeyInjector to use.
+     * @param frame the AppletFrame instance 
+     */
+    public ControlFrame(KeyInjector ki, AppletFrame frame) {
         super("PowerGrid development Control Panel");
         injector = StringInjector.wrap(ki);
+        this.frame = frame;
         createAndShowFrame();
     }
     
@@ -95,15 +100,11 @@ public class ControlFrame extends JFrame {
             c.setSize(delayField.getSize());
             add(c, "West");
         }
-        
-        pack();
-        AppletFrame frame = AppletLoader.theGUI;
         if (frame == null) {
             setLocationRelativeTo(null);
         } else {
             setLocation(frame.getX() + frame.getWidth(), frame.getY());
         }
-        setVisible(true);
     }
     
     

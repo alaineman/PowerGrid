@@ -47,9 +47,9 @@ public class AppletFrame extends JFrame implements AppletStub {
 
     private static final Logger LOGGER = Logger.get("CORE");
         
-    private JLabel label;
+    protected JLabel label;
     private Applet applet = null;
-    private ClientDownloader dloader = null;
+    private transient ClientDownloader dloader = null;
 
     /**
      * Initializes the AppletFrame with the specified the ClientDownloader.
@@ -144,6 +144,9 @@ public class AppletFrame extends JFrame implements AppletStub {
      * <p/>
      * If either the Applet is null, or no Canvas is found, this method returns
      * null.
+     * <p/>
+     * This method is relatively slow, so consider caching the result instead
+     * of calling this method repeatedly.
      * @return the Applet Canvas, or null if it wasn't found.
      */
     public Canvas getCanvas() {

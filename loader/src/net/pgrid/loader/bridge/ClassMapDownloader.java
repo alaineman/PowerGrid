@@ -30,6 +30,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -44,6 +45,15 @@ public class ClassMapDownloader implements Runnable {
     
     public static final String DEFAULT_SERVER = "205.234.152.103";
     public static final int DEFAULT_PORT = 6739;
+    
+    /**
+     * The Character set that will be used for all In- and OutputStreams
+     * related to network traffic.
+     * <p/>
+     * It is set as ISO-8859-1 based on the default encoding of config files as 
+     * provided to us by the RuneScape servers and the Updater Server.
+     */
+    public static final Charset CHARSET = Charset.forName("ISO-8859-1");
     
     private static final Logger LOGGER = Logger.get("UPDATER");
     
@@ -66,15 +76,19 @@ public class ClassMapDownloader implements Runnable {
 
     @Override
     public void run() {
-        getData();
+        try {
+            getData();
+        } catch (IOException e) {
+            LOGGER.log("Failed to load from updater server; aborting...");
+            throw new RuntimeException("Failed to load from server: " + server + ":" + serverPort, e);
+        }
     }
 
     protected byte[] computeHash() throws IOException {
         if (hash == null) {
             try {
                 MessageDigest digest = MessageDigest.getInstance("MD5");
-                try (InputStream in = new FileInputStream("client.jar")) {
-                    DigestInputStream dis = new DigestInputStream(in, digest);
+                try (InputStream in = new FileInputStream("client.jar"); DigestInputStream dis = new DigestInputStream(in, digest)) {
                     while (dis.read() != -1) {}
                 }
                 hash = digest.digest();
@@ -100,7 +114,7 @@ public class ClassMapDownloader implements Runnable {
                     out.write(0x0);
                     out.write(0x3);
                     
-                    OutputStreamWriter writer = new OutputStreamWriter(out);
+                    OutputStreamWriter writer = new OutputStreamWriter(out, CHARSET);
                     writer.append(bytesToHex(computeHash())).append("\n");
                     writer.flush();
                     
@@ -148,13 +162,8 @@ public class ClassMapDownloader implements Runnable {
         return classMapData;
     }
     
-    public byte[] getData() {
-        try {
-            return getData(openConnection());
-        } catch (IOException e) {
-            LOGGER.describe(e);
-            return null;
-        }
+    public byte[] getData() throws IOException {
+        return getData(openConnection());
     }
     
     protected Socket openConnection() throws IOException {

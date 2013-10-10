@@ -36,13 +36,15 @@ import net.pgrid.loader.AppletFrame;
  */
 public class AWTMouseInjector implements MouseInjector {
 
+    private static final long serialVersionUID = 837320987402L;
+    
     private Component target = null;
     
     private int mouseX = 0, mouseY = 0;
     
-    private MouseListener mListener = null;
-    private MouseMotionListener mmListener = null;
-    private MouseWheelListener mwListener = null;
+    private transient MouseListener mListener = null;
+    private transient MouseMotionListener mmListener = null;
+    private transient MouseWheelListener mwListener = null;
     
     @Override
     public void setTarget(Component comp) {

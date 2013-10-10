@@ -24,6 +24,7 @@ import java.awt.Robot;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
+import net.pgrid.loader.Logger;
 
 /**
  *
@@ -31,12 +32,32 @@ import javax.swing.JOptionPane;
  */
 public class RobotKeyInjector extends AbstractKeyInjector {
 
-    private Component target;
-    private Robot rob;
+    private static final long serialVersionUID = 98160654835098234L;
     
+    private Component target;
+    private transient Robot rob = null;
+    
+    /**
+     * Creates a new RobotKeyInjector for the specified Window
+     * @param comp
+     * @throws AWTException 
+     */
     public RobotKeyInjector(Window comp) throws AWTException {
-        rob = new Robot();
         target = comp;
+    }
+
+    /**
+     * @return the Robot instance, or null if none can be created.
+     */
+    protected Robot getRob() {
+        if (rob == null) {
+            try {
+                rob = new Robot();
+            } catch (AWTException e) {
+                Logger.get("Injection").describe(e);
+            }
+        }
+        return rob;
     }
     
     /**
@@ -69,13 +90,13 @@ public class RobotKeyInjector extends AbstractKeyInjector {
     @Override
     public void keyPressed(int keyCode, int modifiers) {
         ensureFocus();
-        rob.keyPress(keyCode);
+        getRob().keyPress(keyCode);
     }
 
     @Override
     public void keyReleased(int keyCode, int modifiers) {
         ensureFocus();
-        rob.keyRelease(keyCode);
+        getRob().keyRelease(keyCode);
     }
 
     @Override
@@ -85,32 +106,32 @@ public class RobotKeyInjector extends AbstractKeyInjector {
                 use_shift = (modifiers & KeyEvent.SHIFT_DOWN_MASK) != 0, 
                 use_ctrl = (modifiers & KeyEvent.CTRL_DOWN_MASK) != 0;
         if (use_ctrl) {
-            rob.keyPress(KeyEvent.VK_CONTROL);
+            getRob().keyPress(KeyEvent.VK_CONTROL);
         }
         if (use_alt) {
-            rob.keyPress(KeyEvent.VK_ALT);
+            getRob().keyPress(KeyEvent.VK_ALT);
         }
         if (use_shift) {
-            rob.keyPress(KeyEvent.VK_SHIFT);
+            getRob().keyPress(KeyEvent.VK_SHIFT);
         }
         try {
-            rob.keyPress(keyCode);
+            getRob().keyPress(keyCode);
             try {
                 Thread.sleep(getDuration());
             } catch (InterruptedException e) {}
-            rob.keyRelease(keyCode);
+            getRob().keyRelease(keyCode);
         } catch (IllegalArgumentException e) {
             String modifierString = (use_shift ? "shift " : "") + (use_ctrl ? "ctrl " : "") + (use_alt ? "alt " : "");
             System.out.println("Warning: Invalid keyCode (" + keyCode + "), supposed char: " + c + ", modifiers = { " + modifierString + "}");
         }
         if (use_shift) {
-            rob.keyRelease(KeyEvent.VK_SHIFT);
+            getRob().keyRelease(KeyEvent.VK_SHIFT);
         }
         if (use_alt) {
-            rob.keyRelease(KeyEvent.VK_ALT);
+            getRob().keyRelease(KeyEvent.VK_ALT);
         }
         if (use_ctrl) {
-            rob.keyRelease(KeyEvent.VK_CONTROL);
+            getRob().keyRelease(KeyEvent.VK_CONTROL);
         }
     }
 

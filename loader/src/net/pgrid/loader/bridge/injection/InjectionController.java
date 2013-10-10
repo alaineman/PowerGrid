@@ -34,6 +34,8 @@ import net.pgrid.loader.bridge.injection.mouse.MouseInjector;
  */
 public class InjectionController implements KeyInjector, MouseInjector{
 
+    private static final long serialVersionUID = 932497346598723L;
+    
     private KeyInjector keyDelegate;
     private MouseInjector mouseDelegate;
     private Component target;

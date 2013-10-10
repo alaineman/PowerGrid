@@ -33,8 +33,10 @@ import net.pgrid.loader.AppletFrame;
  */
 public class AWTKeyInjector implements KeyInjector {
 
+    private static final long serialVersionUID = 305601930419824L;
+    
     private Component target;
-    private KeyListener listener;
+    private transient KeyListener listener;
 
     /**
      * @return the KeyListener on which KeyEvents are placed
@@ -69,6 +71,8 @@ public class AWTKeyInjector implements KeyInjector {
      * @param event the KeyEvent to post
      * 
      * @throws NullPointerException if the event is null
+     * @throws IllegalArgumentException when the ID of the KeyEvent is not one 
+     *         of KEY_PRESSED, KEY_RELEASED, or KEY_TYPED.
      */
     protected void postKeyEvent(KeyEvent event) {
         switch (event.getID()) {
@@ -80,6 +84,9 @@ public class AWTKeyInjector implements KeyInjector {
                 break;
             case KEY_TYPED:
                 getListener().keyTyped(event);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid ID for Event");
         }
     }
     

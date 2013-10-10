@@ -19,7 +19,7 @@
 package net.pgrid.loader.bridge.injection.keyboard;
 
 import java.awt.Component;
-import java.awt.Window;
+import java.io.Serializable;
 
 /**
  * Interface for classes that can inject keystrokes into the virtual machine.
@@ -31,7 +31,7 @@ import java.awt.Window;
  * <p/>
  * @author Chronio
  */
-public interface KeyInjector {
+public interface KeyInjector extends Serializable {
 
     /**
      * Sets the target Component for future keystrokes.

@@ -19,10 +19,15 @@
 package net.pgrid.loader;
 
 import java.applet.Applet;
+import java.awt.Frame;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import javax.swing.SwingUtilities;
 import net.pgrid.loader.bridge.ClassMapDownloader;
 import net.pgrid.loader.bridge.injection.ControlFrame;
 import net.pgrid.loader.bridge.injection.keyboard.AWTKeyInjector;
@@ -46,12 +51,15 @@ public class AppletLoader implements Runnable {
     /**
      * The global AppletLoader instance.
      */
-    public static AppletLoader theLoader = null;
+    static AppletLoader theLoader = null;
     /**
      * The global AppletFrame instance.
      */
-    public static AppletFrame theGUI = null;
-
+    private static AppletFrame theGUI = null;
+    
+    public static AppletFrame getGUI() {
+        return theGUI;
+    }
     /**
      * Starts the AppletLoader.
      * <p/>
@@ -226,11 +234,12 @@ public class AppletLoader implements Runnable {
             theGUI.showMessage("loading Classes");
 
             // ...then we load the classes...
-            ClassLoader loader = new URLClassLoader(new URL[]{
-                new URL("jar:file:client.jar!/")});
+            ClassLoader loader = AccessController.doPrivileged(
+                    new PrivilegedClassLoaderAction());
+            
             Class<?> Rs2Applet = loader.loadClass("Rs2Applet");
             theGUI.showMessage("Creating Applet");
-
+            
             // ...and create the Applet
             applet = (Applet) Rs2Applet.getConstructor().newInstance();
             
@@ -238,7 +247,8 @@ public class AppletLoader implements Runnable {
                 // We set up a ControlPanel to simulate actions from the Bot.
                 KeyInjector injector = new AWTKeyInjector();
                 injector.setTarget(theGUI);
-                ControlFrame f = new ControlFrame(injector);
+                final ControlFrame frame = new ControlFrame(injector, theGUI);
+                SwingUtilities.invokeLater(new FrameVisibilityHelper(frame));
                 
                 // In order to get feedback on loading times with different settings,
                 // the loading time is reported when development mode is enabled.
@@ -249,6 +259,29 @@ public class AppletLoader implements Runnable {
                 IllegalAccessException | NoSuchMethodException | 
                 InvocationTargetException e) {
             LOGGER.describe(e);
+        }
+    }
+    
+    private static class FrameVisibilityHelper implements Runnable {
+        private Frame f;
+        private FrameVisibilityHelper(Frame f) {
+            this.f = f;
+        }
+        @Override
+        public void run() {
+            f.pack();
+            f.setVisible(true);
+        }
+    }
+    
+    private static class PrivilegedClassLoaderAction implements PrivilegedAction<ClassLoader> {
+        @Override
+        public ClassLoader run() {
+            try {
+                return new URLClassLoader(new URL[]{new URL("jar:file:client.jar!/")});
+            } catch (MalformedURLException e) {
+                return null;
+            }
         }
     }
 }

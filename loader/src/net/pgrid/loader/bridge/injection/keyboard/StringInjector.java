@@ -44,6 +44,8 @@ import net.pgrid.loader.Logger;
  */
 public class StringInjector extends AbstractKeyInjector {
     
+    private static final long serialVersionUID = 32581134834L;
+    
     private static Logger LOGGER = Logger.get("INJECT");
     
     private KeyInjector injector;
@@ -64,7 +66,7 @@ public class StringInjector extends AbstractKeyInjector {
      * <p/>
      * It is filled automatically and through calling the loadDefinitions methods.
      */
-    private static HashMap<Character, KeyStroke> keyStrokes;
+    private static volatile HashMap<Character, KeyStroke> keyStrokes;
     
     /**
      * Indicates if the default keyboard File has been loaded.
@@ -135,7 +137,7 @@ public class StringInjector extends AbstractKeyInjector {
      * @param in the InputStream to read from.
      */
     public static synchronized void loadDefinitions(InputStream in) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
             while (reader.ready()) {
                 String line = reader.readLine();
                 if (!line.isEmpty() && !line.startsWith("//")) {

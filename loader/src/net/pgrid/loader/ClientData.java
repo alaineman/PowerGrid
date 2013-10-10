@@ -187,7 +187,7 @@ public class ClientData {
      * @throws IllegalStateException when the client parameters were already set
      */
     public void setClientParameters(Map<String, String> params) {
-        if (clientParameters == null) {
+        if (clientParameters != null) {
             throw new IllegalStateException();
         }
         clientParameters = params;

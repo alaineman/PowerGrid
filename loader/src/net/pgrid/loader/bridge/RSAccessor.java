@@ -41,7 +41,7 @@ public class RSAccessor {
         return null;
     }
     
-    public ObfuscatedField<?> getFieldByID(int classID, int fieldID) {
+    public Object getFieldByID(int classID, int fieldID) {
         return null;
     }
     
@@ -56,8 +56,7 @@ public class RSAccessor {
 //   get field data from field using Object o
 //  return field data    
     
-    public byte getByteField(String name){        
-        
+    public byte getByteField(String name){
         try {
             Class<?> forName = Class.forName("");
         } catch (ClassNotFoundException ex) {

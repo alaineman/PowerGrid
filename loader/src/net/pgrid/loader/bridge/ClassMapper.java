@@ -45,8 +45,8 @@ public class ClassMapper {
     
     private byte[] source;
     private Map<String, String> classes;
-    private Map<String, ObfuscatedFieldData> fieldData;
-    private Map<String, ObfuscatedField<?>> fields;
+    private Map<String, Object> fieldData;
+    private Map<String, Object> fields;
     private Map<String, Long> constants;
     
     private short revision;
@@ -81,7 +81,7 @@ public class ClassMapper {
      * Returns an unmodifiable version of the Field map.
      * @return Field map
      */
-    public Map<String, ObfuscatedField<?>> getFieldMap() {
+    public Map<String, Object> getFieldMap() {
         return Collections.unmodifiableMap(fields);
     }
 
@@ -126,7 +126,7 @@ public class ClassMapper {
         if (source.length < 2) {
             throw new IOException("Insufficient data found.");
         }
-        revision = (short) ((source[0] << 8) + source[1]);
+        revision = (short) ((source[0] << 8) + (source[1] & 0xff));
         cursor = 2;
         gamepack = parseString();
 
@@ -145,12 +145,12 @@ public class ClassMapper {
                     cursor++;
                     String owner = parseString();
                     long flag = parseLong(8);
-                    ObfuscatedFieldData data = new ObfuscatedFieldData(obfFieldName, unobfFieldName, flag);
-                    try {
-                        fields.put(unobfFieldName, new ObfuscatedField<>(data));
-                    } catch (ClassNotFoundException | NoSuchFieldException e) {
-                        LOGGER.describe(e);
-                    }
+                    Object data = new Object();
+                    //try {
+                        fields.put(unobfFieldName, new Object());
+                    //} catch (ClassNotFoundException | NoSuchFieldException e) {
+                    //    LOGGER.describe(e);
+                    //}
                     break;
                 case 0x02:
                     String obfConstName = parseString();
@@ -195,7 +195,7 @@ public class ClassMapper {
             byte b = source[cursor];
             cursor++;
             f <<= 8;
-            f |= b;
+            f |= (b & 0xff);
         }
         return f;
     }

@@ -20,6 +20,7 @@ package net.pgrid.loader.bridge.injection.mouse;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 
 /**
  * Interface for classes that can inject mouse movements and clicks into the
@@ -36,7 +37,7 @@ import java.awt.event.MouseEvent;
  * <p/>
  * @author Chronio
  */
-public interface MouseInjector {
+public interface MouseInjector extends Serializable {
 
     /**
      * Constant specifying the primary mouse button. Usually the left button.

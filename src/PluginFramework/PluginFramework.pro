@@ -10,7 +10,9 @@ TARGET = PluginFramework
 TEMPLATE = lib
 CONFIG += staticlib
 
-SOURCES +=
+SOURCES += \
+    powergridplugin.cpp
 
 HEADERS += \
-    plugininterfaces.h
+    plugininterfaces.h \
+    powergridplugin.h

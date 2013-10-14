@@ -1,6 +1,8 @@
 package net.pgrid.loader.bridge.deobfucation;
 
-import java.util.Collections;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,18 +13,12 @@ public class RSClassDescriptor {
     
     private Class<?> rsClass;
     private String className;
-    private Map<String, String> methods;
-    private Map<String, String> parameters;
-    private Map<String, Long> constants;
+    private Map<String, Field> fields;
 
-    public RSClassDescriptor(Class<?> clazz, String name, 
-            Map<String, String> methods, Map<String, String> parameters,
-            Map<String, Long> constants) {
+    public RSClassDescriptor(Class<?> clazz, String name) {
         this.rsClass    = clazz;
         this.className  = name;
-        this.methods    = Collections.unmodifiableMap(methods);
-        this.parameters = Collections.unmodifiableMap(parameters);
-        this.constants  = Collections.unmodifiableMap(constants);
+        this.fields     = new HashMap<>(16);
     }
 
     public String getClassName() {
@@ -33,20 +29,12 @@ public class RSClassDescriptor {
         return rsClass;
     }
 
-    public Map<String, String> getMethods() {
-        return methods;
-    }
-
-    public Map<String, String> getParameters() {
-        return parameters;
-    }
-
-    public Map<String, Long> getConstants() {
-        return constants;
+    public Map<String, Field> getFields() {
+        return fields;
     }
     
-    public long getConstant(String name) {
-        return constants.get(name);
+    public void putField(String name, Field f) {
+        fields.put(name, f);
     }
 
     @Override
@@ -64,6 +52,5 @@ public class RSClassDescriptor {
         hash = 37 * hash + rsClass.hashCode();
         return hash;
     }
-    
     
 }

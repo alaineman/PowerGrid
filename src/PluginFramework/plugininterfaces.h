@@ -5,9 +5,9 @@
 
 #include <stdexcept>
 
-
-
 #include <QList>
+
+// Convenience function for creating singleton QLists
 
 template <typename T> QList<T> CreateQListSingleton(T elem) {
   QList<T> ql ();
@@ -15,12 +15,14 @@ template <typename T> QList<T> CreateQListSingleton(T elem) {
   return ql;
 }
 
+// Convenience macro using initializer lists, or the above defined 
+// function depending on the compiler
 #ifdef Q_COMPILER_INITIALIZER_LISTS
   // The compiler supports initializer lists, so use that QList constructor
-#define QListSingleton(e) QList({e})
+  #define QListSingleton(e) QList({e})
 #else
   // fall back on the CreateQListSingleton function
-#define QListSingleton(e) CreateQListSingleton(e)
+  #define QListSingleton(e) CreateQListSingleton(e)
 #endif
 
 namespace plugins {

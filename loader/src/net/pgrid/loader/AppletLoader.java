@@ -51,7 +51,7 @@ public class AppletLoader implements Runnable {
     /**
      * The global AppletLoader instance.
      */
-    static AppletLoader theLoader = null;
+    private static AppletLoader theLoader = null;
     /**
      * The global AppletFrame instance.
      */
@@ -59,6 +59,10 @@ public class AppletLoader implements Runnable {
     
     public static AppletFrame getGUI() {
         return theGUI;
+    }
+    
+    public static AppletLoader getLoader() {
+        return theLoader;
     }
     /**
      * Starts the AppletLoader.
@@ -166,6 +170,7 @@ public class AppletLoader implements Runnable {
     private Applet applet;
     private boolean quickload, update, devel; 
     
+    private ClassLoader rsClassLoader = null;
 
     /**
      * Constructs a new AppletLoader instance
@@ -207,6 +212,10 @@ public class AppletLoader implements Runnable {
         return quickload;
     }
 
+    public ClassLoader getRsClassLoader() {
+        return rsClassLoader;
+    }
+
     /**
      * Downloads the client and creates a new <code>Applet</code> instance.
      */
@@ -234,10 +243,10 @@ public class AppletLoader implements Runnable {
             theGUI.showMessage("loading Classes");
 
             // ...then we load the classes...
-            ClassLoader loader = AccessController.doPrivileged(
+            rsClassLoader = AccessController.doPrivileged(
                     new PrivilegedClassLoaderAction());
             
-            Class<?> Rs2Applet = loader.loadClass("Rs2Applet");
+            Class<?> Rs2Applet = rsClassLoader.loadClass("Rs2Applet");
             theGUI.showMessage("Creating Applet");
             
             // ...and create the Applet

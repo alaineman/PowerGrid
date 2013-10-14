@@ -6,45 +6,51 @@
 #include <QList>
 
 namespace plugins {
+  namespace standard {
 
-  class DummyTask : Task, TaskDescriptor {
-      Q_OBJECT
-      Q_PLUGIN_METADATA(IID "net.pgrid.plugins.default.DummyTask")
-      Q_INTERFACES(Task TaskDescriptor)
+    class DummyTask : public QObject, public Task, public TaskDescriptor {
+        Q_OBJECT
+        Q_PLUGIN_METADATA(IID "net.pgrid.plugins.default.DummyTask")
+        Q_INTERFACES(Task TaskDescriptor)
 
-    public:
-      DummyTask();
-      ~DummyTask();
+      public:
+        explicit DummyTask(QObject* parent = NULL) : QObject(parent) {}
+        ~DummyTask();
 
-      void run();
+        void run();
 
-      TaskDescriptor descriptor() { return *this; }
+        TaskDescriptor* descriptor() { return this; }
 
-      int taskID() const Q_DECL_NOTHROW { return 0; }
-      QString name() const Q_DECL_NOTHROW {
-        return QStringLiteral("DummyTask");
-      }
-      QString description() const Q_DECL_NOTHROW {
-        return QStringLiteral(
-              "A Dummy Task illustrating the PowerGrid plugin framework.");
-      }
-  };
+        QString name() const Q_DECL_NOTHROW {
+          return QStringLiteral("DummyTask");
+        }
+        QString description() const Q_DECL_NOTHROW {
+          return QStringLiteral(
+                "A Dummy Task illustrating the PowerGrid plugin framework.");
+        }
+    };
 
-  class PowerGridPlugin : Plugin {
-      Q_OBJECT
-      Q_PLUGIN_METADATA(IID "net.pgrid.plugins.default.PowerGridPlugin")
-      Q_INTERFACES(Plugin)
+    class PowerGridPlugin : public QObject, public Plugin {
+        Q_OBJECT
+        Q_PLUGIN_METADATA(IID "net.pgrid.plugins.default.PowerGridPlugin")
+        Q_INTERFACES(Plugin)
 
-    public:
-      PowerGridPlugin();
-      ~PowerGridPlugin();
+      public:
+        explicit PowerGridPlugin(QObject* parent = NULL) : QObject(parent) {}
+        ~PowerGridPlugin();
 
-      QList<TaskDescriptor> availableTasks();
-      // The dummy task is its own descriptor and thread-safe. As such, we can simply
-      // (and safely) cast the input parameter using qobject_cast.
-      virtual Task create(TaskDescriptor desc) { return qobject_cast<Task>(desc); }
-  };
+        QString pluginName() const Q_DECL_NOTHROW {
+          return QStringLiteral("default PowerGrid Plugin");
+        }
 
+        QList<TaskDescriptor> availableTasks() { return QListSingleton(DummyTask()); }
+
+        // The dummy task is its own descriptor and thread-safe. As such, we can simply
+        // (and safely) cast the input parameter using qobject_cast.
+        Task& create(const TaskDescriptor& desc) { return qobject_cast<Task>(desc); }
+    };
+
+  }
 }
 
 #endif // POWERGRIDPLUGIN_H

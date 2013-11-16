@@ -65,6 +65,7 @@ MOC_DIR     = $$OBJECTS_DIR
 # They should enable the C++11 standard and possibly any compiler-specific enhancements
 macx {
     macx-clang {
+        # pthreads are required for JACE, but clang has trouble supporting them
         QMAKE_CXXFLAGS += -stdlib=libc++ -std=c++11
     } else {
         warning ( Unknown compiler. Add Compiler flags as needed to global_def.pro )

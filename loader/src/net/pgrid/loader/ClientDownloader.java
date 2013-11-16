@@ -75,7 +75,7 @@ public class ClientDownloader {
         try {
             configURL = new URL(CONFIG_LINK);
         } catch (MalformedURLException e) {
-            throw (InternalError) new InternalError("Invalid CONFIG_LINK constant").initCause(e);
+            throw (Error) new InternalError("Invalid CONFIG_LINK constant").initCause(e);
         }
     }
     

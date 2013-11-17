@@ -3,9 +3,9 @@ package net.pgrid.loader.bridge.deobfucation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-import net.pgrid.loader.AppletLoader;
-import net.pgrid.loader.Logger;
+import net.pgrid.loader.ClientLoader;
 import net.pgrid.loader.bridge.ClassMapDownloader;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * Looks up and returns obfuscated RS Classes by their semantic name.
@@ -34,7 +34,7 @@ public class RSClassProvider {
         
         pos = skipString(input, pos); // gamepack
         
-        ClassLoader loader = AppletLoader.getLoader().getRsClassLoader();
+        ClassLoader loader = ClientLoader.getLoader().getRsClassLoader();
         String obfName, deobName;
         
         while (pos < l) {

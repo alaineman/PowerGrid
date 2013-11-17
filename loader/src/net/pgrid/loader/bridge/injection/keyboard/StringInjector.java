@@ -27,7 +27,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import javax.swing.KeyStroke;
-import net.pgrid.loader.Logger;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * This class wraps a KeyInjector to write a String as a series of key presses.
@@ -46,9 +46,9 @@ public class StringInjector extends AbstractKeyInjector {
     
     private static final long serialVersionUID = 32581134834L;
     
-    private static Logger LOGGER = Logger.get("INJECT");
+    private static final Logger LOGGER = Logger.get("INJECT");
     
-    private KeyInjector injector;
+    private final KeyInjector injector;
     /**
      * The standard keyboard layout file to load.
      * <p/>

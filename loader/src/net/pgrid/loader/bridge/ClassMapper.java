@@ -21,7 +21,7 @@ package net.pgrid.loader.bridge;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import net.pgrid.loader.Logger;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * This class reads a byte array and maps the received data.

@@ -24,7 +24,7 @@ import java.awt.Robot;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
-import net.pgrid.loader.Logger;
+import net.pgrid.loader.logging.Logger;
 
 /**
  *

@@ -35,7 +35,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import net.pgrid.loader.ClientDownloader;
-import net.pgrid.loader.Logger;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * 
@@ -43,7 +43,9 @@ import net.pgrid.loader.Logger;
  */
 public class ClassMapDownloader implements Runnable {
     
+    /** The default Updater Server address. */
     public static final String DEFAULT_SERVER = "205.234.152.103";
+    /** The default Updater Server port. */
     public static final int DEFAULT_PORT = 6739;
     
     /**
@@ -57,15 +59,17 @@ public class ClassMapDownloader implements Runnable {
     
     private static final Logger LOGGER = Logger.get("UPDATER");
     
-    private ClientDownloader dl;
+    private final ClientDownloader dl;
     private byte[] hash = null;
     private volatile boolean ready = false;
     private byte[] classMapData = null;
-    private String server;
-    private int serverPort;
+    private final String server;
+    private final int serverPort;
 
     public ClassMapDownloader(ClientDownloader downloader) {
         dl = downloader;
+        server = DEFAULT_SERVER;
+        serverPort = DEFAULT_PORT;
     }
     
     public ClassMapDownloader(ClientDownloader downloader, String updaterServer, int port) {
@@ -80,7 +84,7 @@ public class ClassMapDownloader implements Runnable {
             getData();
         } catch (IOException e) {
             LOGGER.log("Failed to load from updater server; aborting...");
-            throw new RuntimeException("Failed to load from server: " + server + ":" + serverPort, e);
+            
         }
     }
 
@@ -89,6 +93,7 @@ public class ClassMapDownloader implements Runnable {
             try {
                 MessageDigest digest = MessageDigest.getInstance("MD5");
                 try (InputStream in = new FileInputStream("client.jar"); DigestInputStream dis = new DigestInputStream(in, digest)) {
+                    // run over the entire stream
                     while (dis.read() != -1) {}
                 }
                 hash = digest.digest();

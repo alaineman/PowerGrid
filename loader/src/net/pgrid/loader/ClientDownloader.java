@@ -208,10 +208,18 @@ public class ClientDownloader {
         if (!clientData.readyForDownload()) {
             throw new IllegalStateException();
         }
+        
+        RSVersionManager versionManager = new RSVersionManager();
+        if (versionManager.compareAndUpdate(CONFIG_LINK, CONFIG_LINK)) {
+            // the keys are still valid, so skip downloading.
+            return;
+        }
+        
+        
         URL url = new URL(clientData.getDownloadLink());
         URLConnection conn = url.openConnection();
 
-        // Using fast stream copy with Java NIO Channels. This is at least as fast
+        // Using stream copy with Java NIO Channels. This is at least as fast
         // as manual copy using a byte array as buffer.
         try (InputStream in = conn.getInputStream(); 
              FileOutputStream out = new FileOutputStream("client.jar")) {

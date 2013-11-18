@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * This class checks the information belonging to the client data (as given by the 
@@ -15,7 +17,7 @@ import java.util.Scanner;
  * still valid.
  * 
  * Doing so significantly decreases startup time, since the previously downloaded
- * client (and as such the updater file and encryption keys) can be reused.
+ * client (and as such the updater file) can be reused.
  * 
  * To do this, we have to keep track of the userFlow id, assigned by the 
  * Runescape servers to distinct between different users. We can request the 
@@ -32,6 +34,8 @@ public class RSVersionManager {
      */
     public static final String JAV_CONFIG = "http://www.runescape.com/l=3/k=0/jav_config.ws?userFlow=";
     
+    private static final Logger LOGGER = Logger.get("VERSIONING");
+    
     /**
      * The cached File containing the previous encryption keys.
      */
@@ -41,9 +45,7 @@ public class RSVersionManager {
     private String userFlow = null;
     // the old encryption keys
     private String oldKey_m1 = null, oldKey_0 = null;
-    // the new jav_config file data
-    private String configData = null;
-    
+
     /**
      * Attempts to read the previous configuration from the cache.
      * @return true if the required data existed and is valid, false otherwise.
@@ -51,7 +53,7 @@ public class RSVersionManager {
     public boolean parseCacheFile() {
         try {
             Scanner sc = new Scanner(new FileInputStream(KEYS_FILE), "US-ASCII");
-            sc.useDelimiter("\r?\n");
+            sc.useDelimiter("\r?\n"); // matches both LF and CR/LF line endings
             userFlow = sc.next();
             oldKey_0 = sc.next();
             oldKey_m1 = sc.next();
@@ -59,48 +61,47 @@ public class RSVersionManager {
             return true; 
         } catch (FileNotFoundException | NoSuchElementException ex) {
             // no previous keys were found or the KEYS_FILE is invalid
+            LOGGER.describe(ex);
             return false;
         }
     }
     
-    public void parseJavaConfig() throws IOException {
-        try {
-            Scanner sc = new Scanner(new URL(JAV_CONFIG + userFlow).openStream(), "US-ASCII");
-            sc.useDelimiter("\\A");
-            configData = sc.next();
-        } catch (NoSuchElementException e) {
-            // could not read data. Means that the Scanner is empty
-            throw new IOException("Empty response from jav_config", e);
+    /**
+     * Parses the Java config file and compares the new keys with the stored keys.
+     * 
+     * If no previous keys are known, this method first tries to load them using 
+     * the {@code parseCacheFile()} method.
+     * 
+     * If the keys do not match, the keys are updated with the parameter keys.
+     * @param newKey_0  the encryption key with parameter id 0
+     * @param newKey_m1 the encryption key with parameter id -1
+     * @return true if and only if the stored keys match the new keys, false otherwise
+     * @throws NullPointerException when one of the keys is null
+     * @throws IOException if an I/O error occurred.
+     */
+    public boolean compareAndUpdate(String newKey_0, String newKey_m1) throws IOException {
+        if (userFlow == null && !parseCacheFile()) {
+            throw new IOException("Could not connect to Runescape server");
         }
         
-        String newKey_m1 = null, newKey_0 = null;
-        // Scan through the data for the encryption keys
-        int position = 0;
-        int length = configData.length();
-        do {
-            int lineEnd = configData.indexOf('\n', position);
-            if (configData.startsWith("param=-1=", position)) {
-                newKey_m1 = configData.substring(position + 9, lineEnd);
-                if (newKey_0 != null) {
-                    break;
-                }
-            } else if (configData.startsWith("param=0=", position)) {
-                newKey_0 = configData.substring(position + 8, lineEnd);
-                if (newKey_m1 != null) {
-                    break;
-                }
-            }
-            position = lineEnd + 1;
-        } while (position > 0 && position < length);
-        
-        if (newKey_0 != null && newKey_m1 != null) {
-            if (newKey_0.equals(oldKey_0) && newKey_m1.equals(oldKey_m1)) {
-                
-            } else {
-                // key mismatch
-            }
+        if (newKey_0.equals(oldKey_0) && newKey_m1.equals(oldKey_m1)) {
+            // The keys are equal, so we can re-use the client.
+            return true;
         } else {
-            throw new InputMismatchException("Missing required parameter(s)");
+            // key mismatch; update the outdated keys
+            File destination = new File("keys.dat");
+            if (destination.exists() || destination.createNewFile()) {
+                try (PrintStream out = new PrintStream(destination, "US-ASCII")) {
+                    out.println(userFlow);
+                    out.println(newKey_0);
+                    out.println(newKey_m1);
+                }
+                oldKey_0  = newKey_0;
+                oldKey_m1 = newKey_m1;
+                return false;
+            } else {
+                throw new IOException("Could not create keys.dat file"); 
+            }
         }
     }
 }

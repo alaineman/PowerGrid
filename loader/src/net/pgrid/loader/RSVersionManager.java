@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URL;
-import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import net.pgrid.loader.logging.Logger;
@@ -61,9 +59,28 @@ public class RSVersionManager {
             return true; 
         } catch (FileNotFoundException | NoSuchElementException ex) {
             // no previous keys were found or the KEYS_FILE is invalid
-            LOGGER.describe(ex);
+            LOGGER.log("Could not find old keys");
             return false;
         }
+    }
+
+    public boolean hasUserFlow() {
+        return userFlow != null;
+    }
+
+    public void setUserFlow(String userFlow) {
+        this.userFlow = userFlow;
+    }
+    
+    /**
+     * @return the userFlow id
+     */
+    public String getUserFlow() {
+        return userFlow;
+    }
+    
+    public String getUserFlowLink() {
+        return JAV_CONFIG + userFlow;
     }
     
     /**
@@ -80,28 +97,30 @@ public class RSVersionManager {
      * @throws IOException if an I/O error occurred.
      */
     public boolean compareAndUpdate(String newKey_0, String newKey_m1) throws IOException {
-        if (userFlow == null && !parseCacheFile()) {
-            throw new IOException("Could not connect to Runescape server");
-        }
         
-        if (newKey_0.equals(oldKey_0) && newKey_m1.equals(oldKey_m1)) {
+        if (userFlow != null && parseCacheFile() && 
+                newKey_0.equals(oldKey_0) && newKey_m1.equals(oldKey_m1)) {
             // The keys are equal, so we can re-use the client.
+            LOGGER.log("Encryption keys match: local RS client will be re-used");
             return true;
         } else {
             // key mismatch; update the outdated keys
-            File destination = new File("keys.dat");
-            if (destination.exists() || destination.createNewFile()) {
-                try (PrintStream out = new PrintStream(destination, "US-ASCII")) {
+            if (KEYS_FILE.getParentFile().mkdirs()) {
+                LOGGER.log("Created cache directory");
+            }
+            if (KEYS_FILE.exists() || KEYS_FILE.createNewFile()) {
+                try (PrintStream out = new PrintStream(KEYS_FILE, "US-ASCII")) {
                     out.println(userFlow);
                     out.println(newKey_0);
                     out.println(newKey_m1);
                 }
                 oldKey_0  = newKey_0;
                 oldKey_m1 = newKey_m1;
-                return false;
+                LOGGER.log("Updated encryption keys");
             } else {
-                throw new IOException("Could not create keys.dat file"); 
+                LOGGER.log("Could not create keys.dat file");
             }
+            return false;
         }
     }
 }

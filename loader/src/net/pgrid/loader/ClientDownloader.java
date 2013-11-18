@@ -21,6 +21,7 @@ package net.pgrid.loader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -68,6 +69,8 @@ public class ClientDownloader {
      */
     private ClientData clientData = new ClientData();
 
+    private final RSVersionManager versionManager = new RSVersionManager();
+    
     /**
      * Creates a new ClientDownloader that uses the {@code CONFIG_LINK} as config
      * URL.
@@ -185,16 +188,39 @@ public class ClientDownloader {
      */
     public void loadConfig() throws IOException {
         if (!clientData.readyForDownload()) {
-            try (InputStream in = configURL.openStream()) {
+            // Try to get the config to load.
+            if (versionManager.parseCacheFile()) {
+                try {
+                    configURL = new URL(versionManager.getUserFlowLink());
+                } catch (MalformedURLException e) {
+                    LOGGER.log("got invalid userFlow link from version manager");
+                }
+            }
+            HttpURLConnection conn = (HttpURLConnection) configURL.openConnection();
+            conn.setInstanceFollowRedirects(false); // do not auto-resolve the redirect
+            conn.getResponseCode();
+            // This is the link we're redirected to.
+            String redirectLink = conn.getHeaderField("Location");
+            LOGGER.log("Redirect to: " + redirectLink);
+            conn.disconnect();
+            // fire a new request with the redirect link
+            conn = (HttpURLConnection) new URL(redirectLink).openConnection();
+            try (InputStream in = conn.getInputStream()) {
                 // using a Scanner with the right delimiter provides the entire 
                 // content of the stream at once in only a few lines.
-                Scanner out = new Scanner(Channels.newChannel(in), ClassMapDownloader.CHARSET.name()).useDelimiter("\\A");
+                
+                Scanner out = new Scanner(Channels.newChannel(in), 
+                        ClassMapDownloader.CHARSET.name()).useDelimiter("\\A");
                 if (out.hasNext()) {
                     parseConfig(out.next());
+                    conn.disconnect();
                 } else {
                     throw new RuntimeException("Empty response getting config file");
                 }
             }
+            String assignedUserFlow = redirectLink.substring(redirectLink.lastIndexOf('=') + 1);
+            LOGGER.log("Got assigned userFlow id " + assignedUserFlow);
+            versionManager.setUserFlow(assignedUserFlow);
         }
     }
 
@@ -208,13 +234,16 @@ public class ClientDownloader {
         if (!clientData.readyForDownload()) {
             throw new IllegalStateException();
         }
-        
-        RSVersionManager versionManager = new RSVersionManager();
-        if (versionManager.compareAndUpdate(CONFIG_LINK, CONFIG_LINK)) {
-            // the keys are still valid, so skip downloading.
-            return;
+        String key_0  = clientData.getAppletParameter("0");
+        String key_m1 = clientData.getAppletParameter("-1");
+        try {
+            if (versionManager.compareAndUpdate(key_0, key_m1)) {
+                // the keys are still valid, so skip downloading.
+                return;
+            }
+        } catch (IOException e) {
+            LOGGER.log("Failed to check keys: " + e.getMessage());
         }
-        
         
         URL url = new URL(clientData.getDownloadLink());
         URLConnection conn = url.openConnection();

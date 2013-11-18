@@ -346,7 +346,8 @@ public class Logger {
             target.println();
         }
         if (leftOver > 0) {
-            target.append(prefix).append("(nog ").append(String.valueOf(leftOver)).append("...)");
+            target.append(prefix).append("(").append(String.valueOf(leftOver))
+                    .append(" more...)").println();
         }
     }
 }

@@ -18,8 +18,7 @@
  */
 package net.pgrid.loader.bridge;
 
-import net.pgrid.loader.Logger;
-
+import net.pgrid.loader.logging.Logger;
 
 /**
  * The bridge core used to aid the JNI porting and reduce the load between java 

@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import net.pgrid.loader.bridge.ClassMapDownloader;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * Downloads the client files from the Runescape servers.

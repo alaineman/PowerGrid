@@ -32,26 +32,27 @@ import net.pgrid.loader.bridge.ClassMapDownloader;
 import net.pgrid.loader.bridge.injection.ControlFrame;
 import net.pgrid.loader.bridge.injection.keyboard.AWTKeyInjector;
 import net.pgrid.loader.bridge.injection.keyboard.KeyInjector;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * Main class of the Runescape loader.
  * <p/>
- * The AppletLoader class is responsible for managing a ClientDownloader
- * instance to download the client, and to create an
- * <code>Applet</code> instance from the downloaded client.
+ The ClientLoader class is responsible for managing a ClientDownloader
+ instance to download the client, and to create an
+ <code>Applet</code> instance from the downloaded client.
  * <p/>
- * An AppletLoader instance contains all required code to load the client.
- * To actually 
+ An ClientLoader instance contains all required code to load the client.
+ To actually 
  * @author Chronio
  */
-public class AppletLoader implements Runnable {
+public class ClientLoader implements Runnable {
 
     private static final Logger LOGGER = Logger.get("CORE");
     
     /**
-     * The global AppletLoader instance.
+     * The global ClientLoader instance.
      */
-    private static AppletLoader theLoader = null;
+    private static ClientLoader theLoader = null;
     /**
      * The global AppletFrame instance.
      */
@@ -61,15 +62,15 @@ public class AppletLoader implements Runnable {
         return theGUI;
     }
     
-    public static AppletLoader getLoader() {
+    public static ClientLoader getLoader() {
         return theLoader;
     }
     /**
-     * Starts the AppletLoader.
+     * Starts the ClientLoader.
      * <p/>
-     * The AppletLoader works on three Threads: one for the AppletFrame, one for loading
-     * the Runescape client, and one for acquiring the updater data.
-     * <p/>
+ The ClientLoader works on three Threads: one for the AppletFrame, one for loading
+ the Runescape client, and one for acquiring the updater data.
+ <p/>
      * Passing <code>--quickload</code> as a parameter skips checking for a new client
      * version. This dramatically decreases load times, but requires rebooting
      * if the server rejects because of an outdated client.
@@ -139,11 +140,11 @@ public class AppletLoader implements Runnable {
         if (update)     LOGGER.log("Updater enabled");
         if (devel)      LOGGER.log("DevMode enabled");
         
-        theLoader = new AppletLoader(quickload, update, devel);
+        theLoader = new ClientLoader(quickload, update, devel);
         theGUI = new AppletFrame();
         
         // First load the client.
-        Thread loaderThread = new Thread(theLoader, "AppletLoader");
+        Thread loaderThread = new Thread(theLoader, "PG_AppletLoader");
         loaderThread.start();
 
         // Meanwhile start and show the AppletFrame.
@@ -172,6 +173,10 @@ public class AppletLoader implements Runnable {
     
     private ClassLoader rsClassLoader = null;
 
+    public ClientLoader() {
+        this(false, false, false);
+    }
+    
     /**
      * Constructs a new AppletLoader instance
      *
@@ -180,7 +185,7 @@ public class AppletLoader implements Runnable {
      * @param update true to enable updater, false to disable it.
      * @param devel true to enable development tools, false to disable. 
      */
-    public AppletLoader(boolean quickload, boolean update, boolean devel) {
+    public ClientLoader(boolean quickload, boolean update, boolean devel) {
         downloader = new ClientDownloader();
         applet = null;
         this.quickload = quickload;
@@ -198,15 +203,15 @@ public class AppletLoader implements Runnable {
 
     /**
      * @return the Runescape <code>Applet</code> instance created by this
-     * AppletLoader, or null if none has been created yet.
+ ClientLoader, or null if none has been created yet.
      */
     public Applet getApplet() {
         return applet;
     }
 
     /**
-     * @return true if this AppletLoader will try to skip re-downloading the
-     * client.
+     * @return true if this ClientLoader will try to skip re-downloading the
+ client.
      */
     public boolean isQuickload() {
         return quickload;
@@ -230,7 +235,7 @@ public class AppletLoader implements Runnable {
             // Note that we can just start and otherwise ignore the 
             // ClassMapDownloader, it will complete the process on its own.
             if (update) {
-                new Thread(new ClassMapDownloader(downloader)).start();
+                new Thread(new ClassMapDownloader(downloader), "PG_ClassMapDownloader").start();
             }
             
             if (!quickload) {
@@ -272,7 +277,7 @@ public class AppletLoader implements Runnable {
     }
     
     private static class FrameVisibilityHelper implements Runnable {
-        private Frame f;
+        private final Frame f;
         private FrameVisibilityHelper(Frame f) {
             this.f = f;
         }

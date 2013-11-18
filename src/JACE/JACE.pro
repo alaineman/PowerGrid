@@ -96,9 +96,11 @@ HEADERS += \
     jdwpTransport.h \
     jawt.h \
     jawt_md.h \
-    classfile_constants.h
+    classfile_constants.h \
+    rsclassmapper.h
 
-SOURCES += $$SOURCE_DIR/UserInterface/main.cpp
+SOURCES += $$SOURCE_DIR/UserInterface/main.cpp \
+    rsclassmapper.cpp
 
 win32 {
     DEFINES += JNI_WIN32

@@ -55,6 +55,7 @@ public class ControlFrame extends JFrame {
     public ControlFrame(KeyInjector ki, AppletFrame frame) {
         super("PowerGrid development Control Panel");
         injector = StringInjector.wrap(ki);
+        injector.setDuration(20);
         this.frame = frame;
         createAndShowFrame();
     }

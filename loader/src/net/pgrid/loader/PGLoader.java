@@ -15,11 +15,23 @@ import net.pgrid.loader.util.DummyOutputStream;
  * @author Patrick Kramer
  */
 public class PGLoader {
-    
+    // The Logger instance of this class.
     private static final Logger LOGGER;
     
-    public static final PrintStream out, err;
+    /**
+     * The standard output stream (use this over System.out).
+     */
+    public static final PrintStream out;
+    /**
+     * The standard error stream (use this over System.err).
+     */
+    public static final PrintStream err;
     
+    // This piece of code replaces the standard System.out and System.err with
+    // different ones, to split the Runescape log information from PowerGrid 
+    // log information. This prevents printstacktrace contents of obfuscated 
+    // classes from showing up in the console. It saves a lot of searching during
+    // debugging.
     static {
         out = System.out;
         err = System.err;
@@ -79,7 +91,7 @@ public class PGLoader {
     
     /**
      * Starts the client with the specified debug mode enabled. 
-     * @param debugMode
+     * @param debugMode true to enable debugging features, false to disable
      * @throws java.io.IOException
      */
     public synchronized void start(boolean debugMode) throws IOException {
@@ -95,9 +107,15 @@ public class PGLoader {
         }
     }
     
+    /**
+     * Custom UncaughtExceptionHandler.
+     * 
+     * This class checks if the Exception was caused on a PG Thread or some 
+     * other Thread. In the last case, no stack trace is printed to prevent
+     * long obfuscated (and as such useless) Runescape stack traces.
+     */
     public static class PGExceptionHandler 
             implements Thread.UncaughtExceptionHandler {
-        
         private static final Logger LOGGER = Logger.get("UNCAUGHT");
         @Override
         public void uncaughtException(Thread thread, Throwable t) {
@@ -119,14 +137,12 @@ public class PGLoader {
                 Field outField = System.class.getDeclaredField("out");
                 Field errField = System.class.getDeclaredField("err");
 
-                
-
                 File destination = new File("runescape.log");
                 PrintStream replacement;
                 if (destination.exists() || destination.createNewFile()) {
                     replacement = new PrintStream(destination, "UTF-8");
                 } else {
-                    replacement = new PrintStream(new DummyOutputStream());
+                    replacement = new PrintStream(new DummyOutputStream(), false, "UTF-8");
                 }
                 Field modifiersField = Field.class.getDeclaredField("modifiers");
                 modifiersField.setAccessible(true);

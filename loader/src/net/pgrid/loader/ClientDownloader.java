@@ -198,10 +198,9 @@ public class ClientDownloader {
             }
             HttpURLConnection conn = (HttpURLConnection) configURL.openConnection();
             conn.setInstanceFollowRedirects(false); // do not auto-resolve the redirect
-            conn.getResponseCode();
+            conn.getResponseCode(); //TODO maybe remove this?
             // This is the link we're redirected to.
             String redirectLink = conn.getHeaderField("Location");
-            LOGGER.log("Redirect to: " + redirectLink);
             conn.disconnect();
             // fire a new request with the redirect link
             conn = (HttpURLConnection) new URL(redirectLink).openConnection();

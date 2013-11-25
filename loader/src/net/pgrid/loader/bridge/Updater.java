@@ -1,22 +1,21 @@
 package net.pgrid.loader.bridge;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import net.pgrid.loader.ClientDownloader;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * Runnable class that combines and executes all updater-related actions when 
  * required.
  * 
- * External tools should use this class when trying to get data from the 
- * Updater server. It should be noted, however, that repeated calls to the 
- * updater server are strongly discouraged, and the server holds the right to 
- * refuse a connection.
- * 
  * @author Patrick Kramer
  */
 public class Updater implements Runnable {
 
+    private static final Logger LOGGER = Logger.get("UPDATER");
+    
     /**
      * The default destination File.
      */
@@ -54,10 +53,11 @@ public class Updater implements Runnable {
         
         try {
             byte[] data = loader.getData();
-            
-            
+            try (FileOutputStream out = new FileOutputStream(DESTINATION)) {
+                out.write(data);
+            }
         } catch (IOException e) {
-            
+            LOGGER.log("Could not write update File", e);
         }
     }
     

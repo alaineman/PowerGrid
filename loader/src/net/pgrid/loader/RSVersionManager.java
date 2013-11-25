@@ -30,7 +30,7 @@ public class RSVersionManager {
      * Prefix for requesting the {@literal jav_config} file with a specific 
      * userFlow id.
      */
-    public static final String JAV_CONFIG = "http://www.runescape.com/l=3/k=0/jav_config.ws?userFlow=";
+    public static final String JAV_CONFIG = "http://www.runescape.com/k=3/l=0/jav_config.ws?userFlow=";
     
     private static final Logger LOGGER = Logger.get("VERSIONING");
     
@@ -108,7 +108,7 @@ public class RSVersionManager {
             if (KEYS_FILE.getParentFile().mkdirs()) {
                 LOGGER.log("Created cache directory");
             }
-            if (KEYS_FILE.exists() || KEYS_FILE.createNewFile()) {
+            if (KEYS_FILE.isFile() || KEYS_FILE.createNewFile()) {
                 try (PrintStream out = new PrintStream(KEYS_FILE, "US-ASCII")) {
                     out.println(userFlow);
                     out.println(newKey_0);

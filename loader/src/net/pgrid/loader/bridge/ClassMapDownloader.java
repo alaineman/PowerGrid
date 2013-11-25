@@ -83,8 +83,7 @@ public class ClassMapDownloader implements Runnable {
         try {
             getData();
         } catch (IOException e) {
-            LOGGER.log("Failed to load from updater server; aborting...");
-            
+            LOGGER.log("Failed to load from updater server", e);
         }
     }
 
@@ -92,14 +91,14 @@ public class ClassMapDownloader implements Runnable {
         if (hash == null) {
             try {
                 MessageDigest digest = MessageDigest.getInstance("MD5");
-                try (InputStream in = new FileInputStream("client.jar"); DigestInputStream dis = new DigestInputStream(in, digest)) {
+                try (DigestInputStream dis = new DigestInputStream(new FileInputStream("client.jar"), digest)) {
                     // run over the entire stream
                     while (dis.read() != -1) {}
                 }
                 hash = digest.digest();
             } catch (NoSuchAlgorithmException e) {
-                LOGGER.describe(e);
-                throw new InternalError("Failed to compute checksum due to unsupported algorithm");
+                // This should never happen!
+                throw new AssertionError("MD5 is not recognized as a valid MessageDigest algorithm");
             }
         }
         return hash;
@@ -112,7 +111,7 @@ public class ClassMapDownloader implements Runnable {
     protected byte[] getData(Socket s) {
         if (classMapData == null) {
             try {
-                try (InputStream   in = s.getInputStream();
+                try (InputStream in = s.getInputStream();
                      OutputStream out = s.getOutputStream()) {
                     LOGGER.log("Connection to \"" + s.getInetAddress().getHostName() + ":" + s.getPort() + "\" established");
                     
@@ -157,11 +156,8 @@ public class ClassMapDownloader implements Runnable {
                     }
                     classMapData = bOut.toByteArray();
                 }
-                
-            } catch (UnknownHostException e) {
-                LOGGER.log("Server \"" + getServer() + "\" cannot be found: " + e.getLocalizedMessage());
             } catch (IOException e) {
-                LOGGER.describe(e);
+                LOGGER.log("Failed to load updater data", e);
             }
         }
         return classMapData;

@@ -238,12 +238,8 @@ public class ClientLoader implements Runnable {
                 new Thread(new ClassMapDownloader(downloader), "PG_ClassMapDownloader").start();
             }
             
-            if (!quickload) {
-                theGUI.showMessage("Downloading client");
-                downloader.loadClient();
-            } else {
-                LOGGER.log("Reusing existing client data (May not work)");
-            }
+            theGUI.showMessage("Loading client");
+            downloader.loadClient();
             
             theGUI.showMessage("loading Classes");
 
@@ -292,7 +288,7 @@ public class ClientLoader implements Runnable {
         @Override
         public ClassLoader run() {
             try {
-                return new URLClassLoader(new URL[]{new URL("jar:file:client.jar!/")});
+                return new URLClassLoader(new URL[]{new URL("jar:file:cache/client.jar!/")});
             } catch (MalformedURLException e) {
                 return null;
             }

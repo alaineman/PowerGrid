@@ -252,7 +252,7 @@ public class ClientDownloader {
         // Using stream copy with Java NIO Channels. This is at least as fast
         // as manual copy using a byte array as buffer.
         try (InputStream in = conn.getInputStream(); 
-             FileOutputStream out = new FileOutputStream("client.jar")) {
+             FileOutputStream out = new FileOutputStream("cache/client.jar")) {
             
             ReadableByteChannel reader = Channels.newChannel(in);
             WritableByteChannel writer = Channels.newChannel(out);

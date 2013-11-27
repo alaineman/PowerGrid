@@ -71,16 +71,14 @@
 #------------------------------------------------------------------------
 
 TARGET      = JACE
-TEMPLATE    = app
+TEMPLATE    = lib
 CONFIG     += thread # We tell QMake we're building a static lib
-# CONFIG     -= qt     # JACE has nothing to do with QT, so we remove it from the config
+CONFIG     -= qt     # JACE has nothing to do with QT, so we remove it from the config
 
-# JACE uses .tsd and .tsp files as C++ header files
+# JACE uses .tsd and .tsp files as C++ header files, so include those as well
 QMAKE_EXT_H += .tsp .tsd
 
 include (../global_def.pro)
-
-TARGET = appJACE
 
 #------------------------------------------------
 # Add the dependency for jni
@@ -97,16 +95,24 @@ HEADERS += \
     jawt.h \
     jawt_md.h \
     classfile_constants.h \
-    rsclassmapper.h
+    rsclassmapper.h \
+    rsclass.h
 
-SOURCES += $$SOURCE_DIR/UserInterface/main.cpp \
-    rsclassmapper.cpp
+SOURCES += \
+    rsclassmapper.cpp \
+    rsclass.cpp
 
 win32 {
     DEFINES += JNI_WIN32
 }
 else:macx {
     DEFINES += JNI_MACX
+}
+
+debug {
+    # When debugging, have JACE check for null values
+    # and out-of-bounds array indices
+    DEFINES += JACE_CHECK_NULLS JACE_CHECK_ARRAYS
 }
 
 #------------------------------------------------

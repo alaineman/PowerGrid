@@ -8,9 +8,9 @@ You are free to use this loader for your own purposes. The same license applies 
 
 The loader can be used with some command line options, which are explained below:
 
-**--quickload** - Prevents the client from re-downloading the client data and this reduces loading times a lot. However, it may also mean that the Applet cannot run because it is outdated.
+**--quickload** - Prevents the client from re-downloading the client data and this reduces loading times a lot. However, it may also mean that the Applet cannot run because it is outdated. (DEPRECATED: The loader decides now whether the client should be updated based on information from the RuneScape server)
 
-**--update** - Collects update data from the remote updater. Enabling this setting causes the loader to communicate with the online updater server to collect the update data. This allows the loader to undo the client's obfuscation and enables communication with the Runescape client from external applications.
+**--update** - Collects update data from the remote updater. Enabling this setting causes the loader to communicate with the online updater server to collect the update data. This allows the loader to undo the client's obfuscation and stores it in the file "cache/updateInfo.dat"
 
 **--devmode** - Creates an additional window containing development tools. Not really useful for anyone except developers.
 
@@ -19,10 +19,4 @@ If you want to run this client stand-alone, the following command (or similar) i
 ```
     java -jar -Xms256M loader.jar
 ```
-You can also simply double-click the jar file.
-
-Alternatively, if you want to run this client from another client, call the following from within that client:
-```
-    net.pgrid.loader.AppletLoader.main(new String[] {"--update"});
-```
-Including "--update" as a parameter will instruct the client to enable the updater, which is required to undo the client's obfuscation and to allow communication with the running Runescape client.
+You can also simply double-click the jar file (might not work on some Windows computers).

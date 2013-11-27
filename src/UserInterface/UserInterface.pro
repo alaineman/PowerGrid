@@ -31,7 +31,7 @@
 # Basic properties of the project itself
 #------------------------------------------------
 QT          = core gui
-TEMPLATE    = lib
+TEMPLATE    = app
 CONFIG     += static
 
 debug: TARGET = PowerGrid-Debug

@@ -1,0 +1,53 @@
+JClass management and creation within JACE
+==========================================
+
+For implementing the Java bridge properly, an analysis of the JACE API was 
+conducted. This analysis focussed on how JACE instantiates and handles JClass 
+instances. This information is required because Runescape classes are obfuscated,
+and as such need special treatment within JACE regarding class reference lookups.
+The following information was obtained from this analysis:
+
+JACE manages JClass instances by creating them statically in a static 
+function declared in the class. The signature of this function is as follows:
+```
+	const jace::JClass* staticGetJavaJniClass() throw (jace::JNIException)
+```
+
+The implementation of this function creates a _static_ JClass instance (thus 
+preventing the object from being created multiple times), and returns a 
+reference to it. For most "normal" classes this would look as follows:
+
+```
+	static JClassImpl javaClass ("ClassName");
+	return &javaClass;
+```
+
+Where "ClassName" is to be replaced with the name of the class as a std::string.
+
+It must be noted that (regarding RS classes) it should be possible to declare 
+and implement this function in each RS class, and then return an RSClass object 
+instead of a JClassImpl object. This object type does not only hold the Java name
+of the class, but also the simple (or semantic) name. Instances of this class 
+should be created using a central factory, to map the simple name to the actual 
+name. For simplicity and safety, this class should only be statically accessible, 
+in the same way as the jace::helper class.
+
+Because JClass instances are stored statically in each C++ proxy class, there is 
+no central management system in JACE for JClass instances. However, due to the 
+slightly more complicated procedures required to instantiate RS classes, a system
+should be designed that registers RSClass references and returns the right RSClass
+object when requested. The obvious choice for implementation would be a class that
+deals specifically with performing this semantic to actual name mapping. The details
+for this design are as of now not yet determined.
+
+Apart from Class instantiation, it appears after this observation that integrating 
+RSClass objects with the existing JACE bridge only requires the addition of two 
+classes:
+- A RSClass class, representing the static JClass of Runescape objects
+- A RSClassMapper class (name is not definite), mapping semantic names to actual 
+  names in the JVM.
+
+All C++ proxies for RS classes can simply extend the proxy for java.lang.Object, 
+since this represents the structure in the Java layer in the best way. Also, all 
+RS proxies that extend from standard Java API classes should include the right
+superclasses to properly represent the original Java class structure.

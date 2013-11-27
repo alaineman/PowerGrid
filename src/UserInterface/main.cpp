@@ -66,7 +66,7 @@ string detectJVMPath() {
 // not Mac, but generic Unix
 // Not yet supported since there may not be a standard way to get the
 // path to the JVM library
-#error Unix is not fuly supported, missing OS-specific JVM library path
+#error Unix is not supported, missing OS-specific JVM library path
 
 #endif
 

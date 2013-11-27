@@ -50,7 +50,7 @@ public class RSVersionManager {
      */
     public boolean parseCacheFile() {
         try {
-            Scanner sc = new Scanner(new FileInputStream(KEYS_FILE), "US-ASCII");
+            Scanner sc = new Scanner(new FileInputStream(KEYS_FILE), "UTF-8");
             sc.useDelimiter("\r?\n"); // matches both LF and CR/LF line endings
             userFlow = sc.next();
             oldKey_0 = sc.next();
@@ -97,30 +97,36 @@ public class RSVersionManager {
      * @throws IOException if an I/O error occurred.
      */
     public boolean compareAndUpdate(String newKey_0, String newKey_m1) throws IOException {
-        
+        boolean match;
         if (userFlow != null && parseCacheFile() && 
                 newKey_0.equals(oldKey_0) && newKey_m1.equals(oldKey_m1)) {
             // The keys are equal, so we can re-use the client.
             LOGGER.log("Encryption keys match: local RS client will be re-used");
-            return true;
+            match = true;
         } else {
-            // key mismatch; update the outdated keys
-            if (KEYS_FILE.getParentFile().mkdirs()) {
-                LOGGER.log("Created cache directory");
-            }
-            if (KEYS_FILE.isFile() || KEYS_FILE.createNewFile()) {
-                try (PrintStream out = new PrintStream(KEYS_FILE, "US-ASCII")) {
-                    out.println(userFlow);
-                    out.println(newKey_0);
-                    out.println(newKey_m1);
-                }
-                oldKey_0  = newKey_0;
-                oldKey_m1 = newKey_m1;
-                LOGGER.log("Updated encryption keys");
-            } else {
-                LOGGER.log("Could not create keys.dat file");
-            }
-            return false;
+            match = false;
         }
+        // update the keys.dat File.
+        if (KEYS_FILE.getParentFile().mkdirs()) {
+            LOGGER.log("Created cache directory");
+        }
+        if (KEYS_FILE.isFile() || KEYS_FILE.createNewFile()) {
+            try (PrintStream out = new PrintStream(KEYS_FILE, "UTF-8")) {
+                out.println(userFlow); // write the new userflow id to the file.
+                out.println(newKey_0);
+                out.println(newKey_m1);
+                
+                out.flush();
+            } catch (IOException ex) {
+                LOGGER.log("Failed to update keys");
+                throw ex;
+            }
+            oldKey_0  = newKey_0;
+            oldKey_m1 = newKey_m1;
+            LOGGER.log("Updated encryption keys");
+        } else {
+            LOGGER.log("Could not create keys.dat file");
+        }
+        return match;
     }
 }

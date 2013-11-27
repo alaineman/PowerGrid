@@ -192,13 +192,15 @@ public class ClientDownloader {
             if (versionManager.parseCacheFile()) {
                 try {
                     configURL = new URL(versionManager.getUserFlowLink());
+                    LOGGER.log("Re-using old userflow id " + versionManager.getUserFlow());
                 } catch (MalformedURLException e) {
                     LOGGER.log("got invalid userFlow link from version manager");
                 }
+            } else {
+                LOGGER.log("Failed to get version info, using default config URL");
             }
             HttpURLConnection conn = (HttpURLConnection) configURL.openConnection();
             conn.setInstanceFollowRedirects(false); // do not auto-resolve the redirect
-            conn.getResponseCode(); //TODO maybe remove this?
             // This is the link we're redirected to.
             String redirectLink = conn.getHeaderField("Location");
             conn.disconnect();
@@ -218,7 +220,7 @@ public class ClientDownloader {
                 }
             }
             String assignedUserFlow = redirectLink.substring(redirectLink.lastIndexOf('=') + 1);
-            LOGGER.log("Got assigned userFlow id " + assignedUserFlow);
+            LOGGER.log("Got assigned new userFlow id " + assignedUserFlow);
             versionManager.setUserFlow(assignedUserFlow);
         }
     }

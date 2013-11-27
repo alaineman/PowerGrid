@@ -29,9 +29,9 @@ public class PGLoader {
     
     // This piece of code replaces the standard System.out and System.err with
     // different ones, to split the Runescape log information from PowerGrid 
-    // log information. This prevents printstacktrace contents of obfuscated 
+    // log information. This prevents stacktrace contents of obfuscated 
     // classes from showing up in the console. It saves a lot of searching during
-    // debugging.
+    // debugging, and obfuscated stack traces are of little use to anyone.
     static {
         out = System.out;
         err = System.err;
@@ -65,12 +65,12 @@ public class PGLoader {
     /**
      * The AppletFrame instance containing the Runescape Applet.
      */
-    public final AppletFrame frame;
+    private final AppletFrame frame;
     
     /**
      * The ClientLoader instance responsible for loading the Runescape client.
      */
-    public final ClientLoader loader;
+    private final ClientLoader loader;
     
     
     /**
@@ -79,6 +79,20 @@ public class PGLoader {
     public PGLoader() {
         frame = new AppletFrame();
         loader = new ClientLoader();
+    }
+    
+    /**
+     * @return the ClientLoader instance used to load the client.
+     */
+    public ClientLoader getLoader() {
+        return loader;
+    }
+
+    /**
+     * @return the AppletFrame in which the Applet is displayed.
+     */
+    public AppletFrame getFrame() {
+        return frame;
     }
     
     /**
@@ -92,7 +106,7 @@ public class PGLoader {
     /**
      * Starts the client with the specified debug mode enabled. 
      * @param debugMode true to enable debugging features, false to disable
-     * @throws java.io.IOException
+     * @throws java.io.IOException if collecting the data failed.
      */
     public synchronized void start(boolean debugMode) throws IOException {
         // Record the start time for profiling purposes
@@ -123,13 +137,22 @@ public class PGLoader {
                 LOGGER.log("Exception on Thread \"" + thread.getName() + "\":");
                 LOGGER.describe(t);
             } else {
-                // do not print stack traces of (obfuscated) RS classes
-                LOGGER.log("Exception in Runescape or on AWT Thread: " 
+                // do not print stack traces of (obfuscated) RS classes,
+                // but use the System.out PrintStream to send it to the 
+                // runescape.log file.
+                System.out.println("Exception in Runescape or on AWT Thread: " 
                         + t.getClass().getSimpleName());
             }
         }
     }
     
+    /**
+     * PriviledgedAction class that replaces the default System.out and System.err
+     * with a PrintStream that prints to a File. 
+     * 
+     * This prevents Runescape classes from printing their stack traces to the 
+     * console, keeping the console output clean.
+     */
     private static class OutputInterceptor implements PrivilegedAction<Boolean> {
         @Override
         public Boolean run() {
@@ -139,7 +162,7 @@ public class PGLoader {
 
                 File destination = new File("runescape.log");
                 PrintStream replacement;
-                if (destination.exists() || destination.createNewFile()) {
+                if (destination.isFile() || destination.createNewFile()) {
                     replacement = new PrintStream(destination, "UTF-8");
                 } else {
                     replacement = new PrintStream(new DummyOutputStream(), false, "UTF-8");

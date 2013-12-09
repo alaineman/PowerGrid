@@ -2,7 +2,6 @@ package net.pgrid.loader;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * This class represents information that describes the Runescape client and 

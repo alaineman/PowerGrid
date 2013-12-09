@@ -75,6 +75,10 @@ public class PGLoader {
             INSTANCE.start(parser.hasFlag("debug"));
         } catch (IOException e) {
             LOGGER.log("Exception during PowerGrid startup", e);
+            AppletFrame frame = INSTANCE.getFrame();
+            if (frame != null) {
+                frame.showMessage("Exception in loader.");
+            }
         }
     }
     
@@ -129,7 +133,8 @@ public class PGLoader {
         RSDownloader downloader = new RSDownloader();
         RSVersionInfo newVersion = downloader.loadConfig(currentVersion);
         
-        if (versionManager.checkVersions(currentVersion, newVersion)) {
+        if (currentVersion != null && newVersion != null && 
+                versionManager.checkVersions(currentVersion, newVersion)) {
             // re-use the encryption keys
             LOGGER.log("Client version not changed; skipping client re-downloading");
         } else {
@@ -141,6 +146,12 @@ public class PGLoader {
             //TODO: create and start updater Thread
         }
         
+        try {
+            versionManager.writeCurrentVersion(newVersion);
+        } catch (IOException e) {
+            LOGGER.log("Failed to write the current version info", e);
+        }
+        
         getFrame().showMessage("Starting Applet...");
         
         ClassLoader rsClassLoader = new PrivilegedClassLoaderAction().run();
@@ -150,13 +161,13 @@ public class PGLoader {
             Applet a = rs2AppletClass.getConstructor().newInstance();
             
             if (!getFrame().startApplet(newVersion, a)) {
-                getFrame().showMessage("Exception in Applet. Aborting...");
+                getFrame().showMessage("Exception in Applet");
                 LOGGER.log("Failed to start Applet");
             }
         } catch (ClassNotFoundException | NoSuchMethodException | 
                  InstantiationException | IllegalAccessException | 
                  InvocationTargetException | ClassCastException e) {
-            getFrame().showMessage("Error in loader. Aborting...");
+            getFrame().showMessage("Error in loader");
             LOGGER.log("Failed to create RS Applet", e);
         }
         
@@ -179,8 +190,7 @@ public class PGLoader {
         @Override
         public void uncaughtException(Thread thread, Throwable t) {
             if (thread.getName().startsWith("PG_")) {
-                LOGGER.log("Exception on Thread \"" + thread.getName() + "\":");
-                LOGGER.describe(t);
+                LOGGER.log("Exception on Thread \"" + thread.getName() + "\":", t);
             } else {
                 // do not print stack traces of (obfuscated) RS classes,
                 // but use the System.out PrintStream to send it to the 

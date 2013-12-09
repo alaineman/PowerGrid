@@ -62,43 +62,45 @@ public class RSVersionManager {
             return null;
         }
     }
+    
     /**
-     * Compares the two given versions, and writes the new version information 
-     * to KEYS_FILE.
+     * Compares the two given versions, and returns whether the two versions are
+     * the same
      * 
-     * @param oldVersion the old version info
-     * @param newVersion the new version info
+     * @param a the old version info
+     * @param b the new version info
      * @return true if and only if the two versions are in fact the same, false otherwise
      * @throws NullPointerException when one of the RSVersionInfo objects is null
-     * @throws IOException if an I/O error occurred.
      */
-    public boolean checkVersions(RSVersionInfo oldVersion, RSVersionInfo newVersion) throws IOException {
-        String newKey_0 = newVersion.getEncryptionKey0();
-        String newKey_m1 = newVersion.getEncryptionKeyM1();
-        boolean match = newKey_0.equals(oldVersion.getEncryptionKey0()) 
-                    && newKey_m1.equals(oldVersion.getEncryptionKeyM1());
-        
-        // update the keys.dat File.
-        if (KEYS_FILE.getParentFile().mkdirs()) {
-            LOGGER.log("Created cache directory");
+    public boolean checkVersions(RSVersionInfo a, RSVersionInfo b) {
+        return b.getEncryptionKey0() .equals(a.getEncryptionKey0()) 
+            && b.getEncryptionKeyM1().equals(a.getEncryptionKeyM1());
+    }
+    
+    /**
+     * Writes the specified version info to the cache File.
+     * @param info the version info
+     * @throws IOException when writing the cache file failed
+     */
+    public void writeCurrentVersion(RSVersionInfo info) throws IOException {
+        writeVersion(KEYS_FILE, info);
+    }
+    
+    /**
+     * Writes the specified version information to the given File
+     * @param destination the destination File
+     * @param info the RSVersionInfo object
+     * @throws IOException when writing the version info fails
+     */
+    public void writeVersion(File destination, RSVersionInfo info) throws IOException {
+        File folder = destination.getParentFile();
+        if (!folder.isDirectory() && !folder.mkdirs()) {
+            throw new IOException("Failed to create required directories");
         }
-        if (KEYS_FILE.isFile() || KEYS_FILE.createNewFile()) {
-            try (PrintStream out = new PrintStream(KEYS_FILE, "UTF-8")) {
-                out.println(newVersion.getUserFlowID()); // write the new userflow id to the file.
-                out.println(newKey_0);
-                out.println(newKey_m1);
-                
-                out.flush();
-            } catch (IOException ex) {
-                LOGGER.log("Failed to update keys");
-                throw ex;
-            }
-            if (!match) {
-                LOGGER.log("Encryption keys have been updated");
-            }
-        } else {
-            LOGGER.log("Could not create keys.dat file");
+        try (PrintStream out = new PrintStream(destination, "UTF-8")) {
+            out.println(info.getUserFlowID());
+            out.println(info.getEncryptionKey0());
+            out.println(info.getEncryptionKeyM1());
         }
-        return match;
     }
 }

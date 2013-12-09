@@ -18,6 +18,7 @@
  */
 package net.pgrid.loader;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -146,8 +147,12 @@ public class RSDownloader {
 
         // Using stream copy with Java NIO Channels. This is at least as fast
         // as manual copy using a byte array as buffer.
+        File cacheDirectory = new File("cache");
+        if (!cacheDirectory.isDirectory() && cacheDirectory.mkdir()) {
+            LOGGER.log("Created cache directory");
+        }
         try (InputStream in = conn.getInputStream(); 
-             FileOutputStream out = new FileOutputStream("cache/client.jar")) {
+             FileOutputStream out = new FileOutputStream(new File(cacheDirectory, "client.jar"))) {
             
             ReadableByteChannel reader = Channels.newChannel(in);
             WritableByteChannel writer = Channels.newChannel(out);

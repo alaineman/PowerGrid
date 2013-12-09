@@ -3,7 +3,9 @@ package net.pgrid.loader.bridge;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import net.pgrid.loader.ClientDownloader;
+import java.rmi.server.RMIServerSocketFactory;
+import net.pgrid.loader.RSDownloader;
+import net.pgrid.loader.RSVersionInfo;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -21,11 +23,11 @@ public class Updater implements Runnable {
      */
     public static final File DESTINATION = new File("cache", "updaterInfo.dat");
     
-    private final ClientDownloader downloader;
+    private final RSVersionInfo downloader;
     private String updaterServer = null;
     private int port = -1;
 
-    public Updater(ClientDownloader downloader) {
+    public Updater(RSVersionInfo downloader) {
         if (downloader == null) {
             throw new IllegalArgumentException("null");
         }

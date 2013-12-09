@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -34,7 +33,7 @@ import java.nio.charset.Charset;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import net.pgrid.loader.ClientDownloader;
+import net.pgrid.loader.RSVersionInfo;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -59,21 +58,21 @@ public class ClassMapDownloader implements Runnable {
     
     private static final Logger LOGGER = Logger.get("UPDATER");
     
-    private final ClientDownloader dl;
+    private final RSVersionInfo info;
     private byte[] hash = null;
     private volatile boolean ready = false;
     private byte[] classMapData = null;
     private final String server;
     private final int serverPort;
 
-    public ClassMapDownloader(ClientDownloader downloader) {
-        dl = downloader;
+    public ClassMapDownloader(RSVersionInfo downloader) {
+        info = downloader;
         server = DEFAULT_SERVER;
         serverPort = DEFAULT_PORT;
     }
     
-    public ClassMapDownloader(ClientDownloader downloader, String updaterServer, int port) {
-        dl = downloader;
+    public ClassMapDownloader(RSVersionInfo downloader, String updaterServer, int port) {
+        info = downloader;
         server = updaterServer;
         serverPort = port;
     }
@@ -128,9 +127,9 @@ public class ClassMapDownloader implements Runnable {
                     
                     switch(response) {
                         case 0x0: // the keys are required
-                            writer.append(dl.getClientParameter("initial_jar")).append("\n");
-                            writer.append(dl.getAppletParameter("-1")).append("\n");
-                            writer.append(dl.getAppletParameter("0")).append("\n");
+                            writer.append(info.getClientParameter("initial_jar")).append("\n");
+                            writer.append(info.getEncryptionKeyM1()).append("\n");
+                            writer.append(info.getEncryptionKey0()).append("\n");
                             writer.flush();
                             LOGGER.log("Keys sent, waiting for response");
                             break;

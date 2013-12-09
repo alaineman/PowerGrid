@@ -36,14 +36,14 @@ import net.pgrid.loader.bridge.ClassMapDownloader;
 import net.pgrid.loader.logging.Logger;
 
 /**
- * Downloads the client files from the Runescape servers.
+ * Downloads required files from the Runescape servers.
  * <p/>
  * This class contains all functionality required to download the client and 
  * all required parameters for launching it.
  * 
- * @author Chronio
+ * @author Patrick Kramer
  */
-public class ClientDownloader {
+public class RSDownloader {
 
     /**
      * The Logger instance this class logs to.
@@ -61,25 +61,17 @@ public class ClientDownloader {
      * URL of the Runescape config file. It is set in the constructor.
      */
     private URL configURL;
-    
-    /**
-     * ClientData instance that holds all the client info.
-     * <p/>
-     * 
-     */
-    private ClientData clientData = new ClientData();
-
-    private final RSVersionManager versionManager = new RSVersionManager();
+    private RSVersionInfo versionInfo = null;
     
     /**
      * Creates a new ClientDownloader that uses the {@code CONFIG_LINK} as config
      * URL.
      */
-    public ClientDownloader() {
+    public RSDownloader() {
         try {
             configURL = new URL(CONFIG_LINK);
         } catch (MalformedURLException e) {
-            throw (Error) new InternalError("Invalid CONFIG_LINK constant").initCause(e);
+            throw (Error) new AssertionError("Invalid CONFIG_LINK constant").initCause(e);
         }
     }
     
@@ -88,111 +80,27 @@ public class ClientDownloader {
      * @param configURL the config URL
      * @throws IllegalArgumentException when {@code configURL == null}
      */
-    public ClientDownloader(URL configURL) {
+    public RSDownloader(URL configURL) {
         if (configURL == null) {
             throw new IllegalArgumentException();
         }
         this.configURL = configURL;
     }
-    
-    /**
-     * Creates a new ClientDownloader that stores its information in the 
-     * specified ClientData object.
-     * @param clientData the ClientData object
-     * @throws IllegalArgumentException when {@code clientData == null}
-     */
-    public ClientDownloader(ClientData clientData) {
-        this(); // needed to set the configURL
-        
-        if (clientData == null) {
-            throw new IllegalArgumentException();
-        }
-        this.clientData = clientData;
-    }
-    
-    /**
-     * Creates a new ClientDownloader that stores its information in the 
-     * specified ClientData object, and gets the configuration info from the 
-     * specified configuration URL.
-     * @param clientData the ClientData object
-     * @param configURL the configuration URL
-     * @throws IllegalArgumentException when {@code clientData == null} or
-     *         {@code configURL == null}
-     */
-    public ClientDownloader(ClientData clientData, URL configURL) {
-        if (clientData == null || configURL == null) {
-            throw new IllegalArgumentException();
-        }
-        this.configURL  = configURL;
-        this.clientData = clientData;
-    }
-    
-    /**
-     * @return the codebase as an URL instance, or null if the config is not 
-     *         yet loaded or the URL is invalid.
-     */
-    public URL getCodeBaseUrl() {
-        String codebase = clientData.getClientParameter("codebase");
-        if (codebase != null) {
-            try {
-                return new URL(codebase);
-            } catch (MalformedURLException e) {}
-        }
-        return null;
-    }
-
-    /**
-     * Returns the value for the Applet parameter with the given key.
-     * @param key the Applet parameter key
-     * @return the value for the given key, or null if the key does not exist.
-     */
-    public String getAppletParameter(String key) {
-        return clientData.getAppletParameter(key);
-    }
-    
-    /**
-     * Returns the value for the client parameter with the given key.
-     * @param key the client parameter key
-     * @return the value for the given key, or null if the key does not exist.
-     */
-    public String getClientParameter(String key) {
-        return clientData.getClientParameter(key);
-    }
-    
-    /**
-     * @return the client download link, or null if the config data has not yet
-     *         been parsed.
-     */
-    public String getDownloadLink() {
-        return clientData.getDownloadLink();
-    }
-
-    /**
-     * Returns a ClientData instance with the data collected by this 
-     * ClientDownloader.
-     * <p/>
-     * This ClientDownloader is not backed by the returned ClientData, so changes
-     * in the ClientData instance are not reflected in this ClientDownloader.
-     * <p/>
-     * @return a ClientData instance containing the data collected by this 
-     *         ClientDownloader.
-     */
-    public ClientData getClientData() {
-        return new ClientData(clientData);
-    }
 
     /**
      * Loads the config file if it was not already downloaded.
      *
+     * @param oldVersion the current (possibly outdated version)
+     * @return the RSVersionInfo obtained from the Runescape servers
      * @throws IOException if the download failed
      */
-    public void loadConfig() throws IOException {
-        if (!clientData.readyForDownload()) {
+    public synchronized RSVersionInfo loadConfig(RSVersionInfo oldVersion) throws IOException {
+        if (versionInfo == null) {
             // Try to get the config to load.
-            if (versionManager.parseCacheFile()) {
+            if (oldVersion != null) {
                 try {
-                    configURL = new URL(versionManager.getUserFlowLink());
-                    LOGGER.log("Re-using old userflow id " + versionManager.getUserFlow());
+                    configURL = new URL(RSVersionManager.JAV_CONFIG + oldVersion.getUserFlowID());
+                    LOGGER.log("Re-using old userflow id " + oldVersion.getUserFlowID());
                 } catch (MalformedURLException e) {
                     LOGGER.log("got invalid userFlow link from version manager");
                 }
@@ -206,6 +114,7 @@ public class ClientDownloader {
             conn.disconnect();
             // fire a new request with the redirect link
             conn = (HttpURLConnection) new URL(redirectLink).openConnection();
+            String assignedUserFlow = redirectLink.substring(redirectLink.lastIndexOf('=') + 1);
             try (InputStream in = conn.getInputStream()) {
                 // using a Scanner with the right delimiter provides the entire 
                 // content of the stream at once in only a few lines.
@@ -213,16 +122,15 @@ public class ClientDownloader {
                 Scanner out = new Scanner(Channels.newChannel(in), 
                         ClassMapDownloader.CHARSET.name()).useDelimiter("\\A");
                 if (out.hasNext()) {
-                    parseConfig(out.next());
+                    versionInfo = parseConfig(assignedUserFlow, out.next());
                     conn.disconnect();
                 } else {
                     throw new RuntimeException("Empty response getting config file");
                 }
             }
-            String assignedUserFlow = redirectLink.substring(redirectLink.lastIndexOf('=') + 1);
             LOGGER.log("Got assigned new userFlow id " + assignedUserFlow);
-            versionManager.setUserFlow(assignedUserFlow);
         }
+        return versionInfo;
     }
 
     /**
@@ -231,22 +139,9 @@ public class ClientDownloader {
      * @throws IOException if the download failed
      * @throws IllegalStateException when the client data is not available
      */
-    public void loadClient() throws IOException {
-        if (!clientData.readyForDownload()) {
-            throw new IllegalStateException();
-        }
-        String key_0  = clientData.getAppletParameter("0");
-        String key_m1 = clientData.getAppletParameter("-1");
-        try {
-            if (versionManager.compareAndUpdate(key_0, key_m1)) {
-                // the keys are still valid, so skip downloading.
-                return;
-            }
-        } catch (IOException e) {
-            LOGGER.log("Failed to check keys: " + e.getMessage());
-        }
+    public synchronized void loadClient() throws IOException {
         
-        URL url = new URL(clientData.getDownloadLink());
+        URL url = new URL(versionInfo.getClientParameter("codebase") + versionInfo.getClientParameter("initial_jar"));
         URLConnection conn = url.openConnection();
 
         // Using stream copy with Java NIO Channels. This is at least as fast
@@ -279,13 +174,9 @@ public class ClientDownloader {
      * <p/>
      * @throws IllegalStateException when the configData is not yet loaded.
      */
-    private void parseConfig(String configData) {
+    private RSVersionInfo parseConfig(String userFlow, String configData) {
         if (configData == null) {
             throw new IllegalStateException();
-        }
-        if (clientData.hasAppletParameters() && clientData.hasClientParameters()) {
-            // This method will do nothing useful in this case.
-            return;
         }
         
         Map<String, String> appParams = new HashMap<>(32);
@@ -310,13 +201,7 @@ public class ClientDownloader {
                 cliParams.put(key, value);
             }
         }
-        if (!clientData.hasAppletParameters()) {
-            clientData.setAppletParameters(appParams);
-        }
-        if (!clientData.hasClientParameters()) {
-            clientData.setClientParameters(cliParams);
-        }
-        
         LOGGER.log("Config has been parsed");
+        return new RSVersionInfo(userFlow, cliParams, appParams);
     }
 }

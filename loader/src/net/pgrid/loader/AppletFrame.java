@@ -30,6 +30,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Insets;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -50,24 +51,15 @@ public class AppletFrame extends JFrame implements AppletStub {
         
     protected JLabel label;
     private Applet applet = null;
-    private transient ClientDownloader dloader = null;
+    private transient RSVersionInfo info = null;
 
     /**
-     * Initializes the AppletFrame with the specified the ClientDownloader.
-     * <p/>
-     * The ClientDownloader instance will be used to provide the Applet running
-     * inside this AppletFrame with parameters. It also provides the codebase
-     * information to the Applet.
+     * Initializes the AppletFrame.
      * <p/>
      * When this method returns the AppletFrame has been correctly set up and
      * made visible.
-     * <p/>
-     * @param dl the ClientDownloader instance containing the configuration
-     * info.
      */
-    public void init(ClientDownloader dl) {
-        assert dloader == null;
-        dloader = dl;
+    public void init() {
         label = new JLabel();
         createAndShowFrame();
     }
@@ -86,7 +78,9 @@ public class AppletFrame extends JFrame implements AppletStub {
         setTitle("Runescape (running through PowerGrid loader)");
         try {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
-        } catch (IOException shouldNotHappen) {}
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -106,7 +100,6 @@ public class AppletFrame extends JFrame implements AppletStub {
         label.setFont(new Font("Consolas", Font.BOLD, 21));
         label.setHorizontalAlignment(JLabel.CENTER);
         add(label, "Center");
-        showMessage("Loading client...");
 
         setVisible(true);
 
@@ -116,12 +109,14 @@ public class AppletFrame extends JFrame implements AppletStub {
     /**
      * Takes the provided Applet instance and starts it in this Window.
      * <p/>
+     * @param info the RSVersionInfo object to use for getting parameters for the client
      * @param a the Applet to start (should not be null)
      * @return true if the Applet started without Exceptions, false if an Exception occurred.
      * @throws NullPointerException if the provided Applet is null.
      */
-    public boolean startApplet(Applet a) {
+    public boolean startApplet(RSVersionInfo info, Applet a) {
         showMessage("Starting Applet");
+        this.info = info;
         applet = a;
         applet.setStub(this);
         try {
@@ -132,7 +127,7 @@ public class AppletFrame extends JFrame implements AppletStub {
             revalidate();
             LOGGER.log("Applet started");
             return true;
-        } catch (Throwable t) {
+        } catch (RuntimeException t) {
             LOGGER.log("Failed to start client.");
             LOGGER.describe(t);
             setIgnoreRepaint(false);
@@ -148,6 +143,11 @@ public class AppletFrame extends JFrame implements AppletStub {
      * <p/>
      * This method is relatively slow, so consider caching the result instead
      * of calling this method repeatedly.
+     * <p/>
+     * If this method returns null, it does not mean the Runescape Applet is not present
+     * or not running. It merely indicates no Canvas instance was present 
+     * within the Component tree of the Runescape Applet.
+     * <p/>
      * @return the Applet Canvas, or null if it wasn't found.
      */
     public Canvas getCanvas() {
@@ -168,15 +168,11 @@ public class AppletFrame extends JFrame implements AppletStub {
     }
 
     /**
-     * Shows the given log message in the AppletFrame and also logs it to the
-     * console using
-     * <code>LOGGER.log(text)</code>.
+     * Shows the given log message in the AppletFrame.
      *
      * @param text the message to display
-     * @see pgloader.Logger
      */
     public void showMessage(final String text) {
-        LOGGER.log(text);
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -190,22 +186,28 @@ public class AppletFrame extends JFrame implements AppletStub {
 
     @Override
     public String getParameter(String name) {
-        return dloader.getAppletParameter(name);
+        return info.getAppletParameter(name);
     }
 
     @Override
     public URL getDocumentBase() {
-        return dloader.getCodeBaseUrl();
+        String codebase = info.getClientParameter("codebase");
+        if (codebase != null) {
+            try {
+                return new URL(codebase);
+            } catch (MalformedURLException e) {}
+        }
+        return null;
     }
 
     @Override
     public URL getCodeBase() {
-        return dloader.getCodeBaseUrl();
+        return getDocumentBase();
     }
 
     @Override
     public AppletContext getAppletContext() {
-        // The AppletContext is not explicitly required to run the Applet, so 
+        // The AppletContext is not required to run the Applet, so 
         // we can safely return null here.
         return null;
     }

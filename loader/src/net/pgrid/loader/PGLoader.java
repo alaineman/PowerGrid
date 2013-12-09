@@ -1,14 +1,20 @@
 package net.pgrid.loader;
 
+import java.applet.Applet;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import net.pgrid.loader.logging.Logger;
-import net.pgrid.loader.util.DummyOutputStream;
+import net.pgrid.loader.util.ArgumentParser;
+import net.pgrid.loader.util.NullOutputStream;
 
 /**
  * Launcher class for the PowerGrid loader application.
@@ -59,7 +65,17 @@ public class PGLoader {
     public static void main(String[] args) {
         Thread.currentThread().setName("PG_Main");
         Thread.setDefaultUncaughtExceptionHandler(new PGExceptionHandler());
-        ClientLoader.main(args);
+        
+        ArgumentParser parser = new ArgumentParser();
+        parser.analyse(args);
+        // Add more parameters and flags here as needed
+        parser.merge("debug", "d");
+        
+        try {
+            INSTANCE.start(parser.hasFlag("debug"));
+        } catch (IOException e) {
+            LOGGER.log("Exception during PowerGrid startup", e);
+        }
     }
     
     /**
@@ -68,26 +84,12 @@ public class PGLoader {
     private final AppletFrame frame;
     
     /**
-     * The ClientLoader instance responsible for loading the Runescape client.
-     */
-    private final ClientLoader loader;
-    
-    
-    /**
      * Creates a new PGLoader instance.
      */
     public PGLoader() {
         frame = new AppletFrame();
-        loader = new ClientLoader();
     }
     
-    /**
-     * @return the ClientLoader instance used to load the client.
-     */
-    public ClientLoader getLoader() {
-        return loader;
-    }
-
     /**
      * @return the AppletFrame in which the Applet is displayed.
      */
@@ -108,16 +110,59 @@ public class PGLoader {
      * @param debugMode true to enable debugging features, false to disable
      * @throws java.io.IOException if collecting the data failed.
      */
-    public synchronized void start(boolean debugMode) throws IOException {
-        // Record the start time for profiling purposes
-        long startTime = System.currentTimeMillis();
+    public synchronized void start(final boolean debugMode) throws IOException {
+        long startTime;
+        if (debugMode) {
+            LOGGER.log("Debug mode enabled");
+            // Record the start time for profiling purposes
+            startTime = System.currentTimeMillis();
+        } else {
+            startTime = 0;
+        }
         
-        ClientDownloader downloader = new ClientDownloader();
-        downloader.loadConfig();
+        getFrame().init();
+        getFrame().showMessage("Loading config...");
+        
+        RSVersionManager versionManager = new RSVersionManager();
+        RSVersionInfo currentVersion = versionManager.getCurrentVersion();
+        
+        RSDownloader downloader = new RSDownloader();
+        RSVersionInfo newVersion = downloader.loadConfig(currentVersion);
+        
+        if (versionManager.checkVersions(currentVersion, newVersion)) {
+            // re-use the encryption keys
+            LOGGER.log("Client version not changed; skipping client re-downloading");
+        } else {
+            // download the client
+            LOGGER.log("New client version; downloading client");
+            getFrame().showMessage("Downloading client...");
+            downloader.loadClient();
+            
+            //TODO: create and start updater Thread
+        }
+        
+        getFrame().showMessage("Starting Applet...");
+        
+        ClassLoader rsClassLoader = new PrivilegedClassLoaderAction().run();
+        
+        try {
+            Class<? extends Applet> rs2AppletClass = rsClassLoader.loadClass("Rs2Applet").asSubclass(Applet.class);
+            Applet a = rs2AppletClass.getConstructor().newInstance();
+            
+            if (!getFrame().startApplet(newVersion, a)) {
+                getFrame().showMessage("Exception in Applet. Aborting...");
+                LOGGER.log("Failed to start Applet");
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException | 
+                 InstantiationException | IllegalAccessException | 
+                 InvocationTargetException | ClassCastException e) {
+            getFrame().showMessage("Error in loader. Aborting...");
+            LOGGER.log("Failed to create RS Applet", e);
+        }
         
         if (debugMode) {
             long timePassed = System.currentTimeMillis() - startTime;
-            LOGGER.log("Total startup time: " + timePassed);
+            LOGGER.log("Total startup time: " + (timePassed/1000d) + 's');
         }
     }
     
@@ -140,8 +185,8 @@ public class PGLoader {
                 // do not print stack traces of (obfuscated) RS classes,
                 // but use the System.out PrintStream to send it to the 
                 // runescape.log file.
-                System.out.println("Exception in Runescape or on AWT Thread: " 
-                        + t.getClass().getSimpleName());
+                System.out.println("Uncaught Exception in Runescape or on AWT Thread \"" + thread.getName() + "\":");
+                System.out.println('\t' + t.getClass().getSimpleName() + ": " + t.getMessage());
             }
         }
     }
@@ -165,7 +210,7 @@ public class PGLoader {
                 if (destination.isFile() || destination.createNewFile()) {
                     replacement = new PrintStream(destination, "UTF-8");
                 } else {
-                    replacement = new PrintStream(new DummyOutputStream(), false, "UTF-8");
+                    replacement = new PrintStream(new NullOutputStream(), false, "UTF-8");
                 }
                 Field modifiersField = Field.class.getDeclaredField("modifiers");
                 modifiersField.setAccessible(true);
@@ -185,6 +230,17 @@ public class PGLoader {
                 System.err.println("Failed to intercept System.out / err: " + 
                         e.getClass().getSimpleName() + ": " + e.getMessage());
                 return false;
+            }
+        }
+    }
+    
+    private static class PrivilegedClassLoaderAction implements PrivilegedAction<ClassLoader> {
+        @Override
+        public ClassLoader run() {
+            try {
+                return new URLClassLoader(new URL[]{new URL("jar:file:cache/client.jar!/")});
+            } catch (MalformedURLException e) {
+                return null;
             }
         }
     }

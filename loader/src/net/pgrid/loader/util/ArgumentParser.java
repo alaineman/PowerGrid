@@ -71,6 +71,11 @@ public class ArgumentParser {
      *          // This will execute if either "--debug" or "-d" was in the input
      *      }
      * </code></pre>
+     * 
+     * After this method returns, the alias is no longer contained in the parsed
+     * arguments, and has been merged with the option. If option is given a 
+     * value (when using {@code --option value} syntax), then this value will always be kept, even if there is an alias 
+     * specifying a different value.
      * @param option the real option name
      * @param alias  the option's alias name to merge.
      */

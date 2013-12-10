@@ -47,19 +47,30 @@ import net.pgrid.loader.logging.Logger;
  */
 public class AppletFrame extends JFrame implements AppletStub {
 
-    private static final Logger LOGGER = Logger.get("CORE");
-        
+    /** The Logger instance of this class. */
+    private static final Logger LOGGER = Logger.get("APPLET");
+    
+    /**
+     * The JLabel that shows the logging message.
+     */
     protected JLabel label;
     private Applet applet = null;
     private transient RSVersionInfo info = null;
 
+    /**
+     * Creates a new AppletFrame instance.
+     */
+    public AppletFrame() {
+        super("Runescape (running through PowerGrid loader)");
+    }
+    
     /**
      * Initializes the AppletFrame.
      * <p/>
      * When this method returns the AppletFrame has been correctly set up and
      * made visible.
      */
-    public void init() {
+    public synchronized void init() {
         label = new JLabel();
         createAndShowFrame();
     }
@@ -75,10 +86,10 @@ public class AppletFrame extends JFrame implements AppletStub {
      * Sets up the AppletFrame and shows it.
      */
     private void createAndShowFrame() {
-        setTitle("Runescape (running through PowerGrid loader)");
         try {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
         } catch (IOException e) {
+            // Since the icon is embedded in the jar file, this should never happen
             throw new AssertionError(e);
         }
         
@@ -114,7 +125,7 @@ public class AppletFrame extends JFrame implements AppletStub {
      * @return true if the Applet started without Exceptions, false if an Exception occurred.
      * @throws NullPointerException if the provided Applet is null.
      */
-    public boolean startApplet(RSVersionInfo info, Applet a) {
+    public synchronized boolean startApplet(RSVersionInfo info, Applet a) {
         showMessage("Starting Applet");
         this.info = info;
         applet = a;
@@ -127,9 +138,8 @@ public class AppletFrame extends JFrame implements AppletStub {
             revalidate();
             LOGGER.log("Applet started");
             return true;
-        } catch (RuntimeException t) {
-            LOGGER.log("Failed to start client.");
-            LOGGER.describe(t);
+        } catch (RuntimeException e) {
+            LOGGER.log("Failed to start client.", e);
             setIgnoreRepaint(false);
             return false;
         }
@@ -169,16 +179,20 @@ public class AppletFrame extends JFrame implements AppletStub {
 
     /**
      * Shows the given log message in the AppletFrame.
-     *
+     * <p/>
+     * If the client is already started, this method does nothing (as the 
+     * message will never be visible anyway).
      * @param text the message to display
      */
-    public void showMessage(final String text) {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                label.setText(text);
-            }
-        });
+    public synchronized void showMessage(final String text) {
+        if (applet == null) {
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    label.setText(text);
+                }
+            });
+        }
     }
 
     @Override
@@ -205,10 +219,15 @@ public class AppletFrame extends JFrame implements AppletStub {
         return getDocumentBase();
     }
 
+    /**
+     * Returns the AppletContext. 
+     * <p/>
+     * Since the Runescape Applet does not care about this, this method will 
+     * always return {@code null}
+     * @return {@code null}
+     */
     @Override
     public AppletContext getAppletContext() {
-        // The AppletContext is not required to run the Applet, so 
-        // we can safely return null here.
         return null;
     }
     

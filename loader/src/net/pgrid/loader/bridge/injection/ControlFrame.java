@@ -39,11 +39,20 @@ import net.pgrid.loader.bridge.injection.keyboard.StringInjector;
  */
 public class ControlFrame extends JFrame {
 
+    /**
+     * The StringInjector used to inject Strings into the Runescape client.
+     */
     protected StringInjector injector;
-    private AppletFrame frame;
+    private final AppletFrame frame;
     
+    /**
+     * The textField that contains the String to inject.
+     */
     protected JTextField textField = new JTextField();
-    private JButton submit = new JButton("Send");
+    private final JButton submit = new JButton("Send");
+    /**
+     * The textField to contain the delay between key presses (if supported)
+     */
     protected JTextField delayField = new JTextField("0");
     
     /**

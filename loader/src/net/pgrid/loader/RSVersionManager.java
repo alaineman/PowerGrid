@@ -43,6 +43,12 @@ public class RSVersionManager {
         return getVersion(KEYS_FILE);
     }
     
+    /**
+     * Attempts to read RSVersion information from the given file.
+     * @param cacheFile the file to read from
+     * @return the RSVersionInfo object representing the version information,
+     *         or null if the information could not be read.
+     */
     public RSVersionInfo getVersion(File cacheFile) {
         try {
             Scanner sc = new Scanner(new FileInputStream(cacheFile), "UTF-8");

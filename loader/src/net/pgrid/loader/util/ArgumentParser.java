@@ -108,22 +108,23 @@ public class ArgumentParser {
         return options.get(option);
     }
     
-    public boolean hasFlags() {
-        return !flags.isEmpty();
-    }
-    
-    public boolean hasValues() {
-        return !options.isEmpty();
-    }
-    
+    /**
+     * @return the amount of flags detected
+     */
     public int flagCount() {
         return flags.size();
     }
     
+    /**
+     * @return the amount of key-value pairs detected
+     */
     public int valueCount() {
         return options.size();
     }
     
+    /**
+     * @return the total amount of options provided (both flags and key-value pairs)
+     */
     public int argumentCount() {
         return flags.size() + options.size();
     }

@@ -30,7 +30,7 @@ import net.pgrid.loader.bridge.injection.mouse.MouseInjector;
  * This Class aims to provide a thread-safe wrapper around all event injection 
  * functionality for clients that use this loader.
  * <p/>
- * @author Chronio
+ * @author Patrick Kramer
  */
 public class InjectionController implements KeyInjector, MouseInjector{
 
@@ -43,7 +43,12 @@ public class InjectionController implements KeyInjector, MouseInjector{
     // Locks used to synchronize on the fields.
     private final Object keyboardLock, mouseLock;
     
-    
+    /**
+     * Creates a new InjectionController.
+     * @param keyboard the KeyInjector to use
+     * @param mouse the MouseInjector to use
+     * @param target the target Window
+     */
     public InjectionController(KeyInjector keyboard, MouseInjector mouse, Window target) {
         if (keyboard == null || mouse == null) {
             throw new IllegalArgumentException("Null-value");
@@ -56,14 +61,24 @@ public class InjectionController implements KeyInjector, MouseInjector{
         mouseLock = new Object();
     }
 
+    /**
+     * @return the KeyInjector
+     */
     public KeyInjector getKeyDelegate() {
         return keyDelegate;
     }
 
+    /**
+     * @return the MouseInjector
+     */
     public MouseInjector getMouseDelegate() {
         return mouseDelegate;
     }
 
+    /**
+     * Sets the KeyInjector to use
+     * @param keyDelegate the KeyInjector to use
+     */
     public void setKeyDelegate(KeyInjector keyDelegate) {
         if (keyDelegate == null) {
             throw new IllegalArgumentException("Null-value");
@@ -73,6 +88,10 @@ public class InjectionController implements KeyInjector, MouseInjector{
         }
     }
 
+    /**
+     * Sets the MouseInjector to use.
+     * @param mouseDelegate the MouseInjector to use
+     */
     public void setMouseDelegate(MouseInjector mouseDelegate) {
         if (mouseDelegate == null) {
             throw new IllegalArgumentException("Null-value");
@@ -99,6 +118,9 @@ public class InjectionController implements KeyInjector, MouseInjector{
         }
     }
 
+    /**
+     * @return the target Component
+     */
     public Component getTarget() {
         return target;
     }

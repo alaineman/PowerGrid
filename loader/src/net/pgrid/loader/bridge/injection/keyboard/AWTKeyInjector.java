@@ -21,7 +21,10 @@ package net.pgrid.loader.bridge.injection.keyboard;
 import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import static java.awt.event.KeyEvent.*;
+import static java.awt.event.KeyEvent.KEY_PRESSED;
+import static java.awt.event.KeyEvent.KEY_RELEASED;
+import static java.awt.event.KeyEvent.KEY_TYPED;
+import static java.awt.event.KeyEvent.VK_UNDEFINED;
 import java.awt.event.KeyListener;
 import net.pgrid.loader.AppletFrame;
 

@@ -21,7 +21,7 @@ import net.pgrid.loader.util.NullOutputStream;
  * @author Patrick Kramer
  */
 public class PGLoader {
-    // The Logger instance of this class.
+    /** The Logger instance of this class. */
     private static final Logger LOGGER;
     
     /**
@@ -37,7 +37,7 @@ public class PGLoader {
     // different ones, to split the Runescape log information from PowerGrid 
     // log information. This prevents stacktrace contents of obfuscated 
     // classes from showing up in the console. It saves a lot of searching during
-    // debugging, and obfuscated stack traces are of little use to anyone.
+    // debugging, as obfuscated stack traces are of little use to anyone.
     static {
         out = System.out;
         err = System.err;
@@ -114,7 +114,7 @@ public class PGLoader {
      * @param debugMode true to enable debugging features, false to disable
      * @throws java.io.IOException if collecting the data failed.
      */
-    public synchronized void start(final boolean debugMode) throws IOException {
+    public synchronized void start(boolean debugMode) throws IOException {
         long startTime;
         if (debugMode) {
             LOGGER.log("Debug mode enabled");

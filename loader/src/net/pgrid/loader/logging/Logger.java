@@ -20,6 +20,11 @@ public class Logger {
 
     private static PrintStream defaultTarget = System.out;
     
+    /**
+     * Sets the default target PrintStream used to create new Loggers.
+     * This setting will not affect existing Loggers.
+     * @param target the new target PrintStream
+     */
     public static void setDefaultTarget(PrintStream target) {
         if (target != null) {
             defaultTarget = target;

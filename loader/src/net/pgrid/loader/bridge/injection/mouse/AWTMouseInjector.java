@@ -54,6 +54,9 @@ public class AWTMouseInjector implements MouseInjector {
         mwListener = null;
     }
     
+    /**
+     * @return the MouseListener of the Canvas for placing events on
+     */
     public MouseListener getMouseListener() {
         if (mListener == null) {
             if (!(target instanceof AppletFrame)) {
@@ -71,6 +74,9 @@ public class AWTMouseInjector implements MouseInjector {
         return mListener;
     }
     
+    /**
+     * @return the MouseMotionListener of the Canvas for placing events on
+     */
     public MouseMotionListener getMouseMotionListener() {
         if (mmListener == null) {
             if (!(target instanceof AppletFrame)) {
@@ -83,6 +89,9 @@ public class AWTMouseInjector implements MouseInjector {
         return mmListener;
     }
     
+    /**
+     * @return the MouseWheelListener of the Canvas for placing events on
+     */
     public MouseWheelListener getMouseWheelListener() {
         if (mwListener == null) {
             if (!(target instanceof AppletFrame)) {

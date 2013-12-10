@@ -35,6 +35,12 @@ package jace.util;
  * <p/>
  * Minor modifications have been made to this class to ensure Thread-safety of
  * this singleton class.
+ * <p/>
+ * This class should never be used in actual code, the JVM runs this Thread 
+ * automatically just before shutting down. Using this class on its own may 
+ * result in undefined behavior.
+ * <p/>
+ * @author Patrick Kramer (modifications), Toby Reyelts (original)
  */
 public class ShutdownHook extends Thread {
     

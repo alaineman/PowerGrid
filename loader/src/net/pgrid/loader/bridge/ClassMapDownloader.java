@@ -37,10 +37,10 @@ import net.pgrid.loader.RSVersionInfo;
 import net.pgrid.loader.logging.Logger;
 
 /**
- * 
- * @author Chronio
+ * Downloads the updater data from the updater server.
+ * @author Patrick Kramer
  */
-public class ClassMapDownloader implements Runnable {
+public class ClassMapDownloader {
     
     /** The default Updater Server address. */
     public static final String DEFAULT_SERVER = "205.234.152.103";
@@ -60,37 +60,51 @@ public class ClassMapDownloader implements Runnable {
     
     private final RSVersionInfo info;
     private byte[] hash = null;
-    private volatile boolean ready = false;
-    private byte[] classMapData = null;
     private final String server;
     private final int serverPort;
 
-    public ClassMapDownloader(RSVersionInfo downloader) {
-        info = downloader;
+    /**
+     * Creates a new ClassMapDownloader instance that acquires updater 
+     * information for the provided RSVersionInfo object.
+     * @param info the RSVersionInfo object
+     */
+    public ClassMapDownloader(RSVersionInfo info) {
+        this.info = info;
         server = DEFAULT_SERVER;
         serverPort = DEFAULT_PORT;
     }
     
-    public ClassMapDownloader(RSVersionInfo downloader, String updaterServer, int port) {
-        info = downloader;
+    /**
+     * Creates a new ClassMapDownloader instance that acquires updater 
+     * information for the provided RSVersionInfo object.
+     * @param info the RSVersionInfo object
+     * @param updaterServer the updater server
+     * @param port the port of the updater server to connect to
+     */
+    public ClassMapDownloader(RSVersionInfo info, String updaterServer, int port) {
+        this.info = info;
         server = updaterServer;
         serverPort = port;
     }
 
-    @Override
-    public void run() {
-        try {
-            getData();
-        } catch (IOException e) {
-            LOGGER.log("Failed to load from updater server", e);
-        }
-    }
-
-    protected byte[] computeHash() throws IOException {
+    /**
+     * Returns the hash of the downloaded client jar file, if it exists.
+     * <p/>
+     * @return the hash of the client jar file as a hexadecimal String
+     * @throws IOException when reading from the client jar file failed.
+     * 
+     */
+    // FIXME Change computeHash() to something not dependant on the actual client file
+    // This method should only depend on the RSVersionInfo provided to it.
+    // Otherwise this method fails when the client is being updated during 
+    // hash computation. Also, it cannot be asserted that the computed hash 
+    // belongs to the client described by the RSVersionInfo object, as this may
+    // differ from the client file at "cache/client.jar".
+    private byte[] computeHash() throws IOException {
         if (hash == null) {
             try {
                 MessageDigest digest = MessageDigest.getInstance("MD5");
-                try (DigestInputStream dis = new DigestInputStream(new FileInputStream("client.jar"), digest)) {
+                try (DigestInputStream dis = new DigestInputStream(new FileInputStream("cache/client.jar"), digest)) {
                     // run over the entire stream
                     while (dis.read() != -1) {}
                 }
@@ -103,81 +117,66 @@ public class ClassMapDownloader implements Runnable {
         return hash;
     }
     
-    public boolean isReady() {
-        return ready;
-    }
-    
-    protected byte[] getData(Socket s) {
-        if (classMapData == null) {
-            try {
-                try (InputStream in = s.getInputStream();
-                     OutputStream out = s.getOutputStream()) {
-                    LOGGER.log("Connection to \"" + s.getInetAddress().getHostName() + ":" + s.getPort() + "\" established");
-                    
-                    out.write(0x0);
-                    out.write(0x3);
-                    
-                    OutputStreamWriter writer = new OutputStreamWriter(out, CHARSET);
-                    writer.append(bytesToHex(computeHash())).append("\n");
-                    writer.flush();
-                    
-                    LOGGER.log("Waiting for updater server");
-                    
-                    int response = in.read();
-                    
-                    switch(response) {
-                        case 0x0: // the keys are required
-                            writer.append(info.getClientParameter("initial_jar")).append("\n");
-                            writer.append(info.getEncryptionKeyM1()).append("\n");
-                            writer.append(info.getEncryptionKey0()).append("\n");
-                            writer.flush();
-                            LOGGER.log("Keys sent, waiting for response");
-                            break;
-                        case 0x1: // the keys are not required
-                            LOGGER.log("Waiting for server response");
-                            break;
-                        default:  // something went wrong
-                            throw new IOException("Unexpected response from server: " + response);
-                    }
-                    
-                    ByteArrayOutputStream bOut = new ByteArrayOutputStream(4096);
-                    ReadableByteChannel rbc = Channels.newChannel(in);
-                    WritableByteChannel wbc = Channels.newChannel(bOut);
-                    ByteBuffer buf = ByteBuffer.allocateDirect(1024);
-                    while (rbc.read(buf) != -1) {
-                        buf.flip();
-                        wbc.write(buf);
-                        buf.compact();
-                    }
-                    buf.flip();
-                    while (buf.hasRemaining()) {
-                        wbc.write(buf);
-                    }
-                    classMapData = bOut.toByteArray();
+    /**
+     * @return the updater data as a byte array
+     * @throws IOException when an I/O error occurred
+     */
+    public byte[] getData() throws IOException {
+        Socket s = new Socket(server, serverPort);
+        byte[] classMapData = null;
+        try {
+            try (InputStream in = s.getInputStream();
+                 OutputStream out = s.getOutputStream()) {
+                LOGGER.log("Connection to \"" + s.getInetAddress().getHostName() + ":" + s.getPort() + "\" established");
+
+                out.write(0x0);
+                out.write(0x3);
+
+                OutputStreamWriter writer = new OutputStreamWriter(out, CHARSET);
+                writer.append(bytesToHex(computeHash())).append("\n");
+                writer.flush();
+
+                LOGGER.log("Waiting for updater server");
+
+                int response = in.read();
+
+                switch(response) {
+                    case 0x0: // the keys are required
+                        writer.append(info.getClientParameter("initial_jar")).append("\n");
+                        writer.append(info.getEncryptionKeyM1()).append("\n");
+                        writer.append(info.getEncryptionKey0()).append("\n");
+                        writer.flush();
+                        LOGGER.log("Keys sent, waiting for response");
+                        break;
+                    case 0x1: // the keys are not required
+                        LOGGER.log("Waiting for server response");
+                        break;
+                    default:  // something went wrong
+                        throw new IOException("Unexpected response from server: " + response);
                 }
-            } catch (IOException e) {
-                LOGGER.log("Failed to load updater data", e);
+
+                ByteArrayOutputStream bOut = new ByteArrayOutputStream(4096);
+                ReadableByteChannel rbc = Channels.newChannel(in);
+                WritableByteChannel wbc = Channels.newChannel(bOut);
+                ByteBuffer buf = ByteBuffer.allocateDirect(1024);
+                while (rbc.read(buf) != -1) {
+                    buf.flip();
+                    wbc.write(buf);
+                    buf.compact();
+                }
+                buf.flip();
+                while (buf.hasRemaining()) {
+                    wbc.write(buf);
+                }
+                classMapData = bOut.toByteArray();
             }
+        } catch (IOException e) {
+            LOGGER.log("Failed to load updater data", e);
         }
         return classMapData;
     }
     
-    public byte[] getData() throws IOException {
-        return getData(openConnection());
-    }
-    
-    protected Socket openConnection() throws IOException {
-        return new Socket(getServer(), getServerPort());
-    }
-
-    public String getServer() {
-        return server;
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
-    
+    // FIXME memory leak: the hexArray is only used basically once, but remains allocated afterwards.
     private static final char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
     private static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];

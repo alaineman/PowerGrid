@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import net.pgrid.loader.bridge.Updater;
 import net.pgrid.loader.logging.Logger;
 import net.pgrid.loader.util.ArgumentParser;
 import net.pgrid.loader.util.NullOutputStream;
@@ -69,10 +70,14 @@ public class PGLoader {
         ArgumentParser parser = new ArgumentParser();
         parser.analyse(args);
         // Add more parameters and flags here as needed
-        parser.merge("debug", "d");
+        parser.merge("debug", "d");   // debug mode enabled
+        parser.merge("updater", "u"); // updater enabled
+        parser.merge("force-download", "f"); // force redownloading client
         
         try {
-            INSTANCE.start(parser.hasFlag("debug"));
+            INSTANCE.start(parser.hasFlag("debug"),
+                           parser.hasFlag("updater"),
+                           parser.hasFlag("force-download"));
         } catch (IOException e) {
             LOGGER.log("Exception during PowerGrid startup", e);
             AppletFrame frame = INSTANCE.getFrame();
@@ -102,19 +107,13 @@ public class PGLoader {
     }
     
     /**
-     * Starts the client.
-     * @throws java.io.IOException if collecting the data failed 
-     */
-    public void start() throws IOException {
-        start(false);
-    }
-    
-    /**
-     * Starts the client with the specified debug mode enabled. 
+     * Starts the client with the specified settings.
      * @param debugMode true to enable debugging features, false to disable
+     * @param updater true to enable the updater, false to disable
+     * @param force true to force re-downloading the client, even when no new version is found
      * @throws java.io.IOException if collecting the data failed.
      */
-    public synchronized void start(boolean debugMode) throws IOException {
+    public synchronized void start(boolean debugMode, boolean updater, boolean force) throws IOException {
         long startTime;
         if (debugMode) {
             LOGGER.log("Debug mode enabled");
@@ -128,22 +127,29 @@ public class PGLoader {
         getFrame().showMessage("Loading config...");
         
         RSVersionManager versionManager = new RSVersionManager();
-        RSVersionInfo currentVersion = versionManager.getCurrentVersion();
+        RSVersionInfo currentVersion = (force ? null : versionManager.getCurrentVersion());
         
         RSDownloader downloader = new RSDownloader();
-        RSVersionInfo newVersion = downloader.loadConfig(currentVersion);
+        RSVersionInfo newVersion = (force ? null : downloader.loadConfig(currentVersion));
         
-        if (currentVersion != null && newVersion != null && 
+        if (!force && currentVersion != null && newVersion != null && 
                 versionManager.checkVersions(currentVersion, newVersion)) {
             // re-use the encryption keys
             LOGGER.log("Client version not changed; skipping client re-downloading");
         } else {
             // download the client
-            LOGGER.log("New client version; downloading client");
+            if (!force) {
+                LOGGER.log("New client version; downloading client");
+            } else {
+                LOGGER.log("Forcing client redownloading");
+            }
             getFrame().showMessage("Downloading client...");
             downloader.loadClient();
             
-            //TODO: create and start updater Thread
+            if (updater) {
+                // Start the updater
+                new Thread(new Updater(newVersion, debugMode), "PG_Updater").start();
+            }
         }
         
         try {

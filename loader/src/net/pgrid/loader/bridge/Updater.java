@@ -7,8 +7,7 @@ import net.pgrid.loader.RSVersionInfo;
 import net.pgrid.loader.logging.Logger;
 
 /**
- * Runnable class that combines and executes all updater-related actions when 
- * required.
+ * Runnable class that combines and executes all updater-related actions.
  * 
  * @author Patrick Kramer
  */
@@ -24,16 +23,20 @@ public class Updater implements Runnable {
     private final RSVersionInfo info;
     private String updaterServer = null;
     private int port = -1;
+    
+    private boolean profile;
 
     /**
      * Creates a new Updater object
      * @param info the RSVersionInfo
+     * @param profile true to profile the updater and print the results, false to disable
      */
-    public Updater(RSVersionInfo info) {
+    public Updater(RSVersionInfo info, boolean profile) {
         if (info == null) {
             throw new IllegalArgumentException("null");
         }
         this.info = info;
+        this.profile = profile;
     }
     
     /**
@@ -50,10 +53,19 @@ public class Updater implements Runnable {
     
     @Override
     public synchronized void run() {
+        long timeStarted;
+        if (profile) {
+            timeStarted = System.currentTimeMillis();
+        } else {
+            timeStarted = 0;
+        }
+        
         ClassMapDownloader loader;
         if (updaterServer == null) {
+            // we use the default server and port
             loader = new ClassMapDownloader(info);
         } else {
+            // we use the custom updater server
             loader = new ClassMapDownloader(info, updaterServer, port);
         }
         
@@ -62,8 +74,14 @@ public class Updater implements Runnable {
             try (FileOutputStream out = new FileOutputStream(DESTINATION)) {
                 out.write(data);
             }
+            LOGGER.log("Updater data acquired");
+            
+            if (profile) {
+                long timeTaken = System.currentTimeMillis() - timeStarted;
+                LOGGER.log("Updater took " + (timeTaken/1000d) + "s to finish");
+            }
         } catch (IOException e) {
-            LOGGER.log("Could not write update File", e);
+            LOGGER.log("Failed to save the updater data", e);
         }
     }
     

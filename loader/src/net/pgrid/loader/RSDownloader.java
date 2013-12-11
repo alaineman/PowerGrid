@@ -33,7 +33,7 @@ import java.nio.channels.WritableByteChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import net.pgrid.loader.bridge.ClassMapDownloader;
+import net.pgrid.loader.bridge.Updater;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -72,6 +72,7 @@ public class RSDownloader {
         try {
             configURL = new URL(CONFIG_LINK);
         } catch (MalformedURLException e) {
+            // should normally not happen
             throw (Error) new AssertionError("Invalid CONFIG_LINK constant").initCause(e);
         }
     }
@@ -113,6 +114,16 @@ public class RSDownloader {
             // This is the link we're redirected to.
             String redirectLink = conn.getHeaderField("Location");
             conn.disconnect();
+            
+            // This may happen if the connection to the configURL fails. Then,
+            // there will be no header information to collect.
+            // As this may indicate there is no active internet connection
+            // (or the unlikely event in which the RS servers are down),
+            // there is nothing left to do other then report this and terminate.
+            if (redirectLink == null) {
+                PGLoader.report("Failed to connect to Runescape server");
+                throw new IOException("Failed to get config information");
+            }
             // fire a new request with the redirect link
             conn = (HttpURLConnection) new URL(redirectLink).openConnection();
             String assignedUserFlow = redirectLink.substring(redirectLink.lastIndexOf('=') + 1);
@@ -121,12 +132,14 @@ public class RSDownloader {
                 // content of the stream at once in only a few lines.
                 
                 Scanner out = new Scanner(Channels.newChannel(in), 
-                        ClassMapDownloader.CHARSET.name()).useDelimiter("\\A");
+                        Updater.CHARSET.name()).useDelimiter("\\A");
                 if (out.hasNext()) {
                     versionInfo = parseConfig(assignedUserFlow, out.next());
                     conn.disconnect();
                 } else {
-                    throw new RuntimeException("Empty response getting config file");
+                    // If there is not config information, we cannot start the client
+                    PGLoader.report("Failed to get config info from Runescape server");
+                    throw new IOException("Empty response getting config file");
                 }
             }
             LOGGER.log("Got assigned new userFlow id " + assignedUserFlow);
@@ -141,7 +154,6 @@ public class RSDownloader {
      * @throws IllegalStateException when the client data is not available
      */
     public synchronized void loadClient() throws IOException {
-        
         URL url = new URL(versionInfo.getClientParameter("codebase") + versionInfo.getClientParameter("initial_jar"));
         URLConnection conn = url.openConnection();
 

@@ -12,7 +12,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import net.pgrid.loader.bridge.Updater;
+import net.pgrid.loader.bridge.UpdaterRunner;
 import net.pgrid.loader.logging.Logger;
 import net.pgrid.loader.util.ArgumentParser;
 import net.pgrid.loader.util.NullOutputStream;
@@ -60,6 +60,24 @@ public class PGLoader {
     public static final PGLoader INSTANCE;
     
     /**
+     * Convenience method for displaying a message to the user prior to starting
+     * the client. 
+     * <p/>
+     * Calling this method is equivalent to calling 
+     * {@code INSTANCE.getFrame().showMessage}, but this method additionally 
+     * performs some safety checks.
+     * <p/>
+     * If the frame does not (yet) exist, this method does nothing.
+     * @param message the message to report
+     */
+    public static void report(String message) {
+        AppletFrame frame = INSTANCE.getFrame();
+        if (frame != null) {
+            frame.showMessage(message);
+        }
+    }
+    
+    /**
      * Main method of the application.
      * @param args the command line arguments
      */
@@ -71,8 +89,18 @@ public class PGLoader {
         parser.analyse(args);
         // Add more parameters and flags here as needed
         parser.merge("debug", "d");   // debug mode enabled
+        parser.merge("quiet", "q");   // quiet mode enabled (ignored when "debug" is specified)
+        parser.merge("verbose", "v"); // verbose mode (ignored when "debug" or "quiet" is specified)
         parser.merge("updater", "u"); // updater enabled
         parser.merge("force-download", "f"); // force redownloading client
+        
+        if (parser.hasFlag("debug")) {
+            Logger.setVerbosity(Logger.Verbosity.DEBUG);
+        } else if (parser.hasFlag("quiet")) {
+            Logger.setVerbosity(Logger.Verbosity.QUIET);
+        } else if (parser.hasFlag("verbose")) {
+            Logger.setVerbosity(Logger.Verbosity.VERBOSE);
+        } // else we leave it on NORMAL
         
         try {
             INSTANCE.start(parser.hasFlag("debug"),
@@ -80,10 +108,6 @@ public class PGLoader {
                            parser.hasFlag("force-download"));
         } catch (IOException e) {
             LOGGER.log("Exception during PowerGrid startup", e);
-            AppletFrame frame = INSTANCE.getFrame();
-            if (frame != null) {
-                frame.showMessage("Exception in loader.");
-            }
         }
     }
     
@@ -130,7 +154,7 @@ public class PGLoader {
         RSVersionInfo currentVersion = (force ? null : versionManager.getCurrentVersion());
         
         RSDownloader downloader = new RSDownloader();
-        RSVersionInfo newVersion = (force ? null : downloader.loadConfig(currentVersion));
+        RSVersionInfo newVersion = downloader.loadConfig(currentVersion);
         
         if (!force && currentVersion != null && newVersion != null && 
                 versionManager.checkVersions(currentVersion, newVersion)) {
@@ -148,7 +172,7 @@ public class PGLoader {
             
             if (updater) {
                 // Start the updater
-                new Thread(new Updater(newVersion, debugMode), "PG_Updater").start();
+                new Thread(new UpdaterRunner(newVersion, debugMode), "PG_Updater").start();
             }
         }
         

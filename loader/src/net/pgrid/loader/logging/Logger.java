@@ -67,7 +67,8 @@ public class Logger {
         if (l == null) {
             try {
                 l = new Logger(name);
-            } catch (IllegalArgumentException thrownWhenNameIsInvalid) {
+            } catch (IllegalArgumentException e) {
+                // The name is invalid
                 return null;
             }
             LOGGERS.put(name, l);
@@ -114,26 +115,6 @@ public class Logger {
     public static Set<Logger> getAll() {
         return new HashSet<>(LOGGERS.values());
     }
-    private static volatile boolean tracelogEnabled = false;
-
-    /**
-     * Enables or disables trace logging.
-     * <p/>
-     * While enabled, all Loggers print stack trace info whenever a message is 
-     * logged. This allows easy tracking of where the log message originated.
-     * 
-     * @param enabled true to enable trace logging, and false to disable.
-     */
-    public static void setTraceLogEnabled(boolean enabled) {
-        tracelogEnabled = enabled;
-    }
-
-    /**
-     * @return true if and only if trace logging is enabled, false otherwise
-     */
-    public static boolean isTraceLogEnabled() {
-        return tracelogEnabled;
-    }
 
     /**
      * Enum representing various Logging levels.
@@ -161,14 +142,7 @@ public class Logger {
      * @param newMode the new Verbosity level
      */
     public static void setVerbosity(Verbosity newMode) {
-        if (level != newMode) {
-            level = newMode;
-            if (level == VERBOSE || level == DEBUG) {
-                setTraceLogEnabled(true);
-            } else if (level == QUIET) {
-                setTraceLogEnabled(false);
-            }
-        }
+        level = newMode;
     }
 
     /**
@@ -269,7 +243,7 @@ public class Logger {
      */
     public synchronized void log(String message) {
         printMessage(getPrefix(), message);
-        if (isTraceLogEnabled()) {
+        if (getVerbosity() == DEBUG) {
             Thread t = Thread.currentThread();
             StackTraceElement[] trace = t.getStackTrace();
             if (trace.length > 2) {
@@ -292,7 +266,7 @@ public class Logger {
         target.print(getPrefix());
         if (t != null) {
             target.append(t.getClass().getSimpleName()).append(" occurred: ")
-                    .append(t.getLocalizedMessage());
+                    .append(t.getMessage());
             target.println();
             printStackTrace(EMPTY_PREFIX, t.getStackTrace());
         } else {
@@ -312,11 +286,11 @@ public class Logger {
         if (message == null || message.isEmpty()) {
             describe(t);
         } else {
-            printMessage(getPrefix(), message);
+            log(message);
             if (t != null) {
                 target.append(EMPTY_PREFIX).append("caused by ")
                       .append(t.getClass().getSimpleName()).append(": ")
-                      .append(t.getLocalizedMessage());
+                      .append(t.getMessage());
                 target.println();
                 printStackTrace(EMPTY_PREFIX, t.getStackTrace());
             }
@@ -340,9 +314,13 @@ public class Logger {
     }
 
     private void printStackTrace(String prefix, StackTraceElement[] trace) {
+        if (getVerbosity() == QUIET) {
+            return; 
+        }
         int l = trace.length;
-        int max = l > 8 ? 8 : l;
-        int leftOver = l - 8;
+        int max = (getVerbosity() == DEBUG ? 8 : 2);
+        int leftOver = l - max;
+        max = l > max ? max : l;
         for (int i=0;i < max;i++) {
             StackTraceElement e = trace[i];
             target.append(prefix).append("  in ").append(e.getClassName())

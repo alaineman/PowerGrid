@@ -7,9 +7,23 @@
 #include "taskdescriptor.h"
 
 namespace plugins {
+  /**
+   * @brief Interface defining a PowerGrid plugin
+   */
   class PGPlugin {
     public:
+      /**
+       * @brief Returns a list of TaskDescriptors
+       * The TaskDescriptors returned can be used
+       * to create and run Task
+       * @return a list of TaskDescriptors
+       */
       virtual QList<TaskDescriptor> tasks() const = 0;
+
+      /**
+       * @brief Returns the name of this plugin
+       * @return the name of this plugin
+       */
       virtual QString name() const = 0;
   };
 }

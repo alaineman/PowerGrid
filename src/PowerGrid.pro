@@ -29,7 +29,7 @@
 TARGET = PowerGrid
 TEMPLATE = subdirs
 
-SUBDIRS += JACE UserInterface #PluginFramework DefaultPlugin
+SUBDIRS += JACE UserInterface PluginFramework DefaultPlugin
 
 UserInterface.depends = JACE
 #DefaultPlugin.depends = PluginFramework

@@ -30,12 +30,15 @@
 #include <stdexcept>
 #include <string>
 
+
 #include "jace/JNIHelper.h"
+#include "jni.h"
 #ifdef Q_OS_UNIX
-#  include "JACE/UnixVmLoader.h"
+#  include "jace/UnixVmLoader.h"
 #else
 #  include "jace/Win32VmLoader.h"
 #endif
+#include "jace/OptionList.h"
 using namespace jace;
 using namespace std;
 
@@ -75,28 +78,28 @@ int main(int, char*[]) {
   qDebug() << "Attempting to load JVM...";
 
   // Create the loader instance with the appropriate configuration options.
-#ifdef Q_OS_UNIX
-  // Unix OS has no common way of detecting jvm path, so for
-  // Unix, a detectJVMPath function is used.
-  string jvmPath;
-  try {
-    jvmPath = detectJVMPath();
-    qDebug() << "Found JVM path:" << jvmPath.c_str();
-  } catch (runtime_error& err) {
-    qWarning() << "Error during JVM path detection:" << err.what();
-    return EXIT_FAILURE;
-  }
-  UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
-#else
+//#ifdef Q_OS_UNIX
+//  // Unix OS has no common way of detecting jvm path, so for
+//  // Unix, a detectJVMPath function is used.
+//  string jvmPath;
+//  try {
+//    jvmPath = detectJVMPath();
+//    qDebug() << "Found JVM path:" << jvmPath.c_str();
+//  } catch (runtime_error& err) {
+//    qWarning() << "Error during JVM path detection:" << err.what();
+//    return EXIT_FAILURE;
+//  }
+//  UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
+//#else
   // Windows installations have a key in registry indicating the Java installation.
   // The special Win32VmLoader makes use of this key to find a JVM.
-  Win32VmLoader loader ( Win32VmLoader::JVMV_SUN, Win32VmLoader::JVMT_DEFAULT, "", JNI_VERSION_1_6 );
-#endif
+  Win32VmLoader loader {"", JNI_VERSION_1_6};
+//#endif
 
   OptionList options;
 
   // Add the PowerGrid jar file to the classpath
-  options.push_back( ClassPath( "../../loader/dist/PowerGridLoader.jar" ) );
+  options.push_back( ClassPath(/*"java.class.path", */"PowerGridLoader.jar") );
 
   // create the JVM
   try {
@@ -107,8 +110,7 @@ int main(int, char*[]) {
     return EXIT_FAILURE;
   }
 
-  // JVM created, start the client.
-
+  // TODO start the client.
 
   return EXIT_SUCCESS;
 }

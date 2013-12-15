@@ -32,19 +32,11 @@
 #------------------------------------------------
 QT          = core gui
 TEMPLATE    = app
-CONFIG     += static
-
-debug: TARGET = PowerGrid-Debug
-else : TARGET = PowerGrid-Release
-
-include (../global_def.pro)
-
-win32 {
-    QMAKE_POST_LINK = copy $$PROJECT_ROOT/loader/dist/*.jar $$INSTALL_DIR
-}
 
 win32:     RC_FILE = powergrid.rc
 else:macx: ICON    = powergrid.icns
+
+QMAKE_CXXFLAGS += -std=gnu++11
 
 #------------------------------------------------
 # The files in this project
@@ -55,11 +47,8 @@ FORMS       =
 RESOURCES   = resources.qrc
 OTHER_FILES = powergrid.rc powergrid.icns
 
-# Depends for Javabridge
-LIBS += -L$$TARGET_DIR -lJavabridge -lJACE
+# Depends for JACE
+LIBS += -L$$PWD/../../build/release/JACE/release -lJACE
 
-INCLUDEPATH += $$SOURCE_DIR/Javabridge
-DEPENDPATH  += $$SOURCE_DIR/Javabridge
-
-INCLUDEPATH += $$SOURCE_DIR/JACE
-DEPENDPATH  += $$SOURCE_DIR/JACE
+INCLUDEPATH += $$PWD/../JACE
+DEPENDPATH  += $$PWD/../JACE

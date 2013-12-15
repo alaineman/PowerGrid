@@ -11,8 +11,11 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 SOURCES += \
-    powergridplugin.cpp
+    task.cpp \
+    taskdescriptor.cpp \
+    plugin.cpp
 
 HEADERS += \
-    plugininterfaces.h \
-    powergridplugin.h
+    task.h \
+    taskdescriptor.h \
+    plugin.h

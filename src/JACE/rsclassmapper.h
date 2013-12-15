@@ -11,16 +11,16 @@ class RSClassMapper : public QObject {
     static QFile defaultDataFile;
     static RSClassMapper* classmapper;
 
-    QFile source;
+    QString source;
     QMap<QString, QString> classMap;
   public:
     static RSClassMapper* DefaultInstance();
 
-    explicit RSClassMapper(QFile dataFile);
+    explicit RSClassMapper(QString dataFile);
     virtual ~RSClassMapper();
 
-    QFile dataFile() const { return source; }
-    QString getRealName(QString semanticName) const { return classMap.find(semanticName); }
+    QString dataFile() const { return source; }
+    QString getRealName(QString semanticName) const { return classMap.find(semanticName).value(); }
 
     void parseData();
 };

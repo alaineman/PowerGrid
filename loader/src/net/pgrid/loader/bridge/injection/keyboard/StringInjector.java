@@ -231,6 +231,9 @@ public class StringInjector extends AbstractKeyInjector {
                     c, 
                     KeyEvent.getExtendedKeyCodeForChar(stroke.getKeyChar()), 
                     stroke.getModifiers());
+            LOGGER.log("Sent KeyStroke to client: " + stroke.toString());
+        } else {
+            LOGGER.log("Warning: failed to get KeyStroke for character '" + c + '\'');
         }
     }
 

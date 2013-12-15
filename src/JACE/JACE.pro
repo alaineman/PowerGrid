@@ -67,25 +67,25 @@
 # .pro file for the JACE library.
 # This subproject contains the functionality required to bridge the gap
 # between Java and C++. The JACE library is used for that purpose.
-# JACE has been optimized for use with PowerGrid and
+# JACE has been optimized for use with PowerGrid.
 #------------------------------------------------------------------------
 
-TARGET      = JACE
+
 TEMPLATE    = lib
-CONFIG     += thread # We tell QMake we're building a static lib
-CONFIG     -= qt     # JACE has nothing to do with QT, so we remove it from the config
+TARGET      = JACE
+CONFIG     += staticlib thread # We tell QMake we're building a static lib
 
 # JACE uses .tsd and .tsp files as C++ header files, so include those as well
 QMAKE_EXT_H += .tsp .tsd
 
-include (../global_def.pro)
+QMAKE_CXXFLAGS += -std=gnu++11
 
 #------------------------------------------------
 # Add the dependency for jni
 #------------------------------------------------
-LIBS += -L$$LIB_DIR -ljvm
+LIBS += -L$$PWD/../lib -ljvm
 
-# We include the JNI headers in the project directly, this also allows optimization of the JNI headers.
+# We include the JNI headers in the project directly.
 HEADERS += \
     jvmticmlr.h \
     jvmti.h \

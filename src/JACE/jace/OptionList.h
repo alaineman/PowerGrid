@@ -138,7 +138,9 @@ class OptionList {
  *
  */
 class SystemProperty : public Option {
-
+  private:
+    std::string mName;
+    std::string mValue;
   public:
 
   /**
@@ -163,10 +165,7 @@ class SystemProperty : public Option {
   JACE_API virtual void* extraInfo();
   JACE_API virtual Option* clone() const;
 
-  private:
 
-  std::string mName;
-  std::string mValue;
 };
 
 

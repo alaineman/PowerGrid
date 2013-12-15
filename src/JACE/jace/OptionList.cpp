@@ -30,6 +30,7 @@ using std::copy;
 #include <iterator>
 using std::back_inserter;
 
+BEGIN_NAMESPACE (jace)
 std::string Verbose::Gc( "gc" );
 std::string Verbose::Jni( "jni" );
 std::string Verbose::Class( "class" );
@@ -96,7 +97,7 @@ void OptionList::destroyJniOptions( JavaVMOption* jniOptions ) const {
   delete[] jniOptions;
 }
 
-SystemProperty::SystemProperty( const std::string& name_, const std::string& value_ ) : 
+SystemProperty::SystemProperty( const std::string& name_, const std::string& value_ ) :
   mName( name_ ), mValue( value_ ) {
 }
   
@@ -116,7 +117,7 @@ void* SystemProperty::extraInfo() {
   return 0;
 }
 
-Option* SystemProperty::clone() const { 
+Option* SystemProperty::clone() const {
   return new SystemProperty( mName, mValue ); 
 }
 
@@ -175,7 +176,7 @@ void* CustomOption::extraInfo() {
   return 0;
 }
 
-Option* CustomOption::clone() const {
+jace::Option* CustomOption::clone() const {
   return new CustomOption( value );
 }
 
@@ -231,4 +232,4 @@ Option* AbortHook::clone() const {
   return new AbortHook( hook );
 }
 
-
+END_NAMESPACE (jace)

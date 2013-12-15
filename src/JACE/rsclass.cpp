@@ -9,7 +9,7 @@
  * @param simpleName the simple (semantic) name of the RSClass
  */
 RSClass::RSClass(const std::string name, const std::string simpleName) :
-  JClass(name),
+  JClassImpl(name),
   simpleName (simpleName) {
 }
 

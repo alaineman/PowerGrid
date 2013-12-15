@@ -1,9 +1,6 @@
 
 #include "jace/JClassImpl.h"
-
-#ifndef JACE_JNI_HELPER_H
 #include "jace/JNIHelper.h"
-#endif
 
 using std::string;
 using std::auto_ptr;

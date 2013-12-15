@@ -27,9 +27,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import net.pgrid.loader.AppletFrame;
+import net.pgrid.loader.bridge.injection.keyboard.AWTKeyInjector;
 import net.pgrid.loader.bridge.injection.keyboard.AbstractKeyInjector;
 import net.pgrid.loader.bridge.injection.keyboard.KeyInjector;
 import net.pgrid.loader.bridge.injection.keyboard.StringInjector;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * Frame providing various functions to directly control the various components 
@@ -92,10 +94,13 @@ public class ControlFrame extends JFrame {
                             try {
                                 n = Integer.parseInt(delayField.getText());
                             } catch (NumberFormatException e) {}
-                            AbstractKeyInjector robInjector = (AbstractKeyInjector) ki;
-                            robInjector.setDuration(n);
+                            AbstractKeyInjector inj = (AbstractKeyInjector) ki;
+                            inj.setDuration(n);
                         }
-                        injector.typeString(textField.getText());
+                        String text = textField.getText();
+                        Logger.get("INJECT").log("Sending String " + text + " to RS client...");
+                        injector.typeString(text);
+                        
                     }
                 }, "StringInjector").start();
             }
@@ -117,5 +122,19 @@ public class ControlFrame extends JFrame {
         }
     }
     
-    
+    /**
+     * Test main method to experiment with a KeyInjector using a ControlFrame 
+     * instance. 
+     * @param args The command line arguments, ignored here
+     */
+    public static void main(String[] args) {
+        net.pgrid.loader.PGLoader.main(new String[0]);
+        
+        AppletFrame af = net.pgrid.loader.PGLoader.INSTANCE.getFrame();
+        KeyInjector ki = new AWTKeyInjector();
+        ki.setTarget(af);
+        ControlFrame f = new ControlFrame(new AWTKeyInjector(), af);
+        
+        f.setVisible(true);
+    }
 }

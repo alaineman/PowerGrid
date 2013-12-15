@@ -8,7 +8,6 @@ import java.util.Set;
 import static net.pgrid.loader.logging.Logger.Verbosity.DEBUG;
 import static net.pgrid.loader.logging.Logger.Verbosity.NORMAL;
 import static net.pgrid.loader.logging.Logger.Verbosity.QUIET;
-import static net.pgrid.loader.logging.Logger.Verbosity.VERBOSE;
 
 /**
  * Custom Logging facility allowing for faster logging and more
@@ -94,7 +93,7 @@ public class Logger {
             try {
                 l = new Logger(name, target);
                 LOGGERS.put(name, l);
-            } catch (IllegalArgumentException thrownWhenNameOrTargetInvalid) {
+            } catch (IllegalArgumentException e) {
                 return null;
             }
         } else {
@@ -242,7 +241,19 @@ public class Logger {
      * @param message the message to log.
      */
     public synchronized void log(String message) {
-        printMessage(getPrefix(), message);
+        target.print(getPrefix());
+        String[] lines = message.split("\n");
+        int nLines = lines.length;
+        if (nLines != 0) {
+            target.println(lines[0]);
+            for (int i = 1; i < nLines; i++) {
+                target.print(EMPTY_PREFIX);
+                target.println(lines[i]);
+            }
+        } else {
+            // We print a newLine after the empty prefix in case of an empty message.
+            target.println();
+        }
         if (getVerbosity() == DEBUG) {
             Thread t = Thread.currentThread();
             StackTraceElement[] trace = t.getStackTrace();
@@ -268,7 +279,7 @@ public class Logger {
             target.append(t.getClass().getSimpleName()).append(" occurred: ")
                     .append(t.getMessage());
             target.println();
-            printStackTrace(EMPTY_PREFIX, t.getStackTrace());
+            printStackTrace(t.getStackTrace());
         } else {
             target.println("No Exception occurred");
         }
@@ -292,28 +303,12 @@ public class Logger {
                       .append(t.getClass().getSimpleName()).append(": ")
                       .append(t.getMessage());
                 target.println();
-                printStackTrace(EMPTY_PREFIX, t.getStackTrace());
+                printStackTrace(t.getStackTrace());
             }
-        }
-    }
-    
-    private void printMessage(String prefix, String message) {
-        target.print(prefix == null ? EMPTY_PREFIX : prefix);
-        String[] lines = message.split("\n");
-        int nLines = lines.length;
-        if (nLines != 0) {
-            target.println(lines[0]);
-            for (int i = 1; i < nLines; i++) {
-                target.print(EMPTY_PREFIX);
-                target.println(lines[i]);
-            }
-        } else {
-            // We print a newLine after the empty prefix in case of an empty message.
-            target.println();
         }
     }
 
-    private void printStackTrace(String prefix, StackTraceElement[] trace) {
+    private void printStackTrace(StackTraceElement[] trace) {
         if (getVerbosity() == QUIET) {
             return; 
         }
@@ -323,13 +318,13 @@ public class Logger {
         max = l > max ? max : l;
         for (int i=0;i < max;i++) {
             StackTraceElement e = trace[i];
-            target.append(prefix).append("  in ").append(e.getClassName())
+            target.append(EMPTY_PREFIX).append("  in ").append(e.getClassName())
                     .append(".").append(e.getMethodName()).append(" (line ")
                     .append(String.valueOf(e.getLineNumber())).append(")");
             target.println();
         }
         if (leftOver > 0) {
-            target.append(prefix).append("(").append(String.valueOf(leftOver))
+            target.append(EMPTY_PREFIX).append("(").append(String.valueOf(leftOver))
                     .append(" more...)").println();
         }
     }

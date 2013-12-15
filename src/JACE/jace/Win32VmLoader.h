@@ -1,24 +1,12 @@
-
-#ifndef JACE_OS_DEP_H
-#include "jace/os_dep.h"
-#endif
-
-#ifdef _WIN32
-
 #ifndef JACE_WIN32_VM_LOADER
 #define JACE_WIN32_VM_LOADER
 
-#ifndef JACE_NAMESPACE_H
+#include "jace/os_dep.h"
+#ifdef _WIN32
+
 #include "jace/namespace.h"
-#endif
-
-#ifndef JACE_JNI_EXCEPTION_H
 #include "jace/JNIException.h"
-#endif
-
-#ifndef JACE_VM_LOADER
 #include "jace/VmLoader.h"
-#endif
 
 #include <jni.h>
 
@@ -105,6 +93,7 @@ class Win32VmLoader : public ::jace::VmLoader {
    *
    */
   JACE_API Win32VmLoader( std::string path_, jint jniVersion );
+  virtual JACE_API ~Win32VmLoader() {}
 
 	JACE_API void loadVm() throw ( ::jace::JNIException );
   JACE_API void unloadVm();

@@ -171,7 +171,8 @@ public class PGLoader {
             downloader.loadClient();
             
             if (updater) {
-                // Start the updater
+                // Start the updater. This Thread will finish on its own later, 
+                // we don't really need to check it anymore.
                 new Thread(new UpdaterRunner(newVersion, debugMode), "PG_Updater").start();
             }
         }

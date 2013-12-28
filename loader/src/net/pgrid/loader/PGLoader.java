@@ -185,7 +185,7 @@ public class PGLoader {
         
         getFrame().showMessage("Starting Applet...");
         
-        ClassLoader rsClassLoader = new PrivilegedClassLoaderAction().run();
+        ClassLoader rsClassLoader = AccessController.doPrivileged(new PrivilegedClassLoaderAction());
         
         try {
             Class<? extends Applet> rs2AppletClass = rsClassLoader.loadClass("Rs2Applet").asSubclass(Applet.class);

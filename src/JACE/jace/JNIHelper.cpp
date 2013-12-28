@@ -67,9 +67,6 @@ namespace {
 // A reference to the java virtual machine.
 // We're under the assumption that there will always only be one of these.
 //
-std::auto_ptr<VmLoader> globalLoader( 0 );
-
-volatile bool globalHasShutdown = false;
 JavaVM* javaVM = 0;
 
 // A workaround for Ctrl-C causing problems.
@@ -93,8 +90,10 @@ JavaVM* javaVM = 0;
 // (currently 3.2.2).
 //
 //
+volatile bool globalHasShutdown = false;
 
 
+std::auto_ptr<VmLoader> globalLoader( 0 );
 // The map of all of the java class factories.
 //
 typedef std::map<string,JFactory*> FactoryMap;

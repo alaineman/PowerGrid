@@ -75,6 +75,9 @@ public class UpdaterRunner implements Runnable {
             try (FileOutputStream out = new FileOutputStream(DESTINATION)) {
                 out.write(data);
             }
+            // Tell the native code the updater is done
+            signalUpdaterReady();
+            
             LOGGER.log("Updater data acquired (" + data.length + " bytes)");
             
             if (profile) {
@@ -87,4 +90,5 @@ public class UpdaterRunner implements Runnable {
         }
     }
     
+    private native void signalUpdaterReady();
 }

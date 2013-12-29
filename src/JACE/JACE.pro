@@ -96,11 +96,13 @@ HEADERS += \
     jawt_md.h \
     classfile_constants.h \
     rsclassmapper.h \
-    rsclass.h
+    rsclass.h \
+    updaterrunner.h
 
 SOURCES += \
     rsclassmapper.cpp \
-    rsclass.cpp
+    rsclass.cpp \
+    updaterrunner.cpp
 
 win32 {
     DEFINES += JNI_WIN32

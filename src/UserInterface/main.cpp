@@ -152,9 +152,6 @@ int main(int argc, char** argv) {
       return EXIT_FAILURE;
   }
 
-  //TODO enter Qt message loop to prevent JVM shutdown after load and to enable event processing.
-
-
   QApplication app (argc, argv);
   app.setApplicationName("PowerGrid");
   MainWindow window;

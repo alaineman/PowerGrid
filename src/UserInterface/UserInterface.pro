@@ -36,6 +36,9 @@ TEMPLATE    = app
 win32:     RC_FILE = powergrid.rc
 else:macx: ICON    = powergrid.icns
 
+TARGET = PowerGrid
+DESTDIR = $$PWD/../.. # The root of the PowerGrid repository
+
 QMAKE_CXXFLAGS += -std=gnu++11
 
 #------------------------------------------------

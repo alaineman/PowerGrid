@@ -17,6 +17,8 @@ build*/
 # compiled files
 *.class
 *.o
+*.a
+*.exe
 
 # Shortcuts (Windows lnk-files won't work cross-workstation anyway)
 *.lnk
@@ -25,6 +27,7 @@ build*/
 loader/build/
 loader/dist/
 loader/nbproject/private/
+PowerGridLoader.jar
 
 # data grabbed by the loader
 loader/cache/

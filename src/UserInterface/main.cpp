@@ -36,7 +36,7 @@
 #ifdef Q_OS_UNIX
 #  include "jace/UnixVmLoader.h"
 #else
-#  include "jace/Win32VmLoader.h"
+#  include "Win32VmLoader.h"
 #endif
 #include "jace/OptionList.h"
 using namespace jace;
@@ -78,36 +78,52 @@ int main(int, char*[]) {
   qDebug() << "Attempting to load JVM...";
 
   // Create the loader instance with the appropriate configuration options.
-//#ifdef Q_OS_UNIX
-//  // Unix OS has no common way of detecting jvm path, so for
-//  // Unix, a detectJVMPath function is used.
-//  string jvmPath;
-//  try {
-//    jvmPath = detectJVMPath();
-//    qDebug() << "Found JVM path:" << jvmPath.c_str();
-//  } catch (runtime_error& err) {
-//    qWarning() << "Error during JVM path detection:" << err.what();
-//    return EXIT_FAILURE;
-//  }
-//  UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
-//#else
-  // Windows installations have a key in registry indicating the Java installation.
-  // The special Win32VmLoader makes use of this key to find a JVM.
-  Win32VmLoader loader {"", JNI_VERSION_1_6};
-//#endif
-
-  OptionList options;
-
-  // Add the PowerGrid jar file to the classpath
-  options.push_back( ClassPath(/*"java.class.path", */"PowerGridLoader.jar") );
-
-  // create the JVM
   try {
-    helper::createVm( loader, options );
-    qDebug() << "JVM created";
+
+#ifdef Q_OS_UNIX
+      // Unix OS has no common way of detecting jvm path, so for
+      // Unix, a detectJVMPath function is used.
+      string jvmPath;
+      try {
+        jvmPath = detectJVMPath();
+        qDebug() << "Found JVM path:" << jvmPath.c_str();
+      } catch (runtime_error& err) {
+        qWarning() << "Error during JVM path detection:" << err.what();
+        return EXIT_FAILURE;
+      }
+      UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
+#else
+      // Windows installations have a key in registry indicating the Java installation.
+      // The special Win32VmLoader makes use of this key to find a JVM.
+      jace::Win32VmLoader loader;
+#endif
+
+      OptionList options;
+
+      // Add the PowerGrid jar file to the classpath
+      options.push_back( ClassPath(/*"java.class.path", */"PowerGridLoader.jar") );
+
+      // create the JVM
+      try {
+        helper::createVm( loader, options );
+        qDebug() << "JVM created";
+      } catch (JNIException& e) {
+        qWarning() << "[FAILURE] Creating VM failed:" << e.what();
+        return EXIT_FAILURE;
+      }
+
+      // debug statement for detecting if the JVM is running.
+      // This should print "java.lang.ClassLoader" or similar (depending on the ClassLoader used).
+      try {
+          helper::printClass(helper::getClassLoader());
+      } catch (JNIException& e) {
+          // If something goes wrong, we'll know it here
+          qWarning() << "[INFO] JNIException in getClassLoader:" << e.what();
+      }
+
   } catch (JNIException& e) {
-    qWarning() << "[FAILURE] Creating VM failed:" << e.what();
-    return EXIT_FAILURE;
+      qWarning() << "Error creating JVM loader: " << e.what();
+      return EXIT_FAILURE;
   }
 
   // TODO start the client.

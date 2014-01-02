@@ -61,7 +61,7 @@ class VmLoader {
 
   /**
    * Returns the version of the virtual machine to be loaded.
-	 * The implementation should cache this value because it is used on JVM shutdown
+   * The implementation should cache this value because it is used on JVM shutdown
    * and might lead to deadlocks if jace::helper::attach() is called at that point.
    */
   JACE_API virtual jint version() = 0;

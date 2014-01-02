@@ -18,7 +18,7 @@ namespace plugins {
        * to create and run Task
        * @return a list of TaskDescriptors
        */
-      virtual QList<TaskDescriptor> tasks() const = 0;
+      virtual QList<TaskDescriptor*> tasks() const = 0;
 
       /**
        * @brief Returns the name of this plugin

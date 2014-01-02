@@ -78,7 +78,11 @@ CONFIG     += staticlib thread # We tell QMake we're building a static lib
 # JACE uses .tsd and .tsp files as C++ header files, so include those as well
 QMAKE_EXT_H += .tsp .tsd
 
+# enable C++11 features
 QMAKE_CXXFLAGS += -std=gnu++11
+
+# Tell JACE we're building statically, and want to load the JVM dynamically.
+DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD
 
 #------------------------------------------------
 # Add the dependency for jni
@@ -124,7 +128,6 @@ debug {
 
 HEADERS    += \
     jace/WrapperVmLoader.h \
-    jace/Win32VmLoader.h \
     jace/VmLoader.h \
     jace/UnixVmLoader.h \
     jace/StaticVmLoader.h \
@@ -179,7 +182,6 @@ HEADERS    += \
 
 SOURCES    += \
     jace/WrapperVmLoader.cpp \
-    jace/Win32VmLoader.cpp \
     jace/VmLoader.cpp \
     jace/UnixVmLoader.cpp \
     jace/StaticVmLoader.cpp \

@@ -14,7 +14,7 @@ BEGIN_NAMESPACE( jace )
 /**
  * Wraps a preexisting Virtual Machine.
  *
- * @author Gili Tzabari, Patrick Kramer
+ * @author Gili Tzabari
  *
  */
 class WrapperVmLoader : public ::jace::VmLoader {

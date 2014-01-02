@@ -11,9 +11,9 @@ namespace plugins {
     class DEFAULTPLUGIN_EXPORT DefaultPlugin : public QObject, PGPlugin {
         Q_OBJECT
         Q_PLUGIN_METADATA(IID "net.pgrid.plugins.powergrid.DefaultPlugin")
-        Q_INTERFACES(PGPlugin)
+        Q_INTERFACES(plugins::PGPlugin)
       public:
-        virtual QList<TaskDescriptor> tasks() const;
+        virtual QList<TaskDescriptor*> tasks() const;
         virtual QString name() const { return "Default Plugin"; }
     };
   }

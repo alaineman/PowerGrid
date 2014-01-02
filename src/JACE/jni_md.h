@@ -8,6 +8,12 @@
 #define _JAVASOFT_JNI_MD_H_
 
 #ifdef JNI_WIN32
+
+#ifndef VC_EXTRALEAN
+#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#endif
+#include <windows.h>
+
 # define JNIEXPORT __declspec(dllexport)
 # define JNIIMPORT __declspec(dllimport)
 # define JNICALL __stdcall

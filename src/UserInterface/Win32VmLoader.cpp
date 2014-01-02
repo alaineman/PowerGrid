@@ -21,21 +21,46 @@ using std::to_string;
    */
 std::string getRegistryValue(const std::string& regPath, const std::string& regValue, LPDWORD dataSize) {
     LONG result;
-    LPDWORD dataType = NULL;
-    PHKEY regKeyHnd = NULL;
-    result = RegOpenKeyExA(HKEY_LOCAL_MACHINE, regPath.c_str(), 0, KEY_QUERY_VALUE, regKeyHnd);
+    HKEY regKeyHnd;
+    result = RegOpenKeyExA(
+                HKEY_LOCAL_MACHINE,
+                regPath.c_str(),
+                0,
+                KEY_READ,
+                &regKeyHnd
+    );
     if (result != ERROR_SUCCESS) {
-        throw JNIException(std::string("Registry Open Error: ") + to_string(result));
+        throw JNIException(std::string("Registry Open Error (") + regPath + "): " + to_string(result));
     }
-    PVOID buf = NULL;
-    result = RegGetValueA(*regKeyHnd, "", regValue.c_str(),
-                 RRF_RT_REG_SZ, dataType, buf, dataSize);
-    RegCloseKey(*regKeyHnd);
+    char buf [*dataSize];
+    DWORD valueType = REG_SZ;
+    result = RegQueryValueExA(
+                regKeyHnd,
+                regValue.c_str(),
+                NULL,
+                (LPDWORD)&valueType,
+                (LPBYTE)buf,
+                dataSize
+    );
+    if (result != ERROR_SUCCESS) {
+        std::string msg ("Registry Query Error (");
+        msg = msg + regPath + "\\" + regValue + "): ";
+        switch (result) {
+            case ERROR_MORE_DATA:
+                throw JNIException(msg + "Buffer not large enough");
+            case ERROR_FILE_NOT_FOUND:
+                throw JNIException(msg + "Registry value not found");
+            default:
+                throw JNIException(msg + to_string(result));
+        }
+    }
+
+    result = RegCloseKey(regKeyHnd);
     if (result == ERROR_SUCCESS) {
         std::string retValue (reinterpret_cast<char*>(buf), *dataSize);
         return retValue;
     }
-    throw JNIException(std::string("Registry Query Error: ") + to_string(result));
+    throw JNIException(std::string("Registry Close Error (") + regPath + "\\" + regValue + "): " + to_string(result));
 }
 
 }
@@ -63,16 +88,17 @@ void Win32VmLoader::unloadVm() {
 }
 
 void Win32VmLoader::specifyVm() throw (JNIException) {
+    DWORD size;
     if (jvmVersion.length() == 0) {
         try {
-            DWORD size = 16;
+            size = 16;
             jvmVersion = getRegistryValue("SOFTWARE\\JavaSoft\\Java Runtime Environment", "CurrentVersion", &size);
         } catch (JNIException& e) {
             throw JNIException(std::string("Missing default JVM version: ") + e.what());
         }
     }
     try {
-        DWORD size = 256;
+        size = 256;
         path = getRegistryValue("SOFTWARE\\JavaSoft\\Java Runtime Environment\\" + jvmVersion, "RuntimeLib", &size);
     } catch (JNIException& e) {
         throw JNIException(std::string("Missing RuntimeLib key for JVM version ") + jvmVersion + ": " + e.what());

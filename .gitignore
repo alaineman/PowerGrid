@@ -28,6 +28,7 @@ loader/nbproject/private/
 
 # data grabbed by the loader
 loader/cache/
+cache/
 
 # log files
 *.log

@@ -30,7 +30,7 @@
 #------------------------------------------------
 # Basic properties of the project itself
 #------------------------------------------------
-QT          = core gui
+QT          = core gui widgets
 TEMPLATE    = app
 
 win32:     RC_FILE = powergrid.rc
@@ -41,9 +41,12 @@ QMAKE_CXXFLAGS += -std=gnu++11
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-SOURCES     = main.cpp Win32VmLoader.cpp
-HEADERS     = Win32VmLoader.h
-FORMS       =
+SOURCES     = main.cpp Win32VmLoader.cpp \
+    mainwindow.cpp
+HEADERS     = Win32VmLoader.h \
+    mainwindow.h
+FORMS       = \
+    mainwindow.ui
 RESOURCES   = resources.qrc
 OTHER_FILES = powergrid.rc powergrid.icns
 

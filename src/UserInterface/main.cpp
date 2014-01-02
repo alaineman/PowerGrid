@@ -27,6 +27,7 @@
 
 #include <QtCore>
 #include <QProcess>
+#include <QApplication>
 #include <stdexcept>
 #include <string>
 
@@ -38,6 +39,9 @@
 #  include "Win32VmLoader.h"
 #endif
 #include "jace/OptionList.h"
+
+#include "mainwindow.h"
+
 using namespace jace;
 using namespace std;
 
@@ -72,7 +76,7 @@ string detectJVMPath() {
 
 #endif
 
-int main(int, char*[]) {
+int main(int argc, char** argv) {
 
   qDebug() << "Attempting to load JVM...";
 
@@ -148,6 +152,12 @@ int main(int, char*[]) {
       return EXIT_FAILURE;
   }
 
+  //TODO enter Qt message loop to prevent JVM shutdown after load and to enable event processing.
 
-  return EXIT_SUCCESS;
+
+  QApplication app (argc, argv);
+  app.setApplicationName("PowerGrid");
+  MainWindow window;
+  window.show();
+  return app.exec();
 }

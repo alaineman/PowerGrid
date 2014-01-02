@@ -209,7 +209,7 @@ void createVm( const VmLoader& loader,
 			msg.append(e.what());
 		}
     throw JNIException( msg );
-	}
+    }
 
   jmethodID runtimeAddShutdownHook = env->GetMethodID( runtimeClass, "addShutdownHook", "(Ljava/lang/Thread;)V" );
   if ( ! runtimeAddShutdownHook ) {
@@ -253,12 +253,12 @@ void createVm( const VmLoader& loader,
 			msg.append(e.what());
 		}
     throw JNIException( msg );
-	}
+    }
 
-	env->CallStaticObjectMethodA( runtimeClass, runtimeAddShutdownHook, (jvalue*) &shutdownHookObject );
+    env->CallVoidMethod( runtimeObject, runtimeAddShutdownHook, shutdownHookObject );
 	try
 	{
-		helper::catchAndThrow();
+        helper::catchAndThrow();
 	}
 	catch (JNIException& e)
 	{
@@ -266,10 +266,10 @@ void createVm( const VmLoader& loader,
 		msg.append("\ncaused by:\n");
 		msg.append(e.what());
 		throw JNIException( msg );
-	}
+    }
 	deleteLocalRef( env, runtimeObject );
 	deleteLocalRef( env, runtimeClass );
-	deleteLocalRef( env, shutdownHookClass );
+    deleteLocalRef( env, shutdownHookClass );
 }
 
 /**

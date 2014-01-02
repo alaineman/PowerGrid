@@ -49,6 +49,7 @@ class Win32VmLoader : public ::jace::VmLoader {
    * @throws JNIException if an error occurs while trying to look up the VM.
    */
   Win32VmLoader(std::string version = "", jint jniVersion = JNI_VERSION_1_6 );
+  Win32VmLoader(jint jniVersion, std::string path);
   virtual ~Win32VmLoader() {}
 
   void loadVm() throw ( ::jace::JNIException );

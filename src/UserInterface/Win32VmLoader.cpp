@@ -10,12 +10,14 @@ using ::jace::JNIException;
 
 #include <string>
 using std::string;
+using std::to_string;
 
-#include <QtCore>
-#include <string>
+#include <iostream>
+using std::cout;
+using std::endl;
 
 namespace {
-using std::to_string;
+
 /**
    * Windows helper for querying the registry values related to the various JVM installations
    */
@@ -76,6 +78,14 @@ Win32VmLoader::Win32VmLoader(std::string version, jint jniVer) :
     specifyVm();
 }
 
+Win32VmLoader::Win32VmLoader(jint version, std::string path) :
+    jniVersion( version ), jvmVersion("unknown"), path( path ), handle (0) {
+
+    getCreatedJavaVMsPtr = 0;
+    createJavaVMPtr = 0;
+
+}
+
 void Win32VmLoader::loadVm() throw ( JNIException ) {
     loadVm( path );
 }
@@ -100,6 +110,7 @@ void Win32VmLoader::specifyVm() throw (JNIException) {
     try {
         size = 256;
         path = getRegistryValue("SOFTWARE\\JavaSoft\\Java Runtime Environment\\" + jvmVersion, "RuntimeLib", &size);
+        std::cout << "Using JVM v" << jvmVersion.c_str() << " at " << path.c_str() << endl;
     } catch (JNIException& e) {
         throw JNIException(std::string("Missing RuntimeLib key for JVM version ") + jvmVersion + ": " + e.what());
     }
@@ -118,7 +129,7 @@ void Win32VmLoader::loadVm( const std::string &jvmPath ) throw ( JNIException ) 
         throw JNIException(std::string("Can't find JNI_GetCreatedJavaVMs in ") + jvmPath);
     }
 
-    createJavaVMPtr = (CreateJavaVM_t)GetProcAddress(handle, "JNI_CreateJavaVM");
+    createJavaVMPtr = (CreateJavaVM_t) GetProcAddress(handle, "JNI_CreateJavaVM");
     if ( ! createJavaVMPtr ) {
         throw JNIException(std::string("Can't find JNI_CreateJavaVM in ") + jvmPath);
     }
@@ -137,7 +148,7 @@ jint Win32VmLoader::getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs
 }
 
 VmLoader* Win32VmLoader::clone() const {
-    return new Win32VmLoader( jvmVersion, jniVersion );
+    return new Win32VmLoader( jniVersion, path );
 }
 
 }

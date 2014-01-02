@@ -30,7 +30,6 @@
 #include <stdexcept>
 #include <string>
 
-
 #include "jace/JNIHelper.h"
 #include "jni.h"
 #ifdef Q_OS_UNIX
@@ -101,32 +100,54 @@ int main(int, char*[]) {
       OptionList options;
 
       // Add the PowerGrid jar file to the classpath
-      options.push_back( ClassPath(/*"java.class.path", */"PowerGridLoader.jar") );
+      options.push_back( CustomOption("-Djava.class.path=./PowerGridLoader.jar") );
+      options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls
 
       // create the JVM
       try {
-        helper::createVm( loader, options );
+        helper::createVm( loader, options, false);
         qDebug() << "JVM created";
       } catch (JNIException& e) {
         qWarning() << "[FAILURE] Creating VM failed:" << e.what();
         return EXIT_FAILURE;
       }
 
-      // debug statement for detecting if the JVM is running.
-      // This should print "java.lang.ClassLoader" or similar (depending on the ClassLoader used).
-      try {
-          helper::printClass(helper::getClassLoader());
-      } catch (JNIException& e) {
-          // If something goes wrong, we'll know it here
-          qWarning() << "[INFO] JNIException in getClassLoader:" << e.what();
+      JNIEnv* env = helper::attach();
+      jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PGLoader");
+      if (!pgLoaderClass) {
+          throw JNIException("PGLoader class not found");
       }
+      jmethodID mainMethod = env->GetStaticMethodID(pgLoaderClass, "main", "([Ljava/lang/String;)V");
+      if (!mainMethod) {
+          throw JNIException("PGLoader.main method not found");
+      }
+      jclass stringClass = env->FindClass("java/lang/String");
+      if (!stringClass) {
+          throw JNIException("String class not found");
+      }
+      jarray args = env->NewObjectArray(0, stringClass, NULL);
+      if (!args) {
+          throw JNIException("Failed to allocate String[] object");
+      }
+
+      qDebug() << "Ready to call PGLoader.main(String[])" << endl;
+      env->CallStaticVoidMethod(pgLoaderClass, mainMethod, args);
+
+      if (env->ExceptionCheck()) {
+          throw JNIException("Exception in main method invocation");
+      }
+
+      env->DeleteLocalRef(args);
+      env->DeleteLocalRef(stringClass);
+      env->DeleteLocalRef(pgLoaderClass);
+
+      helper::detach();
 
   } catch (JNIException& e) {
       qWarning() << "Error creating JVM loader: " << e.what();
       return EXIT_FAILURE;
   }
 
-  // TODO start the client.
 
   return EXIT_SUCCESS;
 }

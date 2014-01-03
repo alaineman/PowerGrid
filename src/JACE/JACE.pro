@@ -88,7 +88,7 @@ DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD
 #------------------------------------------------
 # Add the dependency for jni
 #------------------------------------------------
-LIBS += -L$$PWD/../lib -ljvm
+# LIBS += -L$$PWD/../lib -ljvm
 
 # We include the JNI headers in the project directly.
 HEADERS += \

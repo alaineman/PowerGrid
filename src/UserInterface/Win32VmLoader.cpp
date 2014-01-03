@@ -1,5 +1,6 @@
+#include <QtGlobal>
 
-#ifdef _WIN32
+#ifdef Q_OS_WIN32
 
 #include "Win32VmLoader.h"
 using ::jace::VmLoader;

@@ -7,8 +7,9 @@ desktop.ini
 ~$*
 ~*.tmp
 
-# build-... folders (default location for storing compiled code)
+# build-... and dist folders (default location for storing compiled code)
 build*/
+dist/
 
 # autosave and workstation-dependant files of Qt Creator
 *.autosave
@@ -27,7 +28,6 @@ build*/
 loader/build/
 loader/dist/
 loader/nbproject/private/
-PowerGridLoader.jar
 
 # data grabbed by the loader
 loader/cache/

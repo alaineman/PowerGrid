@@ -1,8 +1,10 @@
 #ifndef JACE_WIN32_VM_LOADER
 #define JACE_WIN32_VM_LOADER
 
+#include <QtGlobal>
 #include "jace/os_dep.h"
-#ifdef _WIN32
+
+#ifdef Q_OS_WIN32
 
 #include "jace/namespace.h"
 #include "jace/JNIException.h"

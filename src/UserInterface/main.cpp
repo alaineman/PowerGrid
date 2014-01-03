@@ -49,6 +49,8 @@ using namespace std;
 /**
  * @brief Detects the Java Virtual Machine library path
  *
+ * This function executes the java_home tool to find the home directory,
+ * and then assumes the
  * @return a string containing the detected JVM path
  * @throws runtime_error when the path cannot be found.
  */
@@ -80,43 +82,37 @@ string detectJVMPath() {
 
 int main(int argc, char** argv) {
 
-  qDebug() << "Attempting to load JVM...";
+    qDebug() << "Attempting to load JVM...";
 
-  // Create the loader instance with the appropriate configuration options.
-  try {
+    // Create the loader instance with the appropriate configuration options.
+    try {
 
 #ifdef Q_OS_UNIX
-      // Unix OS has no common way of detecting jvm path, so for
-      // Unix, a detectJVMPath function is used.
-      string jvmPath;
-      try {
-        jvmPath = detectJVMPath();
-        qDebug() << "Found JVM path:" << jvmPath.c_str();
-      } catch (runtime_error& err) {
-        qWarning() << "Error during JVM path detection:" << err.what();
-        return EXIT_FAILURE;
-      }
-      UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
+        // Unix OS has no common way of detecting jvm path, so for
+        // Unix, a detectJVMPath function is used.
+        string jvmPath;
+        try {
+            jvmPath = detectJVMPath();
+            qDebug() << "Found JVM path:" << jvmPath.c_str();
+        } catch (runtime_error& err) {
+            qWarning() << "Error during JVM path detection:" << err.what();
+            return EXIT_FAILURE;
+        }
+        UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
 #else
-      // Windows installations have a key in registry indicating the Java installation.
-      // The special Win32VmLoader makes use of this key to find a JVM.
-      jace::Win32VmLoader loader;
+        // Windows installations have a key in registry indicating the Java installation.
+        // The special Win32VmLoader makes use of this key to find a JVM.
+        jace::Win32VmLoader loader;
 #endif
 
-      OptionList options;
+        OptionList options;
 
-      // Add the PowerGrid jar file to the classpath
-      options.push_back( CustomOption("-Djava.class.path=./PowerGridLoader.jar") );
+        // Add the PowerGrid jar file to the classpath
+        options.push_back( CustomOption("-Djava.class.path=./PowerGridLoader.jar") );
 #ifdef PG_DEBUG
-      options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
+        options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
 #endif
-      // create the JVM
-      try {
-        helper::createVm( loader, options, false);
-        qDebug() << "JVM created";
-      } catch (JNIException& e) {
 
-        qWarning() << "[FAILURE] Creating VM failed:" << e.what();
 #ifdef Q_OS_MACX
         /* MacX has issues when starting a JVM through JNI. This is adressed
          * in this issue: https://bugs.openjdk.java.net/browse/JDK-7131356
@@ -126,48 +122,57 @@ int main(int argc, char** argv) {
          */
         qWarning() << "Please make sure Apple's JVM is installed and being used.";
 #endif
+        // create the JVM
+        try {
+            helper::createVm( loader, options, false);
+            qDebug() << "JVM created";
+        } catch (JNIException& e) {
+
+            qWarning() << "[FAILURE] Creating VM failed:" << e.what();
+
+            return EXIT_FAILURE;
+        }
+
+        JNIEnv* env = helper::attach();
+        jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PGLoader");
+        if (!pgLoaderClass) {
+            throw JNIException("PGLoader class not found");
+        }
+        jmethodID mainMethod = env->GetStaticMethodID(pgLoaderClass, "main", "([Ljava/lang/String;)V");
+        if (!mainMethod) {
+            throw JNIException("PGLoader.main method not found");
+        }
+        jclass stringClass = env->FindClass("java/lang/String");
+        if (!stringClass) {
+            throw JNIException("String class not found");
+        }
+        jarray args = env->NewObjectArray(0, stringClass, NULL);
+        if (!args) {
+            throw JNIException("Failed to allocate String[] object");
+        }
+
+        qDebug() << "Ready to call PGLoader.main(String[])" << endl;
+        env->CallStaticVoidMethod(pgLoaderClass, mainMethod, args);
+
+        if (env->ExceptionCheck()) {
+            throw JNIException("Exception in main method invocation");
+        }
+
+        env->DeleteLocalRef(args);
+        env->DeleteLocalRef(stringClass);
+        env->DeleteLocalRef(pgLoaderClass);
+
+        helper::detach();
+
+    } catch (JNIException& e) {
+        qWarning() << "Error creating JVM loader: " << e.what();
         return EXIT_FAILURE;
-      }
+    }
 
-      JNIEnv* env = helper::attach();
-      jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PGLoader");
-      if (!pgLoaderClass) {
-          throw JNIException("PGLoader class not found");
-      }
-      jmethodID mainMethod = env->GetStaticMethodID(pgLoaderClass, "main", "([Ljava/lang/String;)V");
-      if (!mainMethod) {
-          throw JNIException("PGLoader.main method not found");
-      }
-      jclass stringClass = env->FindClass("java/lang/String");
-      if (!stringClass) {
-          throw JNIException("String class not found");
-      }
-      jarray args = env->NewObjectArray(0, stringClass, NULL);
-      if (!args) {
-          throw JNIException("Failed to allocate String[] object");
-      }
-
-      qDebug() << "Ready to call PGLoader.main(String[])" << endl;
-      env->CallStaticVoidMethod(pgLoaderClass, mainMethod, args);
-
-      if (env->ExceptionCheck()) {
-          throw JNIException("Exception in main method invocation");
-      }
-
-      env->DeleteLocalRef(args);
-      env->DeleteLocalRef(stringClass);
-      env->DeleteLocalRef(pgLoaderClass);
-
-      helper::detach();
-
-  } catch (JNIException& e) {
-      qWarning() << "Error creating JVM loader: " << e.what();
-      return EXIT_FAILURE;
-  }
-
-  QApplication app (argc, argv);
-  app.setApplicationName("PowerGrid");
-  MainWindow window;
-  window.show();
-  return app.exec();
+    // The JVM is started and is running, now create our control frame.
+    QApplication app (argc, argv);
+    app.setApplicationName("PowerGrid");
+    MainWindow window;
+    window.show();
+    return app.exec();
 }

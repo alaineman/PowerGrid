@@ -32,6 +32,7 @@
 #------------------------------------------------
 QT          = core gui widgets
 TEMPLATE    = app
+CONFIG     += c++11
 
 win32:     RC_FILE = powergrid.rc
 else:macx: ICON    = powergrid.icns
@@ -52,6 +53,10 @@ FORMS       = \
     mainwindow.ui
 RESOURCES   = resources.qrc
 OTHER_FILES = powergrid.rc powergrid.icns
+
+# helper defines to detect build mode.
+debug:   DEFINES += PG_DEBUG
+release: DEFINES += PG_RELEASE
 
 # Depends for JACE
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../JACE/release/ -lJACE

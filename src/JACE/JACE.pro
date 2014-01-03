@@ -73,13 +73,14 @@
 
 TEMPLATE    = lib
 TARGET      = JACE
-CONFIG     += staticlib thread # We tell QMake we're building a static lib
+CONFIG     += staticlib thread c++11 # We tell QMake we're building a static lib
+
 
 # JACE uses .tsd and .tsp files as C++ header files, so include those as well
 QMAKE_EXT_H += .tsp .tsd
 
-# enable C++11 features
-QMAKE_CXXFLAGS += -std=gnu++11
+# enable C++11 features (need two to work for both Apple's clang and GNU's g++ compilers)
+# QMAKE_CXXFLAGS += -std=gnu++11
 
 # Tell JACE we're building statically, and want to load the JVM dynamically.
 DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD

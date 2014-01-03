@@ -2,8 +2,11 @@
 #ifndef JACE_OS_DEP_H
 #define JACE_OS_DEP_H
 
+// We detect compiler/platform using Qt's detection headers first
+#include <QtGlobal>
+
 // If we're not on Windows, assume a generic unix
-#ifdef _WIN32
+#ifdef Q_OS_WIN32
   #define PATH_SEPARATOR ";"
 #else
   #define JACE_GENERIC_UNIX
@@ -18,7 +21,7 @@
   #define JACE_PROXY_API
 #else
 
-  #ifdef _WIN32
+  #ifdef Q_OS_WIN32
 	/**
 	 * Macros used for importing and exporting DLL symbols.
 	 *
@@ -48,7 +51,7 @@
  * In that case, we should deal with any Comeau issues separately.
  *
  */
-#if ( defined _MSC_VER && ! defined __COMO__  )
+#ifdef Q_CC_MSVC
 
   /**
    * Shut up about debug identifier truncation since we really
@@ -139,8 +142,9 @@
  * Deal with g++'isms. Jace has only been tested with g++3.0+, but we'll just treat
  * all versions the same way for now.
  *
+ * Apple's Clang also pretents to be GNU, so we deal with it separately.
  */
-#elif defined __GNUG__
+#elif defined Q_CC_GNU && !defined Q_CC_CLANG
 
 	/**
 	 * All symbols that aren't local or static are exported by default.
@@ -171,6 +175,16 @@
   #define NO_IMPLICIT_TYPENAME
 
 #else // We assume a generic compiler on a generic Unix box.
+
+#ifdef Q_CC_CLANG
+    // Clang needs template constructors inlined in header
+    #define PUT_TSDS_IN_HEADER
+    // and also needs explicit type names
+    #define NO_IMPLICIT_TYPENAME
+
+    #define SUPPORTS_SSTREAM
+    // And (unresolved) Clang cannot find symbols in libJACE.a after linking.
+#endif
 
 	/**
 	 * All symbols that aren't local or static are exported by default.

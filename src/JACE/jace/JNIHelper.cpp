@@ -22,6 +22,7 @@ using std::cout;
 using std::endl;
 
 #if !defined(SUPPORTS_PTHREADS) && !defined(_WIN32)
+    //FIXME doesn't Mac support pthreads?
 	#error Platform does not support pthreads or win32 thread-local storage
 #endif
 

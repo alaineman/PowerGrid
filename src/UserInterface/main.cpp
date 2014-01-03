@@ -54,6 +54,7 @@ using namespace std;
  */
 string detectJVMPath() {
     // We use the "java_home" tool to track the path to the java home
+    // The JVM library can be found in <java_home>/jre/lib/server/libjvm.dylib
     QProcess javaHomeProcess;
     javaHomeProcess.start("/usr/libexec/java_home");
     javaHomeProcess.waitForFinished();
@@ -61,7 +62,8 @@ string detectJVMPath() {
     if (javaHomeProcess.canReadLine()) {
         QByteArray data = javaHomeProcess.readLine();
         QString dataString = QString::fromLocal8Bit(data);
-
+        dataString.chop(1); // Remove the '\n' from the result string.
+        dataString.append("/jre/lib/server/libjvm.dylib");
         string dataStdString = dataString.toStdString();
         return dataStdString;
     } else {
@@ -105,14 +107,25 @@ int main(int argc, char** argv) {
 
       // Add the PowerGrid jar file to the classpath
       options.push_back( CustomOption("-Djava.class.path=./PowerGridLoader.jar") );
-      options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls
-
+#ifdef PG_DEBUG
+      options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
+#endif
       // create the JVM
       try {
         helper::createVm( loader, options, false);
         qDebug() << "JVM created";
       } catch (JNIException& e) {
+
         qWarning() << "[FAILURE] Creating VM failed:" << e.what();
+#ifdef Q_OS_MACX
+        /* MacX has issues when starting a JVM through JNI. This is adressed
+         * in this issue: https://bugs.openjdk.java.net/browse/JDK-7131356
+         *
+         * Currently there is no fix other than use Apple's own JVM where
+         * possible... Otherwise we cannot start the JVM from here.
+         */
+        qWarning() << "Please make sure Apple's JVM is installed and being used.";
+#endif
         return EXIT_FAILURE;
       }
 

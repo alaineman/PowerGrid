@@ -79,7 +79,7 @@ string detectJVMPath() {
 // not Mac, but generic Unix
 // Not yet supported since there may not be a standard way to get the
 // path to the JVM library
-#error Unix is not supported, missing OS-specific JVM library path
+#error Unix is not supported at this moment
 
 #endif
 
@@ -120,8 +120,9 @@ int main(int argc, char** argv) {
         /* MacX has issues when starting a JVM through JNI. This is adressed
          * in this issue: https://bugs.openjdk.java.net/browse/JDK-7131356
          *
-         * Currently there is no fix other than use Apple's own JVM where
-         * possible... Otherwise we cannot start the JVM from here.
+         * This issue may be fixed later by allowing PowerGrid to start from
+         * Java, effectively circumventing the issue, but this currently has
+         * no priority.
          */
         qWarning() << "Please make sure Apple's JVM is installed and being used.";
 #endif
@@ -150,9 +151,7 @@ int main(int argc, char** argv) {
             throw JNIException("String class not found");
         }
 
-        JArray<String> args;
-        JArray::end()
-
+        jstring arg1 = env->NewStringUTF("-u");
         if (!arg1) {
             throw JNIException("Failed to create UTF String \"-u\"");
         }

@@ -39,6 +39,7 @@ else:macx: ICON    = powergrid.icns
 
 # Make sure the executable is named PowerGrid and is in
 # an easy to find location
+# See also doc/autoBuildInstructions.md
 TARGET = PowerGrid
 DESTDIR = $$PWD/../../dist
 

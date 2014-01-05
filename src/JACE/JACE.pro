@@ -102,12 +102,14 @@ HEADERS += \
     classfile_constants.h \
     rsclassmapper.h \
     rsclass.h \
-    updaterrunner.h
+    updaterrunner.h \
+    mappingunavailableexception.h
 
 SOURCES += \
     rsclassmapper.cpp \
     rsclass.cpp \
-    updaterrunner.cpp
+    updaterrunner.cpp \
+    mappingunavailableexception.cpp
 
 win32 {
     DEFINES += JNI_WIN32

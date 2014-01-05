@@ -40,6 +40,9 @@
 #endif
 #include "jace/OptionList.h"
 
+#include "jace/JArray.h"
+using jace::JArray;
+
 #include "mainwindow.h"
 
 using namespace jace;
@@ -146,18 +149,28 @@ int main(int argc, char** argv) {
         if (!stringClass) {
             throw JNIException("String class not found");
         }
-        jarray args = env->NewObjectArray(0, stringClass, NULL);
+
+        JArray<String> args;
+        JArray::end()
+
+        if (!arg1) {
+            throw JNIException("Failed to create UTF String \"-u\"");
+        }
+
+        jarray args = env->NewObjectArray(1, stringClass, arg1);
         if (!args) {
             throw JNIException("Failed to allocate String[] object");
         }
 
-        qDebug() << "Ready to call PGLoader.main(String[])" << endl;
+        qDebug() << "Calling PGLoader.main(String[] args)";
         env->CallStaticVoidMethod(pgLoaderClass, mainMethod, args);
 
         if (env->ExceptionCheck()) {
             throw JNIException("Exception in main method invocation");
         }
 
+        // Clean up all JNI resources
+        env->DeleteLocalRef(arg1);
         env->DeleteLocalRef(args);
         env->DeleteLocalRef(stringClass);
         env->DeleteLocalRef(pgLoaderClass);

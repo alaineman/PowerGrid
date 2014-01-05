@@ -1,41 +1,29 @@
-/*
- * Modified version of the platform-dependant header file
- * based on #defines. This allows every platform to include the
- * same header file, reducing the complexity.
- */
 
+/* This jni_md header has been rewritten to use Qt's defined types.
+ * By using Qt's defined data types that ensure the same size on
+ * every platform, this header is made so that it is not
+ * machine-dependant anymore.
+ */
 #ifndef _JAVASOFT_JNI_MD_H_
 #define _JAVASOFT_JNI_MD_H_
 
-#ifdef JNI_WIN32
+#include <QtGlobal>
 
-#ifndef VC_EXTRALEAN
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
-#endif
-#include <windows.h>
+// By using Qt's defined qintXX and quintXX types, we can easily
+// typedef all Java types in a platform-independant way.
+typedef quint8  jboolean;
+typedef qint8   jbyte;
+typedef quint16 jchar;
+typedef qint16  jshort;
+typedef qint32  jint;
+typedef qint64  jlong;
 
-# define JNIEXPORT __declspec(dllexport)
-# define JNIIMPORT __declspec(dllimport)
-# define JNICALL __stdcall
+typedef float   jfloat;
+typedef double  jdouble;
 
-typedef long jint;
-typedef __int64 jlong;
-typedef signed char jbyte;
+typedef jint    jsize;
 
-#else
-# define JNIEXPORT
-# define JNIIMPORT
-# define JNICALL
-
-typedef int jint;
-# ifdef _LP64 /* 64-bit Solaris */
-typedef long jlong;
-# else
-typedef long long jlong;
-# endif
-
-typedef signed char jbyte;
-
-#endif
+// We need to define this to prevent jni.h from redefining them
+#define JNI_TYPES_ALREADY_DEFINED_IN_JNI_MD_H
 
 #endif /* !_JAVASOFT_JNI_MD_H_ */

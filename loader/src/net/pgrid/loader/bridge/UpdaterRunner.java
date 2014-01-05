@@ -3,7 +3,6 @@ package net.pgrid.loader.bridge;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import net.pgrid.loader.PGLoader;
 import net.pgrid.loader.RSVersionInfo;
 import net.pgrid.loader.logging.Logger;
 
@@ -72,20 +71,24 @@ public class UpdaterRunner implements Runnable {
         
         try {
             byte[] data = update.getData();
+            LOGGER.log("Updater data acquired (" + data.length + " bytes)");
+            
+            if (!DESTINATION.isFile() && !DESTINATION.createNewFile()) {
+                throw new IOException("Cannot write to updater info destination");
+            }
+            
             try (FileOutputStream out = new FileOutputStream(DESTINATION)) {
                 out.write(data);
             }
+            
             // Tell the native code the updater is done
             signalUpdaterReady();
-            
-            LOGGER.log("Updater data acquired (" + data.length + " bytes)");
             
             if (profile) {
                 long timeTaken = System.currentTimeMillis() - timeStarted;
                 LOGGER.log("Updater took " + (timeTaken/1000d) + "s to finish");
             }
         } catch (IOException e) {
-            PGLoader.report("Updater failed to execute");
             LOGGER.log("Failed to save the updater data", e);
         }
     }

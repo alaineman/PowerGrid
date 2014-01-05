@@ -1,5 +1,5 @@
 #include "rsclass.h"
-#include "jace/JNIHelper.h"
+using std::string;
 
 /**
  * Creates a new RSClass with the given name and type name.
@@ -8,11 +8,11 @@
  *               a call to JNIEnv::FindClass.
  * @param simpleName the simple (semantic) name of the RSClass
  */
-RSClass::RSClass(const std::string name, const std::string simpleName) :
+RSClass::RSClass(const string name, const string simpleName) :
   JClassImpl(name),
   simpleName (simpleName) {
 }
 
-const std::string& RSClass::getSimpleName() const {
+const string& RSClass::getSimpleName() const {
   return simpleName;
 }

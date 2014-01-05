@@ -1,13 +1,19 @@
 #include <jni.h>
 #include "updaterrunner.h"
+#include "rsclassmapper.h"
+#include <QtCore>
 
 /**
- * This method starts the RSClassMapper on a new Thread and returns directly.
+ * This method parses the updater data downloaded by the Java client.
  * It is normally invoked from the JVM by the
  * net.pgrid.loader.bridge.UpdaterRunner class once it's ready.
  */
 JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
   (JNIEnv *, jobject) {
-  //TODO start a new C++ thread on which the UpdaterParser will run.
-
+    RSClassMapper* mapper = RSClassMapper::DefaultInstance();
+    if (mapper) {
+        mapper->parseData();
+    } else {
+        qWarning() << "Cannot parse Updater data: mapper does not exist";
+    }
 }

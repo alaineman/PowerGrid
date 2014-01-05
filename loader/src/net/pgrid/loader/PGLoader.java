@@ -173,6 +173,7 @@ public class PGLoader {
             if (updater) {
                 // Start the updater. This Thread will finish on its own later, 
                 // we don't really need to check it anymore.
+                LOGGER.log("Starting Updater");
                 new Thread(new UpdaterRunner(newVersion, debugMode), "PG_Updater").start();
             }
         }

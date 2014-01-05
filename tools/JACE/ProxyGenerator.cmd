@@ -1,3 +1,4 @@
 @echo off
-java -classpath "%JACE_HOME%\lib\asm-1.5.1.jar";"%JACE_HOME%\lib\asm-attrs-1.5.1.jar";"%JACE_HOME%\lib\bcel.jar";"%JACE_HOME%\lib\jace.jar";"%JACE_HOME%\lib\regex.jar";"%JACE_HOME%\lib\retroweaver.jar" jace.proxygen.ProxyGenerator %*
+set JACE_HOME = ..\..\lib\
+java -classpath "%JACE_HOME%\lib\asm-1.5.1.jar";"%JACE_HOME%\lib\asm-attrs-1.5.1.jar";"%JACE_HOME%\lib\bcel.jar";"%JACE_HOME%\lib\jace.jar";"%JACE_HOME%\lib\retroweaver.jar" jace.proxygen.ProxyGenerator %*
 @echo on

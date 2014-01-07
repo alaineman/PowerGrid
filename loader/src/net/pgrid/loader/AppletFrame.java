@@ -132,10 +132,10 @@ public class AppletFrame extends JFrame implements AppletStub {
         applet.setStub(this);
         try {
             applet.init();
-            applet.start();
             getContentPane().add(applet, BorderLayout.CENTER);
             getContentPane().remove(label);
             revalidate();
+            applet.start();
             LOGGER.log("Applet started");
             return true;
         } catch (RuntimeException e) {

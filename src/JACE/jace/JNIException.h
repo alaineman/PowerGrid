@@ -4,7 +4,7 @@
 #include "jace/os_dep.h"
 #include "jace/namespace.h"
 #include "jace/BaseException.h"
-
+#include "jni.h"
 #include <string>
 
 BEGIN_NAMESPACE( jace )
@@ -41,6 +41,7 @@ JACE_API JNIException& operator=( const JNIException& rhs ) throw ();
 
 };
 
+std::string JNIError_toString(jint errCode) throw();
 
 END_NAMESPACE( jace )
 

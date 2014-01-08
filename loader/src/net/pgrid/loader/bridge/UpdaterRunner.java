@@ -94,11 +94,7 @@ public class UpdaterRunner implements Runnable {
     }
     
     /**
-     * FIXME: This native method invocation currently does not work as expected.
-     * To fix this, we probably need to make the PowerGrid executable behave
-     * like a Java library, and then System.loadLibrary() it in a static 
-     * initialization block. We may need to see how JACE achieves proper Java to
-     * C++ interaction in using its byte code optimizer for Java classes.
+     * Notifies the C++ client the updater is ready.
      */
     private native void signalUpdaterReady();
 }

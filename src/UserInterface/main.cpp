@@ -40,6 +40,9 @@
 #endif
 #include "jace/OptionList.h"
 
+// Native methods that need to be registered
+#include "updaterrunner.h"
+
 #include "jace/JArray.h"
 using jace::JArray;
 
@@ -78,7 +81,7 @@ string detectJVMPath() {
 #elif defined(Q_OS_UNIX)
 // not Mac, but generic Unix
 // Not yet supported since there may not be a standard way to get the
-// path to the JVM library
+// path to the JVM library. Support will be added if there is demand for it.
 #error Unix is not supported at this moment
 
 #endif
@@ -120,6 +123,9 @@ int main(int argc, char** argv) {
         /* MacX has issues when starting a JVM through JNI. This is adressed
          * in this issue: https://bugs.openjdk.java.net/browse/JDK-7131356
          *
+         * The issue only seems to occur when using the Oracle VM. It should be
+         * possible to start PowerGrid successfully using the Apple VM.
+         *
          * This issue may be fixed later by allowing PowerGrid to start from
          * Java, effectively circumventing the issue, but this currently has
          * no priority.
@@ -138,6 +144,10 @@ int main(int argc, char** argv) {
         }
 
         JNIEnv* env = helper::attach();
+
+        // Register all natives
+        bridge::updater::UpdaterRunner_registerNatives(env); // net.pgrid.loader.bridge.UpdaterRunner
+
         jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PGLoader");
         if (!pgLoaderClass) {
             throw JNIException("PGLoader class not found");
@@ -168,11 +178,13 @@ int main(int argc, char** argv) {
             throw JNIException("Exception in main method invocation");
         }
 
-        // Clean up all JNI resources
+        // Clean up JNI references
         env->DeleteLocalRef(arg1);
         env->DeleteLocalRef(args);
         env->DeleteLocalRef(stringClass);
         env->DeleteLocalRef(pgLoaderClass);
+
+
 
         helper::detach();
 

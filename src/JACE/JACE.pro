@@ -92,11 +92,8 @@ DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD
 
 # We include the JNI headers in the project directly.
 HEADERS += \
-    jvmticmlr.h \
-    jvmti.h \
     jni.h \
     jni_md.h \
-    jdwpTransport.h \
     jawt.h \
     jawt_md.h \
     classfile_constants.h \

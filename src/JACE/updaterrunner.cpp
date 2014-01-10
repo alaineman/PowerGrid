@@ -12,7 +12,7 @@ using jace::JNIException;
  * It is normally invoked from the JVM by the
  * net.pgrid.loader.bridge.UpdaterRunner class once it's ready.
  */
-extern "C" JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
+JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
   (JNIEnv *, jobject) {
     RSClassMapper* mapper = RSClassMapper::DefaultInstance();
     if (mapper) {

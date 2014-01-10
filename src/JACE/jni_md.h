@@ -14,13 +14,9 @@
 
 #ifdef Q_OS_WIN32
   #define JNICALL __stdcall
-  #define JNIIMPORT __declspec(dllimport)
-  #define JNIEXPORT __declspec(dllexport)
-#else
-  #define JNICALL
-  #define JNIIMPORT
-  #define JNIEXPORT
 #endif
+#define JNIIMPORT Q_DECL_IMPORT
+#define JNIEXPORT Q_DECL_EXPORT
 
 // By using Qt's defined qintXX and quintXX types, we can easily
 // typedef all Java types in a platform-independant way.

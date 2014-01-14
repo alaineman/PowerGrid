@@ -30,12 +30,25 @@
 #------------------------------------------------
 # Basic properties of the project itself
 #------------------------------------------------
-QT          = core gui widgets
+QT          = core gui widgets concurrent
 TEMPLATE    = app
 CONFIG     += c++11
 
 win32:     RC_FILE = powergrid.rc
 else:macx: ICON    = powergrid.icns
+
+macx {
+    # A bug in Oracle's JVM prevents us from creating a VM
+    # on Mac OS X. We can fix this by launching the Java Loader
+    # and allow the running JVM to link to PowerGrid as a library.
+    DEFINES += PG_ALLOW_JNI_ONLOAD
+    TEMPLATE = lib
+}
+else {
+    # On other platforms, we launch the other way. This way we
+    # have more control over the parameters we launch the VM with.
+    TEMPLATE = app
+}
 
 # Make sure the executable is named PowerGrid and is in
 # an easy to find location

@@ -33,19 +33,24 @@
 
 #include "jace/JNIHelper.h"
 #include "jni.h"
-#ifdef Q_OS_UNIX
-#  include "jace/UnixVmLoader.h"
+
+#ifndef PG_ALLOW_JNI_ONLOAD
+#  ifdef Q_OS_UNIX
+#    include "jace/UnixVmLoader.h"
+#  else
+#    include "Win32VmLoader.h"
+#  endif
 #else
-#  include "Win32VmLoader.h"
+#  include "jace/WrapperVmLoader.h"
+#  include <QtConcurrent>
 #endif
+
 #include "jace/OptionList.h"
 
 // Native methods that need to be registered
 #include "updaterrunner.h"
 
 #include "jace/JArray.h"
-using jace::JArray;
-
 #include "mainwindow.h"
 
 using namespace jace;
@@ -86,6 +91,39 @@ string detectJVMPath() {
 
 #endif
 
+/**
+ * @brief executes the PowerGrid application
+ * @param argc the amount of arguments
+ * @param argv the actual arguments
+ * @return the result
+ */
+int execute(int argc, char** argv) {
+    QApplication app (argc, argv);
+    app.setApplicationName("PowerGrid");
+    MainWindow window;
+    window.show();
+    return app.exec();
+}
+
+VmLoader* globalVmLoader;
+#ifdef PG_ALLOW_JNI_ONLOAD
+// These two functions allow a JVM to load this application
+// as a library
+void JNI_OnLoad(JavaVM* vm, void*) {
+    globalVmLoader = new WrapperVmLoader(vm);
+    // Start the Qt Event Loop on another Thread
+    QtConcurrent::run(execute, argc, argv);
+}
+
+void JNI_OnUnload(JavaVM*, void*) {
+    // Terminate the running Qt Application
+    QApplication.exit(0);
+    if (globalVmLoader) {
+        globalVmLoader->unloadVm();
+        delete (globalVmLoader);
+    }
+}
+#else
 int main(int argc, char** argv) {
 
     qDebug() << "Attempting to load JVM...";
@@ -104,11 +142,11 @@ int main(int argc, char** argv) {
             qWarning() << "Error during JVM path detection:" << err.what();
             return EXIT_FAILURE;
         }
-        UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
+        globalVmLoader = new UnixVmLoader (jvmPath, JNI_VERSION_1_6);
 #else
         // Windows installations have a key in registry indicating the Java installation.
         // The special Win32VmLoader makes use of this key to find a JVM.
-        jace::Win32VmLoader loader;
+        globalVmLoader = new Win32VmLoader();
 #endif
 
         OptionList options;
@@ -119,22 +157,9 @@ int main(int argc, char** argv) {
         options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
 #endif
 
-#ifdef Q_OS_MACX
-        /* MacX has issues when starting a JVM through JNI. This is adressed
-         * in this issue: https://bugs.openjdk.java.net/browse/JDK-7131356
-         *
-         * The issue only seems to occur when using the Oracle VM. It should be
-         * possible to start PowerGrid successfully using the Apple VM.
-         *
-         * This issue may be fixed later by allowing PowerGrid to start from
-         * Java, effectively circumventing the issue, but this currently has
-         * no priority.
-         */
-        qWarning() << "Please make sure Apple's JVM is installed and being used.";
-#endif
         // create the JVM
         try {
-            helper::createVm( loader, options, false);
+            helper::createVm( *loader, options, false);
             qDebug() << "JVM created";
         } catch (JNIException& e) {
 
@@ -184,8 +209,6 @@ int main(int argc, char** argv) {
         env->DeleteLocalRef(stringClass);
         env->DeleteLocalRef(pgLoaderClass);
 
-
-
         helper::detach();
 
     } catch (JNIException& e) {
@@ -194,9 +217,12 @@ int main(int argc, char** argv) {
     }
 
     // The JVM is started and is running, now create our control frame.
-    QApplication app (argc, argv);
-    app.setApplicationName("PowerGrid");
-    MainWindow window;
-    window.show();
-    return app.exec();
+    int result = execute(argc, argv);
+
+    if (globalVmLoader) {
+        globalVmLoader->unloadVm();
+        delete (globalVmLoader);
+    }
+    return result;
 }
+#endif

@@ -59,6 +59,10 @@ public class InjectionController implements KeyInjector, MouseInjector{
         
         keyboardLock = new Object();
         mouseLock = new Object();
+        
+        // Ensure the key and mouse use the correct target component
+        keyDelegate.setTarget(target);
+        mouseDelegate.setTarget(target);
     }
 
     /**

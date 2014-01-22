@@ -17,113 +17,50 @@
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstdlib>
-#include <iostream>
+#ifndef PG_BUILD_JNILIB
+
 
 /* We require dynamic JVM loading instead of statically binding to the JVM library
- * This prevents the StaticVMLoader class from trying to statically bind to jvm.lib
+ * This prevents the StaticVMLoader class from trying to statically bind to the jvm library
  */
 #define JACE_WANT_DYNAMIC_LOAD
 
+// Required Qt headers
 #include <QtCore>
-#include <QProcess>
 #include <QApplication>
-#include <stdexcept>
-#include <string>
 
-#include "jace/JNIHelper.h"
-#include "jni.h"
-
-#ifndef PG_ALLOW_JNI_ONLOAD
-#  ifdef Q_OS_UNIX
-#    include "jace/UnixVmLoader.h"
-#  else
-#    include "Win32VmLoader.h"
-#  endif
-#else
-#  include "jace/WrapperVmLoader.h"
-#  include <QtConcurrent>
+#ifdef Q_OS_MACX
+// There is a bug in Oracle's VM on Mac OS X, and as such we may not be able to load it
+// from here. We build PowerGrid to be loaded as a jni library from a running JVM instead.
+#warning This file does not officially support Mac OS, consider using "libmain.cpp" instead.
 #endif
 
+// Required standard headers
+#include <stdexcept>
+#include <string>
+#include <cstdlib>
+#include <iostream>
+
+// Required JACE headers
+#include "jni.h"
+#include "jace/JNIHelper.h"
 #include "jace/OptionList.h"
+
+#ifdef Q_OS_UNIX
+#  include "jace/UnixVmLoader.h"
+#else
+#  include "Win32VmLoader.h"
+#endif
 
 // Native methods that need to be registered
 #include "updaterrunner.h"
 
-#include "jace/JArray.h"
+// Our own additional headers
 #include "mainwindow.h"
 
 using namespace jace;
 using namespace std;
 
-#ifdef Q_OS_MAC
-/**
- * @brief Detects the Java Virtual Machine library path
- *
- * This function executes the java_home tool to find the home directory,
- * and then assumes the
- * @return a string containing the detected JVM path
- * @throws runtime_error when the path cannot be found.
- */
-string detectJVMPath() {
-    // We use the "java_home" tool to track the path to the java home
-    // The JVM library can be found in <java_home>/jre/lib/server/libjvm.dylib
-    QProcess javaHomeProcess;
-    javaHomeProcess.start("/usr/libexec/java_home");
-    javaHomeProcess.waitForFinished();
-
-    if (javaHomeProcess.canReadLine()) {
-        QByteArray data = javaHomeProcess.readLine();
-        QString dataString = QString::fromLocal8Bit(data);
-        dataString.chop(1); // Remove the '\n' from the result string.
-        dataString.append("/jre/lib/server/libjvm.dylib");
-        string dataStdString = dataString.toStdString();
-        return dataStdString;
-    } else {
-        throw runtime_error("Failed to execute /usr/libexec/java_home");
-    }
-}
-#elif defined(Q_OS_UNIX)
-// not Mac, but generic Unix
-// Not yet supported since there may not be a standard way to get the
-// path to the JVM library. Support will be added if there is demand for it.
-#error Unix is not supported at this moment
-
-#endif
-
-/**
- * @brief executes the PowerGrid application
- * @param argc the amount of arguments
- * @param argv the actual arguments
- * @return the result
- */
-int execute(int argc, char** argv) {
-    QApplication app (argc, argv);
-    app.setApplicationName("PowerGrid");
-    MainWindow window;
-    window.show();
-    return app.exec();
-}
-
-VmLoader* globalVmLoader;
-#ifdef PG_ALLOW_JNI_ONLOAD
-// These two functions allow a JVM to load this application
-// as a library
-void JNI_OnLoad(JavaVM* vm, void*) {
-    globalVmLoader = new WrapperVmLoader(vm);
-    // Start the Qt Event Loop on another Thread
-    QtConcurrent::run(execute, argc, argv);
-}
-
-void JNI_OnUnload(JavaVM*, void*) {
-    // Terminate the running Qt Application
-    QApplication.exit(0);
-    if (globalVmLoader) {
-        globalVmLoader->unloadVm();
-        delete (globalVmLoader);
-    }
-}
-#else
 int main(int argc, char** argv) {
 
     qDebug() << "Attempting to load JVM...";
@@ -131,26 +68,20 @@ int main(int argc, char** argv) {
     // Create the loader instance with the appropriate configuration options.
     try {
 
-#ifdef Q_OS_UNIX
-        // Unix OS has no common way of detecting jvm path, so for
-        // Unix, a detectJVMPath function is used.
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MACX)
+        // As for now, Unix is not supported. We need to be find out
+        // how to find a JVM installation on Unix platforms first.
+#error Unix based systems are not supported yet.
+
         string jvmPath;
-        try {
-            jvmPath = detectJVMPath();
-            qDebug() << "Found JVM path:" << jvmPath.c_str();
-        } catch (runtime_error& err) {
-            qWarning() << "Error during JVM path detection:" << err.what();
-            return EXIT_FAILURE;
-        }
-        globalVmLoader = new UnixVmLoader (jvmPath, JNI_VERSION_1_6);
+        UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
 #else
         // Windows installations have a key in registry indicating the Java installation.
         // The special Win32VmLoader makes use of this key to find a JVM.
-        globalVmLoader = new Win32VmLoader();
+        Win32VmLoader loader;
 #endif
 
         OptionList options;
-
         // Add the PowerGrid jar file to the classpath
         options.push_back( CustomOption("-Djava.class.path=./PowerGridLoader.jar") );
 #ifdef PG_DEBUG
@@ -159,12 +90,10 @@ int main(int argc, char** argv) {
 
         // create the JVM
         try {
-            helper::createVm( *loader, options, false);
+            helper::createVm(loader, options);
             qDebug() << "JVM created";
         } catch (JNIException& e) {
-
             qWarning() << "[FAILURE] Creating VM failed:" << e.what();
-
             return EXIT_FAILURE;
         }
 
@@ -185,12 +114,10 @@ int main(int argc, char** argv) {
         if (!stringClass) {
             throw JNIException("String class not found");
         }
-
         jstring arg1 = env->NewStringUTF("-u");
         if (!arg1) {
             throw JNIException("Failed to create UTF String \"-u\"");
         }
-
         jarray args = env->NewObjectArray(1, stringClass, arg1);
         if (!args) {
             throw JNIException("Failed to allocate String[] object");
@@ -216,13 +143,13 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-    // The JVM is started and is running, now create our control frame.
-    int result = execute(argc, argv);
-
-    if (globalVmLoader) {
-        globalVmLoader->unloadVm();
-        delete (globalVmLoader);
-    }
-    return result;
+    // The JVM is started and is running, now create our
+    // PowerGrid Qt Application and frame.
+    QApplication app (argc, argv);
+    app.setApplicationName(QStringLiteral("PowerGrid"));
+    MainWindow window;
+    window.show();
+    return app.exec();
 }
+
 #endif

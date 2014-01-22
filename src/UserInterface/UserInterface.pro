@@ -31,18 +31,17 @@
 # Basic properties of the project itself
 #------------------------------------------------
 QT          = core gui widgets concurrent
-TEMPLATE    = app
 CONFIG     += c++11
-
-win32:     RC_FILE = powergrid.rc
-else:macx: ICON    = powergrid.icns
 
 macx {
     # A bug in Oracle's JVM prevents us from creating a VM
     # on Mac OS X. We can fix this by launching the Java Loader
     # and allow the running JVM to link to PowerGrid as a library.
-    DEFINES += PG_ALLOW_JNI_ONLOAD
+    DEFINES += PG_BUILD_JNILIB
     TEMPLATE = lib
+    # JNI libraries on Mac OS end with ".jnilib" instead of the
+    # default ".dylib" for dynamic libraries.
+    QMAKE_EXTENSION_SHLIB = jnilib
 }
 else {
     # On other platforms, we launch the other way. This way we
@@ -50,7 +49,10 @@ else {
     TEMPLATE = app
 }
 
-# Make sure the executable is named PowerGrid and is in
+win32:     RC_FILE = powergrid.rc
+else:macx: ICON    = powergrid.icns
+
+# Make sure the executable/library is named PowerGrid and is in
 # an easy to find location
 # See also doc/autoBuildInstructions.md
 TARGET = PowerGrid
@@ -61,13 +63,16 @@ QMAKE_CXXFLAGS += -std=gnu++11
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-SOURCES     = main.cpp \
-              mainwindow.cpp
-HEADERS     = mainwindow.h
-FORMS       = mainwindow.ui
-RESOURCES   = resources.qrc
-OTHER_FILES = powergrid.rc \
-              powergrid.icns
+macx: SOURCES += libmain.cpp
+else: SOURCES += main.cpp
+
+SOURCES       += mainwindow.cpp
+
+HEADERS        = mainwindow.h
+FORMS          = mainwindow.ui
+RESOURCES      = resources.qrc
+OTHER_FILES    = powergrid.rc \
+                 powergrid.icns
 
 win32 {
     # Windows has this specific VmLoader

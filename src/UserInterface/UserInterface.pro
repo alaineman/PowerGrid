@@ -30,7 +30,7 @@
 #------------------------------------------------
 # Basic properties of the project itself
 #------------------------------------------------
-QT          = core gui widgets concurrent
+QT          = core gui widgets
 CONFIG     += c++11
 
 macx {
@@ -42,6 +42,7 @@ macx {
     # JNI libraries on Mac OS end with ".jnilib" instead of the
     # default ".dylib" for dynamic libraries.
     QMAKE_EXTENSION_SHLIB = jnilib
+    QT += concurrent
 }
 else {
     # On other platforms, we launch the other way. This way we
@@ -58,6 +59,37 @@ else:macx: ICON    = powergrid.icns
 TARGET = PowerGrid
 DESTDIR = $$PWD/../../dist
 
+# Add instruction to copy dependant Qt libraries to DESTDIR
+win32 {
+    QTDIR = C:/Qt/Qt5.2.0/5.2.0/mingw48_32/bin # machine dependant hack (Can we get this path from environment?)
+    qtlibs.path = $$DESTDIR
+    qtlibs.CONFIG = no_check_exist
+    debug {
+        qtlibs.files += $$QTDIR/Qt5Cored.dll
+        qtlibs.files += $$QTDIR/Qt5Guid.dll
+        qtlibs.files += $$QTDIR/Qt5Widgetsd.dll
+    }
+    release {
+        qtlibs.files += $$QTDIR/Qt5Core.dll
+        qtlibs.files += $$QTDIR/Qt5Gui.dll
+        qtlibs.files += $$QTDIR/Qt5Widgets.dll
+    }
+    win32-g++ {
+        qtlibs.files += $$QTDIR/icudt51.dll
+        qtlibs.files += $$QTDIR/icuin51.dll
+        qtlibs.files += $$QTDIR/icuuc51.dll
+        qtlibs.files += $$QTDIR/libgcc_s_dw2-1.dll
+        qtlibs.files += $$QTDIR/libstdc++-6.dll
+        qtlibs.files += $$QTDIR/libwinpthread-1.dll
+    }
+    # We may need to add specific files for other compilers
+    else: warning(possibly missing compiler dependant libraries)
+
+    INSTALLS += qtlibs
+}
+else {
+    warning(missing dependency specs; Qt libraries are not copied)
+}
 QMAKE_CXXFLAGS += -std=gnu++11
 
 #------------------------------------------------

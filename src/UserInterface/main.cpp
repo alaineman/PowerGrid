@@ -46,9 +46,12 @@
 #include "jace/JNIHelper.h"
 #include "jace/OptionList.h"
 
+// OS-dependant headers
 #ifdef Q_OS_UNIX
 #  include "jace/UnixVmLoader.h"
-#else
+#  include <QList>
+#  include <QDir>
+#elif defined(Q_OS_WIN32)
 #  include "Win32VmLoader.h"
 #endif
 
@@ -68,12 +71,46 @@ int main(int argc, char** argv) {
     // Create the loader instance with the appropriate configuration options.
     try {
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACX)
-        // As for now, Unix is not supported. We need to be find out
-        // how to find a JVM installation on Unix platforms first.
-#error Unix based systems are not supported yet.
+#if defined(Q_OS_UNIX)
+        QString jvmPath;
+        // get the JAVA_HOME environment variable.
+        QByteArray java_home_bytes = qgetenv("JAVA_HOME");
+        QString java_home(java_home_bytes);
+        if (java_home.isEmpty()) {
+            throw JNIException("JAVA_HOME is not set; cannot find installed jre");
+        }
+        // Now we have to look for libjvm.so in this directory
+        // and subdirectories. We do this iteratively using a
+        // queue of directories (implemented as a QList).
+        QList<QDir> directories;
+        directories.append(java_home);
 
-        string jvmPath;
+        while (!directories.empty()) {
+            QDir current = directories.takeFirst();
+            QFileInfoList entries = current.entryInfoList();
+            QFileInfoList::iterator it = entries.begin();
+            for (;it != entries.end(); it++) {
+                QFileInfo info = *it;
+                if (info.filename() == QStringLiteral("libjvm.so")) {
+                    // We found it
+                    jvmPath = info.canonicalFilePath();
+                    break;
+                }
+                if (info.isDir()) {
+                    // Add the directories to the list of directories
+                    // to search.
+                    directories.prepend(info.absoluteDir());
+                }
+            }
+            if (!jvmPath.isEmpty()) {
+                break;
+            }
+        }
+
+        if (jvmPath.isEmpty()) {
+            throw JNIException("Cannot find libjvm.so in JAVA_HOME directory");
+        }
+
         UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
 #else
         // Windows installations have a key in registry indicating the Java installation.

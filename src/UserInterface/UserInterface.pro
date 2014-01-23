@@ -61,7 +61,8 @@ DESTDIR = $$PWD/../../dist
 
 # Add instruction to copy dependant Qt libraries to DESTDIR
 win32 {
-    QTDIR = $$[QT_INSTALL_PREFIX]/bin # the 'bin' folder of the Qt installation
+    # On Windows, Qt libraries are in the 'bin' folder
+    QTDIR = $$[QT_INSTALL_PREFIX]/bin
     qtlibs.path = $$DESTDIR
     qtlibs.CONFIG = no_check_exist
     CONFIG(debug, debug|release) {
@@ -86,6 +87,17 @@ win32 {
     else: warning(possibly missing compiler dependant libraries)
     INSTALLS += qtlibs
 }
+else:macx {
+    # On mac, Qt libraries are stored as Mac OS frameworks
+    QTDIR = $$[QT_INSTALL_PREFIX]/lib
+    qtlibs.path = $$DESTDIR
+    qtlibs.files += $$QTDIR/QtCore.framework
+    qtlibs.files += $$QTDIR/QtGui.framework
+    qtlibs.files += $$QTDIR/QtWidgets.framework
+    qtlibs.files += $$QTDIR/QtConcurrent.framework
+
+    INSTALLS += qtlibs
+}
 else {
     warning(missing dependency specs; Qt libraries are not copied)
 }
@@ -102,8 +114,7 @@ SOURCES       += mainwindow.cpp
 HEADERS        = mainwindow.h
 FORMS          = mainwindow.ui
 RESOURCES      = resources.qrc
-OTHER_FILES    = powergrid.rc \
-                 powergrid.icns
+OTHER_FILES    = powergrid.rc
 
 win32 {
     # Windows has this specific VmLoader

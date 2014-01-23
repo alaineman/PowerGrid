@@ -84,7 +84,6 @@ win32 {
     }
     # We may need to add specific files for other compilers
     else: warning(possibly missing compiler dependant libraries)
-    message(Configured to copy [$${qtlibs.files}] to $$DESTDIR)
     INSTALLS += qtlibs
 }
 else {

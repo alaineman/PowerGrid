@@ -61,15 +61,15 @@ DESTDIR = $$PWD/../../dist
 
 # Add instruction to copy dependant Qt libraries to DESTDIR
 win32 {
-    QTDIR = C:/Qt/Qt5.2.0/5.2.0/mingw48_32/bin # machine dependant hack (Can we get this path from environment?)
+    QTDIR = $$[QT_INSTALL_PREFIX]/bin # the 'bin' folder of the Qt installation
     qtlibs.path = $$DESTDIR
     qtlibs.CONFIG = no_check_exist
-    debug {
+    CONFIG(debug, debug|release) {
         qtlibs.files += $$QTDIR/Qt5Cored.dll
         qtlibs.files += $$QTDIR/Qt5Guid.dll
         qtlibs.files += $$QTDIR/Qt5Widgetsd.dll
     }
-    release {
+    CONFIG(release, debug|release) {
         qtlibs.files += $$QTDIR/Qt5Core.dll
         qtlibs.files += $$QTDIR/Qt5Gui.dll
         qtlibs.files += $$QTDIR/Qt5Widgets.dll
@@ -79,12 +79,12 @@ win32 {
         qtlibs.files += $$QTDIR/icuin51.dll
         qtlibs.files += $$QTDIR/icuuc51.dll
         qtlibs.files += $$QTDIR/libgcc_s_dw2-1.dll
-        qtlibs.files += $$QTDIR/libstdc++-6.dll
+        qtlibs.files += $$QTDIR/libstd~1.dll
         qtlibs.files += $$QTDIR/libwinpthread-1.dll
     }
     # We may need to add specific files for other compilers
     else: warning(possibly missing compiler dependant libraries)
-
+    message(Configured to copy [$${qtlibs.files}] to $$DESTDIR)
     INSTALLS += qtlibs
 }
 else {

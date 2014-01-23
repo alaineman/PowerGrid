@@ -21,6 +21,9 @@
 
 #include <jni.h>
 #include "jace/WrapperVmLoader.h"
+#include <QApplication>
+#include "mainwindow.h"
+#include <QtConcurrent>
 
 using namespace jace;
 
@@ -42,20 +45,23 @@ int execute(int argc, char** argv) {
 
 // These two functions allow a JVM to load this application
 // as a library
-void JNI_OnLoad(JavaVM* vm, void*) {
+jint JNI_OnLoad(JavaVM* vm, void*) {
     globalVmLoader = new WrapperVmLoader(vm);
     // Start the Qt Event Loop on another Thread
-    QtConcurrent::run(execute, argc, argv);
+    char* programName = const_cast<char*>("PowerGrid");
+    QtConcurrent::run(execute, 1, &programName);
+    return JNI_OK;
 }
 
 void JNI_OnUnload(JavaVM*, void*) {
-    // Terminate the running Qt Application
-    QApplication.exit(0);
-
     if (globalVmLoader) {
+        // Our VmLoader is no longer valid
         globalVmLoader->unloadVm();
         delete (globalVmLoader);
     }
+
+    // Terminate the running Qt Application
+    QApplication::exit();
 }
 
 #endif

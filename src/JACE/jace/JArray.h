@@ -407,7 +407,7 @@ class Iterator : public std::iterator<std::random_access_iterator_tag, ElementTy
   }
 
   // post
-  Iterator operator++( int dummy ) {
+  Iterator operator++( int ) {
 
     #ifdef JACE_CHECK_ARRAYS
       if ( current >= parent->length() ) {
@@ -447,7 +447,7 @@ class Iterator : public std::iterator<std::random_access_iterator_tag, ElementTy
   }
 
   // post
-  Iterator operator--( int dummy ) {
+  Iterator operator--( int ) {
 
     #ifdef JACE_CHECK_ARRAYS
       if ( current == 0 ) {
@@ -562,13 +562,13 @@ bool operator==( const JArray& array );
 mutable int length_;
 
 // Methods for future implementation of caching
-void cache( int begin, int end ) {
+void cache( int, int ) {
 }
 
-void release( int begin, int end ) {
+void release( int, int ) {
 }
 
-void setElement( ElementType& element, int index ) {
+void setElement( ElementType&, int ) {
 }
 
 friend class Iterator;

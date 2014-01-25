@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------
-# Copyright 2012-2013 Patrick Kramer, Vincent Wassenaar
+# Copyright 2012-2014 Patrick Kramer, Vincent Wassenaar
 #
 # This file is part of PowerGrid.
 #
@@ -55,7 +55,7 @@
 
 #------------------------------------------------------------------------
 # All other files are part of the Oracle JDK.
-# These files are subject to the following license terms:
+# These files are subject to the following license:
 #
 # Copyright (c) 1999, 2001, Oracle and/or its affiliates
 # All rights reserved.
@@ -79,16 +79,12 @@ CONFIG     += staticlib thread c++11 # We tell QMake we're building a static lib
 # JACE uses .tsd and .tsp files as C++ header files, so include those as well
 QMAKE_EXT_H += .tsp .tsd
 
-# enable C++11 features (need two to work for both Apple's clang and GNU's g++ compilers)
-# QMAKE_CXXFLAGS += -std=gnu++11
-
 # Tell JACE we're building statically, and want to load the JVM dynamically.
 DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD
 
 #------------------------------------------------
 # Add the dependency for jni
 #------------------------------------------------
-# LIBS += -L$$PWD/../lib -ljvm
 
 # We include the JNI headers in the project directly.
 HEADERS += \

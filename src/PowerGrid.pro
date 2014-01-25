@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------
-# Copyright 2012-2013 Patrick Kramer, Vincent Wassenaar
+# Copyright 2012-2014 Patrick Kramer, Vincent Wassenaar
 #
 # This file is part of PowerGrid.
 #
@@ -29,7 +29,8 @@
 TARGET = PowerGrid
 TEMPLATE = subdirs
 
-SUBDIRS += JACE UserInterface # PluginFramework DefaultPlugin
+SUBDIRS += JACE UserInterface PluginFramework # DefaultPlugin
 
 UserInterface.depends = JACE
+PluginFramework.depends = JACE
 #DefaultPlugin.depends = PluginFramework

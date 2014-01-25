@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------
-# Copyright 2012-2013 Patrick Kramer, Vincent Wassenaar
+# Copyright 2012-2014 Patrick Kramer, Vincent Wassenaar
 #
 # This file is part of PowerGrid.
 #
@@ -75,10 +75,10 @@ win32 {
         qtlibs.files += $$QTDIR/Qt5Gui.dll
         qtlibs.files += $$QTDIR/Qt5Widgets.dll
     }
+    qtlibs.files += $$QTDIR/icudt51.dll
+    qtlibs.files += $$QTDIR/icuin51.dll
+    qtlibs.files += $$QTDIR/icuuc51.dll
     win32-g++ {
-        qtlibs.files += $$QTDIR/icudt51.dll
-        qtlibs.files += $$QTDIR/icuin51.dll
-        qtlibs.files += $$QTDIR/icuuc51.dll
         qtlibs.files += $$QTDIR/libgcc_s_dw2-1.dll
         qtlibs.files += $$QTDIR/libstd~1.dll
         qtlibs.files += $$QTDIR/libwinpthread-1.dll
@@ -101,7 +101,6 @@ else:macx {
 else {
     warning(missing dependency specs; Qt libraries are not copied)
 }
-QMAKE_CXXFLAGS += -std=gnu++11
 
 #------------------------------------------------
 # The files in this project

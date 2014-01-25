@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QString>
 
+#include "mappingunavailableexception.h"
+
 #include "task.h"
 
 namespace plugins {
@@ -43,7 +45,7 @@ namespace plugins {
        * @brief Creates an instance of a Task
        * @return a Task instance
        */
-      virtual Task create();
+      virtual Task createTask() throw( );
   };
 }
 #endif // TASKDESCRIPTOR_H

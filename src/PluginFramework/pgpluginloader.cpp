@@ -1,6 +1,7 @@
 #include "pgpluginloader.h"
 #include <stdexcept>
 #include <QDir>
+#include <QDirIterator>
 
 using namespace std;
 
@@ -27,7 +28,7 @@ void PGPluginLoader::loadPlugins() {
         QDirIterator it (dir);
         while (it.hasNext()) {
             QString file = it.next();
-            QPluginLoader loader (file);
+            QPluginLoader* loader = new QPluginLoader(file);
             pluginList.append(loader);
         }
     }
@@ -35,9 +36,12 @@ void PGPluginLoader::loadPlugins() {
 
 void PGPluginLoader::unloadPlugins() {
     if (loaded) {
-        QList<QPluginLoader>::Iterator it = pluginList.begin();
+        QList<QPluginLoader*>::Iterator it = pluginList.begin();
         for (;it != pluginList.end(); it++) {
-            (*it).unload();
+            if (*it) {
+                (*it)->unload();
+                delete (*it);
+            }
         }
         pluginList.clear();
     }
@@ -49,12 +53,14 @@ QList<PGPlugin*> PGPluginLoader::plugins() {
     }
     QList<PGPlugin*> ps;
     for (int i=0;i<pluginList.size();i++) {
-        QPluginLoader loader = pluginList[i];
-        QObject* obj = loader.instance();
-        if (obj) {
-            PGPlugin* pgplugin = qobject_cast<PGPlugin*>(obj);
-            if (pgplugin) {
-                ps.append(pgplugin);
+        QPluginLoader* loader = pluginList[i];
+        if (loader) {
+            QObject* obj = loader->instance();
+            if (obj) {
+                PGPlugin* pgplugin = qobject_cast<PGPlugin*>(obj);
+                if (pgplugin) {
+                    ps.append(pgplugin);
+                }
             }
         }
     }

@@ -45,7 +45,7 @@ namespace plugins {
        * @brief Creates an instance of a Task
        * @return a Task instance
        */
-      virtual Task createTask() throw( );
+      virtual Task createTask();
   };
 }
 #endif // TASKDESCRIPTOR_H

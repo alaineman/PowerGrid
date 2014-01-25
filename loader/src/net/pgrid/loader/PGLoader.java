@@ -12,7 +12,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import net.pgrid.loader.bridge.UpdaterRunner;
 import net.pgrid.loader.logging.Logger;
 import net.pgrid.loader.util.ArgumentParser;
 import net.pgrid.loader.util.NullOutputStream;
@@ -91,7 +90,7 @@ public class PGLoader {
         parser.merge("debug", "d");   // debug mode enabled
         parser.merge("quiet", "q");   // quiet mode enabled (ignored when "debug" is specified)
         parser.merge("verbose", "v"); // verbose mode (ignored when "debug" or "quiet" is specified)
-        parser.merge("updater", "u"); // updater enabled
+        parser.merge("client-load", "c"); // loaded from native client (do not set this manually!)
         parser.merge("force-download", "f"); // force redownloading client
         
         if (parser.hasFlag("debug")) {
@@ -104,7 +103,7 @@ public class PGLoader {
         
         try {
             INSTANCE.start(parser.hasFlag("debug"),
-                           parser.hasFlag("updater"),
+                           parser.hasFlag("client-load"),
                            parser.hasFlag("force-download"));
         } catch (IOException e) {
             LOGGER.log("Exception during PowerGrid startup", e);
@@ -133,11 +132,11 @@ public class PGLoader {
     /**
      * Starts the client with the specified settings.
      * @param debugMode true to enable debugging features, false to disable
-     * @param updater true to enable the updater, false to disable
+     * @param client true when loaded from native client, false otherwise
      * @param force true to force re-downloading the client, even when no new version is found
      * @throws java.io.IOException if collecting the data failed.
      */
-    public synchronized void start(boolean debugMode, boolean updater, boolean force) throws IOException {
+    public synchronized void start(boolean debugMode, boolean client, boolean force) throws IOException {
         long startTime;
         if (debugMode) {
             LOGGER.log("Debug mode enabled");
@@ -145,6 +144,19 @@ public class PGLoader {
             startTime = System.currentTimeMillis();
         } else {
             startTime = 0;
+        }
+        
+        if (client) {
+            // If the native client started the loader, we set this to true.
+            NativesLoader.setPowergridAvailable(true);
+            LOGGER.log("Loader started from native client");
+        } else {
+            // Try to load the native client
+            if (NativesLoader.checkLoadPowerGrid()) {
+                LOGGER.log("Loaded PowerGrid as native dynamic library");
+            } else {
+                LOGGER.log("PowerGrid client not detected, running stand-alone");
+            }
         }
         
         getFrame().init();
@@ -169,13 +181,6 @@ public class PGLoader {
             }
             getFrame().showMessage("Downloading client...");
             downloader.loadClient();
-            
-            if (updater) {
-                // Start the updater. This Thread will finish on its own later, 
-                // we don't really need to check it anymore.
-                LOGGER.log("Starting Updater");
-                new Thread(new UpdaterRunner(newVersion, debugMode), "PG_Updater").start();
-            }
         }
         
         try {

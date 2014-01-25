@@ -5,7 +5,7 @@ namespace plugins {
   TaskDescriptor::TaskDescriptor(QString name, QString description) :
     nm(name), desc(description) {}
 
-  Task TaskDescriptor::create() {
+  Task TaskDescriptor::createTask() {
     throw std::runtime_error("Cannot create Task");
   }
 }

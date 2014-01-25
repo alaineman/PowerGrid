@@ -139,6 +139,9 @@ int main(int argc, char** argv) {
         // Register all natives
         bridge::updater::UpdaterRunner_registerNatives(env); // net.pgrid.loader.bridge.UpdaterRunner
 
+        // Start the PowerGridLoader
+        // Actual command (in java): net.pgrid.loader.PGLoader.main(new String[]{"-c"});
+
         jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PGLoader");
         if (!pgLoaderClass) {
             throw JNIException("PGLoader class not found");
@@ -151,9 +154,11 @@ int main(int argc, char** argv) {
         if (!stringClass) {
             throw JNIException("String class not found");
         }
-        jstring arg1 = env->NewStringUTF("-u");
+        // This is needed to tell the loader the native client is available.
+        // Otherwise the loader will try to link with a PowerGrid dynamic library.
+        jstring arg1 = env->NewStringUTF("-c");
         if (!arg1) {
-            throw JNIException("Failed to create UTF String \"-u\"");
+            throw JNIException("Failed to create UTF String \"-c\"");
         }
         jarray args = env->NewObjectArray(1, stringClass, arg1);
         if (!args) {

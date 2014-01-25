@@ -16,7 +16,7 @@ namespace plugins {
 class PGPluginLoader {
 private:
     QString directoryName;
-    QList<QPluginLoader> pluginList;
+    QList<QPluginLoader*> pluginList;
     bool loaded;
 public:
     PGPluginLoader(QString dir = "");

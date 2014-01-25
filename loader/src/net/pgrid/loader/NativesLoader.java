@@ -18,7 +18,6 @@
 package net.pgrid.loader;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 
 /**
@@ -86,20 +85,19 @@ public class NativesLoader {
         String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         boolean success = false;
         if (osName.contains("win")) {
-            library = new File("PowerGrid.dll");
+            library = new File("./PowerGrid.dll");
         } else if (osName.contains("mac")) {
             // JNI libraries have .jnilib extension on Mac OS X
-            library = new File("libPowerGrid.jnilib");
+            library = new File("./libPowerGrid.jnilib");
         } else { // Assume some Unix OS
-            library = new File("libPowerGrid.so");
+            library = new File("./libPowerGrid.so");
         }
         if (library.exists()) {
             try {
-                System.load(library.getCanonicalPath());
+                System.loadLibrary("PowerGrid");
                 success = true;
-            } catch (IOException | UnsatisfiedLinkError ex) {}
+            } catch (UnsatisfiedLinkError ex) {}
         }
-        
         powergridAvailable = success;
         return success;
     }

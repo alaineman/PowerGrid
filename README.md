@@ -1,4 +1,4 @@
-![PowerGrid](http://80.57.59.56/styles/skymiles_red/imageset/site_logo.png)
+![PowerGrid](http://powergrid-client.net/styles/skymiles_red/imageset/site_logo.png)
 
 PowerGrid is a revolutionary bot platform that aims to provide a more open approach to botting than other clients have shown so far. Being written in C++, PowerGrid also aims to provide a more fluent experience for end-users, and a generally faster and more dynamic programming language to work in.  
 

@@ -10,7 +10,7 @@ using std::string;
 /**
  * @brief JNIException subclass for indicating missing bindings.
  *
- * This type of objects may be thrown when a required class mapping
+ * This type of exception may be thrown when a required class mapping
  * is not available. It usually indicates that a class or field mapping
  * used to exist but was removed by a Runescape update. It could also
  * indicate the updater is no longer able to find the binding for the class.

@@ -1,4 +1,5 @@
 #include "rsclass.h"
+#include "mappingunavailableexception.h"
 using std::string;
 
 /**
@@ -8,11 +9,20 @@ using std::string;
  *               a call to JNIEnv::FindClass.
  * @param simpleName the simple (semantic) name of the RSClass
  */
-RSClass::RSClass(const string name, const string simpleName) :
+RSClass::RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap) :
   JClassImpl(name),
-  simpleName (simpleName) {
+  simpleName (simpleName),
+  fieldMap (fMap) {
 }
 
-const string& RSClass::getSimpleName() const {
+const QString &RSClass::getSimpleName() const {
   return simpleName;
+}
+
+string RSClass::getFieldName(QString simpleName) const {
+  QMap<QString, QString>::const_iterator it = fieldMap.find(simpleName);
+  if (it == fieldMap.cend()) {
+      throw MappingUnavailableException((this->simpleName + simpleName).toStdString());
+  }
+  return it.value().toStdString();
 }

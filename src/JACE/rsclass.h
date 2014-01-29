@@ -9,14 +9,19 @@
 #include <string>
 using std::string;
 
+#include <QMap>
+#include <QString>
+
 class RSClass : public jace::JClassImpl {
   private:
-    string simpleName;
+    QString simpleName;
+    QMap<QString, QString> fieldMap;
   public:
-    JACE_API RSClass(const string name, const string simpleName);
+    JACE_API RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap);
     JACE_API virtual ~RSClass() throw() {}
 
-    JACE_API virtual const string& getSimpleName() const;
+    JACE_API virtual const QString &getSimpleName() const;
+    JACE_API string getFieldName(QString simpleName) const;
 };
 
 #endif // RSCLASS_H

@@ -6,6 +6,8 @@
 #include <QMap>
 #include <QFile>
 
+class QXmlStreamReader;
+
 class RSClassMapper : public QObject {
     Q_OBJECT
   private:
@@ -15,6 +17,8 @@ class RSClassMapper : public QObject {
     QString source;
     QMap<QString, QString> classMap;                // semanticClassName => realClassName
     QMap<QString, QMap<QString, QString>> fieldMap; // semanticClassName => ( semanticFieldName => realFieldName )
+
+    void parseFieldElement(QXmlStreamReader reader);
   public:
     JACE_API static RSClassMapper* DefaultInstance();
 

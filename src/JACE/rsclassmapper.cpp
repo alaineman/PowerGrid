@@ -2,6 +2,10 @@
 #include "mappingunavailableexception.h"
 #include <stdexcept>
 #include <QDebug>
+#include <QXmlStreamReader>
+#include "jace/JNIException.h"
+
+using jace::JNIException;
 
 QString RSClassMapper::defaultDataFile ("cache/updater.dat");
 RSClassMapper* RSClassMapper::classmapper = nullptr;
@@ -35,7 +39,24 @@ QString RSClassMapper::getRealName(QString semanticName) const {
 
 void RSClassMapper::parseData() {
     if (classMap.isEmpty()) {
-        // TODO implement actual parsing of updater file.
+        // TODO maybe pull directly from server?
+        QXmlStreamReader reader (QFile("cache/updaterData.xml"));
+        reader.readNext();
+        if (reader.name() != "client") {
+            qDebug() << "No client tag as start tag, but" << reader.name();
+        }
+        while (!reader.atEnd()) {
+            reader.readNext();
+            // TODO parse class and store in classMap
+            parseFieldElement(reader /*, className*/);
+        }
+        if (reader.hasError()) {
+            throw JNIException("Failed to parse updater data");
+        }
         qDebug() << "RSClassMapper parsed updater data";
     }
+}
+
+void RSClassMapper::parseFieldElement(QXmlStreamReader reader) {
+    // TODO parse a field and store in field map
 }

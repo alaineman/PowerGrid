@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import net.pgrid.loader.bridge.UpdaterRunner;
 import net.pgrid.loader.logging.Logger;
 import net.pgrid.loader.util.ArgumentParser;
 import net.pgrid.loader.util.NullOutputStream;
@@ -181,6 +182,8 @@ public class PGLoader {
             }
             getFrame().showMessage("Downloading client...");
             downloader.loadClient();
+            UpdaterRunner updaterRunner = new UpdaterRunner(newVersion, debugMode, downloader.getChecksum());
+            new Thread(updaterRunner, "PG_updater").start();
         }
         
         try {

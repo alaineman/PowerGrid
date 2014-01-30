@@ -23,6 +23,7 @@ public class UpdaterRunner implements Runnable {
     private final RSVersionInfo info;
     private String updaterServer = null;
     private int port = -1;
+    private final String checksum;
     
     private boolean profile;
 
@@ -31,10 +32,11 @@ public class UpdaterRunner implements Runnable {
      * @param info the RSVersionInfo
      * @param profile true to profile the updater and print the results, false to disable
      */
-    public UpdaterRunner(RSVersionInfo info, boolean profile) {
+    public UpdaterRunner(RSVersionInfo info, boolean profile, String checksum) {
         if (info == null) {
             throw new IllegalArgumentException("null");
         }
+        this.checksum = checksum;
         this.info = info;
         this.profile = profile;
     }
@@ -82,7 +84,7 @@ public class UpdaterRunner implements Runnable {
             }
             
             // Tell the native code the updater is done
-            signalUpdaterReady();
+            signalUpdaterReady(checksum);
             
             if (profile) {
                 long timeTaken = System.currentTimeMillis() - timeStarted;
@@ -96,5 +98,5 @@ public class UpdaterRunner implements Runnable {
     /**
      * Notifies the C++ client the updater is ready.
      */
-    private native void signalUpdaterReady();
+    private native void signalUpdaterReady(String checksum);
 }

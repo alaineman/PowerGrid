@@ -28,8 +28,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -39,9 +42,9 @@ import net.pgrid.loader.logging.Logger;
 /**
  * Downloads required files from the Runescape servers.
  * <p/>
- * This class contains all functionality required to download the client and 
- * all required parameters for launching it.
- * 
+ * This class contains all functionality required to download the client and all
+ * required parameters for launching it.
+ *
  * @author Patrick Kramer
  */
 public class RSDownloader {
@@ -50,23 +53,22 @@ public class RSDownloader {
      * The Logger instance this class logs to.
      */
     private static final Logger LOGGER = Logger.get("LOADER");
-    
     /**
-     * Link to the Runescape config file. 
+     * Link to the Runescape config file.
      * <p/>
      * It is used as the default link for the configuration data.
      */
     public static final String CONFIG_LINK = "http://www.runescape.com/k=3/l=0/jav_config.ws";
-    
     /**
      * URL of the Runescape config file. It is set in the constructor.
      */
     private URL configURL;
+    private String checksum = null;
     private RSVersionInfo versionInfo = null;
-    
+
     /**
-     * Creates a new ClientDownloader that uses the {@code CONFIG_LINK} as config
-     * URL.
+     * Creates a new ClientDownloader that uses the {@code CONFIG_LINK} as
+     * config URL.
      */
     public RSDownloader() {
         try {
@@ -76,9 +78,10 @@ public class RSDownloader {
             throw (Error) new AssertionError("Invalid CONFIG_LINK constant").initCause(e);
         }
     }
-    
+
     /**
      * Creates a new ClientDownloader that uses the specified URL as config URL.
+     *
      * @param configURL the config URL
      * @throws IllegalArgumentException when {@code configURL == null}
      */
@@ -87,6 +90,14 @@ public class RSDownloader {
             throw new IllegalArgumentException();
         }
         this.configURL = configURL;
+    }
+
+    /**
+     * Returns the checksum of the client or null if the client has not been downloaded yet.
+     * @return the checksum of the client or null if the client has not been downloaded yet.
+     */
+    public String getChecksum() {
+        return checksum;
     }
 
     /**
@@ -114,7 +125,7 @@ public class RSDownloader {
             // This is the link we're redirected to.
             String redirectLink = conn.getHeaderField("Location");
             conn.disconnect();
-            
+
             // This may happen if the connection to the configURL fails. Then,
             // there will be no header information to collect.
             // As this may indicate there is no active internet connection
@@ -130,8 +141,8 @@ public class RSDownloader {
             try (InputStream in = conn.getInputStream()) {
                 // using a Scanner with the right delimiter provides the entire 
                 // content of the stream at once in only a few lines.
-                
-                Scanner out = new Scanner(Channels.newChannel(in), 
+
+                Scanner out = new Scanner(Channels.newChannel(in),
                         Updater.CHARSET.name()).useDelimiter("\\A");
                 if (out.hasNext()) {
                     versionInfo = parseConfig(assignedUserFlow, out.next());
@@ -163,30 +174,44 @@ public class RSDownloader {
         if (!cacheDirectory.isDirectory() && cacheDirectory.mkdir()) {
             LOGGER.log("Created cache directory");
         }
-        try (InputStream in = conn.getInputStream(); 
-             FileOutputStream out = new FileOutputStream(new File(cacheDirectory, "client.jar"))) {
-            
-            ReadableByteChannel reader = Channels.newChannel(in);
-            WritableByteChannel writer = Channels.newChannel(out);
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            try (InputStream in = conn.getInputStream();
+                    FileOutputStream out = new FileOutputStream(new File(cacheDirectory, "client.jar"))) {
 
-            ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
+                DigestInputStream din = new DigestInputStream(in, md);
 
-            while (reader.read(buffer) != -1) {
+                ReadableByteChannel reader = Channels.newChannel(din);               
+                FileChannel writer = out.getChannel();
+
+                ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
+
+                while (reader.read(buffer) != -1) {
+                    buffer.flip();
+                    writer.write(buffer);
+                    buffer.compact();
+                }
                 buffer.flip();
-                writer.write(buffer);
-                buffer.compact();
+                while (buffer.hasRemaining()) {
+                    writer.write(buffer);
+                }
             }
-            buffer.flip();
-            while (buffer.hasRemaining()) {
-                writer.write(buffer);
+            byte[] digest = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02X ", b&0xFF));
             }
+            checksum = sb.toString();
+            
+        } catch (NoSuchAlgorithmException e) {
+            throw new AssertionError("MD5 not supported", e);
         }
     }
 
     /**
      * Parses the required data from the downloaded config data.
      * <p/>
-     * All {@code Applet} parameters are parsed, as well as all client 
+     * All {@code Applet} parameters are parsed, as well as all client
      * parameters.
      * <p/>
      * @throws IllegalStateException when the configData is not yet loaded.
@@ -195,11 +220,11 @@ public class RSDownloader {
         if (configData == null) {
             throw new IllegalStateException();
         }
-        
+
         Map<String, String> appParams = new HashMap<>(32);
         Map<String, String> cliParams = new HashMap<>(32);
         Scanner sc = new Scanner(configData);
-        
+
         while (sc.hasNext()) {
             String line = sc.nextLine();
             if (line.startsWith("param=")) {

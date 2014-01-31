@@ -49,7 +49,6 @@ public class PGLoader {
         if (success) {
             Logger.setDefaultTarget(out);
         }
-        
         LOGGER = Logger.get("CORE");
         INSTANCE = new PGLoader();
     }
@@ -229,14 +228,13 @@ public class PGLoader {
         private static final Logger LOGGER = Logger.get("UNCAUGHT");
         @Override
         public void uncaughtException(Thread thread, Throwable t) {
-            if (thread.getName().startsWith("PG_")) {
-                LOGGER.log("Exception on Thread \"" + thread.getName() + "\":", t);
-            } else {
+            LOGGER.log("Exception on Thread \"" + thread.getName() + "\":", t);
+            if (!thread.getName().startsWith("PG_")) {
                 // do not print stack traces of (obfuscated) RS classes,
                 // but use the System.out PrintStream to send it to the 
                 // runescape.log file.
-                System.out.println("Uncaught Exception in Runescape or on AWT Thread \"" + thread.getName() + "\":");
-                System.out.println('\t' + t.getClass().getSimpleName() + ": " + t.getMessage());
+                System.out.append("Uncaught Exception in Runescape or on AWT Thread \"").append(thread.getName()).println("\":");
+                System.out.append("  ").append(t.getClass().getSimpleName()).append(": ").println(t.getMessage());
             }
         }
     }

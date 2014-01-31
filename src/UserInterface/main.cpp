@@ -124,7 +124,19 @@ int main(int argc, char** argv) {
 #ifdef PG_DEBUG
         options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
 #endif
+#ifdef Q_OS_WIN32
+        options.push_back( LibraryPath(string(qgetenv("USERPROFILE").constData()) + "\\jagexcache\\runescape\\LIVE") );
+#endif
 
+
+#ifdef PG_DEBUG
+        for (OptionList::iterator it = options.begin(); it != options.end(); it++) {
+            OptionList::OptionPtr o = (*it);
+            if (o.get() != NULL) {
+                qDebug() << "Enabled JVM option" << o->stringValue().c_str();
+            }
+        }
+#endif
         // create the JVM
         try {
             helper::createVm(loader, options);

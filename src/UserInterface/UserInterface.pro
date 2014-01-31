@@ -122,7 +122,7 @@ win32 {
 }
 
 # helper defines to detect build mode.
-debug:   DEFINES += PG_DEBUG
+debug: DEFINES += PG_DEBUG
 release: DEFINES += PG_RELEASE
 
 # Depends for JACE

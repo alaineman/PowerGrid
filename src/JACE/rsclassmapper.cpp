@@ -39,6 +39,9 @@ QString RSClassMapper::getRealName(QString semanticName) const {
 }
 
 void RSClassMapper::parseData(jbyteArray data) {
+    if (data == NULL) {
+        throw JNIException("Received NULL jbyteArray as map data");
+    }
     if (classMap.isEmpty()) {
         JNIEnv* env = helper::attach();
         // sizeof(jbyte) == sizeof(char), and QByteArray can be initialized using a const char*

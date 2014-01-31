@@ -1,5 +1,9 @@
 #include "mappingunavailableexception.h"
 
+MappingUnavailableException::MappingUnavailableException(const char* msg) throw() :
+    JNIException( msg) {
+}
+
 MappingUnavailableException::MappingUnavailableException(const std::string& msg) throw() :
     JNIException (msg) {
 }

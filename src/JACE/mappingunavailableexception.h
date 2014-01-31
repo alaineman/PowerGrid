@@ -27,6 +27,12 @@ public:
      * @brief Creates a new MappingUnavailableException with the specified message
      * @param msg the message
      */
+    JACE_API MappingUnavailableException(const char* msg) throw();
+
+    /**
+     * @brief Creates a new MappingUnavailableException with the specified message
+     * @param msg the message
+     */
     JACE_API MappingUnavailableException(const string& msg) throw();
     /**
      * @brief Copy Constructor

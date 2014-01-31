@@ -12,11 +12,11 @@
 namespace jace {
 
 /**
- * A simple extension to std::exception that allows users to 
- * create an exception with a string message. 
+ * A simple extension to std::exception that allows users to
+ * create an exception with a string message.
  *
- * Exception derives from std::exception so that it can 
- * be backwards compatible with anybody expecting 
+ * Exception derives from std::exception so that it can
+ * be backwards compatible with anybody expecting
  * std::exception.
  *
  * @internal - I specify that Exception doesn't ever throw,
@@ -31,7 +31,6 @@ namespace jace {
  */
 class BaseException : public std::exception {
 
-
 public:
 
 
@@ -40,47 +39,45 @@ public:
      *
      */
     JACE_API BaseException( const char* value ) throw ();
-/**
- * Creates a new Exception with the given mesage.
- *
- */
-JACE_API BaseException( const std::string& value ) throw ();
+    /**
+     * Creates a new Exception with the given mesage.
+     *
+     */
+    JACE_API BaseException( const std::string& value ) throw ();
 
-/**
- * Creates a new Exception from the given Exception.
- *
- */
-JACE_API BaseException( const BaseException& rhs ) throw ();
+    /**
+     * Creates a new Exception from the given Exception.
+     *
+     */
+    JACE_API BaseException( const BaseException& rhs ) throw ();
 
-/**
- * Creates a new Exception with the given message.
- */
-JACE_API BaseException(const QString& str) throw ();
+    /**
+     * Creates a new Exception with the given message.
+     */
+    JACE_API BaseException(const QString& str) throw ();
 
-/**
- * Assigns this Exception to the given Exception.
- *
- */
-JACE_API BaseException& operator=( const BaseException& rhs ) throw ();
+    /**
+     * Assigns this Exception to the given Exception.
+     *
+     */
+    JACE_API BaseException& operator=( const BaseException& rhs ) throw ();
 
-/**
- * Destroys this Exception.
- *
- */
-JACE_API virtual ~BaseException() throw ();
+    /**
+     * Destroys this Exception.
+     *
+     */
+    JACE_API virtual ~BaseException() throw ();
 
-/**
- * Returns the message this Exception was created with.
- *
- */
-JACE_API virtual const char *what() const throw ();
-
-
+    /**
+     * Returns the message this Exception was created with.
+     *
+     */
+    JACE_API virtual const char *what() const throw ();
 private:
 
-/* The message for this Exception.
- */
-std::string mValue;
+    /* The message for this Exception.
+     */
+    std::string mValue;
 
 };
 

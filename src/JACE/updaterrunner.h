@@ -15,7 +15,7 @@ extern "C" {
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jstring);
 
 BEGIN_NAMESPACE_2( bridge, updater )
 void UpdaterRunner_registerNatives(JNIEnv* env) throw(jace::JNIException);

@@ -43,9 +43,6 @@ void RSClassMapper::parseData() {
         QFile file ("cache/updaterData.xml");
         QXmlStreamReader reader (&file);
         reader.setNamespaceProcessing(false);
-        if (reader.name() != "client") {
-            qDebug() << "No client tag as start tag, but" << reader.name();
-        }
         QString currentClass;
         QString fieldName;
         while (!reader.atEnd()) {
@@ -76,9 +73,5 @@ void RSClassMapper::parseData() {
                 break;
             }
         }
-        checkError: if (reader.hasError()) {
-            throw JNIException("Failed to parse updater data");
-        }
-        qDebug() << "RSClassMapper parsed updater data";
     }
 }

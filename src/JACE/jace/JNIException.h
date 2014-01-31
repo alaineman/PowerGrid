@@ -7,7 +7,7 @@
 #include "jni.h"
 #include <string>
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 
 /**
@@ -20,30 +20,41 @@ BEGIN_NAMESPACE( jace )
 class JNIException : public BaseException {
 
 public:
+    /**
+     * Creates a new JNIException with the given mesage.
+     *
+     */
+    JACE_API JNIException(const char* str) throw ();
 
-/**
- * Creates a new JNIException with the given mesage.
- *
- */
-JACE_API JNIException( const std::string& value ) throw ();
+    /**
+     * Creates a new JNIException with the given mesage.
+     *
+     */
+    JACE_API JNIException( const std::string& value ) throw ();
 
-/**
- * Creates a new JNIException from an existing JNIException.
- *
- */
-JACE_API JNIException( const JNIException& rhs ) throw ();
+    /**
+     * Creates a new JNIException from an existing JNIException.
+     *
+     */
+    JACE_API JNIException( const JNIException& rhs ) throw ();
 
-/**
- * Creates a new JNIException from an existing JNIException.
- *
- */
-JACE_API JNIException& operator=( const JNIException& rhs ) throw ();
+    /**
+     * Creates a new JNIException with the given mesage.
+     *
+     */
+    JACE_API JNIException( const QString& str) throw();
+
+    /**
+     * Creates a new JNIException from an existing JNIException.
+     *
+     */
+    JACE_API JNIException& operator=( const JNIException& rhs ) throw ();
 
 };
 
 std::string JNIError_toString(jint errCode) throw();
 
-END_NAMESPACE( jace )
+}
 
 
 #endif // #ifndef JACE_JNI_EXCEPTION_H

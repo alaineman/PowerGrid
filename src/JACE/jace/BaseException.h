@@ -7,7 +7,9 @@
 #include <string>
 #include <exception>
 
-BEGIN_NAMESPACE( jace )
+#include <QtCore>
+
+namespace jace {
 
 /**
  * A simple extension to std::exception that allows users to 
@@ -32,6 +34,12 @@ class BaseException : public std::exception {
 
 public:
 
+
+    /**
+     * Creates a new Exception with the given mesage.
+     *
+     */
+    JACE_API BaseException( const char* value ) throw ();
 /**
  * Creates a new Exception with the given mesage.
  *
@@ -43,6 +51,11 @@ JACE_API BaseException( const std::string& value ) throw ();
  *
  */
 JACE_API BaseException( const BaseException& rhs ) throw ();
+
+/**
+ * Creates a new Exception with the given message.
+ */
+JACE_API BaseException(const QString& str) throw ();
 
 /**
  * Assigns this Exception to the given Exception.
@@ -71,9 +84,7 @@ std::string mValue;
 
 };
 
-
-END_NAMESPACE( jace )
-
+}
 
 #endif
 

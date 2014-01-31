@@ -3,9 +3,10 @@
 #include <stdexcept>
 #include <QDebug>
 #include <QXmlStreamReader>
-#include "jace/JNIException.h"
 
-using jace::JNIException;
+#include "jace/JNIException.h"
+#include "jace/JNIHelper.h"
+using namespace jace;
 
 QString RSClassMapper::defaultDataFile ("cache/updater.dat");
 RSClassMapper* RSClassMapper::classmapper = nullptr;
@@ -37,41 +38,61 @@ QString RSClassMapper::getRealName(QString semanticName) const {
     return it.value();
 }
 
-void RSClassMapper::parseData() {
+void RSClassMapper::parseData(jbyteArray data) {
     if (classMap.isEmpty()) {
-        // TODO maybe pull directly from server?
-        QFile file ("cache/updaterData.xml");
-        QXmlStreamReader reader (&file);
+        JNIEnv* env = helper::attach();
+        // sizeof(jbyte) == sizeof(char), and QByteArray can be initialized using a const char*
+        char* bytes = static_cast<char*>(env->GetDirectBufferAddress(data));
+        jlong length = env->GetDirectBufferCapacity(data);
+        QByteArray byteArray (const_cast<const char*>(bytes), length);
+        QXmlStreamReader reader (byteArray);
         reader.setNamespaceProcessing(false);
+
         QString currentClass;
         QString fieldName;
-        while (!reader.atEnd()) {
+        bool readModifier = false;
+        bool stop = true;
+        while (!stop && !reader.atEnd()) {
             reader.readNext();
             // Switches in while loop, still annoying
             switch (reader.tokenType()) {
             case QXmlStreamReader::NoToken:
             case QXmlStreamReader::Invalid:
-                goto checkError; // Switches in while loop, still annoying...
+                stop = true; // Switches in while loop, still annoying...
+                break;
             case QXmlStreamReader::StartElement:
-                if (currentClass.isEmpty()) {
-                    // TODO read name() as class name and store as currentClass
+                if (reader.name() == "modifier") {
+                    readModifier = true;
+                } else if (currentClass.isEmpty()) {
+                    classMap.insert(reader.name().toString(),
+                                    reader.attributes().value("className").toString());
+                    currentClass = reader.name().toString();
                 } else {
                     // TODO read name() as field name and store as fieldName
                 }
                 break;
             case QXmlStreamReader::EndElement:
-                if (fieldName.isEmpty()) {
+                if (readModifier) {
+                    readModifier = false;
+                } else if (fieldName.isEmpty()) {
                     currentClass.clear();
                 } else {
                     fieldName.clear();
                 }
                 break;
             case QXmlStreamReader::Characters:
-                // TODO read name() as obfuscated field name and store as
+                if (readModifier) {
+                    // TODO read name() as modifier value.
+                } else {
+                    // TODO read name() as obfuscated field name and store as
+                }
                 break;
             default:
                 break;
             }
+        }
+        if (reader.hasError()) {
+            throw JNIException("Error parsing XML file: " + reader.errorString());
         }
     }
 }

@@ -5,7 +5,12 @@
 using std::string;
 
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
+
+JNIException::JNIException(const char *str) throw() :
+    BaseException(str) {
+
+}
 
 JNIException::JNIException( const string& value ) throw () : 
   BaseException( value ) {
@@ -26,6 +31,10 @@ JNIException& JNIException::operator=( const JNIException& rhs ) throw () {
   ( ( BaseException& ) *this ) = ( BaseException& ) rhs;
 
   return *this;
+}
+
+JNIException::JNIException(const QString &str) throw () :
+    BaseException(str) {
 }
 
 /**
@@ -59,4 +68,4 @@ string JNIError_toString(jint errCode) throw() {
     }
 }
 
-END_NAMESPACE( jace )
+}

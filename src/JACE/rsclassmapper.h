@@ -1,6 +1,7 @@
 #ifndef RSCLASSMAPPER_H
 #define RSCLASSMAPPER_H
 #include "jace/os_dep.h"
+#include "jni.h"
 
 #include <QObject>
 #include <QMap>
@@ -29,7 +30,7 @@ class RSClassMapper : public QObject {
     JACE_API QString dataFile() const { return source; }
     JACE_API QString getRealName(QString semanticName) const;
 
-    JACE_API void parseData();
+    JACE_API void parseData(jbyteArray data);
 };
 
 #endif // RSCLASSMAPPER_H

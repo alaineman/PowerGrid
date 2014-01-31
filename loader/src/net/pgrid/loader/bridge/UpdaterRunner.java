@@ -31,14 +31,19 @@ public class UpdaterRunner implements Runnable {
      * Creates a new Updater object
      * @param info the RSVersionInfo
      * @param profile true to profile the updater and print the results, false to disable
+     * @param checksum the MD5 checksum of the client
      */
     public UpdaterRunner(RSVersionInfo info, boolean profile, String checksum) {
-        if (info == null) {
+        if (info == null || checksum == null) {
             throw new IllegalArgumentException("null");
         }
         this.checksum = checksum;
         this.info = info;
         this.profile = profile;
+    }
+
+    public String getChecksum() {
+        return checksum;
     }
     
     /**
@@ -72,6 +77,7 @@ public class UpdaterRunner implements Runnable {
         }
         
         try {
+            
             byte[] data = update.getData();
             LOGGER.log("Updater data acquired (" + data.length + " bytes)");
             
@@ -84,7 +90,7 @@ public class UpdaterRunner implements Runnable {
             }
             
             // Tell the native code the updater is done
-            signalUpdaterReady(checksum);
+            signalUpdaterReady(checksum, data);
             
             if (profile) {
                 long timeTaken = System.currentTimeMillis() - timeStarted;
@@ -97,6 +103,9 @@ public class UpdaterRunner implements Runnable {
     
     /**
      * Notifies the C++ client the updater is ready.
+     * This will parse and store the updater data.
+     * @param checksum the checksum of the client
+     * @param data the bytes of the updater data.
      */
-    private native void signalUpdaterReady(String checksum);
+    private native void signalUpdaterReady(String checksum, byte[] data);
 }

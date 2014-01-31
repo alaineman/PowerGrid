@@ -1,10 +1,10 @@
-
-
 #include "jace/BaseException.h"
 
+namespace jace {
 
-BEGIN_NAMESPACE_1( jace )
-
+BaseException::BaseException( const char* value ) throw () :
+    mValue( value ) {
+}
 
 BaseException::BaseException( const std::string& value ) throw () : 
   mValue( value ) {
@@ -27,6 +27,9 @@ BaseException& BaseException::operator=( const BaseException& rhs ) throw () {
   return *this;
 }
 
+BaseException::BaseException(const QString &str) throw() {
+    mValue = str.toStdString();
+}
 
 BaseException::~BaseException() throw () {
 }
@@ -37,5 +40,5 @@ const char* BaseException::what() const throw () {
 }
 
 
-END_NAMESPACE_1( jace )
+}
 

@@ -13,10 +13,10 @@ using jace::JNIException;
  * net.pgrid.loader.bridge.UpdaterRunner class once it's ready.
  */
 JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
-  (JNIEnv *, jobject, jstring) {
+  (JNIEnv*, jobject, jstring, jbyteArray bytes) {
     RSClassMapper* mapper = RSClassMapper::DefaultInstance();
     if (mapper) {
-        mapper->parseData();
+        mapper->parseData(bytes);
     } else {
         qWarning() << "Cannot parse Updater data: mapper does not exist";
     }
@@ -33,7 +33,7 @@ BEGIN_NAMESPACE_2( bridge, updater )
  */
 void UpdaterRunner_registerNatives(JNIEnv* env)
         throw (JNIException) {
-    // Find the Java class "net.pgrid.loader.bridge.UpdaterRunner
+    // Find the Java class "net.pgrid.loader.bridge.UpdaterRunner"
     jclass updaterRunner = env->FindClass("net/pgrid/loader/bridge/UpdaterRunner");
     if (! updaterRunner) {
         throw JNIException("Cannot find net.pgrid.loader.bridge.UpdaterRunner class");
@@ -41,7 +41,7 @@ void UpdaterRunner_registerNatives(JNIEnv* env)
     // The JNINativeMethod struct we need to register
     JNINativeMethod nativeMethod;
     nativeMethod.name = const_cast<char*> ("signalUpdaterReady");
-    nativeMethod.signature = const_cast<char*> ("(Ljava/lang/String;)V");
+    nativeMethod.signature = const_cast<char*> ("(Ljava/lang/String;[B)V");
     nativeMethod.fnPtr = reinterpret_cast<void*>(&Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady);
 
     jint result = env->RegisterNatives(updaterRunner, &nativeMethod, 1);

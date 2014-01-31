@@ -18,7 +18,7 @@ class RSClassMapper : public QObject {
     QMap<QString, QString> classMap;                // semanticClassName => realClassName
     QMap<QString, QMap<QString, QString>> fieldMap; // semanticClassName => ( semanticFieldName => realFieldName )
 
-    void parseFieldElement(QXmlStreamReader reader);
+    void parseFieldElement(QXmlStreamReader reader, QString className);
   public:
     JACE_API static RSClassMapper* DefaultInstance();
 

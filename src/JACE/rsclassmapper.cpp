@@ -40,23 +40,45 @@ QString RSClassMapper::getRealName(QString semanticName) const {
 void RSClassMapper::parseData() {
     if (classMap.isEmpty()) {
         // TODO maybe pull directly from server?
-        QXmlStreamReader reader (QFile("cache/updaterData.xml"));
-        reader.readNext();
+        QFile file ("cache/updaterData.xml");
+        QXmlStreamReader reader (&file);
+        reader.setNamespaceProcessing(false);
         if (reader.name() != "client") {
             qDebug() << "No client tag as start tag, but" << reader.name();
         }
+        QString currentClass;
+        QString fieldName;
         while (!reader.atEnd()) {
             reader.readNext();
-            // TODO parse class and store in classMap
-            parseFieldElement(reader /*, className*/);
+            // Switches in while loop, still annoying
+            switch (reader.tokenType()) {
+            case QXmlStreamReader::NoToken:
+            case QXmlStreamReader::Invalid:
+                goto checkError; // Switches in while loop, still annoying...
+            case QXmlStreamReader::StartElement:
+                if (currentClass.isEmpty()) {
+                    // TODO read name() as class name and store as currentClass
+                } else {
+                    // TODO read name() as field name and store as fieldName
+                }
+                break;
+            case QXmlStreamReader::EndElement:
+                if (fieldName.isEmpty()) {
+                    currentClass.clear();
+                } else {
+                    fieldName.clear();
+                }
+                break;
+            case QXmlStreamReader::Characters:
+                // TODO read name() as obfuscated field name and store as
+                break;
+            default:
+                break;
+            }
         }
-        if (reader.hasError()) {
+        checkError: if (reader.hasError()) {
             throw JNIException("Failed to parse updater data");
         }
         qDebug() << "RSClassMapper parsed updater data";
     }
-}
-
-void RSClassMapper::parseFieldElement(QXmlStreamReader reader) {
-    // TODO parse a field and store in field map
 }

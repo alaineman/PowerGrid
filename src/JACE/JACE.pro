@@ -94,13 +94,15 @@ HEADERS += \
     rsclassmapper.h \
     rsclass.h \
     updaterrunner.h \
-    mappingunavailableexception.h
+    mappingunavailableexception.h \
+    illegaloperationexception.h
 
 SOURCES += \
     rsclassmapper.cpp \
     rsclass.cpp \
     updaterrunner.cpp \
-    mappingunavailableexception.cpp
+    mappingunavailableexception.cpp \
+    illegaloperationexception.cpp
 
 win32 {
     DEFINES += JNI_WIN32

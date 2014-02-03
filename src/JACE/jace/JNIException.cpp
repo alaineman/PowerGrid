@@ -37,15 +37,7 @@ JNIException::JNIException(const QString &str) throw () :
     BaseException(str) {
 }
 
-/**
- * @brief converts a JNI error code into a human-readable description
- * Recognized values are all defined JNI Error codes (which includes
- * JNI_OK, and all JNI_E... defines). If the provided value is neither of these,
- * a generic error message including the provided value is returned.
- *
- * @param errCode the JNI error code
- * @return a human-readable description of the error
- */
+
 string JNIError_toString(jint errCode) throw() {
     switch (errCode) {
     case JNI_OK:

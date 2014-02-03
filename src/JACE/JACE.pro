@@ -82,14 +82,11 @@ QMAKE_EXT_H += .tsp .tsd
 # Tell JACE we're building statically, and want to load the JVM dynamically.
 DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD
 
-#------------------------------------------------
-# Add the dependency for jni
-#------------------------------------------------
+# In debug mode, have JACE check for null values
+# and out-of-bounds array indices
+CONFIG(debug, debug|release): DEFINES += JACE_CHECK_NULLS JACE_CHECK_ARRAYS
 
-# We include the JNI headers in the project directly.
 HEADERS += \
-    jni.h \
-    jni_md.h \
     rsclassmapper.h \
     rsclass.h \
     updaterrunner.h \
@@ -103,25 +100,15 @@ SOURCES += \
     mappingunavailableexception.cpp \
     illegaloperationexception.cpp
 
-win32 {
-    DEFINES += JNI_WIN32
-}
-else:macx {
-    DEFINES += JNI_MACX
-}
-
-debug {
-    # When debugging, have JACE check for null values
-    # and out-of-bounds array indices
-    DEFINES += JACE_CHECK_NULLS JACE_CHECK_ARRAYS
-}
-
 #------------------------------------------------
 # Files in this project. This contains all
-# default JACE classes.
+# default JACE classes, as well as the
+# required JNI headers.
 #------------------------------------------------
 
 HEADERS    += \
+    jni.h \
+    jni_md.h \
     jace/WrapperVmLoader.h \
     jace/VmLoader.h \
     jace/UnixVmLoader.h \
@@ -165,8 +152,6 @@ HEADERS    += \
     jace/proxy/types/JBoolean.h \
     jace/JMethod.tsp \
     jace/JMethod.tsd \
-    jace/JFieldProxy.tsp \
-    jace/JFieldProxy.tsd \
     jace/JField.tsp \
     jace/JField.tsd \
     jace/javacast.tsp \

@@ -2,59 +2,24 @@
 #ifndef JACE_JFIELD_PROXY_H
 #define JACE_JFIELD_PROXY_H
 
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
-
-#ifndef JACE_NAMESPACE_H
 #include "jace/namespace.h"
-#endif
-
-#ifndef JACE_JNI_HELPER_H
 #include "jace/JNIHelper.h"
-#endif
-
-#ifndef JACE_JOBJECT_H
 #include "jace/proxy/JObject.h"
-#endif
-
-#ifndef JACE_JFIELD_PROXY_HELPER_H
 #include "JFieldProxyHelper.h"
-#endif
 
-#ifndef JACE_TYPES_JBOOLEAN_H
 #include "jace/proxy/types/JBoolean.h"
-#endif
-
-#ifndef JACE_TYPES_JBYTE_H
 #include "jace/proxy/types/JByte.h"
-#endif
-
-#ifndef JACE_TYPES_JCHAR_H
 #include "jace/proxy/types/JChar.h"
-#endif
-
-#ifndef JACE_TYPES_JDOUBLE_H
 #include "jace/proxy/types/JDouble.h"
-#endif
-
-#ifndef JACE_TYPES_JFLOAT_H
 #include "jace/proxy/types/JFloat.h"
-#endif
-
-#ifndef JACE_TYPES_JINT_H
 #include "jace/proxy/types/JInt.h"
-#endif
-
-#ifndef JACE_TYPES_JLONG_H
 #include "jace/proxy/types/JLong.h"
-#endif
-
-#ifndef JACE_TYPES_JSHORT_H
 #include "jace/proxy/types/JShort.h"
-#endif
 
-BEGIN_NAMESPACE( jace )
+using namespace ::jace::proxy::types;
+
+namespace jace {
 
 /**
  * A JFieldProxy is a wrapper around a JField.
@@ -193,25 +158,113 @@ FieldType& operator=( const FieldType& field ) {
   return *this;
 }
 
-
-private:
-jobject parent;
-jclass parentClass;
-jfieldID fieldID;
+    private:
+    jobject parent;
+    jclass parentClass;
+    jfieldID fieldID;
 
 };
 
-END_NAMESPACE( jace )
+// ---------------------------------------------------------
+// Template specializations for the JFieldProxy class.
+// ---------------------------------------------------------
 
-/**
- * For those (oddball) compilers that need the template specialization
- * definitions in the header.
- */
-#ifdef PUT_TSDS_IN_HEADER
-  #include "jace/JFieldProxy.tsd"
-#else
-  #include "jace/JFieldProxy.tsp"
-#endif
+template <> class JFieldProxy<JBoolean> : public JBoolean {
+public:
+    JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ );
+    JFieldProxy( jfieldID fieldID_, jvalue value, jclass parent_ );
+    JFieldProxy( const JFieldProxy<JBoolean>& object );
+    JBoolean& operator=( const JBoolean& type );
+private:
+    jobject parent;
+    jclass parentClass;
+    jfieldID fieldID;
+};
 
+template <> class JFieldProxy<JByte> : public JByte {
+public:
+    JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ );
+    JFieldProxy( jfieldID fieldID_, jvalue value, jclass parent_ );
+    JFieldProxy( const JFieldProxy<JByte>& object );
+    JByte& operator=( const JByte& type );
+private:
+    jobject parent;
+    jclass parentClass;
+    jfieldID fieldID;
+};
+
+template <> class JFieldProxy<JChar> : public JChar {
+public:
+    JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ );
+    JFieldProxy( jfieldID fieldID_, jvalue value, jclass parent_ );
+    JFieldProxy( const JFieldProxy<JChar>& object );
+    JChar& operator=( const JChar& type );
+private:
+    jobject parent;
+    jclass parentClass;
+    jfieldID fieldID;
+};
+
+template <> class JFieldProxy<JShort> : public JShort {
+public:
+    JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ );
+    JFieldProxy( jfieldID fieldID_, jvalue value, jclass parent_ );
+    JFieldProxy( const JFieldProxy<JShort>& object );
+    JShort& operator=( const JShort& type );
+private:
+    jobject parent;
+    jclass parentClass;
+    jfieldID fieldID;
+};
+
+template <> class JFieldProxy<JInt> : public JInt {
+public:
+    JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ );
+    JFieldProxy( jfieldID fieldID_, jvalue value, jclass parent_ );
+    JFieldProxy( const JFieldProxy<JInt>& object );
+    JInt& operator=( const JInt& type );
+private:
+    jobject parent;
+    jclass parentClass;
+    jfieldID fieldID;
+};
+
+template <> class JFieldProxy<JLong> : public JLong {
+public:
+    JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ );
+    JFieldProxy( jfieldID fieldID_, jvalue value, jclass parent_ );
+    JFieldProxy( const JFieldProxy<JLong>& object );
+    JLong& operator=( const JLong& type );
+private:
+    jobject parent;
+    jclass parentClass;
+    jfieldID fieldID;
+};
+
+template <> class JFieldProxy<JFloat> : public JFloat {
+public:
+    JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ );
+    JFieldProxy( jfieldID fieldID_, jvalue value, jclass parent_ );
+    JFieldProxy( const JFieldProxy<JFloat>& object );
+    JFloat& operator=( const JFloat& type );
+private:
+    jobject parent;
+    jclass parentClass;
+    jfieldID fieldID;
+};
+
+template <> class JFieldProxy<JDouble> : JDouble {
+public:
+    JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ );
+    JFieldProxy( jfieldID fieldID_, jvalue value, jclass parent_ );
+    JFieldProxy( const JFieldProxy<JDouble>& object );
+    JDouble& operator=( const JDouble& type );
+private:
+    jobject parent;
+    jclass parentClass;
+    jfieldID fieldID;
+};
+
+}
 #endif // #ifndef JACE_JFIELD_PROXY_H
 

@@ -18,7 +18,7 @@ IllegalOperationException::IllegalOperationException(const std::string &value) t
         JNIException(value) {
 }
 
-IllegalOperationException::IllegalOperationException& operator=( const IllegalOperationException& rhs ) throw () {
+IllegalOperationException& IllegalOperationException::operator=( const IllegalOperationException& rhs ) throw () {
     if ( &rhs == this) {
         return *this;
     }

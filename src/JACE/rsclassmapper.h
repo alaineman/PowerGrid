@@ -7,8 +7,6 @@
 #include <QMap>
 #include <QFile>
 
-class QXmlStreamReader;
-
 class RSClassMapper : public QObject {
     Q_OBJECT
   private:

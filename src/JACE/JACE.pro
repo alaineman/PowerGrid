@@ -90,7 +90,6 @@ DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD
 HEADERS += \
     jni.h \
     jni_md.h \
-    classfile_constants.h \
     rsclassmapper.h \
     rsclass.h \
     updaterrunner.h \

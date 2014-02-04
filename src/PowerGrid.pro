@@ -29,8 +29,9 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += JACE UserInterface PluginFramework \  # DefaultPlugin
-    ../tests
+     tests
 
 UserInterface.depends = JACE
 PluginFramework.depends = JACE
 #DefaultPlugin.depends = PluginFramework
+

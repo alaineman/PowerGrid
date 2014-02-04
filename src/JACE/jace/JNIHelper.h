@@ -9,20 +9,21 @@
 #include "jace/VmLoader.h"
 #include "jace/OptionList.h"
 
-BEGIN_NAMESPACE( jace )
-class Peer;
-END_NAMESPACE( jace )
-
 #include "jni.h"
 
-BEGIN_NAMESPACE_2( jace, helper )
+namespace jace {
+
+class Peer;
+
 /**
- * A namespace for helper functions which make it easier to 
+ * A namespace for helper functions which make it easier to
  * use the JNI API.
  *
  * @author Toby Reyelts
  *
  */
+namespace helper {
+
 
 
 /**
@@ -232,6 +233,7 @@ JACE_API void printClass( jobject obj );
  */
 JACE_API bool hasShutdown();
 
-END_NAMESPACE_2( jace, helper )
+} // end namespace helper
+} // end namespace jace
 
 #endif

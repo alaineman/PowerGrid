@@ -34,20 +34,16 @@ include (../common.pri)
 SOURCES += tst_jarraytest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
+# Dependency for JACE
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../JACE/release/ -lJACE
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../JACE/debug/ -lJACE
+else:unix: LIBS += -L$$OUT_PWD/../../JACE/ -lJACE
 
-# Adds dependency for JACE
+INCLUDEPATH += $$PWD/../../JACE
+DEPENDPATH += $$PWD/../../JACE
 
-# QMake OUT_PWD path fails here... How should this be fixed? Paths are now machine-dependant.
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../build-PowerGrid-Desktop_Qt_5_2_0_MinGW_32bit-Release/JACE/release/ -lJACE
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../build-PowerGrid-Desktop_Qt_5_2_0_MinGW_32bit-Release/JACE/debug/ -lJACE
-else:unix: LIBS += -L$$OUT_PWD/../../build-PowerGrid-Desktop_Qt_5_2_0_MinGW_32bit-Release/JACE/ -lJACE
-
-INCLUDEPATH += $$PWD/../../src/JACE
-DEPENDPATH += $$PWD/../../src/JACE
-
-message ($$OUT_PWD)
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../build-PowerGrid-Desktop_Qt_5_2_0_MinGW_32bit-Release/JACE/release/libJACE.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../build-PowerGrid-Desktop_Qt_5_2_0_MinGW_32bit-Release/JACE/debug/libJACE.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../build-PowerGrid-Desktop_Qt_5_2_0_MinGW_32bit-Release/JACE/release/JACE.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../build-PowerGrid-Desktop_Qt_5_2_0_MinGW_32bit-Release/JACE/debug/JACE.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../../build-PowerGrid-Desktop_Qt_5_2_0_MinGW_32bit-Release/JACE/libJACE.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../JACE/release/libJACE.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../JACE/debug/libJACE.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../JACE/release/JACE.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../JACE/debug/JACE.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../../JACE/libJACE.a

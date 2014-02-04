@@ -26,14 +26,6 @@ using std::endl;
 #error Platform does not support pthreads or win32 thread-local storage
 #endif
 
-#ifdef SUPPORTS_SSTREAM
-#include <sstream>
-using std::stringstream;
-#else
-#include <strstream>
-using std::strstream;
-#endif
-
 #include <algorithm>
 using std::copy;
 using std::replace;
@@ -60,16 +52,10 @@ using std::string;
 
 #endif
 
-BEGIN_NAMESPACE_2( jace, helper )
-
+namespace jace {
+namespace helper {
 
 namespace {
-
-    // A reference to the java virtual machine.
-    // We're under the assumption that there will always only be one of these.
-    //
-    JavaVM* javaVM = 0;
-
     // A workaround for Ctrl-C causing problems.
     // If Ctrl-C isn't handled by the program, and it causes
     // a SIGTERM, the VM automatically shuts down. Meanwhile
@@ -93,8 +79,13 @@ namespace {
     //
     volatile bool globalHasShutdown = false;
 
+    // A reference to the java virtual machine.
+    // We're under the assumption that there will always only be one of these.
+    //
+    JavaVM* javaVM = 0;
 
     std::auto_ptr<VmLoader> globalLoader( 0 );
+
     // The map of all of the java class factories.
     //
     typedef std::map<string,JFactory*> FactoryMap;
@@ -104,35 +95,13 @@ namespace {
         return &factoryMap;
     }
 
-    // A quick hack to get a string representation for any value
-    // This should probably go into some framework utility class
-    //
-#ifdef SUPPORTS_SSTREAM
-
-    template <class T> string toString( T value ) {
-        stringstream stream;
-        stream << value;
-        return stream.str();
-    }
-
-#else
-
-    template <class T> string toString( T value ) {
-        strstream stream;
-        stream << value;
-        return string( stream.str(), stream.pcount() );
-    }
-
-#endif
-
 #ifdef SUPPORTS_PTHREADS
     pthread_key_t CLASSLOADER_KEY = 0;
 #elif _WIN32
     DWORD CLASSLOADER_KEY = 0;
 #endif
 
-} // namespace {
-
+} // namespace internal
 
 std::string asString( JNIEnv* env, jstring str ) {
     const char* utfString = env->GetStringUTFChars( str, 0 );
@@ -187,7 +156,7 @@ void createVm( const VmLoader& loader,
     options.destroyJniOptions( jniOptions );
 
     if ( rc != 0 ) {
-        string msg = "Unable to create the virtual machine. The error was " + toString( rc );
+        string msg = "Unable to create the virtual machine. The error was " + std::to_string( rc );
         throw JNIException( msg );
     }
 
@@ -316,14 +285,14 @@ JavaVM* getJavaVM() throw ( JNIException ) {
         if ( result != 0 ) {
             string msg = string( "JNIHelper::getJavaVM\n" ) +
                     "Unable to find the JVM. The specific JNI error code is " +
-                    toString( result );
+                    std::to_string( result );
             throw JNIException( msg );
         }
 
         if ( numVMs != 1 ) {
             string msg = string( "JNIHelper::getJavaVM\n" ) +
                     "Looking for exactly 1 JVM, but " +
-                    toString( numVMs ) +
+                    std::to_string( numVMs ) +
                     " were found.";
             throw JNIException( msg );
         }
@@ -360,7 +329,7 @@ JNIEnv* attach() throw ( JNIException ) {
     if ( result != 0 ) {
         string msg = "JNIHelper::attach\n" \
                 "Unable to attach the current thread. The specific JNI error code is " +
-                toString( result );
+                std::to_string( result );
         throw JNIException( msg );
     }
 
@@ -718,7 +687,7 @@ void onProcessCreation() throw ( ::jace::JNIException ) {
     CLASSLOADER_KEY = TlsAlloc();
     if ( CLASSLOADER_KEY == TLS_OUT_OF_INDEXES ) {
         std::string msg = "JNIHelper::setClassLoader()\n"
-                "TlsAlloc() returned " + toString( GetLastError() ) + ".";
+                "TlsAlloc() returned " + std::to_string( GetLastError() ) + ".";
         throw JNIException( msg );
     }
 #endif
@@ -772,14 +741,14 @@ void onProcessDestruction() throw ( ::jace::JNIException ) {
     int rc = pthread_key_delete( CLASSLOADER_KEY );
     if ( rc != 0 ) {
         std::string msg = "JNIHelper::setClassLoader()\n"
-                "thread_key_delete() returned " + toString( rc ) + ".";
+                "thread_key_delete() returned " + std::to_string( rc ) + ".";
         throw JNIException( msg );
     }
 #elif _WIN32
     BOOL rc = TlsFree( CLASSLOADER_KEY );
     if ( !rc ) {
         std::string msg = "JNIHelper::setClassLoader()\n"
-                "TlsFree() returned " + toString( GetLastError() ) + ".";
+                "TlsFree() returned " + std::to_string( GetLastError() ) + ".";
         throw JNIException( msg );
     }
 #endif
@@ -805,14 +774,14 @@ void setClassLoader(jobject classLoader) {
     rc = pthread_setspecific( CLASSLOADER_KEY, classLoader );
     if ( rc != 0 ) {
         std::string msg = "JNIHelper::setClassLoader()\n"
-                "pthread_setspecific() returned " + toString( rc ) + ".";
+                "pthread_setspecific() returned " + std::to_string( rc ) + ".";
         throw JNIException( msg );
     }
 #elif _WIN32
     rc = TlsSetValue( CLASSLOADER_KEY, classLoader );
     if ( !rc ) {
         std::string msg = "JNIHelper::setClassLoader()\n"
-                "TlsSetValue() returned " + toString( GetLastError() ) + ".";
+                "TlsSetValue() returned " + std::to_string( GetLastError() ) + ".";
         throw JNIException( msg );
     }
 #endif
@@ -888,5 +857,6 @@ bool hasShutdown() {
     return globalHasShutdown;
 }
 
-END_NAMESPACE_2( jace, helper )
+} // end namespace helper
+} // end namespace jace
 

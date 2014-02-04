@@ -25,7 +25,7 @@ RSClassMapper::~RSClassMapper() {}
 QMap<QString, QString> RSClassMapper::getFieldMap(QString className) const {
     QMap<QString, QMap<QString, QString>>::const_iterator it = fieldMap.find(className);
     if (it == fieldMap.end()) {
-        throw MappingUnavailableException(className.toStdString());
+        //throw MappingUnavailableException(className.toStdString());
     }
     return it.value();
 }
@@ -33,7 +33,7 @@ QMap<QString, QString> RSClassMapper::getFieldMap(QString className) const {
 QString RSClassMapper::getRealName(QString semanticName) const {
     QMap<QString, QString>::const_iterator it = classMap.find(semanticName);
     if (it == classMap.end()) {
-        throw MappingUnavailableException(semanticName.toStdString());
+        //throw MappingUnavailableException(semanticName.toStdString());
     }
     return it.value();
 }

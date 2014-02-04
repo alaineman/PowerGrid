@@ -164,7 +164,7 @@
    * Requires template specialization definitions to appear in the header.
    *
    */
-  //#define PUT_TSDS_IN_HEADER // Check to see if required.
+  #define PUT_TSDS_IN_HEADER // Check to see if required.
 
   /**
    * Supports the new-style sstreams.

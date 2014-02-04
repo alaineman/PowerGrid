@@ -30,3 +30,5 @@ TEMPLATE = app           # Tests are executable
 CONFIG  += testcase      # Adds unit test to "make check" target
 CONFIG  += console       # Behaves as a console application on Windows
 CONFIG  -= app_bundle    # Should not build an app bundle on Mac OS
+CONFIG  += c++11         # Enable C++11 in tests as well
+CONFIG  += thread        # Needed for linking with JACE

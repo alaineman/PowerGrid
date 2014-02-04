@@ -1,66 +1,23 @@
-
 #ifndef JACE_JARRAY_H
 #define JACE_JARRAY_H
 
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
-
-#ifndef JACE_NAMESPACE_H
 #include "jace/namespace.h"
-#endif
 
-#ifndef JACE_JNI_HELPER_H
 #include "jace/JNIHelper.h"
-#endif
-
-#ifndef JACE_JCLASS_IMPL_H
 #include "jace/JClassImpl.h"
-#endif
-
-#ifndef JACE_ELEMENT_PROXY_H
 #include "jace/ElementProxy.h"
-#endif
-
-#ifndef JACE_JARRAY_HELPER
 #include "jace/JArrayHelper.h"
-#endif
-
-#ifndef JACE_JNI_EXCEPTION_H
 #include "jace/JNIException.h"
-#endif
 
-#ifndef JACE_TYPES_JBOOLEAN_H
 #include "jace/proxy/types/JBoolean.h"
-#endif
-
-#ifndef JACE_TYPES_JBYTE_H
 #include "jace/proxy/types/JByte.h"
-#endif
-
-#ifndef JACE_TYPES_JCHAR_H
 #include "jace/proxy/types/JChar.h"
-#endif
-
-#ifndef JACE_TYPES_JDOUBLE_H
 #include "jace/proxy/types/JDouble.h"
-#endif
-
-#ifndef JACE_TYPES_JFLOAT_H
 #include "jace/proxy/types/JFloat.h"
-#endif
-
-#ifndef JACE_TYPES_JINT_H
 #include "jace/proxy/types/JInt.h"
-#endif
-
-#ifndef JACE_TYPES_JLONG_H
 #include "jace/proxy/types/JLong.h"
-#endif
-
-#ifndef JACE_TYPES_JSHORT_H
 #include "jace/proxy/types/JShort.h"
-#endif
 
 #include <string>
 #include <vector>
@@ -139,13 +96,6 @@ JArray( int size ) : JObject( 0 ) {
  *
  */
 template <class T> JArray( const std::vector<T>& values ) : JObject( 0 ) {
-
-  #ifdef NO_IMPLICIT_TYPENAME
-    #define JACE_TYPENAME typename
-  #else
-    #define JACE_TYPENAME
-  #endif
-
   jobjectArray localArray = ::jace::JArrayHelper::newArray( values.size(), ElementType::staticGetJavaJniClass() );
 
   this->setJavaJniObject( localArray );
@@ -153,7 +103,7 @@ template <class T> JArray( const std::vector<T>& values ) : JObject( 0 ) {
   int i = 0;
   JNIEnv* env = ::jace::helper::attach();
 
-  for ( JACE_TYPENAME std::vector<T>::const_iterator it = values.begin(); it != values.end(); ++it, ++i ) {
+  for ( typename std::vector<T>::const_iterator it = values.begin(); it != values.end(); ++it, ++i ) {
     env->SetObjectArrayElement( localArray, i, ElementType( *it ).getJavaJniObject() );
     ::jace::helper::catchAndThrow();
   }
@@ -251,6 +201,36 @@ const ElementProxy<ElementType> operator[]( const int& index ) const {
   return element;
 }
 
+/**
+ * Read-only alternative to operator[].
+ * Contrary to operator[], this returns a standalone JACE object.
+ * As such, the following does not update the array:
+ *     JArray<String> arr = ...;
+ *     arr.at(0) = "SomeString";
+ *
+ *
+ * Returns the value at the given index.
+ */
+const ElementType at(const int& index) const {
+    #ifdef JACE_CHECK_NULLS
+      if ( ! this->getJavaJniObject() ) {
+        throw ::jace::JNIException( "[JArray::at] Can not dereference a null array." );
+      }
+    #endif
+
+    #ifdef JACE_CHECK_ARRAYS
+      if ( index >= length() ) {
+        throw ::jace::JNIException( "[JArray::at] invalid array index." );
+      }
+    #endif
+
+      jvalue localElementRef = ::jace::JArrayHelper::getElement( this->getJavaJniObject(), index );
+      ElementType result (localElementRef);
+      JNIEnv* env = ::jace::helper::attach();
+      ::jace::helper::deleteLocalRef(env, localElementRef.l);
+
+      return result;
+}
 
 /**
  * Returns the JClass for this instance.
@@ -303,8 +283,8 @@ jarray getJavaJniArray() {
  */
 QList<ElementType> toQList() const {
     QList<ElementType> list;
-    for (Iterator it = begin(); it != end(); it++) {
-        list << *it;
+    for (int i=0; i<length(); i++) {
+        list << at(i);
     }
     return list;
 }

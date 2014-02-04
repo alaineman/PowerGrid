@@ -19,18 +19,16 @@
 
 #------------------------------------------------
 #
-# Global qmake project file for PowerGrid.
+# QMake .pro file for all PowerGrid unit tests.
 #
-# This project file includes and builds each
-# subproject and links all modules together.
+# This subdirs project contains all unit tests
+# to be built and run. The unit tests are
+# configured to be run when invoking "make check".
+# (When using Qt Creator, add this as a custom
+# build step to automate testing).
 #
 #------------------------------------------------
+
 TEMPLATE = subdirs
-CONFIG += ordered
 
-SUBDIRS += JACE UserInterface PluginFramework \  # DefaultPlugin
-    ../tests
-
-UserInterface.depends = JACE
-PluginFramework.depends = JACE
-#DefaultPlugin.depends = PluginFramework
+SUBDIRS += JArray

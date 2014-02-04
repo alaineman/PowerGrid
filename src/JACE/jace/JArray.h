@@ -65,7 +65,7 @@
 #include <string>
 #include <vector>
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 
 /**
@@ -138,18 +138,12 @@ JArray( int size ) : JObject( 0 ) {
  * Creates a new JArray from a vector of a convertible type, T.
  *
  */
-
-// For some reason, Sun's compiler (5.2?) doesn't seem to like this template
-// constructor and gives a really weird error. *shrugs*
-//
-// #ifndef __SUNPRO_CC
-
 template <class T> JArray( const std::vector<T>& values ) : JObject( 0 ) {
 
   #ifdef NO_IMPLICIT_TYPENAME
-    #define TYPENAME typename
+    #define JACE_TYPENAME typename
   #else
-    #define TYPENAME
+    #define JACE_TYPENAME
   #endif
 
   jobjectArray localArray = ::jace::JArrayHelper::newArray( values.size(), ElementType::staticGetJavaJniClass() );
@@ -159,7 +153,7 @@ template <class T> JArray( const std::vector<T>& values ) : JObject( 0 ) {
   int i = 0;
   JNIEnv* env = ::jace::helper::attach();
 
-  for ( TYPENAME std::vector<T>::const_iterator it = values.begin(); it != values.end(); ++it, ++i ) {
+  for ( JACE_TYPENAME std::vector<T>::const_iterator it = values.begin(); it != values.end(); ++it, ++i ) {
     env->SetObjectArrayElement( localArray, i, ElementType( *it ).getJavaJniObject() );
     ::jace::helper::catchAndThrow();
   }
@@ -168,8 +162,6 @@ template <class T> JArray( const std::vector<T>& values ) : JObject( 0 ) {
 
   ::jace::helper::deleteLocalRef( env, localArray );
 }
-
-// #endif // #ifndef __SUNPRO_CC
 
 JArray( const JArray& array ) : JObject( 0 ) {
   this->setJavaJniObject( array.getJavaJniObject() );
@@ -303,6 +295,18 @@ jarray getJavaJniArray() const {
  */
 jarray getJavaJniArray() {
   return static_cast<jarray>( this->getJavaJniObject() );
+}
+
+/**
+ * Part of the integration between JACE and Qt.
+ * Copies the references / values in this JArray to a QList.
+ */
+QList<ElementType> toQList() const {
+    QList<ElementType> list;
+    for (Iterator it = begin(); it != end(); it++) {
+        list << *it;
+    }
+    return list;
 }
 
 /**
@@ -576,7 +580,7 @@ friend class Iterator;
 }; // class JArray
 
 
-END_NAMESPACE( jace )
+}
 
 /**
  * For those (oddball) compilers that need the template specialization

@@ -25,7 +25,7 @@ RSClassMapper::~RSClassMapper() {}
 QMap<QString, QString> RSClassMapper::getFieldMap(QString className) const {
     QMap<QString, QMap<QString, QString>>::const_iterator it = fieldMap.find(className);
     if (it == fieldMap.end()) {
-        //throw MappingUnavailableException(className.toStdString());
+        throw MappingUnavailableException(className);
     }
     return it.value();
 }
@@ -33,7 +33,7 @@ QMap<QString, QString> RSClassMapper::getFieldMap(QString className) const {
 QString RSClassMapper::getRealName(QString semanticName) const {
     QMap<QString, QString>::const_iterator it = classMap.find(semanticName);
     if (it == classMap.end()) {
-        //throw MappingUnavailableException(semanticName.toStdString());
+        throw MappingUnavailableException(semanticName);
     }
     return it.value();
 }
@@ -44,7 +44,6 @@ void RSClassMapper::parseData(jbyteArray data) {
     }
     if (classMap.isEmpty()) {
         JNIEnv* env = helper::attach();
-        // sizeof(jbyte) == sizeof(char), and QByteArray can be initialized using a const char*
         char* bytes = static_cast<char*>(env->GetDirectBufferAddress(data));
         jlong length = env->GetDirectBufferCapacity(data);
         QByteArray byteArray (const_cast<const char*>(bytes), length);
@@ -57,21 +56,22 @@ void RSClassMapper::parseData(jbyteArray data) {
         bool stop = true;
         while (!stop && !reader.atEnd()) {
             reader.readNext();
-            // Switches in while loop, still annoying
             switch (reader.tokenType()) {
             case QXmlStreamReader::NoToken:
             case QXmlStreamReader::Invalid:
-                stop = true; // Switches in while loop, still annoying...
+                stop = true;
                 break;
             case QXmlStreamReader::StartElement:
                 if (reader.name() == "modifier") {
                     readModifier = true;
                 } else if (currentClass.isEmpty()) {
-                    classMap.insert(reader.name().toString(),
-                                    reader.attributes().value("className").toString());
                     currentClass = reader.name().toString();
+                    classMap.insert(currentClass,
+                                    reader.attributes().value("className").toString());
+                    fieldMap.insert(currentClass, QMap<QString, QString>());
+                    modifiers.insert(currentClass, QMap<QString, qint32>());
                 } else {
-                    // TODO read name() as field name and store as fieldName
+                    fieldName = reader.name().toString();
                 }
                 break;
             case QXmlStreamReader::EndElement:
@@ -85,9 +85,16 @@ void RSClassMapper::parseData(jbyteArray data) {
                 break;
             case QXmlStreamReader::Characters:
                 if (readModifier) {
-                    // TODO read name() as modifier value.
+                    bool ok = true;
+                    int mod = reader.text().toInt(&ok);
+                    if (ok) {
+                        modifiers.find(currentClass).value().insert(fieldName, mod);
+                    } else {
+                        qDebug() << "Cannot convert" << currentClass << fieldName << "modifier" << reader.text() << "to integer";
+                    }
                 } else {
-                    // TODO read name() as obfuscated field name and store as
+                    fieldMap.find(currentClass).value()
+                            .insert(fieldName, reader.name().toString());
                 }
                 break;
             default:

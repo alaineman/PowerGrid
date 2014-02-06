@@ -34,6 +34,13 @@ public:
      * @param msg the message
      */
     JACE_API MappingUnavailableException(const string& msg) throw();
+
+    /**
+     * @brief Creates a new MappingUnavailableException with the specified message
+     * @param str the message
+     */
+    JACE_API MappingUnavailableException(const QString& str) throw();
+
     /**
      * @brief Copy Constructor
      * @param rhs the object to copy from

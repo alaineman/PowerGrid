@@ -17,31 +17,33 @@ class JArrayTest : public QObject {
 public:
     JArrayTest() {}
 private Q_SLOTS:
+    void initTestCase();
+
     void test_toQList_normal();
     void test_toQList_empty();
     void test_toQList_single();
 };
+
+void JArrayTest::initTestCase() {
+    // TODO create a VM
+}
 
 /**
  * Tests if a JArray's toQList function returns the correct result with
  * an arbitrary array (normal case).
  */
 void JArrayTest::test_toQList_normal() {
-    JNIEnv* env = ::jace::helper::attach();
-    jclass cls  = env->FindClass("java/lang/Object");
-    env->DeleteLocalRef(cls);
-    JArray<JInt> arr (4);
-//    JArray<JInt> jarr (4);
-//    jarr[0] = 4;
-//    jarr[1] = 2;
-//    jarr[2] = 1;
-//    jarr[3] = 0;
-//    QList<JInt> qlist = jarr.toQList();
-//    QVERIFY2(qlist.length() == jarr.length(), "lengths are equal");
-//    QVERIFY2(qlist.at(0) == 4, "qlist[0] == 4");
-//    QVERIFY2(qlist.at(1) == 2, "qlist[1] == 2");
-//    QVERIFY2(qlist.at(2) == 1, "qlist[2] == 1");
-//    QVERIFY2(qlist.at(3) == 0, "qlist[3] == 0");
+    JArray<JInt> jarr (4);
+    jarr[0] = 4;
+    jarr[1] = 2;
+    jarr[2] = 1;
+    jarr[3] = 0;
+    QList<JInt> qlist = jarr.toQList();
+    QVERIFY2(qlist.length() == jarr.length(), "length equality");
+    QVERIFY2(qlist.at(0) == 4, "qlist[0] == 4");
+    QVERIFY2(qlist.at(1) == 2, "qlist[1] == 2");
+    QVERIFY2(qlist.at(2) == 1, "qlist[2] == 1");
+    QVERIFY2(qlist.at(3) == 0, "qlist[3] == 0");
 }
 \
 /**
@@ -49,9 +51,9 @@ void JArrayTest::test_toQList_normal() {
  * (border case).
  */
 void JArrayTest::test_toQList_empty() {
-//    JArray<JDouble> jarr (0);
-//    QList<JDouble> qlist = jarr.toQList();
-//    QVERIFY2(qlist.isEmpty(), "QList is empty");
+    JArray<JDouble> jarr (0);
+    QList<JDouble> qlist = jarr.toQList();
+    QVERIFY2(qlist.isEmpty(), "QList is empty");
 }
 
 /**
@@ -59,11 +61,11 @@ void JArrayTest::test_toQList_empty() {
  * QList (border case).
  */
 void JArrayTest::test_toQList_single() {
-//    JArray<JInt> jarr (1);
-//    jarr[0] = 3;
-//    QList<JInt> qlist = jarr.toQList();
-//    QVERIFY2(qlist.length() == jarr.length(), "lengths are equal");
-//    QVERIFY2(qlist.at(0) == 3, "qlist[0] == 3");
+    JArray<JInt> jarr (1);
+    jarr[0] = 3;
+    QList<JInt> qlist = jarr.toQList();
+    QVERIFY2(qlist.length() == jarr.length(), "length equality");
+    QVERIFY2(qlist.at(0) == 3, "qlist[0] == 3");
 }
 
 QTEST_APPLESS_MAIN(JArrayTest)

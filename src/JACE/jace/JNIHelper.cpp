@@ -852,6 +852,30 @@ void printClass( jobject obj ) {
     deleteLocalRef( env, objClass );
 }
 
+QString getJavaProperty(QString name) {
+    JNIEnv* env = attach();
+    jclass systemClass = env->FindClass("java/lang/System");
+    if (systemClass) {
+        jmethodID getProperty = env->GetStaticMethodID(systemClass, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+        if (getProperty) {
+            const char* propUtf = name.toStdString().c_str();
+            jstring property = env->NewStringUTF(propUtf);
+            jstring result = (jstring) env->CallStaticObjectMethod(systemClass, getProperty, property);
+            const char* resUtf = env->GetStringUTFChars(result, NULL);
+            QString returnValue (resUtf);
+
+            env->DeleteLocalRef(result);
+            env->DeleteLocalRef(property);
+            env->DeleteLocalRef(systemClass);
+
+            return returnValue;
+        } else {
+            throw JNIException("cannot find System.getProperty method");
+        }
+    } else {
+        throw JNIException("cannot find System class");
+    }
+}
 
 bool hasShutdown() {
     return globalHasShutdown;

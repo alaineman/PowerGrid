@@ -229,6 +229,12 @@ JACE_API void print( jobject obj );
 JACE_API void printClass( jobject obj );
 
 /**
+ * Returns the value for System.getProperty(name) in the running JVM.
+ * If the property does not exists, this returns an empty string.
+ */
+JACE_API QString getJavaProperty(QString name);
+
+/**
  * Checks to see if the system has shutdown.
  */
 JACE_API bool hasShutdown();

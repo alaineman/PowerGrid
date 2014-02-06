@@ -60,6 +60,7 @@
 
 // Our own additional headers
 #include "mainwindow.h"
+#include "versionInfo.h"
 
 using namespace jace;
 using namespace std;
@@ -200,9 +201,11 @@ int main(int argc, char** argv) {
     // The JVM is started and is running, now create our
     // PowerGrid Qt Application and frame.
     QApplication app (argc, argv);
-    app.setApplicationName(QStringLiteral("PowerGrid"));
+    app.setApplicationName(PG_NAME_STR);
     MainWindow window;
     window.show();
+    window.setJVMVersion(jace::helper::getJavaProperty("java.version"));
+
     return app.exec();
 }
 

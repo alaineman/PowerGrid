@@ -3,9 +3,7 @@
 
 #include <QMainWindow>
 
-namespace Ui {
-class MainWindow;
-}
+class Ui_controlPanel;
 
 class MainWindow : public QMainWindow
 {
@@ -16,7 +14,10 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui_controlPanel *ui;
+
+public slots:
+    void setJVMVersion(QString version);
 };
 
 #endif // MAINWINDOW_H

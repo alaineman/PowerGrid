@@ -110,7 +110,8 @@ else: SOURCES += main.cpp
 
 SOURCES       += mainwindow.cpp
 
-HEADERS        = mainwindow.h
+HEADERS        = mainwindow.h \
+    versionInfo.h
 FORMS          = mainwindow.ui
 RESOURCES      = resources.qrc
 OTHER_FILES    = powergrid.rc

@@ -73,8 +73,7 @@
 
 TEMPLATE    = lib
 TARGET      = JACE
-CONFIG     += staticlib thread c++11 # We tell QMake we're building a static lib
-
+CONFIG     += staticlib thread c++11
 
 # JACE uses .tsd and .tsp files as C++ header files, so include those as well
 QMAKE_EXT_H += .tsp .tsd
@@ -87,18 +86,18 @@ DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD
 CONFIG(debug, debug|release): DEFINES += JACE_CHECK_NULLS JACE_CHECK_ARRAYS
 
 HEADERS += \
-    rsclassmapper.h \
-    rsclass.h \
-    updaterrunner.h \
-    mappingunavailableexception.h \
-    illegaloperationexception.h
+    IllegalOperationException.h \
+    MappingUnavailableException.h \
+    RSClass.h \
+    RSClassMapper.h \
+    UpdaterRunner.h
 
 SOURCES += \
-    rsclassmapper.cpp \
-    rsclass.cpp \
-    updaterrunner.cpp \
-    mappingunavailableexception.cpp \
-    illegaloperationexception.cpp
+    IllegalOperationException.cpp \
+    MappingUnavailableException.cpp \
+    RSClass.cpp \
+    RSClassMapper.cpp \
+    UpdaterRunner.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

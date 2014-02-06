@@ -1,5 +1,5 @@
-#include "rsclassmapper.h"
-#include "mappingunavailableexception.h"
+#include "RSClassMapper.h"
+#include "MappingUnavailableException.h"
 #include <stdexcept>
 #include <QDebug>
 #include <QXmlStreamReader>

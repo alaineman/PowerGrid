@@ -1,6 +1,6 @@
 #include <jni.h>
-#include "updaterrunner.h"
-#include "rsclassmapper.h"
+#include "UpdaterRunner.h"
+#include "RSClassMapper.h"
 #include <QtCore>
 #include "jace/namespace.h"
 #include <string>

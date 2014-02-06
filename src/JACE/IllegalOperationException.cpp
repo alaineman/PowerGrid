@@ -1,4 +1,4 @@
-#include "illegaloperationexception.h"
+#include "IllegalOperationException.h"
 #include "jace/JNIException.h"
 using jace::JNIException;
 

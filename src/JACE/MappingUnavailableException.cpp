@@ -1,4 +1,4 @@
-#include "mappingunavailableexception.h"
+#include "MappingUnavailableException.h"
 
 MappingUnavailableException::MappingUnavailableException(const char* msg) throw() :
     JNIException (msg) {

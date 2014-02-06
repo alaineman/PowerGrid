@@ -1,5 +1,5 @@
-#include "rsclass.h"
-#include "mappingunavailableexception.h"
+#include "RSClass.h"
+#include "MappingUnavailableException.h"
 using std::string;
 
 /**

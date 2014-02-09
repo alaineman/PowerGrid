@@ -11,6 +11,8 @@
 #include "jace/JMethod.h"
 #include "jace/JField.h"
 
+using namespace jace::proxy::types;
+
 #include "RSClass.h"
 
 #include "java/lang/object.h"
@@ -72,65 +74,65 @@ public:
     JACE_PROXY_API Canvas getCanvas();
     JACE_PROXY_API java::util::Map getChatChannels();
     JACE_PROXY_API NodeSubQueue getCollapsedMenuItems();
-    JACE_PROXY_API jint getConnectionState();
+    JACE_PROXY_API JInt getConnectionState();
     JACE_PROXY_API java::lang::String getCurrentAction();
     JACE_PROXY_API QList<GrandExchangeOffer> getCurrentGrandExchangeOffers();
-    JACE_PROXY_API jint getDestinationX();
-    JACE_PROXY_API jint getDestinationY();
+    JACE_PROXY_API JInt getDestinationX();
+    JACE_PROXY_API JInt getDestinationY();
     JACE_PROXY_API DetailInfoNode getDetailInfoNode();
-    JACE_PROXY_API jint getFPS();
+    JACE_PROXY_API JInt getFPS();
     JACE_PROXY_API Facade getFacade();
-    JACE_PROXY_API jint getFrameTime();
+    JACE_PROXY_API JInt getFrameTime();
     JACE_PROXY_API QList<Friend> getFriendsList();
     JACE_PROXY_API GraphicsToolkit getGraphicsToolkit();
     JACE_PROXY_API QList<Interface> getInterfaceArray();
     JACE_PROXY_API QList<Rectangle> getInterfaceBoundsArray();
-    JACE_PROXY_API jint getInterfaceIndex();
+    JACE_PROXY_API JInt getInterfaceIndex();
     JACE_PROXY_API HashTable getInterfaceNodeCache();
     JACE_PROXY_API ItemDefLoader getItemDefLoader();
     JACE_PROXY_API LandscapeInfo getLandscapeInfo();
     JACE_PROXY_API java::lang::String getLastSelectedItemName();
     JACE_PROXY_API QList<HintArrow> getLoadedHintArrows();
     JACE_PROXY_API HashTable getLoadedItems();
-    JACE_PROXY_API jint getLoadedNPCCount();
+    JACE_PROXY_API JInt getLoadedNPCCount();
     JACE_PROXY_API QList<NPCNode> getLoadedNPCNodes();
     JACE_PROXY_API QList<OverheadMessage> getLoadedOverheadMessages();
     JACE_PROXY_API QList<Player> getLoadedPlayers();
     JACE_PROXY_API Deque getLoadedProjectiles();
     JACE_PROXY_API Player getLocalPlayer();
-    JACE_PROXY_API jint getLoopCycle();
-    JACE_PROXY_API jint getMenuHeight();
+    JACE_PROXY_API JInt getLoopCycle();
+    JACE_PROXY_API JInt getMenuHeight();
     JACE_PROXY_API Deque getMenuItems();
     JACE_PROXY_API QList<java::lang::String> getMenuOptions();
-    JACE_PROXY_API jint getMenuOptionsCount();
-    JACE_PROXY_API jint getMenuOptionsCountCollapsed();
-    JACE_PROXY_API jint getMenuWidth();
-    JACE_PROXY_API jint getMenuX();
-    JACE_PROXY_API jint getMenuY();
-    JACE_PROXY_API jint getMessageCounter();
-    JACE_PROXY_API jfloat getMinimapAngle();
-    JACE_PROXY_API jint getMinimapOffset();
-    JACE_PROXY_API jint getMinimapScale();
-    JACE_PROXY_API jint getMinimapSetting();
+    JACE_PROXY_API JInt getMenuOptionsCount();
+    JACE_PROXY_API JInt getMenuOptionsCountCollapsed();
+    JACE_PROXY_API JInt getMenuWidth();
+    JACE_PROXY_API JInt getMenuX();
+    JACE_PROXY_API JInt getMenuY();
+    JACE_PROXY_API JInt getMessageCounter();
+    JACE_PROXY_API JFloat getMinimapAngle();
+    JACE_PROXY_API JInt getMinimapOffset();
+    JACE_PROXY_API JInt getMinimapScale();
+    JACE_PROXY_API JInt getMinimapSetting();
     JACE_PROXY_API MouseListener getMouse();
-    JACE_PROXY_API jint getMouseCrosshairSpriteCycleIndex();
+    JACE_PROXY_API JInt getMouseCrosshairSpriteCycleIndex();
     JACE_PROXY_API QList<Sprite> getMouseCrosshairSprites();
-    JACE_PROXY_API jint getMouseCrosshairState();
-    JACE_PROXY_API jint getNPCCombatCount();
-    JACE_PROXY_API QList<jint> getNPCCombatIndexArray();
+    JACE_PROXY_API JInt getMouseCrosshairState();
+    JACE_PROXY_API JInt getNPCCombatCount();
+    JACE_PROXY_API QList<JInt> getNPCCombatIndexArray();
     JACE_PROXY_API HashTable getNPCNodeCache();
     JACE_PROXY_API ObjectDefLoader getObjectDefLoader();
-    JACE_PROXY_API jint getPlane();
-    JACE_PROXY_API jint getPlayerCount();
-    JACE_PROXY_API QList<jint> getPlayerIndexArray();
+    JACE_PROXY_API JInt getPlane();
+    JACE_PROXY_API JInt getPlayerCount();
+    JACE_PROXY_API QList<JInt> getPlayerIndexArray();
     JACE_PROXY_API Cache getPlayerModels();
     JACE_PROXY_API QList<Server> getServers();
-    JACE_PROXY_API jint getSubMenuHeight();
-    JACE_PROXY_API jint getSubMenuWidth();
-    JACE_PROXY_API jint getSubMenuX();
-    JACE_PROXY_API jint getSubMenuY();
-    JACE_PROXY_API QList<jfloat> getTileData();
-    JACE_PROXY_API QList<jboolean> getValidInterfaceArray();
+    JACE_PROXY_API JInt getSubMenuHeight();
+    JACE_PROXY_API JInt getSubMenuWidth();
+    JACE_PROXY_API JInt getSubMenuX();
+    JACE_PROXY_API JInt getSubMenuY();
+    JACE_PROXY_API QList<JFloat> getTileData();
+    JACE_PROXY_API QList<JBoolean> getValidInterfaceArray();
 
 private:
     // Needed for casting objects of this type

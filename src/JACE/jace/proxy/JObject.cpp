@@ -239,7 +239,7 @@ jobject JObject::newObject( const JClass* jClass, const JArguments& arguments ) 
 }
 
 // Placeholder
-const JClass* JObject::getJavaJniClass() const throw ( JNIException ) {
+const JClass *JObject::getJavaJniClass() const throw ( JNIException ) {
   return 0;
 }
 

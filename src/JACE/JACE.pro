@@ -90,14 +90,18 @@ HEADERS += \
     MappingUnavailableException.h \
     RSClass.h \
     RSClassMapper.h \
-    UpdaterRunner.h
+    UpdaterRunner.h \
+    api/native/client.h \
+    java/lang/object.h
 
 SOURCES += \
     IllegalOperationException.cpp \
     MappingUnavailableException.cpp \
     RSClass.cpp \
     RSClassMapper.cpp \
-    UpdaterRunner.cpp
+    UpdaterRunner.cpp \
+    api/native/client.cpp \
+    java/lang/object.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

@@ -94,11 +94,7 @@ const ElementType& operator=( const ElementType& element ) const {
     ::jace::helper::deleteGlobalRef( env, parent );
   }
   catch ( std::exception& e ) {
-    #ifdef JACE_UNUSED_LOCAL_VAR
-      e; // shut up the compiler warning
-      // It's possible that we're trying to attach when
-      // the JVM has already been destroyed
-    #endif
+    Q_UNUSED(e);
   }
 }
 

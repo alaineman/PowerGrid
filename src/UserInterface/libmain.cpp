@@ -23,34 +23,29 @@
 #include "jace/WrapperVmLoader.h"
 #include <QApplication>
 #include "mainwindow.h"
+#include "versionInfo.h"
 #include <QtConcurrent>
 
 using namespace jace;
 
 VmLoader* globalVmLoader;
 
-/**
- * @brief executes the PowerGrid application
- * @param argc the amount of arguments
- * @param argv the actual arguments
- * @return the result
- */
-int execute(int argc, char** argv) {
-    QApplication app (argc, argv);
-    app.setApplicationName("PowerGrid");
-    MainWindow window;
-    window.show();
-    return app.exec();
-}
-
 // These two functions allow a JVM to load this application
 // as a library
 jint JNI_OnLoad(JavaVM* vm, void*) {
     globalVmLoader = new WrapperVmLoader(vm);
-    // Start the Qt Event Loop on another Thread
-    char* programName = const_cast<char*>("PowerGrid");
-    QtConcurrent::run(execute, 1, &programName);
-    return JNI_OK;
+    // This should go into a Java class that makes a native method call.
+    // Now the JVM may be waiting forever until the library is loaded.
+    QApplication app (0, NULL);
+    app.setApplicationName(PG_NAME_STR);
+    MainWindow window;
+    window.show();
+    int result = app.exec();
+    if (result == 0) {
+        return JNI_OK;
+    } else {
+        return JNI_ERR;
+    }
 }
 
 void JNI_OnUnload(JavaVM*, void*) {
@@ -64,4 +59,6 @@ void JNI_OnUnload(JavaVM*, void*) {
     QApplication::exit();
 }
 
+#else
+#warning libmain.cpp is included in the build even though the target is an application! Use main.cpp instead.
 #endif

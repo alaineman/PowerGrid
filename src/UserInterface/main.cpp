@@ -209,4 +209,6 @@ int main(int argc, char** argv) {
     return app.exec();
 }
 
+#else
+#warning main.cpp is included in the build even though the target is a library! Use libmain.cpp instead.
 #endif

@@ -8,24 +8,31 @@
 #include "jace/JNIHelper.h"
 using namespace jace;
 
-QString RSClassMapper::defaultDataFile ("cache/updater.dat");
 RSClassMapper* RSClassMapper::classmapper = nullptr;
 
 RSClassMapper* RSClassMapper::DefaultInstance() {
     if (! RSClassMapper::classmapper) {
-        RSClassMapper::classmapper = new RSClassMapper(defaultDataFile);
+        RSClassMapper::classmapper = new RSClassMapper();
     }
     return RSClassMapper::classmapper;
 }
 
-RSClassMapper::RSClassMapper(QString dataFile) : source (dataFile) {}
+RSClassMapper::RSClassMapper() {}
 
 RSClassMapper::~RSClassMapper() {}
 
 QMap<QString, QString> RSClassMapper::getFieldMap(QString className) const {
     QMap<QString, QMap<QString, QString>>::const_iterator it = fieldMap.find(className);
-    if (it == fieldMap.end()) {
+    if (it == fieldMap.cend()) {
         throw MappingUnavailableException(className);
+    }
+    return it.value();
+}
+
+QMap<QString, int> RSClassMapper::getModifierMap(QString className) const {
+    QMap<QString, QMap<QString, int>>::const_iterator it = modifiers.find(className);
+    if (it == modifiers.cend()) {
+        return QMap<QString, int>();
     }
     return it.value();
 }
@@ -44,6 +51,7 @@ void RSClassMapper::parseData(jbyteArray data) {
     }
     if (classMap.isEmpty()) {
         JNIEnv* env = helper::attach();
+        // java byte array copy using Java NIO transfer
         char* bytes = static_cast<char*>(env->GetDirectBufferAddress(data));
         jlong length = env->GetDirectBufferCapacity(data);
         QByteArray byteArray (const_cast<const char*>(bytes), length);

@@ -16,12 +16,14 @@ class RSClass : public jace::JClassImpl {
   private:
     QString simpleName;
     QMap<QString, QString> fieldMap;
+    QMap<QString, int> modifierMap;
   public:
-    JACE_API RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap);
+    JACE_API RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, int> mMap);
     JACE_API virtual ~RSClass() throw() {}
 
     JACE_API virtual const QString &getSimpleName() const;
     JACE_API string getFieldName(QString simpleName) const;
+    JACE_API int getFieldModifier(QString simpleName) const;
 };
 
 #endif // RSCLASS_H

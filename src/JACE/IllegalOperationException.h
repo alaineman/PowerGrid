@@ -13,7 +13,7 @@ using jace::JNIException;
  * the data in the client directly. Since this may lead to
  * undefined behavior in the Runescape client, such
  * operations are mostly blocked. The exception to this
- * is operations that push input events to the client.
+ * are operations that push input events to the client.
  *
  * @author Patrick Kramer
  */

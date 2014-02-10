@@ -9,10 +9,11 @@ using std::string;
  *               a call to JNIEnv::FindClass.
  * @param simpleName the simple (semantic) name of the RSClass
  */
-RSClass::RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap) :
+RSClass::RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, int> mMap) :
   JClassImpl(name),
   simpleName (simpleName),
-  fieldMap (fMap) {
+  fieldMap (fMap),
+  modifierMap (mMap ) {
 }
 
 const QString &RSClass::getSimpleName() const {
@@ -25,4 +26,13 @@ string RSClass::getFieldName(QString simpleName) const {
       throw MappingUnavailableException((this->simpleName + simpleName).toStdString());
   }
   return it.value().toStdString();
+}
+
+int RSClass::getFieldModifier(QString simpleName) const {
+    QMap<QString, int>::const_iterator it = modifierMap.find(simpleName);
+    if (it == fieldMap.cend()) {
+        return 1; // equivalent to no modifier ( f*1 == f )
+    } else {
+        return it.value();
+    }
 }

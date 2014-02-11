@@ -119,12 +119,18 @@ JFieldProxy<Type> get( const ::jace::JClass* jClass ) {
 
 Type getReadOnly( const ::jace::JClass* jClass) {
     jvalue value = helper.getField( jClass );
-    return Type(value);
+    Type result (value);
+    JNIEnv* env = jace::helper::attach();
+    jace::helper::deleteLocalRef(env, value.l);
+    return result;
 }
 
-Type getReadOnly( const ::jace::proxy::JObject& object) {
+Type getReadOnly( ::jace::proxy::JObject& object) {
     jvalue value = helper.getField(object);
-    return Type(value);
+    Type result (value);
+    JNIEnv* env = jace::helper::attach();
+    jace::helper::deleteLocalRef(env, value.l);
+    return result;
 }
 
 private:

@@ -3,34 +3,20 @@
 
 #include "jace/os_dep.h"
 #include "jace/Namespace.h"
-#include "jace/javacast.h"\
+#include "jace/javacast.h"
 
 #include "jace/proxy/JObject.h"
 #include "jace/JArray.h"
 #include "jace/JFieldProxy.h"
 #include "jace/JMethod.h"
 #include "jace/JField.h"
-#include "jace/JClassImpl.h"
+#include "jace/JClass.h"
 
 /**
  * Forward declarations for the classes that this class uses.
  */
-namespace jace {
- namespace proxy {
-  namespace types {
-   class JBoolean;
-   class JVoid;
-   class JLong;
-   class JInt;
-  }
- }
-}
 namespace java {
 namespace lang {
-
-class String;
-class Class;
-class InterruptedException;
 
 class Object: public virtual jace::proxy::JObject {
 public:
@@ -39,24 +25,17 @@ public:
         static Object create();
     };
 public:
-    explicit Object();
-    Object(const Object&);
-
-    java::lang::Class getClass();
-    jace::proxy::types::JInt hashCode();
-    jace::proxy::types::JBoolean equals(java::lang::Object p0);
-    java::lang::String toString();
-    void notify();
-    void notifyAll();
-    void wait(jace::proxy::types::JLong p0);
-    void wait(jace::proxy::types::JLong p0, jace::proxy::types::JInt p1);
-    void wait();
+    Object();
+    Object(const Object&obj);
+    Object(const NoOp& noop);
 
     virtual const jace::JClass* getJavaJniClass() const throw (::jace::JNIException);
     static const jace::JClass* staticGetJavaJniClass() throw (::jace::JNIException);
 
-    explicit Object(jvalue);
-    explicit Object(jobject);
+    explicit Object(jvalue val);
+    explicit Object(jobject obj);
+
+    Object& operator= (Object& obj);
 
     friend std::ostream& operator<<(std::ostream& out, Object& object);
 private:

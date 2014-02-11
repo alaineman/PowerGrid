@@ -57,9 +57,9 @@ class ObjectDefLoader;
 class Cache;
 class Server;
 
-class Client : virtual java::lang::Object {
+class Client : public virtual java::lang::Object {
 public:
-    JACE_PROXY_API explicit Client (const Client&obj);
+    JACE_PROXY_API Client (const Client& obj);
 
     JACE_PROXY_API virtual const RSClass* getJavaJniClass() const throw(::jace::JNIException);
     JACE_PROXY_API static const RSClass* staticGetJavaJniClass() throw(::jace::JNIException);

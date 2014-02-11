@@ -56,7 +56,7 @@ QString RSClassMapper::getRealName(QString semanticName) const {
 RSClass* RSClassMapper::getRSClass(QString name) {
     RSClass* rsc = classes.find(name).value();
     if ( !rsc ) {
-        rsc = new RSClass(getRealName(name), name, getFieldMap(name), getModifierMap(name));
+        rsc = new RSClass(getRealName(name).toStdString(), name, getFieldMap(name), getModifierMap(name));
         classes.insert(name, rsc);
         // We delete the references from the maps to prevent redundancy
         classMap.remove(name);

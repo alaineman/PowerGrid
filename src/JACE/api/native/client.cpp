@@ -5,8 +5,8 @@
 namespace api {
 namespace native {
 
-Client::Client(const Client &obj) {
-    setJavaJniValue(obj.getJavaJniValue());
+Client::Client(const Client& obj) :
+    JObject(NoOp()), Object(obj) {
 }
 
 Client::Client(jobject obj) {
@@ -17,12 +17,12 @@ Client::Client(jvalue val) {
     setJavaJniValue(val);
 }
 
-RSClass* Client::staticGetJavaJniClass() {
+const RSClass* Client::staticGetJavaJniClass() throw(jace::JNIException) {
     static RSClass* cls = RSClassMapper::DefaultInstance()->getRSClass("Client");
     return cls;
 }
 
-RSClass* Client::getJavaJniClass() const {
+const RSClass* Client::getJavaJniClass() const throw(jace::JNIException) {
     return Client::staticGetJavaJniClass();
 }
 
@@ -36,8 +36,9 @@ RSClass* Client::getJavaJniClass() const {
 // By doing this, we effectively prevent external code from writing to the
 // Runescape client directly.
 Client Client::getClient() {
-    RSClass* rsc = Client::staticGetJavaJniClass();
-    return jace::JField<Client>(rsc->getFieldName("getClient")).getReadOnly(rsc);
+    const RSClass* rsc = Client::staticGetJavaJniClass();
+    Client c = jace::JField<Client>(rsc->getFieldName("getClient")).getReadOnly(rsc);
+    return c;
 }
 
 // Example 2: virtual primitive-type method..
@@ -51,7 +52,7 @@ Client Client::getClient() {
 // smaller and easier to understand. The content of any getter method would then
 // just be "return getJavaJniClass().getField<Type>(name);".
 JInt Client::getFPS() {
-    RSClass* rsc = getJavaJniClass();
+    const RSClass* rsc = getJavaJniClass();
     JInt result = jace::JField<JInt>(rsc->getFieldName("getFPS")).getReadOnly(*this);
     return result * rsc->getFieldModifier("getFPS");
 }

@@ -105,9 +105,11 @@ else {
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-macx: SOURCES += libmain.cpp
-else: SOURCES += main.cpp
-
+macx {
+  SOURCES += libmain.cpp
+} else {
+  SOURCES += main.cpp
+}
 SOURCES       += mainwindow.cpp
 
 HEADERS        = mainwindow.h \

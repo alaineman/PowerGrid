@@ -30,7 +30,7 @@ string RSClass::getFieldName(QString simpleName) const {
 
 int RSClass::getFieldModifier(QString simpleName) const {
     QMap<QString, int>::const_iterator it = modifierMap.find(simpleName);
-    if (it == fieldMap.cend()) {
+    if (it == modifierMap.cend()) {
         return 1; // equivalent to no modifier ( f*1 == f )
     } else {
         return it.value();

@@ -34,9 +34,12 @@ VmLoader* globalVmLoader;
 // as a library
 jint JNI_OnLoad(JavaVM* vm, void*) {
     globalVmLoader = new WrapperVmLoader(vm);
-    // This should go into a Java class that makes a native method call.
+    // FIXME This should go into a Java class that makes a native method call.
     // Now the JVM may be waiting forever until the library is loaded.
-    QApplication app (0, NULL);
+    // Additionally, QApplication may only be launched from a QThread, so we need to
+    // start a new Thread from there.
+    int argc = 0;
+    QApplication app (argc, NULL);
     app.setApplicationName(PG_NAME_STR);
     MainWindow window;
     window.show();

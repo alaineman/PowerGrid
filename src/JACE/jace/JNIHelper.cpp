@@ -679,7 +679,7 @@ void onProcessCreation() throw ( ::jace::JNIException ) {
     }
     default: {
         std::string msg = "JNIHelper::setClassLoader()\n"
-                "phread_key_create() returned " + toString( rc ) + ".";
+                "phread_key_create() returned " + std::to_string( rc ) + ".";
         throw JNIException( msg );
     }
     }

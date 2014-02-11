@@ -19,7 +19,15 @@ RSClassMapper* RSClassMapper::DefaultInstance() {
 
 RSClassMapper::RSClassMapper() {}
 
-RSClassMapper::~RSClassMapper() {}
+RSClassMapper::~RSClassMapper() {
+    // Upon destruction, delete all maintained RSClass references.
+    for (QMap<QString,RSClass*>::Iterator it=classes.begin(); it!=classes.end();it++) {
+        RSClass* rsc = it.value();
+        if (rsc) {
+            delete rsc;
+        }
+    }
+}
 
 QMap<QString, QString> RSClassMapper::getFieldMap(QString className) const {
     QMap<QString, QMap<QString, QString>>::const_iterator it = fieldMap.find(className);
@@ -43,6 +51,19 @@ QString RSClassMapper::getRealName(QString semanticName) const {
         throw MappingUnavailableException(semanticName);
     }
     return it.value();
+}
+
+RSClass* RSClassMapper::getRSClass(QString name) {
+    RSClass* rsc = classes.find(name).value();
+    if ( !rsc ) {
+        rsc = new RSClass(getRealName(name), name, getFieldMap(name), getModifierMap(name));
+        classes.insert(name, rsc);
+        // We delete the references from the maps to prevent redundancy
+        classMap.remove(name);
+        fieldMap.remove(name);
+        modifiers.remove(name);
+    }
+    return rsc;
 }
 
 void RSClassMapper::parseData(jbyteArray data) {

@@ -117,6 +117,16 @@ JFieldProxy<Type> get( const ::jace::JClass* jClass ) {
   return fieldProxy;
 }
 
+Type getReadOnly( const ::jace::JClass* jClass) {
+    jvalue value = helper.getField( jClass );
+    return Type(value);
+}
+
+Type getReadOnly( const ::jace::proxy::JObject& object) {
+    jvalue value = helper.getField(object);
+    return Type(value);
+}
+
 private:
 
 ::jace::JFieldHelper helper;

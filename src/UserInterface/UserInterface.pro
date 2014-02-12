@@ -31,7 +31,7 @@
 # Basic properties of the project itself
 #------------------------------------------------
 QT          = core gui widgets
-CONFIG     += c++11
+CONFIG     += thread c++11
 
 macx {
     # A bug in Oracle's JVM prevents us from creating a VM
@@ -112,8 +112,7 @@ macx {
 }
 SOURCES       += mainwindow.cpp
 
-HEADERS        = mainwindow.h \
-    versionInfo.h
+HEADERS        = mainwindow.h versionInfo.h
 FORMS          = mainwindow.ui
 RESOURCES      = resources.qrc
 OTHER_FILES    = powergrid.rc
@@ -125,8 +124,13 @@ win32 {
 }
 
 # helper defines to detect build mode.
-debug: DEFINES += PG_DEBUG
-release: DEFINES += PG_RELEASE
+CONFIG(debug, debug|release) {
+    DEFINES += PG_DEBUG QT_NO_DEBUG_OUTPUT
+}
+CONFIG(release, debug|release) {
+    DEFINES += PG_RELEASE
+}
+DEFINES += JACE_STATIC
 
 # Depends for JACE
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../JACE/release/ -lJACE

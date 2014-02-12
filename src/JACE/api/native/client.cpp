@@ -5,25 +5,30 @@
 namespace api {
 namespace native {
 
-Client::Client(const Client& obj) :
+JACE_PROXY_API Client::Client(const Client& obj) :
     JObject(NoOp()), Object(obj) {
 }
 
-Client::Client(jobject obj) {
+JACE_PROXY_API Client::Client(jobject obj) {
     setJavaJniObject(obj);
 }
 
-Client::Client(jvalue val) {
+JACE_PROXY_API Client::Client(jvalue val) {
     setJavaJniValue(val);
 }
 
-const RSClass* Client::staticGetJavaJniClass() throw(jace::JNIException) {
+JACE_PROXY_API const RSClass* Client::staticGetJavaJniClass() throw(jace::JNIException) {
     static RSClass* cls = RSClassMapper::DefaultInstance()->getRSClass("Client");
     return cls;
 }
 
-const RSClass* Client::getJavaJniClass() const throw(jace::JNIException) {
+JACE_PROXY_API const RSClass* Client::getJavaJniClass() const throw(jace::JNIException) {
     return Client::staticGetJavaJniClass();
+}
+
+JACE_PROXY_API Client& Client::operator =(Client& other) {
+    setJavaJniObject(other.getJavaJniObject());
+    return *this;
 }
 
 // Example 1: static object-type field.
@@ -35,7 +40,7 @@ const RSClass* Client::getJavaJniClass() const throw(jace::JNIException) {
 // since this returns the field contents directly instead of a JFieldProxy.
 // By doing this, we effectively prevent external code from writing to the
 // Runescape client directly.
-Client Client::getClient() {
+JACE_PROXY_API Client Client::getClient() {
     const RSClass* rsc = Client::staticGetJavaJniClass();
     Client c = jace::JField<Client>(rsc->getFieldName("getClient")).getReadOnly(rsc);
     return c;
@@ -51,7 +56,7 @@ Client Client::getClient() {
 // and the modifier application to RSClass, since this makes the proxy classes even
 // smaller and easier to understand. The content of any getter method would then
 // just be "return getJavaJniClass().getField<Type>(name);".
-JInt Client::getFPS() {
+JACE_PROXY_API JInt Client::getFPS() {
     const RSClass* rsc = getJavaJniClass();
     JInt result = jace::JField<JInt>(rsc->getFieldName("getFPS")).getReadOnly(*this);
     return result * rsc->getFieldModifier("getFPS");
@@ -60,3 +65,5 @@ JInt Client::getFPS() {
 
 } // end namespace native
 } // end namespace api
+
+

@@ -5,8 +5,7 @@
 
 class Ui_controlPanel;
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -15,9 +14,11 @@ public:
 
 private:
     Ui_controlPanel *ui;
+    QTimer* timer;
 
 public slots:
     void setJVMVersion(QString version);
+    void updateFPS();
 };
 
 #endif // MAINWINDOW_H

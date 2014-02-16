@@ -20,12 +20,12 @@ const QString &RSClass::getSimpleName() const {
   return simpleName;
 }
 
-string RSClass::getFieldName(QString simpleName) const {
-  QMap<QString, QString>::const_iterator it = fieldMap.find(simpleName);
-  if (it == fieldMap.cend()) {
-      throw MappingUnavailableException((this->simpleName + simpleName).toStdString());
-  }
-  return it.value().toStdString();
+string RSClass::getFieldName(QString name) const {
+    QMap<QString, QString>::const_iterator it = fieldMap.find(name);
+    if (it == fieldMap.cend()) {
+        throw MappingUnavailableException(simpleName + name);
+    }
+    return it.value().toStdString();
 }
 
 int RSClass::getFieldModifier(QString simpleName) const {

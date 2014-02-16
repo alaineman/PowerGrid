@@ -125,10 +125,10 @@ win32 {
 
 # helper defines to detect build mode.
 CONFIG(debug, debug|release) {
-    DEFINES += PG_DEBUG QT_NO_DEBUG_OUTPUT
+    DEFINES += PG_DEBUG
 }
 CONFIG(release, debug|release) {
-    DEFINES += PG_RELEASE
+    DEFINES += PG_RELEASE QT_NO_DEBUG_OUTPUT
 }
 DEFINES += JACE_STATIC
 

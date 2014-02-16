@@ -18,8 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow() {
     timer->stop();
-    delete ui;
     delete timer;
+    delete ui;
 }
 
 void MainWindow::setJVMVersion(QString version) {
@@ -28,9 +28,14 @@ void MainWindow::setJVMVersion(QString version) {
 
 void MainWindow::updateFPS() {
     try {
+        // FIXME this doesn't work right now
         api::native::Client c = api::native::Client::getClient();
-        JInt fpsValue = c.getFPS();
-        ui->fps->setText(QString::number(fpsValue.getInt()));
+        if (!c.isNull()) {
+            JInt fpsValue = c.getFPS();
+            ui->fps->setText(QString::number(fpsValue.getInt()));
+        } else {
+            ui->fps->setText(QStringLiteral("ERR: No Client found"));
+        }
     } catch (jace::JNIException& e) {
         qDebug() << "updateFPS failed:" << e.what();
     }

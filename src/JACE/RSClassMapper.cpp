@@ -48,22 +48,25 @@ QMap<QString, int> RSClassMapper::getModifierMap(QString className) const {
 QString RSClassMapper::getRealName(QString semanticName) const {
     QMap<QString, QString>::const_iterator it = classMap.find(semanticName);
     if (it == classMap.end()) {
-        throw MappingUnavailableException(semanticName);
+        throw MappingUnavailableException("class " + semanticName);
     }
     return it.value();
 }
 
 RSClass* RSClassMapper::getRSClass(QString name) {
-    RSClass* rsc = classes.find(name).value();
-    if ( !rsc ) {
-        rsc = new RSClass(getRealName(name).toStdString(), name, getFieldMap(name), getModifierMap(name));
+    QMap<QString, RSClass*>::const_iterator it = classes.find(name);
+    if (it == classes.cend()) {
+        RSClass* rsc = new RSClass(getRealName(name).toStdString(), name, getFieldMap(name), getModifierMap(name));
         classes.insert(name, rsc);
         // We delete the references from the maps to prevent redundancy
         classMap.remove(name);
         fieldMap.remove(name);
         modifiers.remove(name);
+        qDebug() << "Linked RS class:" << name;
+        return rsc;
+    } else {
+        return it.value();
     }
-    return rsc;
 }
 
 void RSClassMapper::parseData(jbyteArray data) {

@@ -1,6 +1,7 @@
 #include "client.h"
 #include "RSClassMapper.h"
 #include "jace/JField.h"
+#include "MappingUnavailableException.h"
 
 namespace api {
 namespace native {
@@ -41,8 +42,15 @@ JACE_PROXY_API Client& Client::operator =(Client& other) {
 // By doing this, we effectively prevent external code from writing to the
 // Runescape client directly.
 JACE_PROXY_API Client Client::getClient() {
+    // FIXME: This seems to cause an ACCESS_VIOLATION on Win7. Not sure yet why, though...
+    // It seems that the RSClass* is non-null, yet it causes an
+    // ACCESS_VIOLATION when referenced...
+    // Is it accidentally deleted at some point in the process?
     const RSClass* rsc = Client::staticGetJavaJniClass();
-    Client c = jace::JField<Client>(rsc->getFieldName("getClient")).getReadOnly(rsc);
+    qDebug() << "Requesting Client";
+    std::string fName = rsc->getFieldName("getClient");
+    qDebug() << "RSClass properties received";
+    Client c (NULL); // = jace::JField<Client>(fName).getReadOnly(rsc);
     return c;
 }
 

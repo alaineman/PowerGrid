@@ -22,7 +22,7 @@ class RSClass : public jace::JClassImpl {
     JACE_API virtual ~RSClass() throw() {}
 
     JACE_API virtual const QString &getSimpleName() const;
-    JACE_API string getFieldName(QString simpleName) const;
+    JACE_API string getFieldName(QString name) const;
     JACE_API int getFieldModifier(QString simpleName) const;
 };
 

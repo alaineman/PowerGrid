@@ -28,15 +28,14 @@ void MainWindow::setJVMVersion(QString version) {
 
 void MainWindow::updateFPS() {
     try {
-        // FIXME this doesn't work right now
         api::native::Client c = api::native::Client::getClient();
         if (!c.isNull()) {
             JInt fpsValue = c.getFPS();
             ui->fps->setText(QString::number(fpsValue.getInt()));
         } else {
-            ui->fps->setText(QStringLiteral("ERR: No Client found"));
+            ui->fps->setText(QStringLiteral("ERR: Client is null"));
         }
     } catch (jace::JNIException& e) {
-        qDebug() << "updateFPS failed:" << e.what();
+        ui->fps->setText(QStringLiteral("ERR: Client class missing"));
     }
 }

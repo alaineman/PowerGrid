@@ -3,11 +3,7 @@
 PowerGrid is a revolutionary bot platform that aims to provide a more open approach to botting than other clients have shown so far. Being written in C++, PowerGrid also aims to provide a more fluent experience for end-users, and a generally faster and more dynamic programming language to work in.  
 
 ## PowerGrid functionality ##
-PowerGrid offers a completely new travelling system that allows the user to walk to any location in the Runescape world, while also using available teleports and shortcuts to get to the destination in the fastest possible way.
-
-It also provides a mechanism to check a variety of stats and settings without needing to navigate through widgets, PowerGrid automatically checks these when required, but caches the results so that consecutive calls are much faster. This is mainly required because PowerGrid uses JNI to interact with the Java environment, which is usually slower than interaction from within the Java environment, but the big advantage is that PowerGrid's further processing happens completely separate from the Java Virtual machine, being not only much faster, but also less detectable than executing similar code inside the JVM.
-
-PowerGrid offers a full user interface to travel to any destination or location using either landmarks, special locations such as banks and stores, or even an actual world map, allowing the user to click any tile on the map, after which PowerGrid computes a route and executes it for maximum control.
+PowerGrid aims to surpass current Runescape bots by revolutionizing the way it deals with its extensions. Where traditional bot clients focus on the botting aspect and work through executing scripts, PowerGrid works in a completely different way: PowerGrid makes use of the provided extensions to improve the tasks it performs. For example, a plugin developer would write an extension to PowerGrid for interacting with a transportation system called "fairy rings" in the Runescape world. This plugin can be loaded by PowerGrid, and the PowerGrid AI can then use the extended functionality to find shorter paths across the world. Such extensions can be created for not only travelling, but also for training virtually all skills.
 
 PowerGrid is, unlike other bots, written in C++. While this causes a delay in transferring data from the Java environment to C++, the C++ functions themselves can be made much faster, and since most code will run outside the Java Virtual Machine, there is also less chance of the Runescape client detecting the bot. 
 
@@ -19,7 +15,11 @@ PowerGrid comes with its own control frame that is separate from the main Runesc
 Because of this feature, it is also possible to use PowerGrid to play Runescape normally, without PowerGrid getting in the way. Also, PowerGrid solely uses reflection to monitor the bot, which opens up more dynamic possibilities than when using injection. This is because Runescape's classes themselves are not modified, and this prevents many workarounds that other bot platforms have to make to get the injection to work.
 
 ## Legal notices ##
-Copyright 2012-2013 Patrick Kramer, Vincent Wassenaar
+We believe in the power of free software, and as such we decided to make the entire bot open-source, including the core, api, and applet loader. We believe that together with everyone we can continue to improve PowerGrid, and meet the expectations of our users. Therefore, we licensed PowerGrid under the GNU GPL version 3, so that everyone may use it and modify it as they want.
+
+The license information that applies to PowerGrid (the GNU GPL v3) is mentioned below:
+
+Copyright 2012-2014 Patrick Kramer, Vincent Wassenaar
 
 PowerGrid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

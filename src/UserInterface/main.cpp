@@ -61,6 +61,7 @@
 // Our own additional headers
 #include "mainwindow.h"
 #include "versionInfo.h"
+#include "NativesLoader.h"
 
 using namespace jace;
 using namespace std;
@@ -137,7 +138,7 @@ int main(int argc, char** argv) {
         JNIEnv* env = helper::attach();
 
         // Register all natives
-        bridge::updater::UpdaterRunner_registerNatives(env); // net.pgrid.loader.bridge.UpdaterRunner
+        registerAllNatives(env);
 
         // Start the PowerGridLoader
         // Actual command (in java): net.pgrid.loader.PGLoader.main(new String[]{"-c"});

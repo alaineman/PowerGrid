@@ -146,19 +146,6 @@ public class PGLoader {
             startTime = 0;
         }
         
-        if (client) {
-            // If the native client started the loader, we set this to true.
-            NativesLoader.setPowergridAvailable(true);
-            LOGGER.log("Loader started from native client");
-        } else {
-            // Try to load the native client
-            if (NativesLoader.checkLoadPowerGrid()) {
-                LOGGER.log("Loaded PowerGrid as native dynamic library");
-            } else {
-                LOGGER.log("PowerGrid client not detected, running stand-alone");
-            }
-        }
-        
         getFrame().init();
         getFrame().showMessage("Loading config...");
         

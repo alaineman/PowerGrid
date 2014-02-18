@@ -50,6 +50,7 @@ void UpdaterRunner_registerNatives(JNIEnv* env)
         throw JNIException("RegisterNatives failed for UpdaterRunner: "
                            + jace::JNIError_toString(result));
     }
+    qDebug() << "Natives registered successfully for UpdaterRunner class";
 }
 
 END_NAMESPACE_2( bridge, updater )

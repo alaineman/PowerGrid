@@ -28,6 +28,10 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
+macx {
+  warning("Mac OS X is not supported as of now, and things may not work as expected!")
+}
+
 SUBDIRS += JACE UserInterface PluginFramework   # DefaultPlugin
 
 UserInterface.depends = JACE

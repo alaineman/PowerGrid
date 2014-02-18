@@ -32,26 +32,9 @@
 #------------------------------------------------
 QT          = core gui widgets
 CONFIG     += thread c++11
+TEMPLATE    = app
 
-macx {
-    # A bug in Oracle's JVM prevents us from creating a VM
-    # on Mac OS X. We can fix this by launching the Java Loader
-    # and allow the running JVM to link to PowerGrid as a library.
-    DEFINES += PG_BUILD_JNILIB
-    TEMPLATE = lib
-    # JNI libraries on Mac OS end with ".jnilib" instead of the
-    # default ".dylib" for dynamic libraries.
-    QMAKE_EXTENSION_SHLIB = jnilib
-    QT += concurrent
-}
-else {
-    # On other platforms, we launch the other way. This way we
-    # have more control over the parameters we launch the VM with.
-    TEMPLATE = app
-}
-
-win32:     RC_FILE = powergrid.rc
-else:macx: ICON    = powergrid.icns
+win32: RC_FILE = powergrid.rc
 
 # Make sure the executable/library is named PowerGrid and is in
 # an easy to find location
@@ -87,17 +70,6 @@ win32 {
     else: warning(possibly missing compiler dependant libraries)
     INSTALLS += qtlibs
 }
-else:macx {
-    # On mac, Qt libraries are stored as Mac OS frameworks
-    QTDIR = $$[QT_INSTALL_PREFIX]/lib
-    qtlibs.path = $$DESTDIR
-    qtlibs.files += $$QTDIR/QtCore.framework
-    qtlibs.files += $$QTDIR/QtGui.framework
-    qtlibs.files += $$QTDIR/QtWidgets.framework
-    qtlibs.files += $$QTDIR/QtConcurrent.framework
-
-    INSTALLS += qtlibs
-}
 else {
     warning(missing dependency specs; Qt libraries are not copied)
 }
@@ -105,13 +77,7 @@ else {
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-macx {
-  SOURCES += libmain.cpp
-} else {
-  SOURCES += main.cpp
-}
-SOURCES       += mainwindow.cpp
-
+SOURCES       += main.cpp mainwindow.cpp
 HEADERS        = mainwindow.h versionInfo.h
 FORMS          = mainwindow.ui
 RESOURCES      = resources.qrc

@@ -70,7 +70,7 @@
 # JACE has been optimized for use with PowerGrid.
 #------------------------------------------------------------------------
 
-
+QT          = core concurrent
 TEMPLATE    = lib
 TARGET      = JACE
 CONFIG     += staticlib thread c++11

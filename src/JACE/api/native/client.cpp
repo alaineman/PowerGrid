@@ -1,7 +1,6 @@
 #include "client.h"
-#include "RSClassMapper.h"
-#include "jace/JField.h"
-#include "MappingUnavailableException.h"
+
+#include "MethodHelper.h"
 
 namespace api {
 namespace native {
@@ -18,52 +17,46 @@ JACE_PROXY_API Client::Client(jvalue val) {
     setJavaJniValue(val);
 }
 
-JACE_PROXY_API const RSClass* Client::staticGetJavaJniClass() throw(jace::JNIException) {
-    static RSClass* cls = RSClassMapper::DefaultInstance()->getRSClass("Client");
-    return cls;
-}
-
-JACE_PROXY_API const RSClass* Client::getJavaJniClass() const throw(jace::JNIException) {
-    return Client::staticGetJavaJniClass();
-}
-
 JACE_PROXY_API Client& Client::operator =(Client& other) {
     setJavaJniObject(other.getJavaJniObject());
     return *this;
 }
 
-// Example 1: static object-type field.
-// static fields map to static member functions in a proxy class.
-// We collect the value for the field (using the class reference)
-// and return it directly, since RS does not mess with object references.
+IMPL_RSCLASS_GET(Client)
 
-// Furthermore, we get the contents of the field using JField::getReadOnly,
-// since this returns the field contents directly instead of a JFieldProxy.
-// By doing this, we effectively prevent external code from writing to the
-// Runescape client directly.
-JACE_PROXY_API Client Client::getClient() {
-    const RSClass* rsc = Client::staticGetJavaJniClass();
-    return jace::JField<Client>(rsc->getFieldName("getClient")).getReadOnly(rsc);
-}
+IMPL_STATIC_OBJECT_METHOD(Client, getClient, Client)
 
-// Example 2: virtual primitive-type method..
-// virtual fields are practically collected the same way, only here the object
-// reference is used for the actual collection.
-// Additionally, since it's a primitive type, we may need to apply a modifier
-// value to the result as well.
-
-// A possible improvement on this technique involves moving the field getter
-// and the modifier application to RSClass, since this makes the proxy classes even
-// smaller and easier to understand. The content of any getter method would then
-// just be "return getJavaJniClass().getField<Type>(name);".
-JACE_PROXY_API JInt Client::getFPS() {
-    const RSClass* rsc = getJavaJniClass();
-    JInt result = jace::JField<JInt>(rsc->getFieldName("getFPS")).getReadOnly(*this);
-    return result * rsc->getFieldModifier("getFPS");
-}
-
+IMPL_PRIMITIVE_METHOD(Client, getConnectionState, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getDestinationX, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getDestinationY, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getFPS, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getFrameTime, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getInterfaceIndex, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getLoadedNPCCount, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getLoopCycle, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMenuHeight, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMenuOptionsCount, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMenuOptionsCountCollapsed, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMenuWidth, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMenuX, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMenuY, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMessageCounter, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMinimapAngle, JFloat)
+IMPL_PRIMITIVE_METHOD(Client, getMinimapOffset, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMinimapScale, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMinimapSetting, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMouseCrosshairSpriteCycleIndex, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getMouseCrosshairState, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getNPCCombatCount, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getPlane, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getPlayerCount, JInt)
+IMPL_ARRAY_METHOD(Client, getPlayerIndexArray, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getSubMenuHeight, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getSubMenuWidth, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getSubMenuX, JInt)
+IMPL_PRIMITIVE_METHOD(Client, getSubMenuY, JInt)
+IMPL_ARRAY_METHOD(Client, getTileData, JFloat)
+IMPL_ARRAY_METHOD(Client, getValidInterfaceArray, JBoolean)
 
 } // end namespace native
 } // end namespace api
-
-

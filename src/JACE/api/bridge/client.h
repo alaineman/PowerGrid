@@ -137,8 +137,6 @@ public:
     JACE_PROXY_API QList<JFloat> getTileData();
     JACE_PROXY_API QList<JBoolean> getValidInterfaceArray();
 
-    JACE_PROXY_API Client& operator= (Client& other);
-
 private:
     DECLARE_FRIENDS
 };

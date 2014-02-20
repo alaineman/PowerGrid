@@ -100,7 +100,9 @@ HEADERS += \
     api/bridge/abstractcentrallocationdata.h \
     api/bridge/abstractmodel.h \
     api/bridge/abstractserver.h \
-    api/bridge/abstractsocketstream.h
+    api/bridge/abstractsocketstream.h \
+    api/bridge/animablenode.h \
+    api/bridge/animatedobject.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -116,7 +118,9 @@ SOURCES += \
     api/bridge/abstractcentrallocationdata.cpp \
     api/bridge/abstractmodel.cpp \
     api/bridge/abstractserver.cpp \
-    api/bridge/abstractsocketstream.cpp
+    api/bridge/abstractsocketstream.cpp \
+    api/bridge/animablenode.cpp \
+    api/bridge/animatedobject.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

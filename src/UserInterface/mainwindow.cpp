@@ -20,7 +20,7 @@
 #include "ui_mainwindow.h"
 #include "versionInfo.h"
 
-#include "api/native/client.h"
+#include "api/bridge/client.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -46,7 +46,7 @@ void MainWindow::setJVMVersion(QString version) {
 
 void MainWindow::updateFPS() {
     try {
-        api::native::Client c = api::native::Client::getClient();
+        api::bridge::Client c = api::bridge::Client::getClient();
         if (!c.isNull()) {
             JInt fpsValue = c.getFPS();
             ui->fps->setText(QString::number(fpsValue.getInt()));

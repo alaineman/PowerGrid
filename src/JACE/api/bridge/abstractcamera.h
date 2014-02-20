@@ -9,14 +9,14 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
-//class AbstractCameraLocationData;
+class AbstractCameraLocationData;
 //class AbstractCentralLocationData;
 
 class AbstractCamera : public Object {
 public:
     RS_OBJECT(AbstractCamera)
 
-//    JACE_PROXY_API AbstractCameraLocationData getCameraLocationData();
+    JACE_PROXY_API AbstractCameraLocationData getCameraLocationData();
 //    JACE_PROXY_API AbstractCentralLocationData getCentralLocationData();
 private:
     DECLARE_FRIENDS

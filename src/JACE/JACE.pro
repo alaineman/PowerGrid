@@ -102,7 +102,15 @@ HEADERS += \
     api/bridge/abstractserver.h \
     api/bridge/abstractsocketstream.h \
     api/bridge/animablenode.h \
-    api/bridge/animatedobject.h
+    api/bridge/animatedobject.h \
+    api/bridge/animation.h \
+    api/bridge/baseinfo.h \
+    api/bridge/canvas.h \
+    api/bridge/detailinfo.h \
+    api/bridge/entityposition.h \
+    api/bridge/fileworker.h \
+    api/bridge/friend.h \
+    api/bridge/grandexchangeoffer.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -120,7 +128,15 @@ SOURCES += \
     api/bridge/abstractserver.cpp \
     api/bridge/abstractsocketstream.cpp \
     api/bridge/animablenode.cpp \
-    api/bridge/animatedobject.cpp
+    api/bridge/animatedobject.cpp \
+    api/bridge/animation.cpp \
+    api/bridge/baseinfo.cpp \
+    api/bridge/canvas.cpp \
+    api/bridge/detailinfo.cpp \
+    api/bridge/entityposition.cpp \
+    api/bridge/fileworker.cpp \
+    api/bridge/friend.cpp \
+    api/bridge/grandexchangeoffer.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

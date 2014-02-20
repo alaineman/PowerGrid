@@ -81,6 +81,20 @@ public class AppletFrame extends JFrame implements AppletStub {
     public Applet getApplet() {
         return applet;
     }
+    
+    /**
+     * @return the width of the internal Applet, or -1 if the Applet does not exist.
+     */
+    public int getAppletWidth() {
+        return (applet != null ? applet.getWidth() : -1);
+    }
+    
+    /**
+     * @return the height of the internal Applet, or -1 if the Applet does not exist.
+     */
+    public int getAppletHeight() {
+        return (applet != null ? applet.getHeight() : -1);
+    }
 
     /**
      * Sets up the AppletFrame and shows it.

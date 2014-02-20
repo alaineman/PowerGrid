@@ -54,7 +54,7 @@
  * This should appear once for each class in the class' private section.
  */
 #define DECLARE_FRIENDS \
-    template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);\
+    template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 
 /*
  * Implements the JACE constructors.
@@ -170,5 +170,27 @@ JACE_PROXY_API QList<componentType> className::name() {\
     jace::JArray<componentType> result = jace::JField<jace::JArray<componentType>>(rsc->getFieldName(#name)).getReadOnly(*this);\
     return result.toQList();\
 }
+
+#define IMPL_ARRAY2_METHOD(className, name, componentType) \
+    JACE_PROXY_API QList<QList<componentType>> className::name() {\
+        const RSClass* rsc = getJavaJniClass();\
+        jace::JArray<jace::JArray<componentType>> jresult = jace::JField<jace::JArray<componentType>>(rsc->getFieldName(#name)).getReadOnly(*this);\
+        QList<QList<componentType>> result;\
+        for (jace::JArray<jace::JArray<componentType>>::Iterator it = jresult.begin(); it < jresult.end(); it++) {\
+            result << (*it).toQList();\
+        }\
+        return result\
+    }
+
+#define IMPL_STATIC_ARRAY2_METHOD(className, name, componentType) \
+    JACE_PROXY_API QList<QList<componentType>> className::name() {\
+        const RSClass* rsc = staticGetJavaJniClass();\
+        jace::JArray<jace::JArray<componentType>> jresult = jace::JField<jace::JArray<componentType>>(rsc->getFieldName(#name)).getReadOnly(rsc);\
+        QList<QList<componentType>> result;\
+        for (jace::JArray<jace::JArray<componentType>>::Iterator it = jresult.begin(); it < jresult.end(); it++) {\
+            result << (*it).toQList();\
+        }\
+        return result\
+    }
 
 #endif // METHODHELPER_H

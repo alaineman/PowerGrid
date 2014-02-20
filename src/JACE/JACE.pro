@@ -91,7 +91,7 @@ HEADERS += \
     RSClass.h \
     RSClassMapper.h \
     UpdaterRunner.h \
-    api/native/client.h \
+    api/bridge/client.h \
     java/lang/object.h \
     java/lang/string.h \
     MethodHelper.h
@@ -102,7 +102,7 @@ SOURCES += \
     RSClass.cpp \
     RSClassMapper.cpp \
     UpdaterRunner.cpp \
-    api/native/client.cpp \
+    api/bridge/client.cpp \
     java/lang/object.cpp \
     java/lang/string.cpp
 

@@ -39,7 +39,7 @@ namespace java {
 }
 
 namespace api {
-namespace native {
+namespace bridge {
 
 // Forward declarations of RS classes
 //class Camera;
@@ -106,7 +106,7 @@ public:
     JACE_PROXY_API JInt getLoopCycle();
     JACE_PROXY_API JInt getMenuHeight();
 //    JACE_PROXY_API Deque getMenuItems();
-//    JACE_PROXY_API QList<String> getMenuOptions();
+    JACE_PROXY_API QList<String> getMenuOptions();
     JACE_PROXY_API JInt getMenuOptionsCount();
     JACE_PROXY_API JInt getMenuOptionsCountCollapsed();
     JACE_PROXY_API JInt getMenuWidth();
@@ -138,11 +138,12 @@ public:
     JACE_PROXY_API QList<JBoolean> getValidInterfaceArray();
 
     JACE_PROXY_API Client& operator= (Client& other);
+
 private:
     DECLARE_FRIENDS
 };
 
-} // end namespace native
+} // end namespace bridge
 } // end namespace api
 
 #endif // CLIENT_H

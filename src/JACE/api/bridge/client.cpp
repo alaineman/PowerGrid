@@ -26,7 +26,7 @@
 
 // Work in the correct namespace (api::native for all RS proxies)
 namespace api {
-namespace native {
+namespace bridge {
 
 // framework macros (required for all proxy classes)
 IMPL_JACE_CONSTRUCTORS(Client)
@@ -52,6 +52,7 @@ IMPL_PRIMITIVE_METHOD(Client, getLoadedNPCCount, JInt)
 IMPL_PRIMITIVE_METHOD(Client, getLoopCycle, JInt)
 
 IMPL_PRIMITIVE_METHOD(Client, getMenuHeight, JInt)
+IMPL_ARRAY_METHOD(Client, getMenuOptions, String)
 IMPL_PRIMITIVE_METHOD(Client, getMenuOptionsCount, JInt)
 IMPL_PRIMITIVE_METHOD(Client, getMenuOptionsCountCollapsed, JInt)
 IMPL_PRIMITIVE_METHOD(Client, getMenuWidth, JInt)
@@ -80,5 +81,5 @@ IMPL_ARRAY_METHOD(Client, getTileData, JFloat)
 
 IMPL_ARRAY_METHOD(Client, getValidInterfaceArray, JBoolean)
 
-} // end namespace native
+} // end namespace bridge
 } // end namespace api

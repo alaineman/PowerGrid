@@ -2,7 +2,6 @@
 #define ABSTRACTCAMERA_H
 
 #include "MethodHelper.h"
-
 #include "java/lang/object.h"
 using namespace java::lang;
 

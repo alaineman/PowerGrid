@@ -96,7 +96,8 @@ HEADERS += \
     java/lang/string.h \
     MethodHelper.h \
     api/bridge/abstractcamera.h \
-    api/bridge/abstractcameralocationdata.h
+    api/bridge/abstractcameralocationdata.h \
+    api/bridge/abstractcentrallocationdata.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -108,7 +109,8 @@ SOURCES += \
     java/lang/object.cpp \
     java/lang/string.cpp \
     api/bridge/abstractcamera.cpp \
-    api/bridge/abstractcameralocationdata.cpp
+    api/bridge/abstractcameralocationdata.cpp \
+    api/bridge/abstractcentrallocationdata.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

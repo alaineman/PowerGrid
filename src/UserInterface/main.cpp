@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Patrick Kramer, Vincent Wassenaar
+ * Copyright 2014 Patrick Kramer, Vincent Wassenaar
  *
  * This file is part of PowerGrid.
  *
@@ -17,9 +17,6 @@
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PG_BUILD_JNILIB
-
-
 /* We require dynamic JVM loading instead of statically binding to the JVM library
  * This prevents the StaticVMLoader class from trying to statically bind to the jvm library
  */
@@ -31,8 +28,8 @@
 
 #ifdef Q_OS_MACX
 // There is a bug in Oracle's VM on Mac OS X, and as such we may not be able to load it
-// from here. We build PowerGrid to be loaded as a jni library from a running JVM instead.
-#warning This file does not officially support Mac OS, consider using "libmain.cpp" instead.
+// from here.
+#warning PowerGrid does not officially support Mac OS, use at your own risk!
 #endif
 
 // Required standard headers
@@ -92,7 +89,7 @@ int main(int argc, char** argv) {
             QFileInfoList::iterator it = entries.begin();
             for (;it != entries.end(); it++) {
                 QFileInfo info = *it;
-                if (info.filename() == QStringLiteral("libjvm.so")) {
+                if (info.fileName() == QStringLiteral("libjvm.so")) {
                     // We found it
                     jvmPath = info.canonicalFilePath();
                     break;
@@ -112,7 +109,7 @@ int main(int argc, char** argv) {
             throw JNIException("Cannot find libjvm.so in JAVA_HOME directory");
         }
 
-        UnixVmLoader loader (jvmPath, JNI_VERSION_1_6);
+        UnixVmLoader loader (jvmPath.toStdString(), JNI_VERSION_1_6);
 #else
         // Windows installations have a key in registry indicating the Java installation.
         // The special Win32VmLoader makes use of this key to find a JVM.
@@ -196,7 +193,3 @@ int main(int argc, char** argv) {
     qDebug() << "Done.";
     return app.exec();
 }
-
-#else
-#warning main.cpp is included in the build even though the target is a library! Use libmain.cpp instead.
-#endif

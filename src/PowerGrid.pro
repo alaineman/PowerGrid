@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------
-# Copyright 2012-2014 Patrick Kramer, Vincent Wassenaar
+# Copyright 2014 Patrick Kramer, Vincent Wassenaar
 #
 # This file is part of PowerGrid.
 #

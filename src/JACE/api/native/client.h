@@ -1,31 +1,42 @@
+/*
+ * Copyright 2014 Patrick Kramer, Vincent Wassenaar
+ *
+ * This file is part of PowerGrid.
+ *
+ * PowerGrid is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PowerGrid is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "jace/os_dep.h"
-#include "jace/proxy/JObject.h"
-#include "jace/javacast.h"
-#include "jace/JArray.h"
-#include "jace/JFieldProxy.h"
-#include "jace/JMethod.h"
-#include "jace/JField.h"
+#include "MethodHelper.h"
 
 #include "RSClass.h"
 #include "java/lang/object.h"
-
-#include <QList>
 
 using namespace jace::proxy::types;
 using namespace java::lang;
 
 // Forward declarations of Java API classes
-//namespace java {
-// namespace lang {
-//  class String;
-// }
+namespace java {
+ namespace lang {
+  class String;
+ }
 // namespace util {
 //  class Map;
 // }
-//}
+}
 
 namespace api {
 namespace native {
@@ -57,13 +68,8 @@ namespace native {
 
 class Client : public Object {
 public:
-    JACE_PROXY_API Client (const Client& obj);
-
-    JACE_PROXY_API virtual const RSClass* getJavaJniClass() const throw(::jace::JNIException);
-    JACE_PROXY_API static const RSClass* staticGetJavaJniClass() throw(::jace::JNIException);
-
-    JACE_PROXY_API explicit Client (jvalue);
-    JACE_PROXY_API explicit Client (jobject);
+    // Macro defining required framework methods and constructors
+    RS_OBJECT(Client)
 
     JACE_PROXY_API static Client getClient();
 
@@ -72,7 +78,7 @@ public:
 //    JACE_PROXY_API java::util::Map getChatChannels();
 //    JACE_PROXY_API NodeSubQueue getCollapsedMenuItems();
     JACE_PROXY_API JInt getConnectionState();
-//    JACE_PROXY_API String getCurrentAction();
+    JACE_PROXY_API String getCurrentAction();
 //    JACE_PROXY_API QList<GrandExchangeOffer> getCurrentGrandExchangeOffers();
     JACE_PROXY_API JInt getDestinationX();
     JACE_PROXY_API JInt getDestinationY();
@@ -88,7 +94,7 @@ public:
 //    JACE_PROXY_API HashTable getInterfaceNodeCache();
 //    JACE_PROXY_API ItemDefLoader getItemDefLoader();
 //    JACE_PROXY_API LandscapeInfo getLandscapeInfo();
-//    JACE_PROXY_API String getLastSelectedItemName();
+    JACE_PROXY_API String getLastSelectedItemName();
 //    JACE_PROXY_API QList<HintArrow> getLoadedHintArrows();
 //    JACE_PROXY_API HashTable getLoadedItems();
     JACE_PROXY_API JInt getLoadedNPCCount();
@@ -133,11 +139,7 @@ public:
 
     JACE_PROXY_API Client& operator= (Client& other);
 private:
-    // Needed for casting objects of this type
-    template <typename T> friend T (jace::java_cast)(const ::jace::proxy::JObject&);
-
-    // Needed to integrate this class into the JACE framework
-    template <typename T> friend class jace::JMethod;
+    DECLARE_FRIENDS
 };
 
 } // end namespace native

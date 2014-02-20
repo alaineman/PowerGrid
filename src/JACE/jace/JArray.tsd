@@ -1,5 +1,6 @@
 
 #include <string>
+#include "namespace.h"
 
 BEGIN_NAMESPACE( jace )
 
@@ -10,8 +11,7 @@ BEGIN_NAMESPACE( jace )
  *
  */
 
-template <> inline
-JArray< ::jace::proxy::types::JBoolean>::JArray( int size ) : JObject( NO_OP ) {
+template <> inline JArray<jace::proxy::types::JBoolean>::JArray( int size ) : JObject( NO_OP ) {
 
   JNIEnv* env = helper::attach();
   jarray array = env->NewBooleanArray( size );
@@ -36,17 +36,17 @@ JArray< ::jace::proxy::types::JBoolean>::JArray( int size ) : JObject( NO_OP ) {
 }
 
 template <> inline
-ElementProxy< ::jace::proxy::types::JBoolean> JArray< ::jace::proxy::types::JBoolean>::operator[]( const int& index ) {
+jace::proxy::types::JBoolean JArray<jace::proxy::types::JBoolean>::operator[]( const int& index ) {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
   
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -56,21 +56,21 @@ ElementProxy< ::jace::proxy::types::JBoolean> JArray< ::jace::proxy::types::JBoo
   env->GetBooleanArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.z = val;
-  return ElementProxy< ::jace::proxy::types::JBoolean>( getJavaJniArray(), value, index );
+  return jace::proxy::types::JBoolean(value);
 }
 
 template <> inline
-const ElementProxy< ::jace::proxy::types::JBoolean> JArray< ::jace::proxy::types::JBoolean>::operator[]( const int& index ) const {
+const jace::proxy::types::JBoolean JArray<jace::proxy::types::JBoolean>::operator[]( const int& index ) const {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
   
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -80,12 +80,12 @@ const ElementProxy< ::jace::proxy::types::JBoolean> JArray< ::jace::proxy::types
   env->GetBooleanArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.z = val;
-  return ElementProxy< ::jace::proxy::types::JBoolean>( getJavaJniArray(), value, index );
+  return jace::proxy::types::JBoolean( value );
 }
 
 
 template <> inline
-JArray< ::jace::proxy::types::JByte>::JArray( int size ) : JObject( NO_OP ) {
+JArray< jace::proxy::types::JByte>::JArray( int size ) : JObject( NO_OP ) {
 
   JNIEnv* env = helper::attach();
   jarray array = env->NewByteArray( size );
@@ -105,17 +105,17 @@ JArray< ::jace::proxy::types::JByte>::JArray( int size ) : JObject( NO_OP ) {
 }
 
 template <> inline
-ElementProxy< ::jace::proxy::types::JByte> JArray< ::jace::proxy::types::JByte>::operator[]( const int& index ) {
+ jace::proxy::types::JByte JArray< jace::proxy::types::JByte>::operator[]( const int& index ) {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -125,21 +125,21 @@ ElementProxy< ::jace::proxy::types::JByte> JArray< ::jace::proxy::types::JByte>:
   env->GetByteArrayRegion( thisArray, index, 1, &byte );
   jvalue value;
   value.b = byte;
-  return ElementProxy< ::jace::proxy::types::JByte>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JByte( value );
 }
 
 template <> inline
-const ElementProxy< ::jace::proxy::types::JByte> JArray< ::jace::proxy::types::JByte>::operator[]( const int& index ) const {
+const  jace::proxy::types::JByte JArray< jace::proxy::types::JByte>::operator[]( const int& index ) const {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -149,11 +149,11 @@ const ElementProxy< ::jace::proxy::types::JByte> JArray< ::jace::proxy::types::J
   env->GetByteArrayRegion( thisArray, index, 1, &byte );
   jvalue value;
   value.b = byte;
-  return ElementProxy< ::jace::proxy::types::JByte>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JByte(value);
 }
 
 template <> inline
-JArray< ::jace::proxy::types::JChar>::JArray( int size ) : JObject( NO_OP ) {
+JArray< jace::proxy::types::JChar>::JArray( int size ) : JObject( NO_OP ) {
 
   JNIEnv* env = helper::attach();
   jarray array = env->NewCharArray( size );
@@ -173,17 +173,17 @@ JArray< ::jace::proxy::types::JChar>::JArray( int size ) : JObject( NO_OP ) {
 }
 
 template <> inline
-ElementProxy< ::jace::proxy::types::JChar> JArray< ::jace::proxy::types::JChar>::operator[]( const int& index ) {
+ jace::proxy::types::JChar JArray<jace::proxy::types::JChar>::operator[]( const int& index ) {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -193,21 +193,21 @@ ElementProxy< ::jace::proxy::types::JChar> JArray< ::jace::proxy::types::JChar>:
   env->GetCharArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.c = val;
-  return ElementProxy< ::jace::proxy::types::JChar>( getJavaJniArray(), value, index );
+  return jace::proxy::types::JChar(value);
 }
 
 template <> inline
-const ElementProxy< ::jace::proxy::types::JChar> JArray< ::jace::proxy::types::JChar>::operator[]( const int& index ) const {
+const  jace::proxy::types::JChar JArray< jace::proxy::types::JChar>::operator[]( const int& index ) const {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -217,12 +217,12 @@ const ElementProxy< ::jace::proxy::types::JChar> JArray< ::jace::proxy::types::J
   env->GetCharArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.c = val;
-  return ElementProxy< ::jace::proxy::types::JChar>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JChar(value);
 }
 
 
 template <> inline
-JArray< ::jace::proxy::types::JDouble>::JArray( int size ) : JObject( NO_OP ) {
+JArray< jace::proxy::types::JDouble>::JArray( int size ) : JObject( NO_OP ) {
 
   JNIEnv* env = helper::attach();
   jarray array = env->NewDoubleArray( size );
@@ -242,17 +242,17 @@ JArray< ::jace::proxy::types::JDouble>::JArray( int size ) : JObject( NO_OP ) {
 }
 
 template <> inline
-ElementProxy< ::jace::proxy::types::JDouble> JArray< ::jace::proxy::types::JDouble>::operator[]( const int& index ) {
+ jace::proxy::types::JDouble JArray< jace::proxy::types::JDouble>::operator[]( const int& index ) {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -262,21 +262,21 @@ ElementProxy< ::jace::proxy::types::JDouble> JArray< ::jace::proxy::types::JDoub
   env->GetDoubleArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.d = val;
-  return ElementProxy< ::jace::proxy::types::JDouble>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JDouble(value);
 }
 
 template <> inline
-const ElementProxy< ::jace::proxy::types::JDouble> JArray< ::jace::proxy::types::JDouble>::operator[]( const int& index ) const {
+const  jace::proxy::types::JDouble JArray< jace::proxy::types::JDouble>::operator[]( const int& index ) const {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -286,12 +286,12 @@ const ElementProxy< ::jace::proxy::types::JDouble> JArray< ::jace::proxy::types:
   env->GetDoubleArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.d = val;
-  return ElementProxy< ::jace::proxy::types::JDouble>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JDouble(value);
 }
 
 
 template <> inline
-JArray< ::jace::proxy::types::JFloat>::JArray( int size ) : JObject( NO_OP ) {
+JArray< jace::proxy::types::JFloat>::JArray( int size ) : JObject( NO_OP ) {
 
   JNIEnv* env = helper::attach();
   jarray array = env->NewFloatArray( size );
@@ -311,17 +311,17 @@ JArray< ::jace::proxy::types::JFloat>::JArray( int size ) : JObject( NO_OP ) {
 }
 
 template <> inline
-ElementProxy< ::jace::proxy::types::JFloat> JArray< ::jace::proxy::types::JFloat>::operator[]( const int& index ) {
+ jace::proxy::types::JFloat JArray< jace::proxy::types::JFloat>::operator[]( const int& index ) {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -331,21 +331,21 @@ ElementProxy< ::jace::proxy::types::JFloat> JArray< ::jace::proxy::types::JFloat
   env->GetFloatArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.f = val;
-  return ElementProxy< ::jace::proxy::types::JFloat>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JFloat(value);
 }
 
 template <> inline
-const ElementProxy< ::jace::proxy::types::JFloat> JArray< ::jace::proxy::types::JFloat>::operator[]( const int& index ) const {
+const  jace::proxy::types::JFloat JArray< jace::proxy::types::JFloat>::operator[]( const int& index ) const {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -355,12 +355,12 @@ const ElementProxy< ::jace::proxy::types::JFloat> JArray< ::jace::proxy::types::
   env->GetFloatArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.f = val;
-  return ElementProxy< ::jace::proxy::types::JFloat>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JFloat(value);
 }
 
 
 template <> inline
-JArray< ::jace::proxy::types::JInt>::JArray( int size ) : JObject( NO_OP ) {
+JArray< jace::proxy::types::JInt>::JArray( int size ) : JObject( NO_OP ) {
 
   JNIEnv* env = helper::attach();
   jarray array = env->NewIntArray( size );
@@ -380,17 +380,17 @@ JArray< ::jace::proxy::types::JInt>::JArray( int size ) : JObject( NO_OP ) {
 }
 
 template <> inline
-ElementProxy< ::jace::proxy::types::JInt> JArray< ::jace::proxy::types::JInt>::operator[]( const int& index ) {
+ jace::proxy::types::JInt JArray< jace::proxy::types::JInt>::operator[]( const int& index ) {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -400,21 +400,21 @@ ElementProxy< ::jace::proxy::types::JInt> JArray< ::jace::proxy::types::JInt>::o
   env->GetIntArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.i = val;
-  return ElementProxy< ::jace::proxy::types::JInt>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JInt(value);
 }
 
 template <> inline
-const ElementProxy< ::jace::proxy::types::JInt> JArray< ::jace::proxy::types::JInt>::operator[]( const int& index ) const {
+const  jace::proxy::types::JInt JArray< jace::proxy::types::JInt>::operator[]( const int& index ) const {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -424,12 +424,12 @@ const ElementProxy< ::jace::proxy::types::JInt> JArray< ::jace::proxy::types::JI
   env->GetIntArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.i = val;
-  return ElementProxy< ::jace::proxy::types::JInt>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JInt(value);
 }
 
 
 template <> inline
-JArray< ::jace::proxy::types::JLong>::JArray( int size ) : JObject( NO_OP ) {
+JArray< jace::proxy::types::JLong>::JArray( int size ) : JObject( NO_OP ) {
 
   JNIEnv* env = helper::attach();
   jarray array = env->NewLongArray( size );
@@ -449,17 +449,17 @@ JArray< ::jace::proxy::types::JLong>::JArray( int size ) : JObject( NO_OP ) {
 }
 
 template <> inline
-ElementProxy< ::jace::proxy::types::JLong> JArray< ::jace::proxy::types::JLong>::operator[]( const int& index ) {
+ jace::proxy::types::JLong JArray< jace::proxy::types::JLong>::operator[]( const int& index ) {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -469,21 +469,21 @@ ElementProxy< ::jace::proxy::types::JLong> JArray< ::jace::proxy::types::JLong>:
   env->GetLongArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.j = val;
-  return ElementProxy< ::jace::proxy::types::JLong>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JLong(value);
 }
 
 template <> inline
-const ElementProxy< ::jace::proxy::types::JLong> JArray< ::jace::proxy::types::JLong>::operator[]( const int& index ) const {
+const  jace::proxy::types::JLong JArray< jace::proxy::types::JLong>::operator[]( const int& index ) const {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -493,12 +493,12 @@ const ElementProxy< ::jace::proxy::types::JLong> JArray< ::jace::proxy::types::J
   env->GetLongArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.j = val;
-  return ElementProxy< ::jace::proxy::types::JLong>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JLong(value);
 }
 
 
 template <> inline
-JArray< ::jace::proxy::types::JShort>::JArray( int size ) : JObject( NO_OP ) {
+JArray< jace::proxy::types::JShort>::JArray( int size ) : JObject( NO_OP ) {
 
   JNIEnv* env = helper::attach();
   jarray array = env->NewShortArray( size );
@@ -518,17 +518,17 @@ JArray< ::jace::proxy::types::JShort>::JArray( int size ) : JObject( NO_OP ) {
 }
 
 template <> inline
-ElementProxy< ::jace::proxy::types::JShort> JArray< ::jace::proxy::types::JShort>::operator[]( const int& index ) {
+ jace::proxy::types::JShort JArray< jace::proxy::types::JShort>::operator[]( const int& index ) {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -538,21 +538,21 @@ ElementProxy< ::jace::proxy::types::JShort> JArray< ::jace::proxy::types::JShort
   env->GetShortArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.s = val;
-  return ElementProxy< ::jace::proxy::types::JShort>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JShort(value);
 }
 
 template <> inline
-const ElementProxy< ::jace::proxy::types::JShort> JArray< ::jace::proxy::types::JShort>::operator[]( const int& index ) const {
+const  jace::proxy::types::JShort JArray< jace::proxy::types::JShort>::operator[]( const int& index ) const {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
+      throw jace::JNIException( "[JArray::operator[]] Can not dereference a null array." );
     }
   #endif
 
   #ifdef JACE_CHECK_ARRAYS
     if ( index >= length() ) {
-      throw ::jace::JNIException( "[JArray::operator[]] invalid array index." );
+      throw jace::JNIException( "[JArray::operator[]] invalid array index." );
     }
   #endif
 
@@ -562,7 +562,7 @@ const ElementProxy< ::jace::proxy::types::JShort> JArray< ::jace::proxy::types::
   env->GetShortArrayRegion( thisArray, index, 1, &val );
   jvalue value;
   value.s = val;
-  return ElementProxy< ::jace::proxy::types::JShort>( getJavaJniArray(), value, index );
+  return  jace::proxy::types::JShort(value);
 }
 
 END_NAMESPACE( jace )

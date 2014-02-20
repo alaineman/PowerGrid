@@ -43,19 +43,19 @@ namespace bridge {
 
 // Forward declarations of RS classes
 //class Camera;
-//class Canvas;
+class Canvas;
 //class NodeSubQueue;
-//class GrandExchangeOffer;
+class GrandExchangeOffer;
 //class DetailInfoNode;
 //class Facade;
-//class Friend;
-//class GraphicsToolkit;
+class Friend;
+class GraphicsToolkit;
 //class Interface;
 //class Rectangle;
 //class HashTable;
 //class ItemDefLoader;
 //class LandscapeInfo;
-//class HintArrow;
+class HintArrow;
 //class NPCNode;
 //class OverheadMessage;
 //class Player;
@@ -74,20 +74,20 @@ public:
     JACE_PROXY_API static Client getClient();
 
 //    JACE_PROXY_API Camera getCamera();
-//    JACE_PROXY_API Canvas getCanvas();
+    JACE_PROXY_API Canvas getCanvas();
 //    JACE_PROXY_API java::util::Map getChatChannels();
 //    JACE_PROXY_API NodeSubQueue getCollapsedMenuItems();
     JACE_PROXY_API JInt getConnectionState();
     JACE_PROXY_API String getCurrentAction();
-//    JACE_PROXY_API QList<GrandExchangeOffer> getCurrentGrandExchangeOffers();
+    JACE_PROXY_API QList<GrandExchangeOffer> getCurrentGrandExchangeOffers();
     JACE_PROXY_API JInt getDestinationX();
     JACE_PROXY_API JInt getDestinationY();
 //    JACE_PROXY_API DetailInfoNode getDetailInfoNode();
     JACE_PROXY_API JInt getFPS();
 //    JACE_PROXY_API Facade getFacade();
     JACE_PROXY_API JInt getFrameTime();
-//    JACE_PROXY_API QList<Friend> getFriendsList();
-//    JACE_PROXY_API GraphicsToolkit getGraphicsToolkit();
+    JACE_PROXY_API QList<Friend> getFriendsList();
+    JACE_PROXY_API GraphicsToolkit getGraphicsToolkit();
 //    JACE_PROXY_API QList<Interface> getInterfaceArray();
 //    JACE_PROXY_API QList<Rectangle> getInterfaceBoundsArray();
     JACE_PROXY_API JInt getInterfaceIndex();
@@ -95,7 +95,7 @@ public:
 //    JACE_PROXY_API ItemDefLoader getItemDefLoader();
 //    JACE_PROXY_API LandscapeInfo getLandscapeInfo();
     JACE_PROXY_API String getLastSelectedItemName();
-//    JACE_PROXY_API QList<HintArrow> getLoadedHintArrows();
+    JACE_PROXY_API QList<HintArrow> getLoadedHintArrows();
 //    JACE_PROXY_API HashTable getLoadedItems();
     JACE_PROXY_API JInt getLoadedNPCCount();
 //    JACE_PROXY_API QList<NPCNode> getLoadedNPCNodes();

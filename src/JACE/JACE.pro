@@ -110,7 +110,15 @@ HEADERS += \
     api/bridge/entityposition.h \
     api/bridge/fileworker.h \
     api/bridge/friend.h \
-    api/bridge/grandexchangeoffer.h
+    api/bridge/grandexchangeoffer.h \
+    api/bridge/graphicstoolkit.h \
+    api/bridge/hintarrow.h \
+    api/bridge/animator.h \
+    api/bridge/cameramatrix.h \
+    api/bridge/chatline.h \
+    api/bridge/entitydata.h \
+    api/bridge/entitynode.h \
+    api/bridge/grounddata.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -136,7 +144,15 @@ SOURCES += \
     api/bridge/entityposition.cpp \
     api/bridge/fileworker.cpp \
     api/bridge/friend.cpp \
-    api/bridge/grandexchangeoffer.cpp
+    api/bridge/grandexchangeoffer.cpp \
+    api/bridge/graphicstoolkit.cpp \
+    api/bridge/hintarrow.cpp \
+    api/bridge/animator.cpp \
+    api/bridge/cameramatrix.cpp \
+    api/bridge/chatline.cpp \
+    api/bridge/entitydata.cpp \
+    api/bridge/entitynode.cpp \
+    api/bridge/grounddata.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

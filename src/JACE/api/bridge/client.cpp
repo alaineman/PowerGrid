@@ -23,6 +23,11 @@
 
 // Don't forget to include the types of the fields (if they're not primitive)
 #include "java/lang/string.h"
+#include "canvas.h"
+#include "grandexchangeoffer.h"
+#include "friend.h"
+#include "graphicstoolkit.h"
+#include "hintarrow.h"
 
 // Work in the correct namespace (api::native for all RS proxies)
 namespace api {
@@ -36,18 +41,24 @@ IMPL_RSCLASS_GET(Client)
 IMPL_STATIC_OBJECT_METHOD(Client, getClient, Client)
 
 // virtual fields, organized by first character
+IMPL_OBJECT_METHOD(Client, getCanvas, Canvas)
 IMPL_PRIMITIVE_METHOD(Client, getConnectionState, JInt)
 IMPL_OBJECT_METHOD(Client, getCurrentAction, String)
+IMPL_ARRAY_METHOD(Client, getCurrentGrandExchangeOffers, GrandExchangeOffer)
 
 IMPL_PRIMITIVE_METHOD(Client, getDestinationX, JInt)
 IMPL_PRIMITIVE_METHOD(Client, getDestinationY, JInt)
 
 IMPL_PRIMITIVE_METHOD(Client, getFPS, JInt)
 IMPL_PRIMITIVE_METHOD(Client, getFrameTime, JInt)
+IMPL_ARRAY_METHOD(Client, getFriendsList, Friend)
+
+IMPL_OBJECT_METHOD(Client, getGraphicsToolkit, GraphicsToolkit)
 
 IMPL_PRIMITIVE_METHOD(Client, getInterfaceIndex, JInt)
 
 IMPL_OBJECT_METHOD(Client, getLastSelectedItemName, String)
+IMPL_ARRAY_METHOD(Client, getLoadedHintArrows, HintArrow)
 IMPL_PRIMITIVE_METHOD(Client, getLoadedNPCCount, JInt)
 IMPL_PRIMITIVE_METHOD(Client, getLoopCycle, JInt)
 

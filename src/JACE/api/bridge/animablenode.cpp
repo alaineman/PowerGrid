@@ -1,10 +1,13 @@
-#include "abstractsocketstream.h"
+#include "animablenode.h"
 
 namespace api {
 namespace bridge {
 
-IMPL_JACE_CONSTRUCTORS(AbstractSocketStream)
-IMPL_RSCLASS_GET(AbstractSocketStream)
+IMPL_JACE_CONSTRUCTORS(AnimableNode)
+IMPL_RSCLASS_GET(AnimableNode)
+
+//IMPL_OBJECT_METHOD(AnimableNode, getAnimable, Animable)
+IMPL_OBJECT_METHOD(AnimableNode, getNext, AnimableNode)
 
 }
 }

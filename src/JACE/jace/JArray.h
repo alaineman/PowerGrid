@@ -154,7 +154,7 @@ JArray( const JArray& array ) : JObject( 0 ) {
  * automatically pins and depins that single element in the array.
  *
  */
-ElementProxy<ElementType> operator[]( const int& index ) {
+ElementType operator[]( const int& index ) {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
@@ -169,7 +169,7 @@ ElementProxy<ElementType> operator[]( const int& index ) {
   #endif
 
   jvalue localElementRef = ::jace::JArrayHelper::getElement( this->getJavaJniObject(), index );
-  ElementProxy<ElementType> element( this->getJavaJniArray(), localElementRef, index );
+  ElementType element( localElementRef );
   JNIEnv* env = ::jace::helper::attach();
   ::jace::helper::deleteLocalRef( env, localElementRef.l );
   return element;
@@ -180,7 +180,7 @@ ElementProxy<ElementType> operator[]( const int& index ) {
  * instances of JArray.
  *
  */
-const ElementProxy<ElementType> operator[]( const int& index ) const {
+const ElementType operator[]( const int& index ) const {
 
   #ifdef JACE_CHECK_NULLS
     if ( ! this->getJavaJniObject() ) {
@@ -195,7 +195,7 @@ const ElementProxy<ElementType> operator[]( const int& index ) const {
   #endif
 
   jvalue localElementRef = ::jace::JArrayHelper::getElement( this->getJavaJniObject(), index );
-  ElementProxy<ElementType> element( this->getJavaJniArray(), localElementRef, index );
+  ElementType element( localElementRef );
   JNIEnv* env = ::jace::helper::attach();
   ::jace::helper::deleteLocalRef( env, localElementRef.l );
   return element;
@@ -492,7 +492,7 @@ class Iterator : public std::iterator<std::random_access_iterator_tag, ElementTy
    * Returns the element to which the Iterator points.
    *
    */
-  ElementProxy<ElementType> operator*() {
+  ElementType operator*() {
 
     #ifdef JACE_CHECK_ARRAYS
       if ( current < 0 || current >= parent->length() ) {

@@ -14,7 +14,7 @@ class AnimableNode : public Object {
 public:
     RS_OBJECT(AnimableNode)
 
-    //JACE_PROXY_API Animable getAnimable();
+    JACE_PROXY_API Animable getAnimable();
     JACE_PROXY_API AnimableNode getNext();
 private:
     DECLARE_FRIENDS

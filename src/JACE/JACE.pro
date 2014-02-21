@@ -122,7 +122,10 @@ HEADERS += \
     api/bridge/isaaccipher.h \
     api/bridge/interactable.h \
     api/bridge/node.h \
-    api/bridge/animable.h
+    api/bridge/animable.h \
+    api/bridge/deque.h \
+    api/bridge/boundary.h \
+    api/bridge/hashtable.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -160,7 +163,10 @@ SOURCES += \
     api/bridge/isaaccipher.cpp \
     api/bridge/interactable.cpp \
     api/bridge/node.cpp \
-    api/bridge/animable.cpp
+    api/bridge/animable.cpp \
+    api/bridge/deque.cpp \
+    api/bridge/boundary.cpp \
+    api/bridge/hashtable.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

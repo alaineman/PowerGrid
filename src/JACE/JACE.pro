@@ -119,7 +119,9 @@ HEADERS += \
     api/bridge/entitydata.h \
     api/bridge/entitynode.h \
     api/bridge/grounddata.h \
-    api/bridge/isaaccipher.h
+    api/bridge/isaaccipher.h \
+    api/bridge/interactable.h \
+    api/bridge/node.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -154,7 +156,9 @@ SOURCES += \
     api/bridge/entitydata.cpp \
     api/bridge/entitynode.cpp \
     api/bridge/grounddata.cpp \
-    api/bridge/isaaccipher.cpp
+    api/bridge/isaaccipher.cpp \
+    api/bridge/interactable.cpp \
+    api/bridge/node.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

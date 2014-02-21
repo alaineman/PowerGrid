@@ -133,7 +133,21 @@ HEADERS += \
     api/bridge/groundentity.h \
     api/bridge/groundobject.h \
     api/bridge/animatedanimableobject.h \
-    api/bridge/animatedboundaryobject.h
+    api/bridge/animatedboundaryobject.h \
+    api/bridge/itemnode.h \
+    api/bridge/keyboard.h \
+    api/bridge/mlstring.h \
+    api/bridge/mouse.h \
+    api/bridge/passiveanimator.h \
+    api/bridge/quaternion.h \
+    api/bridge/skillinfo.h \
+    api/bridge/sprite.h \
+    api/bridge/worldcontroller.h \
+    api/bridge/interface.h \
+    api/bridge/nodesub.h \
+    api/bridge/stream.h \
+    api/bridge/reference.h \
+    api/bridge/queue.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -182,7 +196,21 @@ SOURCES += \
     api/bridge/groundentity.cpp \
     api/bridge/groundobject.cpp \
     api/bridge/animatedanimableobject.cpp \
-    api/bridge/animatedboundaryobject.cpp
+    api/bridge/animatedboundaryobject.cpp \
+    api/bridge/itemnode.cpp \
+    api/bridge/keyboard.cpp \
+    api/bridge/mlstring.cpp \
+    api/bridge/mouse.cpp \
+    api/bridge/passiveanimator.cpp \
+    api/bridge/quaternion.cpp \
+    api/bridge/skillinfo.cpp \
+    api/bridge/sprite.cpp \
+    api/bridge/worldcontroller.cpp \
+    api/bridge/interface.cpp \
+    api/bridge/nodesub.cpp \
+    api/bridge/stream.cpp \
+    api/bridge/reference.cpp \
+    api/bridge/queue.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

@@ -121,7 +121,8 @@ HEADERS += \
     api/bridge/grounddata.h \
     api/bridge/isaaccipher.h \
     api/bridge/interactable.h \
-    api/bridge/node.h
+    api/bridge/node.h \
+    api/bridge/animable.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -158,7 +159,8 @@ SOURCES += \
     api/bridge/grounddata.cpp \
     api/bridge/isaaccipher.cpp \
     api/bridge/interactable.cpp \
-    api/bridge/node.cpp
+    api/bridge/node.cpp \
+    api/bridge/animable.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

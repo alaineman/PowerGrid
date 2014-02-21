@@ -83,9 +83,9 @@
  */
 #define IMPL_JACE_CONSTRUCTORS_SUPERTYPE(name, superType) \
 name::name() {}\
-name::name(const name& obj) : superType(obj) {}\
+name::name(const name& obj) : JObject(NoOp()), superType(obj) {}\
 name::name(jobject obj) {\
-    setJavaJniValue(obj);\
+    setJavaJniObject(obj);\
 }\
 name::name(jvalue val) {\
     setJavaJniValue(val);\

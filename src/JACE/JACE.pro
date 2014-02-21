@@ -125,7 +125,15 @@ HEADERS += \
     api/bridge/animable.h \
     api/bridge/deque.h \
     api/bridge/boundary.h \
-    api/bridge/hashtable.h
+    api/bridge/hashtable.h \
+    api/bridge/hashtableiterator.h \
+    api/bridge/camera.h \
+    api/bridge/detailinfonode.h \
+    api/bridge/floordecoration.h \
+    api/bridge/groundentity.h \
+    api/bridge/groundobject.h \
+    api/bridge/animatedanimableobject.h \
+    api/bridge/animatedboundaryobject.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -166,7 +174,15 @@ SOURCES += \
     api/bridge/animable.cpp \
     api/bridge/deque.cpp \
     api/bridge/boundary.cpp \
-    api/bridge/hashtable.cpp
+    api/bridge/hashtable.cpp \
+    api/bridge/hashtableiterator.cpp \
+    api/bridge/camera.cpp \
+    api/bridge/detailinfonode.cpp \
+    api/bridge/floordecoration.cpp \
+    api/bridge/groundentity.cpp \
+    api/bridge/groundobject.cpp \
+    api/bridge/animatedanimableobject.cpp \
+    api/bridge/animatedboundaryobject.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

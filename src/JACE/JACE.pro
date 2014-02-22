@@ -147,7 +147,9 @@ HEADERS += \
     api/bridge/nodesub.h \
     api/bridge/stream.h \
     api/bridge/reference.h \
-    api/bridge/queue.h
+    api/bridge/queue.h \
+    api/bridge/cache.h \
+    api/bridge/floatstream.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -210,7 +212,9 @@ SOURCES += \
     api/bridge/nodesub.cpp \
     api/bridge/stream.cpp \
     api/bridge/reference.cpp \
-    api/bridge/queue.cpp
+    api/bridge/queue.cpp \
+    api/bridge/cache.cpp \
+    api/bridge/floatstream.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

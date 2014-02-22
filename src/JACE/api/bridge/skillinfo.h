@@ -10,7 +10,7 @@ namespace bridge {
 
 class SkillInfo : public Object {
 public:
-    RS_OBJECT(HintArrow)
+    RS_OBJECT(SkillInfo)
 
     JACE_PROXY_API JInt getCurrentLevel();
     JACE_PROXY_API JInt getExperience();

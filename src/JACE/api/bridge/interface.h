@@ -8,11 +8,13 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
+class InterfaceChild;
+
 class Interface : public Object {
 public:
     RS_OBJECT(Interface)
 
-    // JACE_PROXY_API QList<InterfaceChild> getChildren();
+    JACE_PROXY_API QList<InterfaceChild> getChildren();
 private:
     DECLARE_FRIENDS
 };

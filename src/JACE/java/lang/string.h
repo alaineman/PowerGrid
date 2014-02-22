@@ -47,7 +47,7 @@ public:
     explicit String(jobject object);
     String(jstring string);
 
-    String& operator = (String& obj);
+    String& operator = (const String& obj);
 
     std::string toStdString() const throw(jace::JNIException);
     QString toQString() const throw(jace::JNIException);

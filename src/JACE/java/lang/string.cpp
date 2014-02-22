@@ -47,7 +47,7 @@ String::String(jvalue value) :
 String::String(jstring string) :
     Object(string) {}
 
-String& String::operator =(String& obj) {
+String& String::operator =(const String &obj) {
     setJavaJniObject(obj.getJavaJniObject());
     return *this;
 }

@@ -47,7 +47,7 @@
     JACE_PROXY_API static const RSClass* staticGetJavaJniClass() throw(jace::JNIException);\
     JACE_PROXY_API name (jvalue);\
     JACE_PROXY_API name (jobject);\
-    JACE_PROXY_API name& operator =(name& other);
+    JACE_PROXY_API name& operator =(const name& other);
 
 /*
  * Creates the links to any friend classes the class needs.
@@ -71,7 +71,7 @@
     name::name(jvalue val) {\
         setJavaJniValue(val);\
     }\
-    name& name::operator =(name& other) {\
+    name& name::operator =(const name& other) {\
         setJavaJniValue(other.getJavaJniValue());\
         return *this;\
     }
@@ -90,7 +90,7 @@ name::name(jobject obj) {\
 name::name(jvalue val) {\
     setJavaJniValue(val);\
 }\
-name& name::operator =(name& other) {\
+name& name::operator =(const name& other) {\
     setJavaJniValue(other.getJavaJniValue());\
     return *this;\
 }

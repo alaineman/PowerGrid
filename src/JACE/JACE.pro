@@ -149,7 +149,9 @@ HEADERS += \
     api/bridge/reference.h \
     api/bridge/queue.h \
     api/bridge/cache.h \
-    api/bridge/floatstream.h
+    api/bridge/floatstream.h \
+    api/bridge/toolkitld.h \
+    api/bridge/varpbits.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -214,7 +216,9 @@ SOURCES += \
     api/bridge/reference.cpp \
     api/bridge/queue.cpp \
     api/bridge/cache.cpp \
-    api/bridge/floatstream.cpp
+    api/bridge/floatstream.cpp \
+    api/bridge/toolkitld.cpp \
+    api/bridge/varpbits.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

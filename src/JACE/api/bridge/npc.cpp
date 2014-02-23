@@ -1,0 +1,18 @@
+#include "npc.h"
+#include "npcdef.h"
+#include "java/lang/string.h"
+
+namespace api {
+namespace bridge {
+
+IMPL_JACE_CONSTRUCTORS_SUPERTYPE(NPC, Character)
+IMPL_RSCLASS_GET(NPC)
+
+IMPL_PRIMITIVE_METHOD(NPC, getID, JInt)
+IMPL_PRIMITIVE_METHOD(NPC, getLevel, JInt)
+IMPL_OBJECT_METHOD(NPC, getNPCDef, NPCDef)
+IMPL_OBJECT_METHOD(NPC, getNPCName, String)
+
+
+} // namespace bridge
+} // namespace api

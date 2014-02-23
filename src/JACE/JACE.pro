@@ -176,7 +176,13 @@ HEADERS += \
     api/bridge/animatedfloorobject.h \
     api/bridge/animatedwallobject.h \
     api/bridge/boundaryobject.h \
-    api/bridge/cameralocationdata.h
+    api/bridge/cameralocationdata.h \
+    api/bridge/wallobject.h \
+    api/bridge/landscape.h \
+    api/bridge/interfacechild.h \
+    api/bridge/interfacenode.h \
+    api/bridge/interactableanimator.h \
+    api/bridge/playerdef.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -268,7 +274,13 @@ SOURCES += \
     api/bridge/animatedfloorobject.cpp \
     api/bridge/animatedwallobject.cpp \
     api/bridge/boundaryobject.cpp \
-    api/bridge/cameralocationdata.cpp
+    api/bridge/cameralocationdata.cpp \
+    api/bridge/wallobject.cpp \
+    api/bridge/landscape.cpp \
+    api/bridge/interfacechild.cpp \
+    api/bridge/interfacenode.cpp \
+    api/bridge/interactableanimator.cpp \
+    api/bridge/playerdef.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

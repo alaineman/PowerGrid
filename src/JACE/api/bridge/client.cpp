@@ -24,7 +24,7 @@
 // Don't forget to include the types of the fields (if they're not primitive)
 #include "java/lang/string.h"
 #include "java/util/map.h"
-//#include "java/awt/rectangle.h"
+#include "java/awt/rectangle.h"
 #include "camera.h"
 #include "canvas.h"
 #include "nodesubqueue.h"
@@ -80,7 +80,7 @@ IMPL_ARRAY_METHOD(Client, getFriendsList, Friend)
 IMPL_OBJECT_METHOD(Client, getGraphicsToolkit, GraphicsToolkit)
 
 IMPL_ARRAY_METHOD(Client, getInterfaceArray, Interface)
-//IMPL_ARRAY_METHOD(Client, getInterfaceBoundsArray, java::awt::Rectangle)
+IMPL_ARRAY_METHOD(Client, getInterfaceBoundsArray, java::awt::Rectangle)
 IMPL_PRIMITIVE_METHOD(Client, getInterfaceIndex, JInt)
 IMPL_OBJECT_METHOD(Client, getInterfaceNodeCache, HashTable)
 IMPL_OBJECT_METHOD(Client, getItemDefLoader, ItemDefLoader)

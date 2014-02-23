@@ -1,5 +1,5 @@
-#ifndef JAVA_IO_INPUTSTREAM_H
-#define JAVA_IO_INPUTSTREAM_H
+#ifndef JAVA_AWT_GRAPHICSDEVICE_H
+#define JAVA_AWT_GRAPHICSDEVICE_H
 
 #include "jace/os_dep.h"
 #include "jace/javacast.h"
@@ -14,24 +14,25 @@
 using namespace java::lang;
 
 namespace java {
-namespace io {
+namespace awt {
 
-class InputStream : public Object {
+class GraphicsDevice : public Object {
 public:
-    InputStream();
-    InputStream(const InputStream&obj);
+    GraphicsDevice();
+    GraphicsDevice(const GraphicsDevice&obj);
 
     virtual const jace::JClass* getJavaJniClass() const throw (jace::JNIException);
     static const jace::JClass* staticGetJavaJniClass() throw (jace::JNIException);
 
-    explicit InputStream(jvalue value);
-    explicit InputStream(jobject object);
-    InputStream& operator = (const InputStream& obj);
+    explicit GraphicsDevice(jvalue value);
+    explicit GraphicsDevice(jobject object);
+    GraphicsDevice& operator = (const GraphicsDevice& obj);
 private:
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
+
 };
 
-} // namespace io
+} // namespace awt
 } // namespace java
 
-#endif // JAVA_IO_INPUTSTREAM_H
+#endif // JAVA_AWT_GRAPHICSDEVICE_H

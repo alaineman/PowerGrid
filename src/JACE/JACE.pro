@@ -178,7 +178,9 @@ HEADERS += \
     api/bridge/boundaryobject.h \
     api/bridge/cameralocationdata.h \
     api/bridge/centrallocationdata.h \
-    api/bridge/character.h
+    api/bridge/character.h \
+    api/bridge/chatmessage.h \
+    api/bridge/chatchannel.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -272,7 +274,9 @@ SOURCES += \
     api/bridge/boundaryobject.cpp \
     api/bridge/cameralocationdata.cpp \
     api/bridge/centrallocationdata.cpp \
-    api/bridge/character.cpp
+    api/bridge/character.cpp \
+    api/bridge/chatmessage.cpp \
+    api/bridge/chatchannel.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

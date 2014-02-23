@@ -197,7 +197,13 @@ HEADERS += \
     api/bridge/packetstream.h \
     api/bridge/tile.h \
     api/bridge/toolkitopengl.h \
-    api/bridge/modeldirectx.h
+    api/bridge/modeldirectx.h \
+    api/bridge/filesystem.h \
+    api/bridge/combatinfonode.h \
+    api/bridge/dequenode.h \
+    api/bridge/floorobject.h \
+    api/bridge/hardreference.h \
+    java/io/file.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -310,7 +316,13 @@ SOURCES += \
     api/bridge/packetstream.cpp \
     api/bridge/tile.cpp \
     api/bridge/toolkitopengl.cpp \
-    api/bridge/modeldirectx.cpp
+    api/bridge/modeldirectx.cpp \
+    api/bridge/filesystem.cpp \
+    api/bridge/combatinfonode.cpp \
+    api/bridge/dequenode.cpp \
+    api/bridge/floorobject.cpp \
+    api/bridge/hardreference.cpp \
+    java/io/file.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

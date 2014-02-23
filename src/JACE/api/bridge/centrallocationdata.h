@@ -14,7 +14,7 @@ public:
     RS_OBJECT(CentralLocationData)
 
     JACE_PROXY_API EntityPosition getPoint1();
-    JACE_PROXY_API EntityPosition getPoint1();
+    JACE_PROXY_API EntityPosition getPoint2();
 private:
     DECLARE_FRIENDS
 };

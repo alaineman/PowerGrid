@@ -12,6 +12,8 @@ public:
     RS_OBJECT(HardReference)
 
     JACE_PROXY_API Object getHardReference();
+private:
+    DECLARE_FRIENDS
 };
 
 } // namespace bridge

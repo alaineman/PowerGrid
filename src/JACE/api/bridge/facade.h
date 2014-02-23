@@ -17,6 +17,8 @@ public:
 
     JACE_PROXY_API QList<SkillInfo> getSkills();
     JACE_PROXY_API Varpbits getVarpbits();
+private:
+    DECLARE_FRIENDS
 };
 
 } // namespace bridge

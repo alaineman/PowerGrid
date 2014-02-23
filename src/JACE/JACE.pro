@@ -218,7 +218,11 @@ HEADERS += \
     java/awt/graphicsdevice.h \
     java/awt/displaymode.h \
     api/bridge/graphics.h \
-    java/io/socket.h
+    java/net/socket.h \
+    api/bridge/inputstream.h \
+    api/bridge/softreference.h \
+    api/bridge/outputstream.h \
+    api/bridge/socketstream.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -340,10 +344,7 @@ SOURCES += \
     java/io/file.cpp \
     api/bridge/landscapedetails.cpp \
     api/bridge/landscapeinfo.cpp \
-    java/io/inputstream.cpp \
-    java/io/outputstream.cpp \
     api/bridge/groundbytes.cpp \
-    java/lang/ref/softreference.cpp \
     java/util/map.cpp \
     java/awt/rectangle.cpp \
     java/util/zip/inflater.cpp \
@@ -352,7 +353,14 @@ SOURCES += \
     java/awt/graphicsdevice.cpp \
     java/awt/displaymode.cpp \
     api/bridge/graphics.cpp \
-    java/io/socket.cpp
+    java/net/socket.cpp \
+    api/bridge/inputstream.cpp \
+    api/bridge/softreference.cpp \
+    api/bridge/outputstream.cpp \
+    api/bridge/socketstream.cpp \
+    java/io/java_io_inputstream.cpp \
+    java/io/java_io_outputstream.cpp \
+    java/lang/ref/java_lang_ref_softreference.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

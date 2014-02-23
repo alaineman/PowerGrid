@@ -18,6 +18,8 @@ public:
     JACE_PROXY_API JInt getLast();
     JACE_PROXY_API QList<JInt> getMemory();
     JACE_PROXY_API QList<JInt> getResults();
+private:
+    DECLARE_FRIENDS
 };
 
 } // namespace bridge

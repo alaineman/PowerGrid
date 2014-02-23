@@ -3,14 +3,14 @@
 
 #include "MethodHelper.h"
 #include "java/lang/object.h"
-//#include "walldecoration.h"
-#warning api::bridge::AnimatedWallObject is not finished yet
+#include "walldecoration.h"
+
 
 namespace api {
 namespace bridge {
-class AnimatedObject;
 
-class AnimatedWallObject : public java::lang::Object /*WallDecoration */{
+class AnimatedObject;
+class AnimatedWallObject : public WallDecoration {
 public:
     RS_OBJECT(AnimatedWallObject)
 

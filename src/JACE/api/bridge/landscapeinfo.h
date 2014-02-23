@@ -9,7 +9,7 @@ namespace api {
 namespace bridge {
 
 class BaseInfo;
-// class GroundBytes;
+class GroundBytes;
 class LandscapeDetails;
 class ObjectDefLoader;
 class LandscapeInfo : public Object {
@@ -17,7 +17,7 @@ public:
     RS_OBJECT(LandscapeInfo)
 
     JACE_PROXY_API BaseInfo getBaseInfo();
-    // JACE_PROXY_API GroundBytes getGroundBytes();
+    JACE_PROXY_API GroundBytes getGroundBytes();
     JACE_PROXY_API LandscapeDetails getLandscapeDetails();
     JACE_PROXY_API ObjectDefLoader getObjectDefLoader();
 

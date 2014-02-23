@@ -21,6 +21,8 @@ public:
 
     JACE_PROXY_API java::awt::DisplayMode getDisplayMode();
     JACE_PROXY_API java::awt::GraphicsDevice getGraphicsDevice();
+private:
+    DECLARE_FRIENDS
 };
 
 } // namespace bridge

@@ -207,7 +207,8 @@ HEADERS += \
     java/io/inputstream.h \
     java/io/outputstream.h \
     api/bridge/groundbytes.h \
-    java/lang/ref/softreference.h
+    java/lang/ref/softreference.h \
+    java/util/map.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -330,7 +331,8 @@ SOURCES += \
     java/io/inputstream.cpp \
     java/io/outputstream.cpp \
     api/bridge/groundbytes.cpp \
-    java/lang/ref/softreference.cpp
+    java/lang/ref/softreference.cpp \
+    java/util/map.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

@@ -23,7 +23,7 @@
 
 // Don't forget to include the types of the fields (if they're not primitive)
 #include "java/lang/string.h"
-//#include "java/util/map.h"
+#include "java/util/map.h"
 //#include "java/awt/rectangle.h"
 #include "camera.h"
 #include "canvas.h"
@@ -62,7 +62,7 @@ IMPL_STATIC_OBJECT_METHOD(Client, getClient, Client)
 // virtual fields, organized by first character
 IMPL_OBJECT_METHOD(Client, getCamera, Camera)
 IMPL_OBJECT_METHOD(Client, getCanvas, Canvas)
-//IMPL_OBJECT_METHOD(Client, getChatChannels, java::util::Map)
+IMPL_OBJECT_METHOD(Client, getChatChannels, java::util::Map)
 IMPL_OBJECT_METHOD(Client, getCollapsedMenuItems, NodeSubQueue)
 IMPL_PRIMITIVE_METHOD(Client, getConnectionState, JInt)
 IMPL_OBJECT_METHOD(Client, getCurrentAction, String)

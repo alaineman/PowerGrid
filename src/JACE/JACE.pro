@@ -215,7 +215,8 @@ HEADERS += \
     api/bridge/gzipdecompressor.h \
     java/awt/graphicsdevice.h \
     java/awt/displaymode.h \
-    api/bridge/graphics.h
+    api/bridge/graphics.h \
+    java/io/socket.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -346,7 +347,8 @@ SOURCES += \
     api/bridge/gzipdecompressor.cpp \
     java/awt/graphicsdevice.cpp \
     java/awt/displaymode.cpp \
-    api/bridge/graphics.cpp
+    api/bridge/graphics.cpp \
+    java/io/socket.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

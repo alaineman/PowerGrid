@@ -152,6 +152,7 @@ HEADERS += \
     api/bridge/floatstream.h \
     api/bridge/toolkitld.h \
     api/bridge/varpbits.h \
+    api/bridge/facade.h \
     api/bridge/linkedlistnode.h \
     api/bridge/linkedlist.h \
     api/bridge/modelld.h \
@@ -169,7 +170,13 @@ HEADERS += \
     api/bridge/server.h \
     api/bridge/npcdefloader.h \
     api/bridge/npcdef.h \
-    api/bridge/walldecoration.h
+    api/bridge/walldecoration.h \
+    api/bridge/combatinfo.h \
+    api/bridge/animableobject.h \
+    api/bridge/animatedfloorobject.h \
+    api/bridge/animatedwallobject.h \
+    api/bridge/boundaryobject.h \
+    api/bridge/cameralocationdata.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -237,6 +244,7 @@ SOURCES += \
     api/bridge/floatstream.cpp \
     api/bridge/toolkitld.cpp \
     api/bridge/varpbits.cpp \
+    api/bridge/facade.cpp \
     api/bridge/linkedlistnode.cpp \
     api/bridge/linkedlist.cpp \
     api/bridge/modelld.cpp \
@@ -254,7 +262,13 @@ SOURCES += \
     api/bridge/server.cpp \
     api/bridge/npcdefloader.cpp \
     api/bridge/npcdef.cpp \
-    api/bridge/walldecoration.cpp
+    api/bridge/walldecoration.cpp \
+    api/bridge/combatinfo.cpp \
+    api/bridge/animableobject.cpp \
+    api/bridge/animatedfloorobject.cpp \
+    api/bridge/animatedwallobject.cpp \
+    api/bridge/boundaryobject.cpp \
+    api/bridge/cameralocationdata.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

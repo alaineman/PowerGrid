@@ -24,8 +24,6 @@ class Peer;
  */
 namespace helper {
 
-
-
 /**
  * Creates a new Java Virtual Machine using the specified loader
  * with the specified options.

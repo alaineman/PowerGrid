@@ -159,7 +159,13 @@ HEADERS += \
     api/bridge/objectcomposite.h \
     api/bridge/nodesubqueue.h \
     api/bridge/objectdefloader.h \
-    api/bridge/objectdef.h
+    api/bridge/objectdef.h \
+    api/bridge/combatinfo.h \
+    api/bridge/animableobject.h \
+    api/bridge/animatedfloorobject.h \
+    api/bridge/animatedwallobject.h \
+    api/bridge/boundaryobject.h \
+    api/bridge/cameralocationdata.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -234,7 +240,13 @@ SOURCES += \
     api/bridge/objectcomposite.cpp \
     api/bridge/nodesubqueue.cpp \
     api/bridge/objectdefloader.cpp \
-    api/bridge/objectdef.cpp
+    api/bridge/objectdef.cpp \
+    api/bridge/combatinfo.cpp \
+    api/bridge/animableobject.cpp \
+    api/bridge/animatedfloorobject.cpp \
+    api/bridge/animatedwallobject.cpp \
+    api/bridge/boundaryobject.cpp \
+    api/bridge/cameralocationdata.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

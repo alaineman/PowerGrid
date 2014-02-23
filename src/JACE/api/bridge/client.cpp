@@ -91,7 +91,7 @@ IMPL_ARRAY_METHOD(Client, getMouseCrosshairSprites, Sprite)
 IMPL_PRIMITIVE_METHOD(Client, getMouseCrosshairState, JInt)
 
 IMPL_PRIMITIVE_METHOD(Client, getNPCCombatCount, JInt)
-IMPL_ARRAY_METHOD(Client, getNPCCombarIndexArray, JInt)
+IMPL_ARRAY_METHOD(Client, getNPCCombatIndexArray, JInt)
 IMPL_OBJECT_METHOD(Client, getNPCNodeCache, HashTable)
 
 IMPL_PRIMITIVE_METHOD(Client, getPlane, JInt)

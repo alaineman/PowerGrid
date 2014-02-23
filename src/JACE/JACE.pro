@@ -151,7 +151,14 @@ HEADERS += \
     api/bridge/cache.h \
     api/bridge/floatstream.h \
     api/bridge/toolkitld.h \
-    api/bridge/varpbits.h
+    api/bridge/varpbits.h \
+    api/bridge/linkedlistnode.h \
+    api/bridge/linkedlist.h \
+    api/bridge/modelld.h \
+    api/bridge/objectcomposite.h \
+    api/bridge/nodesubqueue.h \
+    api/bridge/objectdefloader.h \
+    api/bridge/objectdef.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -218,7 +225,14 @@ SOURCES += \
     api/bridge/cache.cpp \
     api/bridge/floatstream.cpp \
     api/bridge/toolkitld.cpp \
-    api/bridge/varpbits.cpp
+    api/bridge/varpbits.cpp \
+    api/bridge/linkedlistnode.cpp \
+    api/bridge/linkedlist.cpp \
+    api/bridge/modelld.cpp \
+    api/bridge/objectcomposite.cpp \
+    api/bridge/nodesubqueue.cpp \
+    api/bridge/objectdefloader.cpp \
+    api/bridge/objectdef.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

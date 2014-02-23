@@ -47,7 +47,12 @@ public:
     explicit File(jobject object);
     File& operator = (const File& obj);
 
-    QFile toQFile() const throw(jace::JNIException);
+    /*!
+     * \brief Converts this Java File to a QFile
+     * The caller is responsible for cleaning up the QFile* when done.
+     * \return a QFile* representing the same file as this java File object
+     */
+    QFile* toQFile() const throw(jace::JNIException);
 private:
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 };

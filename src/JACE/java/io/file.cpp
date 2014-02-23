@@ -18,7 +18,7 @@
  */
 
 #include "file.h"
-#include "string.h"
+#include "java/lang/string.h"
 using jace::JNIException;
 
 namespace java {
@@ -57,7 +57,7 @@ File& File::operator =(const File &obj) {
     return *this;
 }
 
-QFile File::toQFile() const throw(JNIException) {
+QFile *File::toQFile() const throw(JNIException) {
     JNIEnv* env = jace::helper::attach();
     jclass fileClass = File::staticGetJavaJniClass()->getClass();
     if (!fileClass) throw JNIException("Cannot find java.io.File class");
@@ -65,7 +65,7 @@ QFile File::toQFile() const throw(JNIException) {
     if (!getAbsolutePath) throw JNIException("Cannot find method \"getAbsolutePath()\" in java.io.File");
     String pathJString (env->CallObjectMethod(getJavaJniObject(), getAbsolutePath));
     QString path = pathJString.toQString();
-    return QFile(path);
+    return new QFile(path);
 }
 
 } // namespace io

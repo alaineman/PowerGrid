@@ -151,7 +151,8 @@ HEADERS += \
     api/bridge/cache.h \
     api/bridge/floatstream.h \
     api/bridge/toolkitld.h \
-    api/bridge/varpbits.h
+    api/bridge/varpbits.h \
+    api/bridge/facade.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -218,7 +219,8 @@ SOURCES += \
     api/bridge/cache.cpp \
     api/bridge/floatstream.cpp \
     api/bridge/toolkitld.cpp \
-    api/bridge/varpbits.cpp
+    api/bridge/varpbits.cpp \
+    api/bridge/facade.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

@@ -22,7 +22,6 @@ using std::cout;
 using std::endl;
 
 #if !defined(SUPPORTS_PTHREADS) && !defined(_WIN32)
-//FIXME doesn't Mac support pthreads?
 #error Platform does not support pthreads or win32 thread-local storage
 #endif
 
@@ -101,7 +100,7 @@ namespace {
     DWORD CLASSLOADER_KEY = 0;
 #endif
 
-} // namespace internal
+} // namespace
 
 std::string asString( JNIEnv* env, jstring str ) {
     const char* utfString = env->GetStringUTFChars( str, 0 );
@@ -265,11 +264,6 @@ void createVm( const VmLoader& loader,
     deleteLocalRef( env, shutdownHookClass );
 }
 
-
-/**
- * Returns the current java virtual machine.
- *
- */
 JavaVM* getJavaVM() throw ( JNIException ) {
 
     if ( ! javaVM ) {
@@ -310,12 +304,6 @@ void shutdown() {
     globalLoader->unloadVm();
 }
 
-
-/**
- * Attaches the current thread to the virtual machine
- * and returns the appropriate JNIEnv for the thread.
- *
- */
 JNIEnv* attach() throw ( JNIException ) {
 
     if ( globalHasShutdown ) {
@@ -336,32 +324,11 @@ JNIEnv* attach() throw ( JNIException ) {
     return env;
 }
 
-
-/**
- * Detaches the current thread from the virtual machine.
- *
- */
 void detach() throw () {
 
     getJavaVM()->DetachCurrentThread();
 }
 
-
-/**
- * Enlists a new factory for a java class with the JNIHelper.
- *
- * All java classes should enlist with the JNIHelper on start-up.
- * They can do this by adding a static member variable
- * of type JEnlister to their class definition.
- *
- * For example, java::lang::Object has a static member variable,
- *
- *   static JEnlister<Object> enlister;
- *
- * which is all that is required to register a new factory
- * for itself.
- *
- */
 void enlist( JFactory* factory ) {
     string name = factory->getClass()->getName();
     replace( name.begin(), name.end(), '/', '.' );
@@ -417,16 +384,6 @@ void deleteGlobalRef( JNIEnv* env, jobject globalRef ) {
     env->DeleteGlobalRef( globalRef );
 }
 
-/**
- * Checks for a java exception.
- *
- * If a java exception has been thrown, the java exception is cleared,
- * and a corresponding C++ proxy exception is thrown.
- *
- * @internal We don't want to put a throw specification on this, because
- * it could throw any range of exceptions.
- *
- */
 void catchAndThrow() {
 
     JNIEnv* env = attach();
@@ -644,10 +601,6 @@ void classLoaderDestructor( void* value ) {
 }
 }
 
-/**
- * Returns the ClassLoader being used by the current thread.
- *
- */
 jobject getClassLoader() {
 
 #ifdef SUPPORTS_PTHREADS
@@ -657,13 +610,6 @@ jobject getClassLoader() {
 #endif
 }
 
-
-/**
- * Callback that initializes process-local variables. Should be called at most once per process.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
 void onProcessCreation() throw ( ::jace::JNIException ) {
 
 #ifdef SUPPORTS_PTHREADS
@@ -693,21 +639,9 @@ void onProcessCreation() throw ( ::jace::JNIException ) {
 #endif
 }
 
-/**
- * Callback that initializes thread-local variables. Should be called at most once per thread.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
 void onThreadCreation() throw ( ::jace::JNIException ) {
 }
 
-/**
- * Callback that frees thread-local variables. Should be called at most once per thread.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
 void onThreadDestruction() throw ( ::jace::JNIException ) {
 
 #ifdef _WIN32
@@ -729,12 +663,6 @@ void onThreadDestruction() throw ( ::jace::JNIException ) {
 #endif
 }
 
-/**
- * Callback that frees process-local variables. Should be called at most once per process.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
 void onProcessDestruction() throw ( ::jace::JNIException ) {
 
 #ifdef SUPPORTS_PTHREADS

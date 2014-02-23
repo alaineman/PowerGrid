@@ -34,9 +34,6 @@ SoftReference::SoftReference(jobject object) :
 SoftReference::SoftReference(jvalue value) :
     Object(value) {}
 
-SoftReference::SoftReference(jstring string) :
-    Object(string) {}
-
 SoftReference& SoftReference::operator =(const SoftReference &obj) {
     setJavaJniObject(obj.getJavaJniObject());
     return *this;

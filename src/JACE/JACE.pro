@@ -160,6 +160,17 @@ HEADERS += \
     api/bridge/nodesubqueue.h \
     api/bridge/objectdefloader.h \
     api/bridge/objectdef.h \
+    api/bridge/itemdefloader.h \
+    api/bridge/itemdef.h \
+    api/bridge/overheadmessage.h \
+    api/bridge/lookuptable.h \
+    api/bridge/menugroupnode.h \
+    api/bridge/menuitemnode.h \
+    api/bridge/referencetable.h \
+    api/bridge/server.h \
+    api/bridge/npcdefloader.h \
+    api/bridge/npcdef.h \
+    api/bridge/walldecoration.h \
     api/bridge/combatinfo.h \
     api/bridge/animableobject.h \
     api/bridge/animatedfloorobject.h \
@@ -243,6 +254,17 @@ SOURCES += \
     api/bridge/nodesubqueue.cpp \
     api/bridge/objectdefloader.cpp \
     api/bridge/objectdef.cpp \
+    api/bridge/itemdefloader.cpp \
+    api/bridge/itemdef.cpp \
+    api/bridge/overheadmessage.cpp \
+    api/bridge/lookuptable.cpp \
+    api/bridge/menugroupnode.cpp \
+    api/bridge/menuitemnode.cpp \
+    api/bridge/referencetable.cpp \
+    api/bridge/server.cpp \
+    api/bridge/npcdefloader.cpp \
+    api/bridge/npcdef.cpp \
+    api/bridge/walldecoration.cpp \
     api/bridge/combatinfo.cpp \
     api/bridge/animableobject.cpp \
     api/bridge/animatedfloorobject.cpp \

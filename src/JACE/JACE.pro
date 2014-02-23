@@ -182,7 +182,11 @@ HEADERS += \
     api/bridge/interfacechild.h \
     api/bridge/interfacenode.h \
     api/bridge/interactableanimator.h \
-    api/bridge/playerdef.h
+    api/bridge/playerdef.h \
+    api/bridge/centrallocationdata.h \
+    api/bridge/character.h \
+    api/bridge/chatmessage.h \
+    api/bridge/chatchannel.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -280,7 +284,11 @@ SOURCES += \
     api/bridge/interfacechild.cpp \
     api/bridge/interfacenode.cpp \
     api/bridge/interactableanimator.cpp \
-    api/bridge/playerdef.cpp
+    api/bridge/playerdef.cpp \
+    api/bridge/centrallocationdata.cpp \
+    api/bridge/character.cpp \
+    api/bridge/chatmessage.cpp \
+    api/bridge/chatchannel.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

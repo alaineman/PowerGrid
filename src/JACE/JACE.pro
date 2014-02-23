@@ -203,7 +203,9 @@ HEADERS += \
     api/bridge/dequenode.h \
     api/bridge/floorobject.h \
     api/bridge/hardreference.h \
-    java/io/file.h
+    java/io/file.h \
+    api/bridge/landscapedetails.h \
+    api/bridge/landscapeinfo.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -322,7 +324,9 @@ SOURCES += \
     api/bridge/dequenode.cpp \
     api/bridge/floorobject.cpp \
     api/bridge/hardreference.cpp \
-    java/io/file.cpp
+    java/io/file.cpp \
+    api/bridge/landscapedetails.cpp \
+    api/bridge/landscapeinfo.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

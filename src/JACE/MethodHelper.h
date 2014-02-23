@@ -213,13 +213,13 @@ JACE_PROXY_API QList<componentType> className::name() {\
 #define IMPL_ARRAY3_METHOD(className, name, componentType) \
     JACE_PROXY_API QList<QList<QList<componentType>>> className::name() {\
         const RSClass* rsc = getJavaJniClass();\
-        jace::JArray<jace::Jarray<jace::JArray<componentType>>> jresult = \
-                jace::JField<jace::JArray<jace::Jarray<jace::JArray<componentType>>>>(rsc->getFieldName(#name)).getReadOnly(*this);\
+        jace::JArray<jace::JArray<jace::JArray<componentType>>> jresult = \
+                jace::JField<jace::JArray<jace::JArray<jace::JArray<componentType>>>>(rsc->getFieldName(#name)).getReadOnly(*this);\
         QList<QList<QList<componentType>>> result;\
         /* TODO: Maybe rewrite this to use Iterators? Because this copies the array twice. */\
         foreach (jace::JArray<jace::JArray<componentType>> arr2D, jresult.toQList()) {\
             QList<QList<componentType>> result2D;\
-            foreach (jace::JArray<componentType>> arr1D, arr2D.toQList()) {\
+            foreach (jace::JArray<componentType> arr1D, arr2D.toQList()) {\
                 result2D << arr1D.toQList();\
             }\
             result << result2D;\

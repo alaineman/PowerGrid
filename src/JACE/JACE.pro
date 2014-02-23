@@ -186,7 +186,18 @@ HEADERS += \
     api/bridge/centrallocationdata.h \
     api/bridge/character.h \
     api/bridge/chatmessage.h \
-    api/bridge/chatchannel.h
+    api/bridge/chatchannel.h \
+    api/bridge/player.h \
+    api/bridge/spriteld.h \
+    api/bridge/projectile.h \
+    api/bridge/projectilenode.h \
+    api/bridge/npc.h \
+    api/bridge/npcnode.h \
+    api/bridge/modelopengl.h \
+    api/bridge/packetstream.h \
+    api/bridge/tile.h \
+    api/bridge/toolkitopengl.h \
+    api/bridge/modeldirectx.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -288,7 +299,18 @@ SOURCES += \
     api/bridge/centrallocationdata.cpp \
     api/bridge/character.cpp \
     api/bridge/chatmessage.cpp \
-    api/bridge/chatchannel.cpp
+    api/bridge/chatchannel.cpp \
+    api/bridge/player.cpp \
+    api/bridge/spriteld.cpp \
+    api/bridge/projectile.cpp \
+    api/bridge/projectilenode.cpp \
+    api/bridge/npc.cpp \
+    api/bridge/npcnode.cpp \
+    api/bridge/modelopengl.cpp \
+    api/bridge/packetstream.cpp \
+    api/bridge/tile.cpp \
+    api/bridge/toolkitopengl.cpp \
+    api/bridge/modeldirectx.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

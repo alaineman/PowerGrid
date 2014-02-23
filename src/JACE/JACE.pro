@@ -186,7 +186,13 @@ HEADERS += \
     api/bridge/centrallocationdata.h \
     api/bridge/character.h \
     api/bridge/chatmessage.h \
-    api/bridge/chatchannel.h
+    api/bridge/chatchannel.h \
+    api/bridge/filesystem.h \
+    api/bridge/combatinfonode.h \
+    api/bridge/dequenode.h \
+    api/bridge/floorobject.h \
+    api/bridge/hardreference.h \
+    java/io/file.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -288,7 +294,13 @@ SOURCES += \
     api/bridge/centrallocationdata.cpp \
     api/bridge/character.cpp \
     api/bridge/chatmessage.cpp \
-    api/bridge/chatchannel.cpp
+    api/bridge/chatchannel.cpp \
+    api/bridge/filesystem.cpp \
+    api/bridge/combatinfonode.cpp \
+    api/bridge/dequenode.cpp \
+    api/bridge/floorobject.cpp \
+    api/bridge/hardreference.cpp \
+    java/io/file.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

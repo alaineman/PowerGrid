@@ -178,21 +178,20 @@ JACE_PROXY_API QList<componentType> className::name() {\
  * \brief Implements a proxy method that returns a 2-dimensional array.
  * The return type is a QList of QLists with the data in the array.
  * The method does NOT apply any modifier to the return values.
+ * \internal Requires foreach fix
  */
 #define IMPL_ARRAY2_METHOD(className, name, componentType) \
     JACE_PROXY_API QList<QList<componentType>> className::name() {\
         const RSClass* rsc = getJavaJniClass();\
         jace::JArray<jace::JArray<componentType>> jresult = jace::JField<jace::JArray<jace::JArray<componentType>>>(rsc->getFieldName(#name)).getReadOnly(*this);\
         QList<QList<componentType>> result;\
-        foreach (const JArray<componentType> elem, jresult.toQList()) {\
-            result << elem.toQList();\
-        }\
         return result;\
     }
 /*!
  * \brief Implements a static proxy method that returns a 2-dimensional array.
  * The return type is a QList of QLists with the data in the array.
  * The method does NOT apply any modifier to the return values.
+ * \internal Requires foreach fix
  */
 #define IMPL_STATIC_ARRAY2_METHOD(className, name, componentType) \
     JACE_PROXY_API QList<QList<componentType>> className::name() {\

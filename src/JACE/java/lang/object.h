@@ -70,7 +70,7 @@ public:
      * This invokes the \c toString method on the java object in the Java VM.
      * \return the String value of the java Object, as a java String.
      */
-    String& toString();
+    String toString();
 
     friend std::ostream& operator<<(std::ostream& out, Object& object);
 private:

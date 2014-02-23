@@ -34,7 +34,7 @@ namespace java {
 namespace lang {
 
 
-class String : public Object, public virtual JObject {
+class String : public Object {
 public:
     String();
     String(const String&obj);

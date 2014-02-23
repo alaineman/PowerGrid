@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef JAVA_LANG_STRING_H
-#define JAVA_LANG_STRING_H
+
+#ifndef JAVA_LANG_REF_SOFTREFERENCE_H
+#define JAVA_LANG_REF_SOFTREFERENCE_H
 
 #include "jace/os_dep.h"
 #include "jace/javacast.h"
@@ -32,29 +33,27 @@
 
 namespace java {
 namespace lang {
+namespace ref {
 
-
-class String : public Object {
+class SoftReference : public Object {
 public:
-    String();
-    String(const String&obj);
+    SoftReference();
+    SoftReference(const SoftReference&obj);
 
     virtual const jace::JClass* getJavaJniClass() const throw (jace::JNIException);
     static const jace::JClass* staticGetJavaJniClass() throw (jace::JNIException);
 
-    explicit String(jvalue value);
-    explicit String(jobject object);
-    String(jstring string);
-    String& operator = (const String& obj);
+    explicit SoftReference(jvalue value);
+    explicit SoftReference(jobject object);
+    SoftReference& operator = (const SoftReference& obj);
 
-    std::string toStdString() const throw(jace::JNIException);
-    QString toQString() const throw(jace::JNIException);
-
+    Object get() const throw(jace::JNIException);
 private:
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 };
 
-} // end namespace lang
-} // end namespace java
+} // namespace ref
+} // namespace lang
+} // namespace java
 
-#endif // JAVA_LANG_STRING_H
+#endif // JAVA_LANG_REF_SOFTREFERENCE_H

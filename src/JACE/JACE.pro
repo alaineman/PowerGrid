@@ -205,7 +205,20 @@ HEADERS += \
     api/bridge/hardreference.h \
     java/io/file.h \
     api/bridge/landscapedetails.h \
-    api/bridge/landscapeinfo.h
+    api/bridge/landscapeinfo.h \
+    java/io/inputstream.h \
+    java/io/outputstream.h \
+    api/bridge/groundbytes.h \
+    java/lang/ref/softreference.h \
+    java/util/map.h \
+    java/awt/rectangle.h \
+    java/util/zip/inflater.h \
+    api/bridge/fileondisk.h \
+    api/bridge/gzipdecompressor.h \
+    java/awt/graphicsdevice.h \
+    java/awt/displaymode.h \
+    api/bridge/graphics.h \
+    java/io/socket.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -326,7 +339,20 @@ SOURCES += \
     api/bridge/hardreference.cpp \
     java/io/file.cpp \
     api/bridge/landscapedetails.cpp \
-    api/bridge/landscapeinfo.cpp
+    api/bridge/landscapeinfo.cpp \
+    java/io/inputstream.cpp \
+    java/io/outputstream.cpp \
+    api/bridge/groundbytes.cpp \
+    java/lang/ref/softreference.cpp \
+    java/util/map.cpp \
+    java/awt/rectangle.cpp \
+    java/util/zip/inflater.cpp \
+    api/bridge/fileondisk.cpp \
+    api/bridge/gzipdecompressor.cpp \
+    java/awt/graphicsdevice.cpp \
+    java/awt/displaymode.cpp \
+    api/bridge/graphics.cpp \
+    java/io/socket.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

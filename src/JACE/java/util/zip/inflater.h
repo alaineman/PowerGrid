@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef JAVA_LANG_STRING_H
-#define JAVA_LANG_STRING_H
+#ifndef JAVA_UTIL_ZIP_INFLATER_H
+#define JAVA_UTIL_ZIP_INFLATER_H
 
 #include "jace/os_dep.h"
 #include "jace/javacast.h"
@@ -29,32 +29,27 @@
 #include "jace/JClass.h"
 
 #include "java/lang/object.h"
+using namespace java::lang;
 
 namespace java {
-namespace lang {
+namespace util {
+namespace zip {
 
-
-class String : public Object {
+class Inflater : public Object {
 public:
-    String();
-    String(const String&obj);
+    Inflater();
+    Inflater(const Inflater&obj);
 
     virtual const jace::JClass* getJavaJniClass() const throw (jace::JNIException);
     static const jace::JClass* staticGetJavaJniClass() throw (jace::JNIException);
 
-    explicit String(jvalue value);
-    explicit String(jobject object);
-    String(jstring string);
-    String& operator = (const String& obj);
-
-    std::string toStdString() const throw(jace::JNIException);
-    QString toQString() const throw(jace::JNIException);
-
-private:
-    template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
+    explicit Inflater(jvalue value);
+    explicit Inflater(jobject object);
+    Inflater& operator = (const Inflater& obj);
 };
 
-} // end namespace lang
-} // end namespace java
+} // namespace zip
+} // namespace util
+} // namespace java
 
-#endif // JAVA_LANG_STRING_H
+#endif // JAVA_UTIL_ZIP_INFLATER_H

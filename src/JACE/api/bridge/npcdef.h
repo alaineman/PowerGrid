@@ -15,6 +15,7 @@ namespace lang {
 namespace api {
 namespace bridge {
 
+class NPCDefLoader;
 class HashTable;
 class NPCDef : public Object {
 public:
@@ -24,6 +25,7 @@ public:
     JACE_PROXY_API JInt getID();
     JACE_PROXY_API JInt getModelBoundRadius();
     JACE_PROXY_API String getName();
+    JACE_PROXY_API NPCDefLoader getNPCDefLoader();
     JACE_PROXY_API HashTable getNodeTable();
     JACE_PROXY_API JInt getPrayerHeadIconIndex();
     JACE_PROXY_API JInt getRenderEmote();

@@ -1,16 +1,16 @@
-#ifndef API_BRIDGE_ITEMNODE_H
-#define API_BRIDGE_ITEMNODE_H
+#ifndef API_BRIDGE_GROUNDITEM_H
+#define API_BRIDGE_GROUNDITEM_H
 
 #include "MethodHelper.h"
-#include "node.h"
+#include "groundentity.h"
 using namespace java::lang;
 
 namespace api {
 namespace bridge {
 
-class ItemNode : public Node {
+class GroundItem : public GroundEntity {
 public:
-    RS_OBJECT(ItemNode)
+    RS_OBJECT(GroundItem)
 
     JACE_PROXY_API JInt getID();
     JACE_PROXY_API JInt getStackSize();
@@ -21,4 +21,4 @@ private:
 } // namespace bridge
 } // namespace api
 
-#endif // API_BRIDGE_ITEMNODE_H
+#endif // API_BRIDGE_GROUNDITEM_H

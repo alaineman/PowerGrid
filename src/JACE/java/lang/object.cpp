@@ -18,9 +18,18 @@
  */
 
 #include "object.h"
+#include "java/lang/string.h"
 
 namespace java {
 namespace lang {
+
+/*!
+   \class java::lang::Object
+   \brief Proxy for \c{java.lang.Object}
+
+   This class is the base class of all java classes, and as such also
+   the base class of all proxy classes.
+ */
 
 Object::Object() :
     JObject() {}
@@ -49,6 +58,33 @@ const jace::JClass* Object::getJavaJniClass() const throw(jace::JNIException) {
 Object& Object::operator =(Object& obj) {
     setJavaJniObject(obj.getJavaJniObject());
     return *this;
+}
+
+/*!
+ * \brief Calls this Java Object's \c equals method.
+ * This invokes the equals method on the two java objects in the Java VM.
+ *
+ * \param other the object to call equals with
+ * \return true if the two objects are equal according to this
+ *         object's equals method, false otherwise
+ */
+bool Object::equals(const Object &other) {
+    JNIEnv* env = jace::helper::attach();
+    jmethodID equals_id = env->GetMethodID(
+                Object::staticGetJavaJniClass()->getClass(), "equals", "(Ljava/lang/Object;)Z");
+    return env->CallBooleanMethod(getJavaJniObject(), equals_id, other.getJavaJniObject()) == JNI_TRUE;
+}
+
+/*!
+ * \brief Calls this Java Object's \c toString method.
+ * This invokes the \c toString method on the java object in the Java VM.
+ * \return the String value of the java Object, as a java String.
+ */
+String& Object::toString() {
+    JNIEnv* env = jace::helper::attach();
+    jmethodID toString_id = env->GetMethodID(
+                Object::staticGetJavaJniClass()->getClass(), "toString", "()Ljava/lang/String;");
+    return String(env->CallObjectMethod(getJavaJniObject(), toString_id));
 }
 
 } // end namespace lang

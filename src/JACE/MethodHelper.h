@@ -33,8 +33,8 @@
 #include "jace/JField.h"
 #include <QList>
 
-/*
- * Marks this class as an RS proxy object.
+/*!
+ * \brief Marks this class as an RS proxy object.
  * This macro declares all constructors and framework methods.
  *
  * This macro should appear at the beginning of a RS proxy class
@@ -49,18 +49,18 @@
     JACE_PROXY_API name (jobject);\
     JACE_PROXY_API name& operator =(const name& other);
 
-/*
- * Creates the links to any friend classes the class needs.
+/*!
+ * \brief Creates the links to any friend classes the class needs.
  * This is required for smooth integration into the JACE framework.
  * This should appear once for each class in the class' private section.
  */
 #define DECLARE_FRIENDS \
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 
-/*
- * Implements the JACE constructors.
- * If the class has a superclass other than java.lang.Object,
- * use IMPL_JACE_CONSTRUCTORS_SUPERTYPE instead.
+/*!
+ * \brief Implements the JACE constructors.
+ * If the class has a superclass other than \c java.lang.Object,
+ * use \c IMPL_JACE_CONSTRUCTORS_SUPERTYPE instead.
  */
 #define IMPL_JACE_CONSTRUCTORS(name) \
     name::name() : JObject(NoOp()) {}\
@@ -76,10 +76,10 @@
         return *this;\
     }
 
-/*
- * Implements the JACE constructors.
- * If the class is a direct subclass of java.lang.Object,
- * please use IMPL_JACE_CONSTRUCTORS instead.
+/*!
+ * \brief Implements the JACE constructors.
+ * If the class is a direct subclass of \c java.lang.Object,
+ * please use \c IMPL_JACE_CONSTRUCTORS instead.
  */
 #define IMPL_JACE_CONSTRUCTORS_SUPERTYPE(name, superType) \
 name::name() {}\
@@ -95,9 +95,9 @@ name& name::operator =(const name& other) {\
     return *this;\
 }
 
-/*
- * Implements the getter methods for the RSClass*.
- * (Which are getJavaJniClass() and staticGetJavaJniClass()).
+/*!
+ * \brief Implements the getter methods for the \c RSClass*
+ * (Which are \c getJavaJniClass() and \c staticGetJavaJniClass()).
  */
 #define IMPL_RSCLASS_GET(name) \
 JACE_PROXY_API const RSClass* name::staticGetJavaJniClass() throw(jace::JNIException) {\
@@ -108,9 +108,9 @@ JACE_PROXY_API const RSClass* name::getJavaJniClass() const throw(jace::JNIExcep
     return name::staticGetJavaJniClass();\
 }
 
-/*
- * Implements a static proxy method.
- * The method does NOT apply any modifer to the return value.
+/*!
+ * \brief Implements a static proxy method.
+ * The method does NOT apply any modifier to the return value.
  */
 #define IMPL_STATIC_OBJECT_METHOD(className, name, returnType) \
 JACE_PROXY_API returnType className::name() {\
@@ -118,9 +118,9 @@ JACE_PROXY_API returnType className::name() {\
     returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).getReadOnly(rsc);\
     return result;\
 }
-/*
- * Implements a static proxy method.
- * The method does NOT apply any modifer to the return value.
+/*!
+ * \brief Implements a proxy method.
+ * The method does NOT apply any modifier to the return value.
  */
 #define IMPL_OBJECT_METHOD(className, name, returnType) \
 JACE_PROXY_API returnType className::name() {\
@@ -128,9 +128,9 @@ JACE_PROXY_API returnType className::name() {\
     returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).getReadOnly(*this);\
     return result;\
 }
-/*
- * Implements a static proxy method.
- * The method applies a modifer (if any) to the return value.
+/*!
+ * \brief Implements a static proxy method.
+ * The method applies a modifier (if any) to the return value.
  */
 #define IMPL_STATIC_PRIMITIVE_METHOD(className, name, returnType) \
 JACE_PROXY_API returnType className::name() {\
@@ -138,9 +138,9 @@ JACE_PROXY_API returnType className::name() {\
     returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).getReadOnly(rsc);\
     return result * rsc->getFieldModifier(#name);\
 }
-/*
- * Implements a proxy method.
- * The method applies a modifer (if any) to the return value.
+/*!
+ * \brief Implements a proxy method.
+ * The method applies a modifier (if any) to the return value.
  */
 #define IMPL_PRIMITIVE_METHOD(className, name, returnType) \
 JACE_PROXY_API returnType className::name() {\
@@ -149,10 +149,10 @@ JACE_PROXY_API returnType className::name() {\
     return result * rsc->getFieldModifier(#name);\
 }
 
-/*
- * Implements a static proxy method. Can only be used for arrays.
+/*!
+ * \brief Implements a static proxy method. Can only be used for arrays.
  * The return type is a QList with the data in the array.
- * The method does NOT apply any modifer to the return value.
+ * The method does NOT apply any modifier to the return value.
  */
 #define IMPL_STATIC_ARRAY_METHOD(className, name, componentType) \
 JACE_PROXY_API QList<componentType> className::name() {\
@@ -160,10 +160,12 @@ JACE_PROXY_API QList<componentType> className::name() {\
     jace::JArray<componentType> result = jace::JField<jace::JArray<componentType>>(rsc->getFieldName(#name)).getReadOnly(rsc);\
     return result.toQList();\
 }
-/*
- * Implements a proxy method. Can only be used for arrays.
+/*!
+ * \brief Implements a proxy method. Can only be used for arrays.
  * The return type is a QList with the data in the array.
- * The method does NOT apply any modifer to the return value.
+ * The method does NOT apply any modifier to the return value.
+ * For multidimensional arrays, use \c IMPL_ARRAY2_METHOD or
+ * \c IMPL_ARRAY3_METHOD instead.
  */
 #define IMPL_ARRAY_METHOD(className, name, componentType) \
 JACE_PROXY_API QList<componentType> className::name() {\
@@ -172,26 +174,59 @@ JACE_PROXY_API QList<componentType> className::name() {\
     return result.toQList();\
 }
 
+/*!
+ * \brief Implements a proxy method that returns a 2-dimensional array.
+ * The return type is a QList of QLists with the data in the array.
+ * The method does NOT apply any modifier to the return values.
+ */
 #define IMPL_ARRAY2_METHOD(className, name, componentType) \
     JACE_PROXY_API QList<QList<componentType>> className::name() {\
         const RSClass* rsc = getJavaJniClass();\
         jace::JArray<jace::JArray<componentType>> jresult = jace::JField<jace::JArray<jace::JArray<componentType>>>(rsc->getFieldName(#name)).getReadOnly(*this);\
         QList<QList<componentType>> result;\
-        for (jace::JArray<jace::JArray<componentType>>::Iterator it = jresult.begin(); it < jresult.end(); it++) {\
-            result << (*it).toQList();\
+        foreach (const JArray<componentType> elem, jresult.toQList()) {\
+            result << elem.toQList();\
         }\
         return result;\
     }
-
+/*!
+ * \brief Implements a static proxy method that returns a 2-dimensional array.
+ * The return type is a QList of QLists with the data in the array.
+ * The method does NOT apply any modifier to the return values.
+ */
 #define IMPL_STATIC_ARRAY2_METHOD(className, name, componentType) \
     JACE_PROXY_API QList<QList<componentType>> className::name() {\
         const RSClass* rsc = staticGetJavaJniClass();\
         jace::JArray<jace::JArray<componentType>> jresult = jace::JField<jace::JArray<jace::JArray<componentType>>>(rsc->getFieldName(#name)).getReadOnly(rsc);\
         QList<QList<componentType>> result;\
-        for (jace::JArray<jace::JArray<componentType>>::Iterator it = jresult.begin(); it < jresult.end(); it++) {\
-            result << (*it).toQList();\
+        /* TODO: Maybe rewrite this to use Iterators? Because this copies the array twice. */\
+        foreach (const jace::JArray<componentType> elem, jresult.toQList()) {\
+            result << elem.toQList();\
         }\
         return result;\
     }
+
+/*!
+ * \brief Implements a proxy method that returns a 3-dimensional array.
+ * The return type is a QList of QLists of QLists with the data in the array.
+ * The method does NOT apply any modifier to the return values.
+ */
+#define IMPL_ARRAY3_METHOD(className, name, componentType) \
+    JACE_PROXY_API QList<QList<QList<componentType>>> className::name() {\
+        const RSClass* rsc = getJavaJniClass();\
+        jace::JArray<jace::Jarray<jace::JArray<componentType>>> jresult = \
+                jace::JField<jace::JArray<jace::Jarray<jace::JArray<componentType>>>>(rsc->getFieldName(#name)).getReadOnly(*this);\
+        QList<QList<QList<componentType>>> result;\
+        /* TODO: Maybe rewrite this to use Iterators? Because this copies the array twice. */\
+        foreach (jace::JArray<jace::JArray<componentType>> arr2D, jresult.toQList()) {\
+            QList<QList<componentType>> result2D;\
+            foreach (jace::JArray<componentType>> arr1D, arr2D.toQList()) {\
+                result2D << arr1D.toQList();\
+            }\
+            result << result2D;\
+        }\
+        return result;\
+    }
+
 
 #endif // METHODHELPER_H

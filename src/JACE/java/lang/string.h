@@ -1,7 +1,3 @@
-#ifndef STRING_H
-#define STRING_H
-
-#include "jace/os_dep.h"
 /*
  * Copyright 2014 Patrick Kramer, Vincent Wassenaar
  *
@@ -20,8 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef STRING_H
+#define STRING_H
 
-#include "jace/Namespace.h"
+#include "jace/os_dep.h"
 #include "jace/javacast.h"
 
 #include "jace/proxy/JObject.h"
@@ -35,7 +33,8 @@
 namespace java {
 namespace lang {
 
-class String : public Object {
+
+class String : public Object, public virtual JObject {
 public:
     String();
     String(const String&obj);
@@ -46,7 +45,6 @@ public:
     explicit String(jvalue value);
     explicit String(jobject object);
     String(jstring string);
-
     String& operator = (const String& obj);
 
     std::string toStdString() const throw(jace::JNIException);
@@ -54,7 +52,6 @@ public:
 
 private:
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
-    template <typename T> friend class jace::JMethod;
 };
 
 } // end namespace lang

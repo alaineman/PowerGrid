@@ -22,6 +22,15 @@
 namespace java {
 namespace lang {
 
+/*!
+ * \class java::lang::String
+ * \brief Proxy class for \c{java.lang.String}
+ *
+ * This class provides access to java String objects, and provides
+ * additional operation to convert java Strings to \c std::string and
+ * \c QString objects.
+ */
+
 String::String() : Object() {
 }
 
@@ -51,14 +60,20 @@ String& String::operator =(const String &obj) {
     setJavaJniObject(obj.getJavaJniObject());
     return *this;
 }
-
+/*!
+ * \brief Coverts this String into an \c std::string
+ * \return an \c std::string with the contents of this java String
+ */
 std::string String::toStdString() const throw (jace::JNIException){
     JNIEnv* env = jace::helper::attach();
     jstring string = static_cast<jstring>(getJavaJniObject());
     const char* chars = env->GetStringUTFChars(string, NULL);
     return chars;
 }
-
+/*!
+ * \brief Coverts this String into an \c QString
+ * \return an \c QString with the contents of this java String
+ */
 QString String::toQString() const throw (jace::JNIException) {
     JNIEnv* env = jace::helper::attach();
     jstring string = static_cast<jstring>(getJavaJniObject());

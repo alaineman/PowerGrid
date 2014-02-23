@@ -1,0 +1,71 @@
+include(compat.qdocconf)
+
+# Global information of the project
+project        = PowerGrid
+description    = PowerGrid API Reference Documentation
+url            = http://powergrid-client.net/doc/
+versionsym     = PG_VERSION_STR
+
+# The QHelp information for the project
+qhp.PowerGrid.file             = powergrid.qhp
+qhp.PowerGrid.virtualFolder    = powergrid
+qhp.PowerGrid.namespace        = net.powergrid-client.powergrid
+qhp.PowerGrid.indexTitle       = PowerGrid API Reference Documentation
+qhp.PowerGrid.indexRoot        = 
+qhp.PowerGrid.extraFiles       = 
+qhp.PowerGrid.subprojects      = bridge lowerapi higherapi plugins howto
+
+qhp.PowerGrid.subprojects.bridge.title         = Java proxy classes
+qhp.PowerGrid.subprojects.bridge.indexTitle    = The classes from the Java VM
+qhp.PowerGrid.subprojects.bridge.selectors     = jclass
+
+qhp.PowerGrid.subprojects.lowerapi.title       = Lower-level API
+qhp.PowerGrid.subprojects.lowerapi.indexTitle  = Lower-level API Reference
+qhp.PowerGrid.subprojects.lowerapi.selectors   = ll-api
+
+qhp.PowerGrid.subprojects.higherapi.title      = Higher-level API
+qhp.PowerGrid.subprojects.higherapi.indexTitle = Higher-level API Reference
+qhp.PowerGrid.subprojects.higherapi.selectors  = hl-api
+
+qhp.PowerGrid.subprojects.plugins.title        = Plugins
+qhp.PowerGrid.subprojects.plugins.indexTitle   = Plugin API Reference
+qhp.PowerGrid.subprojects.plugins.selectors    = pluginclass
+
+qhp.PowerGrid.subprojects.howto.title          = Overviews
+qhp.PowerGrid.subprojects.howto.indexTitle     = All Overviews and HOWTOs
+qhp.PowerGrid.subprojects.howto.selectors      = overview
+
+HTML.stylesheets = default.css
+HTML.postHeader  = \
+    "<h1>PowerGrid API Reference Documentation</h1>"
+
+HTML.footer      = \
+    "<hr /><div id=\"footer\" align=\"center\">\n" \
+    "  <p>Copyright 2014 Patrick Kramer, Vincent Wassenaar. Documentation contributions are copyrights of their respective owners.</p>\n" \
+    "  <p>This documentation is licensed under the terms of the <a href=\"http://www.gnu.org/licenses/fdl.html\">GNU Free Documentation " \
+         "License version 1.3</a> as published by the Free Software Foundation.</p>\n" \
+    "  <p>Documentation sources are available on the PowerGrid repository hosted at <a href=\"github.com/Alaineman/PowerGrid\">GitHub.com</a>.</p>\n" \
+    "  <p>All mentioned trademarks are property of their respective owners.</p>\n" \
+    "</div>"
+
+# The outputdir variable specifies the directory
+# where QDoc will put the generated documentation.
+outputdir   = ../api
+
+# The headerdirs variable specifies the directories
+# containing the header files associated
+# with the .cpp source files used in the documentation.
+headerdirs  = ../../src
+
+# The sourcedirs variable specifies the
+# directories containing the .cpp or .qdoc
+# files used in the documentation.
+#sourcedirs  = ../../src
+
+# The exampledirs variable specifies the directories containing
+# the source code of the example files.
+exampledirs = .
+
+# The imagedirs variable specifies the
+# directories containing the images used in the documentation.
+imagedirs   = ./images

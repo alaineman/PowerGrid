@@ -31,12 +31,17 @@
 #include "jace/JField.h"
 #include "jace/JClass.h"
 
-/**
- * Forward declarations for the classes that this class uses.
- */
 namespace java {
 namespace lang {
 
+class String;
+
+/*!
+ * \brief Proxy for \c{java.lang.Object}
+ *
+ * This class is the base class of all java classes, and as such also
+ * the base class of all proxy classes.
+ */
 class Object: public virtual jace::proxy::JObject {
 public:
     Object();
@@ -50,6 +55,22 @@ public:
     explicit Object(jobject obj);
 
     Object& operator= (Object& obj);
+
+    /*!
+     * \brief Calls this Java Object's \c equals method.
+     * This invokes the equals method on the two java objects in the Java VM.
+     *
+     * \param other the object to call equals with
+     * \return true if the two objects are equal according to this
+     *         object's equals method, false otherwise
+     */
+    bool equals(const Object& other);
+    /*!
+     * \brief Calls this Java Object's \c toString method.
+     * This invokes the \c toString method on the java object in the Java VM.
+     * \return the String value of the java Object, as a java String.
+     */
+    String& toString();
 
     friend std::ostream& operator<<(std::ostream& out, Object& object);
 private:

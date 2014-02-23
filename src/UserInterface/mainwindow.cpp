@@ -22,6 +22,26 @@
 
 #include "api/bridge/client.h"
 
+/*!
+ * \class MainWindow
+ * \brief PowerGrid Control panel
+ *
+ * This class provides the PowerGrid control panel. It contains a variety
+ * of slots to update the different properties this control panel displays.
+ *
+ * For example, there is a \c{setJVMVersion(QString)} slot that sets the version
+ * of the running Java VM, as well as a slot to update the number of frames/second
+ * the RS client is running (\c{updateFPS()}).
+ *
+ */
+
+/*!
+ * \brief Creates a new MainWindow instance
+ * \param parent the parent, if any
+ *
+ * This constructor creates a new \c MainWindow object that can be displayed
+ * on screen.
+ */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui_controlPanel),
@@ -40,10 +60,20 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+/*!
+ * \brief sets the JVM version displayed by this \c MainWindow
+ * \param version the version to display
+ */
 void MainWindow::setJVMVersion(QString version) {
     ui->jvmVersion->setText(version);
 }
-
+/*!
+ * \brief updates the number of frames per second (FPS)
+ *
+ * This slot automatically collects the required information from the
+ * RS client, the FPS can be kept up-to-date if this is called
+ * periodically.
+ */
 void MainWindow::updateFPS() {
     try {
         api::bridge::Client c = api::bridge::Client::getClient();

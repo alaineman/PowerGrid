@@ -165,7 +165,9 @@ HEADERS += \
     api/bridge/animatedfloorobject.h \
     api/bridge/animatedwallobject.h \
     api/bridge/boundaryobject.h \
-    api/bridge/cameralocationdata.h
+    api/bridge/cameralocationdata.h \
+    api/bridge/centrallocationdata.h \
+    api/bridge/character.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -246,7 +248,9 @@ SOURCES += \
     api/bridge/animatedfloorobject.cpp \
     api/bridge/animatedwallobject.cpp \
     api/bridge/boundaryobject.cpp \
-    api/bridge/cameralocationdata.cpp
+    api/bridge/cameralocationdata.cpp \
+    api/bridge/centrallocationdata.cpp \
+    api/bridge/character.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

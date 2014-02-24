@@ -9,10 +9,17 @@ namespace bridge {
 
 class Deque;
 
+/*!
+ * \brief Node subclass that references a Deque.
+ */
 class DequeNode : public Node {
 public:
     RS_OBJECT(DequeNode)
 
+    /*!
+     * \brief Returns the Deque this Node refers to
+     * \return this Node's Deque.
+     */
     JACE_PROXY_API Deque getDeque();
 private:
     DECLARE_FRIENDS

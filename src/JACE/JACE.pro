@@ -223,7 +223,9 @@ HEADERS += \
     api/bridge/softreference.h \
     api/bridge/outputstream.h \
     api/bridge/socketstream.h \
-    api/bridge/grounditem.h
+    api/bridge/grounditem.h \
+    java/awt/event/mouseevent.h \
+    java/awt/component.h
 
 SOURCES += \
     IllegalOperationException.cpp \
@@ -362,7 +364,9 @@ SOURCES += \
     java/io/java_io_inputstream.cpp \
     java/io/java_io_outputstream.cpp \
     java/lang/ref/java_lang_ref_softreference.cpp \
-    api/bridge/grounditem.cpp
+    api/bridge/grounditem.cpp \
+    java/awt/event/mouseevent.cpp \
+    java/awt/component.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

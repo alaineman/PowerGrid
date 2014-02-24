@@ -1,5 +1,5 @@
-#ifndef JAVA_AWT_DISPLAYMODE_H
-#define JAVA_AWT_DISPLAYMODE_H
+#ifndef JAVA_AWT_COMPONENT_H
+#define JAVA_AWT_COMPONENT_H
 
 #include "jace/os_dep.h"
 #include "jace/javacast.h"
@@ -16,17 +16,17 @@ using namespace java::lang;
 namespace java {
 namespace awt {
 
-class DisplayMode : public Object {
+class Component : public Object {
 public:
-    DisplayMode();
-    DisplayMode(const DisplayMode&obj);
+    Component();
+    Component(const Component&obj);
 
     virtual const jace::JClass* getJavaJniClass() const throw (jace::JNIException);
     static const jace::JClass* staticGetJavaJniClass() throw (jace::JNIException);
 
-    explicit DisplayMode(jvalue value);
-    explicit DisplayMode(jobject object);
-    DisplayMode& operator = (const DisplayMode& obj);
+    explicit Component(jvalue value);
+    explicit Component(jobject object);
+    Component& operator = (const Component& obj);
 private:
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 };
@@ -34,4 +34,4 @@ private:
 } // namespace awt
 } // namespace java
 
-#endif // JAVA_AWT_DISPLAYMODE_H
+#endif // JAVA_AWT_COMPONENT_H

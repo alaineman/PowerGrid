@@ -86,7 +86,6 @@ DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD
 CONFIG(debug, debug|release): DEFINES += JACE_CHECK_NULLS JACE_CHECK_ARRAYS
 
 HEADERS += \
-    IllegalOperationException.h \
     MappingUnavailableException.h \
     RSClass.h \
     RSClassMapper.h \
@@ -228,7 +227,6 @@ HEADERS += \
     java/awt/component.h
 
 SOURCES += \
-    IllegalOperationException.cpp \
     MappingUnavailableException.cpp \
     RSClass.cpp \
     RSClassMapper.cpp \

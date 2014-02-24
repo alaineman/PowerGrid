@@ -21,6 +21,10 @@ MouseEvent MouseEvent::createEvent(Component source, Type id, JLong when, JInt m
     jobject mEvent = env->NewObject(mouseEventClass, constructor, source.getJavaJniObject(), (jint)id,
                                     when.getLong(), modifiers.getInt(), x.getInt(), y.getInt(), clickCount.getInt(),
                                     popupTrigger.getBoolean(), (jint)button);
+    if (env->ExceptionCheck()) {
+        env->ExceptionClear();
+        throw JNIException("Exception in MouseEvent constructor");
+    }
     return MouseEvent(mEvent);
 }
 

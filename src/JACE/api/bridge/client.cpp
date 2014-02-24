@@ -36,13 +36,13 @@
 #include "interface.h"
 #include "hashtable.h"
 #include "itemdefloader.h"
-//#include "landscapeinfo.h"
+#include "landscapeinfo.h"
 #include "hintarrow.h"
 #include "npcnode.h"
 #include "overheadmessage.h"
 #include "player.h"
 #include "deque.h"
-//#include "mouselistener.h" // Which one?
+#include "mouse.h"
 #include "sprite.h"
 #include "objectdefloader.h"
 #include "cache.h"
@@ -85,7 +85,7 @@ IMPL_PRIMITIVE_METHOD(Client, getInterfaceIndex, JInt)
 IMPL_OBJECT_METHOD(Client, getInterfaceNodeCache, HashTable)
 IMPL_OBJECT_METHOD(Client, getItemDefLoader, ItemDefLoader)
 
-//IMPL_OBJECT_METHOD(Client, getLandscapeInfo, LandscapeInfo)
+IMPL_OBJECT_METHOD(Client, getLandscapeInfo, LandscapeInfo)
 IMPL_OBJECT_METHOD(Client, getLastSelectedItemName, String)
 IMPL_ARRAY_METHOD(Client, getLoadedHintArrows, HintArrow)
 IMPL_OBJECT_METHOD(Client, getLoadedItems, HashTable)
@@ -109,7 +109,7 @@ IMPL_PRIMITIVE_METHOD(Client, getMinimapAngle, JFloat)
 IMPL_PRIMITIVE_METHOD(Client, getMinimapOffset, JInt)
 IMPL_PRIMITIVE_METHOD(Client, getMinimapScale, JInt)
 IMPL_PRIMITIVE_METHOD(Client, getMinimapSetting, JInt)
-//IMPL_OBJECT_METHOD(Client, getMouse, /*java::awt::event:: (?)*/MouseListener)
+IMPL_OBJECT_METHOD(Client, getMouse, Mouse)
 IMPL_PRIMITIVE_METHOD(Client, getMouseCrosshairSpriteCycleIndex, JInt)
 IMPL_ARRAY_METHOD(Client, getMouseCrosshairSprites, Sprite)
 IMPL_PRIMITIVE_METHOD(Client, getMouseCrosshairState, JInt)

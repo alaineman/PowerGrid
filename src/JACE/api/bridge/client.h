@@ -35,9 +35,6 @@ namespace java {
  }
  namespace awt {
   class Rectangle;
-//  namespace event { // FIXME is Client::getMouse() an AWT MouseListener or not?
-//    class MouseListener;
-//  }
  }
  namespace util {
   class Map;
@@ -65,7 +62,7 @@ class NPCNode;
 class OverheadMessage;
 class Player;
 class Deque;
-class MouseListener; // May not be needed, see Client::getMouse()
+class Mouse;
 class Sprite;
 class ObjectDefLoader;
 class Cache;
@@ -122,7 +119,7 @@ public:
     JACE_PROXY_API JInt getMinimapOffset();
     JACE_PROXY_API JInt getMinimapScale();
     JACE_PROXY_API JInt getMinimapSetting();
-    JACE_PROXY_API /*java::awt::event:: (?) */MouseListener getMouse();
+    JACE_PROXY_API Mouse getMouse();
     JACE_PROXY_API JInt getMouseCrosshairSpriteCycleIndex();
     JACE_PROXY_API QList<Sprite> getMouseCrosshairSprites();
     JACE_PROXY_API JInt getMouseCrosshairState();

@@ -10,7 +10,7 @@ IMPL_JACE_CONSTRUCTORS(Mouse)
 IMPL_RSCLASS_GET(Mouse)
 
 // Remember: these are methods, not fields
-Mouse::mouseClicked(MouseEvent e) {
+void Mouse::mouseClicked(MouseEvent e) {
     jclass mouseClass = Mouse::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseClicked", "(Ljava/awt/event/MouseEvent;)V");
@@ -18,7 +18,7 @@ Mouse::mouseClicked(MouseEvent e) {
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-Mouse::mousePressed(MouseEvent e) {
+void Mouse::mousePressed(MouseEvent e) {
     jclass mouseClass = Mouse::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mousePressed", "(Ljava/awt/event/MouseEvent;)V");
@@ -26,7 +26,7 @@ Mouse::mousePressed(MouseEvent e) {
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-Mouse::mouseReleased(MouseEvent e) {
+void Mouse::mouseReleased(MouseEvent e) {
     jclass mouseClass = Mouse::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseReleased", "(Ljava/awt/event/MouseEvent;)V");
@@ -34,7 +34,7 @@ Mouse::mouseReleased(MouseEvent e) {
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-Mouse::mouseMoved(MouseEvent e) {
+void Mouse::mouseMoved(MouseEvent e) {
     jclass mouseClass = Mouse::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseMoved", "(Ljava/awt/event/MouseEvent;)V");
@@ -42,7 +42,7 @@ Mouse::mouseMoved(MouseEvent e) {
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-Mouse::mouseEntered(MouseEvent e) {
+void Mouse::mouseEntered(MouseEvent e) {
     jclass mouseClass = Mouse::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseEntered", "(Ljava/awt/event/MouseEvent;)V");
@@ -50,7 +50,7 @@ Mouse::mouseEntered(MouseEvent e) {
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-Mouse::mouseExited(MouseEvent e) {
+void Mouse::mouseExited(MouseEvent e) {
     jclass mouseClass = Mouse::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseExited", "(Ljava/awt/event/MouseEvent;)V");
@@ -58,7 +58,7 @@ Mouse::mouseExited(MouseEvent e) {
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-Mouse::mouseDragged(MouseEvent e) {
+void Mouse::mouseDragged(MouseEvent e) {
     jclass mouseClass = Mouse::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseDragged", "(Ljava/awt/event/MouseEvent;)V");
@@ -66,7 +66,7 @@ Mouse::mouseDragged(MouseEvent e) {
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-Mouse::mouseWheel(MouseEvent e) {
+void Mouse::mouseWheel(MouseEvent e) {
     jclass mouseClass = Mouse::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseWheel", "(Ljava/awt/event/MouseEvent;)V");

@@ -224,7 +224,8 @@ HEADERS += \
     api/bridge/socketstream.h \
     api/bridge/grounditem.h \
     java/awt/event/mouseevent.h \
-    java/awt/component.h
+    java/awt/component.h \
+    java/awt/event/keyevent.h
 
 SOURCES += \
     MappingUnavailableException.cpp \
@@ -364,7 +365,8 @@ SOURCES += \
     java/lang/ref/java_lang_ref_softreference.cpp \
     api/bridge/grounditem.cpp \
     java/awt/event/mouseevent.cpp \
-    java/awt/component.cpp
+    java/awt/component.cpp \
+    java/awt/event/keyevent.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

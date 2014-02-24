@@ -51,8 +51,6 @@ public:
     explicit MouseEvent(jvalue value);
     explicit MouseEvent(jobject object);
     MouseEvent& operator = (const MouseEvent& obj);
-
-    JACE_PROXY_API JInt getID();
 private:
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 };

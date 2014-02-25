@@ -2,25 +2,13 @@
 #ifndef JACE_JVALUE_H
 #define JACE_JVALUE_H
 
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
-
-#ifndef JACE_NAMESPACE_H
 #include "jace/namespace.h"
-#endif
-
-#ifndef JACE_JCLASS_H
 #include "jace/JClass.h"
-#endif
-
-#ifndef JACE_JNI_EXCEPTION_H
 #include "jace/JNIException.h"
-#endif
 
-
-BEGIN_NAMESPACE_2( jace, proxy )
-
+namespace jace {
+namespace proxy {
 
 /**
  * The base class for all java values.
@@ -130,7 +118,7 @@ jvalue mValue;
 
 };
 
-
-END_NAMESPACE_2( jace, proxy )
+} // namespace proxy
+} // namespace jace
 
 #endif

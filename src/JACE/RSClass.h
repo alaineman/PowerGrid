@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef RSCLASS_H
 #define RSCLASS_H
 

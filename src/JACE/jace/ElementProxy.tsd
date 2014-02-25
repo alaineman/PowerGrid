@@ -1,6 +1,4 @@
-
-
-BEGIN_NAMESPACE ( jace )
+namespace jace {
 
 /**
  * Contains the definitions for the template specializations of the template class, ElementProxy.
@@ -8,6 +6,7 @@ BEGIN_NAMESPACE ( jace )
  * This file is internal to the JACE library.
  *
  */
+
 template <> inline
 ElementProxy< ::jace::proxy::types::JBoolean>::ElementProxy( jarray array, jvalue element, int index ) : 
   ::jace::proxy::types::JBoolean( element ), mIndex( index ) {
@@ -136,5 +135,4 @@ template <> inline
   return *this;
 }
 
-END_NAMESPACE ( jace )
-
+}

@@ -8,14 +8,13 @@
 
 #include "jace/proxy/JValue.h"
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 class JArguments;
-END_NAMESPACE( jace )
 
-BEGIN_NAMESPACE_2( jace, proxy )
-
+namespace proxy {
 /**
- * The abstract base class for all C++ proxy objects generated for java.
+ * \brief The abstract base class for all C++ proxy objects generated for java.
+ *
  * These proxy classes are a C++ representation of the corresponding
  * java class.
  *
@@ -55,7 +54,7 @@ BEGIN_NAMESPACE_2( jace, proxy )
  * @author Toby Reyelts
  *
  */
-class JObject : public ::jace::proxy::JValue {
+class JObject : public JValue {
 
 public:
 
@@ -81,7 +80,7 @@ JACE_API virtual ~JObject() throw();
 
 
 /**
- * Returns the underlying JNI jobject for this JObject.
+ * \brief Returns the underlying JNI jobject for this JObject.
  *
  * This is simply a convenience method for retrieving the jobject
  * member from the jvalue returned from getJavaJniValue.
@@ -91,13 +90,15 @@ JACE_API virtual ~JObject() throw();
  * the returned jobject will become invalid right after the assignment operation
  * because the enclosing Thread goes out of scope and destroys its associated jobject.
  *
+ * \return the Java JNI object this proxy represents
  */
 JACE_API jobject getJavaJniObject();
 
 
 /**
- * Returns the underlying JNI jobject for this JObject. The jobject
- * reference has the same lifetime as this JObject.
+ * \brief Returns the underlying JNI jobject for this JObject.
+ *
+ * The jobject reference has the same lifetime as this JObject.
  *
  * This is simply a convenience method for retrieving the jobject
  * member from the jvalue returned from getJavaJniValue.
@@ -107,6 +108,8 @@ JACE_API jobject getJavaJniObject();
  *
  * This method should really be protected, but there is a bug in
  * Visual C++ which requires us to make this public.
+ *
+ * \return
  */
 JACE_API jobject getJavaJniObject() const;
 
@@ -134,6 +137,7 @@ JACE_API JObject& operator=( const JObject& object );
  *
  * The returned JClass* should not be deleted.
  *
+ * \return the JClass* that represents the static type of this class.
  */
 JACE_API virtual const JClass* getJavaJniClass() const throw ( JNIException );
 
@@ -252,7 +256,8 @@ JACE_API jobject newObject( const JClass* jClass, const JArguments& arguments );
 
 };
 
-END_NAMESPACE_2( jace, proxy )
+}
+}
 
 #endif
 

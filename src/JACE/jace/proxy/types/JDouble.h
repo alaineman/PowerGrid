@@ -10,8 +10,9 @@
 #include "jace/proxy/JValue.h"
 #include "jace/JNIException.h"
 
-BEGIN_NAMESPACE_3( jace, proxy, types )
-
+namespace jace {
+namespace proxy {
+namespace types {
 
 /** 
  * A representation of the java primitive double.
@@ -102,8 +103,9 @@ virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIExcepti
 
 };
 
-
-END_NAMESPACE_3( jace, proxy, types )
+}
+}
+}
 
 #endif // #ifndef JACE_TYPES_JDOUBLE_H
 

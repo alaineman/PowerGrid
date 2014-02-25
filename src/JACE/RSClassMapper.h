@@ -27,6 +27,16 @@
 #include <QMap>
 #include <QFile>
 
+/**
+ * @brief Maps proxy classes to their Java equivalents
+ *
+ * This class contains all data required for successfully mapping C++ class
+ * names to their obfuscated names. This class is called by each of the RS
+ * proxies to get the mapping data for each class.
+ *
+ * Warning: Do not call @c getRSClass(QString name) from here! Use
+ * @c name::staticGetJavaJniClass() instead.
+ */
 class RSClassMapper : public QObject {
     Q_OBJECT
 private:
@@ -38,13 +48,36 @@ private:
 
     QMap<QString, RSClass*> classes;                // semanticClassname => RSClass representative
 public:
+    /**
+     * @brief Returns the global RSClassMapper instance.
+     * @return a pointer to the singleton RSClassMapper.
+     */
     JACE_API static RSClassMapper* DefaultInstance();
 
+    /**
+     * @brief Creates a new RSClassMapper
+     */
     JACE_API explicit RSClassMapper();
+
     JACE_API virtual ~RSClassMapper();
 
+    /**
+     * @brief Returns the RSClass belonging to the given name.
+     *
+     * Warning: Calling this manually may prevent the actual proxy
+     * from collecting the RSClass*! Therefore, please call
+     * @c name::staticGetJavaJniClass() instead.
+     */
     JACE_API RSClass* getRSClass(QString name);
 
+    /**
+     * @brief Parses the provided data
+     *
+     * The provided @c jbytearray is parsed as XML to
+     * read the mapping data. The parsed data is stored in this
+     * RSClassMapper for later retrieval using @c getRSClass(QString name)
+     * @param data the java byte array containing the data
+     */
     JACE_API void parseData(jbyteArray data);
 private:
     JACE_API QMap<QString, QString> getFieldMap(QString className) const;

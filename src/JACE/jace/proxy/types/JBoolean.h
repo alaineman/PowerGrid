@@ -18,7 +18,7 @@ namespace types {
  * @author Toby Reyelts
  *
  */
-class JACE_API JBoolean : public ::jace::proxy::JValue {
+class JACE_API JBoolean : public jace::proxy::JValue {
 
 
 public:

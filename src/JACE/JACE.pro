@@ -225,7 +225,8 @@ HEADERS += \
     api/bridge/grounditem.h \
     java/awt/event/mouseevent.h \
     java/awt/component.h \
-    java/awt/event/keyevent.h
+    java/awt/event/keyevent.h \
+    namespace.h
 
 SOURCES += \
     MappingUnavailableException.cpp \
@@ -467,3 +468,5 @@ SOURCES    += \
     jace/proxy/types/JChar.cpp \
     jace/proxy/types/JByte.cpp \
     jace/proxy/types/JBoolean.cpp \
+
+OTHER_FILES +=

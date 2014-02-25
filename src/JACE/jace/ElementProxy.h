@@ -19,7 +19,7 @@
 #include "jace/proxy/types/JLong.h"
 #include "jace/proxy/types/JShort.h"
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * An ElementProxy is a wrapper around a JArray element.
@@ -106,14 +106,74 @@ int mIndex;
 
 };
 
-END_NAMESPACE( jace )
-
-/**
+/*
  * For those (oddball) compilers that need the template specialization
  * definitions in the header.
+ *
+ * Chronio: Correction: This works on (almost) all compilers, as long as
+ *          you declare the template specialization class in the header.
+ *
+ *          Remember: there is no inheritance between a template class
+ *          and its specialization!
+ *
+ *          Note: Currently re-writing to a nice format, so read-writes
+ *          involving JArrays may not work as expected at the moment!
  */
 #ifdef PUT_TSDS_IN_HEADER
-  #include "jace/ElementProxy.tsd"
+  //#include "jace/ElementProxy.tsd"
+
+using namespace jace::proxy::types;
+
+template <> class ElementProxy<jace::proxy::types::JBoolean> :
+    public JBoolean {
+public:
+    ElementProxy(jarray array, jvalue element, int index);
+    ElementProxy(const ElementProxy& obj);
+
+    JBoolean& operator= (const JBoolean element);
+    JBoolean& operator= (const JBoolean element) const;
+private:
+    jarray parent;
+    int mIndex;
+};
+
+template <> class ElementProxy<jace::proxy::types::JByte> :
+    public JByte {
+public:
+    ElementProxy(jarray array, jvalue element, int index);
+    ElementProxy(const ElementProxy& obj);
+
+    JByte& operator= (const JByte element);
+private:
+    jarray parent;
+    int mIndex;
+};
+
+template <> class ElementProxy<jace::proxy::types::JChar> :
+    public JChar {
+public:
+    ElementProxy(jarray array, jvalue element, int index);
+    ElementProxy(const ElementProxy& obj);
+
+    JChar& operator= (const JChar element);
+private:
+    jarray parent;
+    int mIndex;
+};
+
+template <> class ElementProxy<jace::proxy::types::JDouble> :
+    public JDouble {
+public:
+    ElementProxy(jarray array, jvalue element, int index);
+    ElementProxy(const ElementProxy& obj);
+
+    JDouble& operator= (const JDouble element);
+private:
+    jarray parent;
+    int mIndex;
+};
+
+}
 #else
   #include "jace/ElementProxy.tsp"
 #endif

@@ -1,33 +1,16 @@
-
 #ifndef JACE_TYPES_JSHORT_H
 #define JACE_TYPES_JSHORT_H
 
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
-
-#ifndef JACE_NAMESPACE_H
 #include "jace/namespace.h"
-#endif
-
-#ifndef JACE_JNI_HELPER_H
 #include "jace/JNIHelper.h"
-#endif
-
-#ifndef JACE_JCLASS_H
 #include "jace/JClass.h"
-#endif
-
-#ifndef JACE_JVALUE_H
 #include "jace/proxy/JValue.h"
-#endif
-
-#ifndef JACE_JNI_EXCEPTION_H
 #include "jace/JNIException.h"
-#endif
 
-BEGIN_NAMESPACE_3( jace, proxy, types )
-
+namespace jace {
+namespace proxy {
+namespace types {
 
 /** 
  * A representation of the java primitive short.
@@ -119,8 +102,9 @@ virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIExcepti
 
 };
 
-
-END_NAMESPACE_3( jace, proxy, types )
+}
+}
+}
 
 #endif // #ifndef JACE_TYPES_JSHORT_H
 

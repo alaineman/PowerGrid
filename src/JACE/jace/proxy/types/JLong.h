@@ -1,8 +1,8 @@
 
 #ifndef JACE_TYPES_JLONG_H
 #define JACE_TYPES_JLONG_H
+
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 #include "jace/JNIHelper.h"
 #include "jace/JClass.h"
 #include "jace/proxy/JValue.h"

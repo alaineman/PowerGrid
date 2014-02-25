@@ -1,5 +1,5 @@
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * Contains the definitions for the template specializations of the template class, JField.
@@ -439,5 +439,4 @@ JFieldProxy< ::jace::proxy::types::JDouble> JField< ::jace::proxy::types::JDoubl
   return JFieldProxy< ::jace::proxy::types::JDouble>( fieldID, value, jClass->getClass() );
 }
 
-END_NAMESPACE( jace )
-
+}

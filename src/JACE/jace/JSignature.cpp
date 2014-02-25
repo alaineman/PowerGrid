@@ -11,7 +11,7 @@ using std::list;
 /* The template implementation.
  *
  */
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * Constructs a new JSignature with the given return type.
@@ -71,5 +71,4 @@ JSignature& JSignature::operator<<( const JClass& argumentType ) {
   return *this;
 }
 
-
-END_NAMESPACE( jace )
+}

@@ -2,7 +2,6 @@
 #define JACE_OPTION_LIST_H
 
 #include "os_dep.h"
-#include "namespace.h"
 #include "JNIException.h"
 #include "counted_ptr.h"
 
@@ -11,7 +10,7 @@
 #include <vector>
 #include <string>
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * A Jvm option. These are supplied to jace::helper::createVm()
@@ -424,7 +423,7 @@ class AbortHook : public Hook {
   abort_t hook;
 };
 
-END_NAMESPACE( jace )
+}
 
 #endif // JACE_OPTION_LIST_H
 

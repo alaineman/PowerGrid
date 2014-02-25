@@ -2,7 +2,6 @@
 #define JACE_BASE_EXCEPTION_H
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 
 #include <string>
 #include <exception>

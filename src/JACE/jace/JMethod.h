@@ -1,83 +1,29 @@
-
 #ifndef JACE_JMETHOD_H
 #define JACE_JMETHOD_H
-
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
-
-#ifndef JACE_NAMESPACE_H
-#include "jace/namespace.h"
-#endif
-
-#ifndef JACE_JCLASS_H
 #include "jace/JClass.h"
-#endif
-
-#ifndef JACE_JOBJECT_H
 #include "jace/proxy/JObject.h"
-#endif
-
-#ifndef JACE_JVALUE_H
 #include "jace/proxy/JValue.h"
-#endif
-
-#ifndef JACE_JARGUMENTS_H
 #include "jace/JArguments.h"
-#endif
-
-#ifndef JACE_JNI_EXCEPTION_H
 #include "jace/JNIException.h"
-#endif
-
-#ifndef JACE_JSIGNATURE_H
 #include "jace/JSignature.h"
-#endif
 
-#ifndef JACE_TYPES_JBOOLEAN_H
 #include "jace/proxy/types/JBoolean.h"
-#endif
-
-#ifndef JACE_TYPES_JBYTE_H
 #include "jace/proxy/types/JByte.h"
-#endif
-
-#ifndef JACE_TYPES_JCHAR_H
 #include "jace/proxy/types/JChar.h"
-#endif
-
-#ifndef JACE_TYPES_JDOUBLE_H
 #include "jace/proxy/types/JDouble.h"
-#endif
-
-#ifndef JACE_TYPES_JFLOAT_H
 #include "jace/proxy/types/JFloat.h"
-#endif
-
-#ifndef JACE_TYPES_JINT_H
 #include "jace/proxy/types/JInt.h"
-#endif
-
-#ifndef JACE_TYPES_JLONG_H
 #include "jace/proxy/types/JLong.h"
-#endif
-
-#ifndef JACE_TYPES_JSHORT_H
 #include "jace/proxy/types/JShort.h"
-#endif
-
-#ifndef JACE_TYPES_JVOID
 #include "jace/proxy/types/JVoid.h"
-#endif
 
 #include <jni.h>
-
 #include <string>
 #include <vector>
 #include <list>
 
-
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * Transforms a JArguments to a vector of jvalue's.
@@ -254,7 +200,7 @@ jmethodID mMethodID;
 
 };
 
-END_NAMESPACE( jace )
+}
 
 /**
  * For those (oddball) compilers that need the template specialization

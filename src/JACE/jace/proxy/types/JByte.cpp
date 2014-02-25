@@ -1,13 +1,11 @@
 
 #include "jace/proxy/types/JByte.h"
-
-#ifndef JACE_JCLASS_IMPL_H
 #include "jace/JClassImpl.h"
-#endif
 using jace::JClassImpl;
 
-BEGIN_NAMESPACE_3( jace, proxy, types )
-
+namespace jace {
+namespace proxy {
+namespace types {
 
 JByte::JByte( jvalue value ) {
   setJavaJniValue( value );
@@ -55,6 +53,6 @@ const JClass* JByte::getJavaJniClass() const throw ( JNIException ) {
   return JByte::staticGetJavaJniClass();
 }
 
-
-END_NAMESPACE_3( jace, proxy, types )
-
+}
+}
+}

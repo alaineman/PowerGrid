@@ -1,18 +1,11 @@
-
 #include "jace/JArguments.h"
-
-
-#ifndef JACE_JVALUE_H
 #include "jace/proxy/JValue.h"
-#endif
 using jace::proxy::JValue;
 
 #include <list>
 using std::list;
 
-
-BEGIN_NAMESPACE( jace )
-
+namespace jace {
 /**
  * Constructs a new argument list. 
  *
@@ -66,5 +59,4 @@ list<JValue*> JArguments::asList() const {
   return mList;
 }
 
-
-END_NAMESPACE( jace )
+}

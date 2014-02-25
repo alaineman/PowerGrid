@@ -38,7 +38,7 @@ using std::endl;
 #include <list>
 using std::list;
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 namespace {
 
@@ -175,5 +175,4 @@ jmethodID JConstructor::getMethodID( const JClass* jClass, const JArguments& arg
   return mMethodID;
 }
 
-
-END_NAMESPACE( jace )
+}

@@ -1,15 +1,13 @@
-
 #include "jace/proxy/types/JInt.h"
-
-#ifndef JACE_JCLASS_IMPL_H
 #include "jace/JClassImpl.h"
-#endif
 using jace::JClassImpl;
 
 #include <iostream>
 using std::ostream;
 
-BEGIN_NAMESPACE_3( jace, proxy, types )
+namespace jace {
+namespace proxy {
+namespace types {
 
 JInt::JInt( jvalue value ) {
   setJavaJniValue( value );
@@ -68,5 +66,6 @@ ostream& operator<<( ostream& stream, const JInt& val ) {
   return stream << val.getInt();
 }
 
-END_NAMESPACE_3( jace, proxy, types )
-
+}
+}
+}

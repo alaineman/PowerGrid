@@ -21,7 +21,6 @@
 #define RSCLASS_H
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 #include "jace/JClassImpl.h"
 #include "jace/JNIException.h"
 

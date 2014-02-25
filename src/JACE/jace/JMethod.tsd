@@ -6,7 +6,7 @@
  *
  */
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 template <> inline
 ::jace::proxy::types::JBoolean JMethod< ::jace::proxy::types::JBoolean>::invoke( const JClass* jClass, const JArguments& arguments ) {
@@ -526,5 +526,4 @@ template <> inline
   return ::jace::proxy::types::JVoid();
 }
 
-END_NAMESPACE( jace )
-
+}

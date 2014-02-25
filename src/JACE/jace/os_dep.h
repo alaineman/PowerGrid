@@ -163,8 +163,15 @@
   /**
    * Requires template specialization definitions to appear in the header.
    *
+   * Remark (Chronio): Only when you don't specify the specializations as
+   * a class, but as a series of member functions.
+   * If the template specialization is declared as follows, the declaration
+   * can appear in the header and it becomes possible to leave the
+   * implementation in the source code.
+   *
+   * > template <> class ElementProxy<JBoolean> : public JBoolean { ... }
    */
-  #define PUT_TSDS_IN_HEADER // Check to see if required.
+  #define PUT_TSDS_IN_HEADER
 
   /**
    * Supports the new-style sstreams.

@@ -11,7 +11,7 @@ using std::string;
 
 #include <dlfcn.h>
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 UnixVmLoader::UnixVmLoader( std::string path_, jint jniVer ) : 
   jniVersion( jniVer ), path( path_ ), lib( 0 ) {
@@ -76,7 +76,7 @@ jint UnixVmLoader::version() {
   return jniVersion;
 }
 
-END_NAMESPACE( jace )
+}
 
 #endif // JACE_GENERIC_UNIX
 

@@ -1,24 +1,11 @@
-
 #ifndef JACE_JENLISTER_H
 #define JACE_JENLISTER_H
 
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
-
-#ifndef JACE_NAMESPACE_H
-#include "jace/namespace.h"
-#endif
-
-#ifndef JACE_JNI_HELPER_H
 #include "jace/JNIHelper.h"
-#endif
-
-#ifndef JACE_JFACTORY_H
 #include "jace/JFactory.h"
-#endif
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * An implementation of a JFactory that creates new instances
@@ -95,11 +82,9 @@ virtual const ::jace::JClass* getClass() {
   return T::staticGetJavaJniClass();
 }
 
-
 };
 
-
-END_NAMESPACE( jace )
+}
 
 #endif // #ifndef JACE_JENLISTER_H
 

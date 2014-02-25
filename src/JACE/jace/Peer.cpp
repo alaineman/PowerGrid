@@ -1,10 +1,9 @@
-
 #include "jace/Peer.h"
 
 #include <string>
 using std::string;
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 Peer::Peer( jobject obj ) {
   JNIEnv* env = helper::attach();
@@ -45,5 +44,5 @@ void Peer::releaseGlobalRef( jobject ref ) {
   helper::deleteGlobalRef( env, ref );
 }
  
-END_NAMESPACE( jace )
+}
 

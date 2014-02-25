@@ -1,14 +1,10 @@
-
-
 #include "jace/proxy/types/JFloat.h"
-
-#ifndef JACE_JCLASS_IMPL_H
 #include "jace/JClassImpl.h"
-#endif
 using jace::JClassImpl;
 
-BEGIN_NAMESPACE_3( jace, proxy, types )
-
+namespace jace {
+namespace proxy {
+namespace types {
 
 JFloat::JFloat( jvalue value ) {
   setJavaJniValue( value );
@@ -56,6 +52,6 @@ const JClass* JFloat::getJavaJniClass() const throw ( JNIException ) {
   return JFloat::staticGetJavaJniClass();
 }
 
-
-END_NAMESPACE_3( jace, proxy, types )
-
+}
+}
+}

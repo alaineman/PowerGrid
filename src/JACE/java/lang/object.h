@@ -21,7 +21,6 @@
 #define OBJECT_H
 
 #include "jace/os_dep.h"
-#include "jace/Namespace.h"
 #include "jace/javacast.h"
 
 #include "jace/proxy/JObject.h"

@@ -2,18 +2,16 @@
 #define JACE_JFACTORY_H
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 
 #include <jni.h>
 
 #include <memory>
 
-BEGIN_NAMESPACE_2( jace, proxy )
-class JValue;
-END_NAMESPACE_2( jace, proxy )
-
-BEGIN_NAMESPACE( jace )
-class JClass;
+namespace jace {
+ namespace proxy {
+  class JValue;
+ }
+ class JClass;
 
 /**
  * An interface for a factory that creates new instances
@@ -63,8 +61,7 @@ JACE_API virtual ~JFactory();
 
 };
 
-
-END_NAMESPACE( jace )
+}
 
 #endif // #ifndef JACE_JFACTORY_H
 

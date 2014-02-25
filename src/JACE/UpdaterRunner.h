@@ -22,7 +22,6 @@
 
 #include <jni.h>
 #include "jace/JNIException.h"
-#include "jace/namespace.h"
 
 #ifdef __cplusplus
 extern "C" {

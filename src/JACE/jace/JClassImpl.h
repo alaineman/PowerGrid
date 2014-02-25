@@ -2,13 +2,12 @@
 #define JACE_JCLASS_IMPL_H
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 #include "jace/JClass.h"
 #include "jace/JNIException.h"
 
 #include <string>
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * The implementation of the JClass interface.
@@ -16,7 +15,7 @@ BEGIN_NAMESPACE( jace )
  * @author Toby Reyelts
  *
  */
-class JClassImpl : public ::jace::JClass {
+class JClassImpl : public JClass {
 public:
 
 /**
@@ -34,7 +33,6 @@ public:
  * For example, "Ljava/lang/Object;"
  *
  */
-// JClassImpl( const std::string& name, const std::string& nameAsType );
 JACE_API JClassImpl( const std::string name, const std::string nameAsType );
 
 
@@ -60,7 +58,6 @@ JACE_API JClassImpl( const std::string name, const std::string nameAsType );
  *  JClassImpl( "java/lang/String", "Ljava/lang/String;" );
  *
  */
-// JClassImpl( const std::string& name );
 JACE_API JClassImpl( const std::string name );
 
 /**
@@ -112,7 +109,6 @@ mutable jclass mClass;
 
 };
 
-
-END_NAMESPACE( jace )
+}
 
 #endif

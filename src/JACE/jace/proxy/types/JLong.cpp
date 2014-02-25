@@ -1,12 +1,10 @@
-
 #include "jace/proxy/types/JLong.h"
-
-#ifndef JACE_JCLASS_IMPL_H
 #include "jace/JClassImpl.h"
-#endif
 using jace::JClassImpl;
 
-BEGIN_NAMESPACE_3( jace, proxy, types )
+namespace jace {
+namespace proxy {
+namespace types {
 
 JLong::JLong( jvalue value ) {
   setJavaJniValue( value );
@@ -61,5 +59,7 @@ const JClass* JLong::getJavaJniClass() const throw ( JNIException ) {
   return JLong::staticGetJavaJniClass();
 }
 
-END_NAMESPACE_3( jace, proxy, types )
+}
+}
+}
 

@@ -1,8 +1,8 @@
 
 #include "jace/proxy/JValue.h"
 
-BEGIN_NAMESPACE_2( jace, proxy )
-
+namespace jace {
+namespace proxy {
 
 /**
  * Constructs a new JValue.
@@ -38,4 +38,5 @@ void JValue::setJavaJniValue( jvalue value ) throw ( JNIException ) {
 JValue::~JValue() {
 }
 
-END_NAMESPACE_2( jace, proxy )
+}
+}

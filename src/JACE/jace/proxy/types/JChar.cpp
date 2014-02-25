@@ -1,17 +1,13 @@
-
-
 #include "jace/proxy/types/JChar.h"
-
-#ifndef JACE_JCLASS_IMPL_H
 #include "jace/JClassImpl.h"
-#endif
 using jace::JClassImpl;
 
 #include <iostream>
 using std::ostream;
 
-BEGIN_NAMESPACE_3( jace, proxy, types )
-
+namespace jace {
+namespace proxy {
+namespace types {
 
 JChar::JChar( jvalue value ) {
   setJavaJniValue( value );
@@ -63,6 +59,6 @@ ostream& operator<<( ostream& stream, const JChar& val ) {
   return stream << ( char ) val.getChar();
 }
 
-
-END_NAMESPACE_3( jace, proxy, types )
-
+}
+}
+}

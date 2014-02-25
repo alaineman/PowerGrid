@@ -5,9 +5,7 @@
 using std::string;
 using std::auto_ptr;
 
-BEGIN_NAMESPACE( jace )
-
-
+namespace jace {
 /**
  * Creates a new JClassImpl with the given name, and 
  * type name.
@@ -201,4 +199,4 @@ auto_ptr<JClass> JClassImpl::clone() const {
   return auto_ptr<JClass>( new JClassImpl( *this ) );
 }
 
-END_NAMESPACE( jace )
+}

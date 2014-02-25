@@ -10,7 +10,7 @@ IMPL_RSCLASS_GET(LandscapeDetails)
 
 IMPL_ARRAY_METHOD(LandscapeDetails, getLandscape, Landscape)
 //IMPL_ARRAY3_METHOD(LandscapeDetails, getRegionData, Tile)
-#warning LandscapeDetails.getRegionData()
+#warning api::bridge::LandscapeDetails.getRegionData()
 
 } // namespace bridge
 } // namespace api

@@ -1,21 +1,14 @@
 #ifndef JACE_JAVACAST_H
 #define JACE_JAVACAST_H
 
-#ifndef JACE_JOBJECT_H
 #include "jace/proxy/JObject.h"
-#endif
-
-#ifndef JACE_JCLASS_H
 #include "jace/JClass.h"
-#endif
-
-#ifndef JACE_JNI_HELPER_H
 #include "jace/JNIHelper.h"
-#endif
 
 #include <string>
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
+
 
 /**
  * Performs a safe cast from one JObject subclass to another.
@@ -115,7 +108,7 @@ template <typename T> bool instanceof( const ::jace::proxy::JObject& object ) {
   return isValid;
 }
 
-END_NAMESPACE( jace )
+}
 
 /**
  * For those (oddball) compilers that need the template specialization

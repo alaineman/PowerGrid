@@ -1,4 +1,3 @@
-
 #ifndef JACE_COUNTED_PTR_H
 #define JACE_COUNTED_PTR_H
 
@@ -11,6 +10,9 @@
  * was out of the question, as its size and scope greatly dwarfs my own.
  * I've taken care to place counted_ptr in the Jace namespace to prevent
  * possible collisions with other implementations.
+ *
+ * Chronio: This is only used by Option, so we may be able to rewrite Option
+ *          to make this completely obsolete.
  *
  * Mark's copyright notice appears below.
  */
@@ -41,10 +43,7 @@
 
 #include <stddef.h>
 
-#include "jace/namespace.h"
-#include "jace/os_dep.h"
-
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 template <class X>
 class counted_ptr
@@ -109,90 +108,12 @@ protected:
     count = 0;
   }
 
-  void acquire()
-  {
+  void acquire() {
     (*count) += 1;
   }
-
-//  template <class Y>
-//  void acquire()
-//  {
-//    (*count) += 1;
-//  }
-
 };
 
-//
-// counted_array_ptr
-//
-
-template <class X>
-class counted_array_ptr
-{
-//
-// Public typedefs
-//
-public:
-  typedef X element_type;
-  typedef X* pointer_type;
-  typedef size_t size_type;
-
-public:
-  explicit counted_array_ptr(X* p = NULL) : ptr(p)
-  {
-    count=new size_type;
-    *count=1;
-  }
-
-  counted_array_ptr (const counted_array_ptr<X> &r)
-  {
-    ptr = r.ptr;
-    count = r.count;
-    (*count)++;
-  }
-
-  ~counted_array_ptr() { release(); }
-
-  counted_array_ptr& operator= (const counted_array_ptr<X> &r)
-  {
-    if (this != &r)
-    {
-      release();
-      ptr = r.ptr;
-      count = r.count;
-      acquire();
-    }
-     return *this;
-  }
-
-  X& operator* () const { return *ptr; }
-  X* operator-> () const { return ptr; }
-  X* get () const { return ptr; }
-
-  bool unique () const { return *count==1; }
-
-protected:
-  X* ptr;
-  size_type *count;
-
-  void release()
-  {
-    if (count && --(*count)==0)
-    {
-      delete [] ptr;
-      delete count;
-    }
-    ptr = 0;
-    count = 0;
-  }
-
-  void acquire()
-  {
-    ++(*count);
-  }
-};
-
-END_NAMESPACE( jace )
+}
 
 #endif // JACE_COUNTED_PTR_H
 

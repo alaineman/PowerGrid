@@ -1,7 +1,6 @@
 #include "jace/JNIHelper.h"
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 #include "jace/JFactory.h"
 using jace::JFactory;
 
@@ -24,6 +23,9 @@ using std::endl;
 #if !defined(SUPPORTS_PTHREADS) && !defined(_WIN32)
 #error Platform does not support pthreads or win32 thread-local storage
 #endif
+
+// Maybe something to think about: Qt ships with a winpthread library.
+// Can't we simplify this class to use pthreads on Windows as well?
 
 #include <algorithm>
 using std::copy;
@@ -67,15 +69,6 @@ namespace {
     // that the program is shutting down, and disable interaction
     // with the VM. This seems to work ok on Windows, but not with
     // gcc. *shrugs* For now, those people will have to handle Ctrl-C.
-    //
-    // One other important note for gcc users: It seems that a trivial
-    // re-arranging of these global variables can cause very strange linker
-    // errors to occur. The shared jace library still builds, but when applications
-    // try to link with the library, it's as if none of the library code is actually
-    // there. I can't see how this behavior is anything but a bug in gcc
-    // (currently 3.2.2).
-    //
-    //
     volatile bool globalHasShutdown = false;
 
     // A reference to the java virtual machine.

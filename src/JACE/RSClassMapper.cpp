@@ -25,7 +25,10 @@
 
 #include "jace/JNIException.h"
 #include "jace/JNIHelper.h"
+
 using namespace jace;
+
+
 
 RSClassMapper* RSClassMapper::classmapper = nullptr;
 
@@ -93,7 +96,7 @@ void RSClassMapper::parseData(jbyteArray data) {
         throw JNIException("Received NULL jbyteArray as map data");
     }
     if (classMap.isEmpty()) {
-        JNIEnv* env = helper::attach();
+        JNIEnv* env = jace::helper::attach();
         // java byte array copy using Java NIO transfer
         char* bytes = static_cast<char*>(env->GetDirectBufferAddress(data));
         jlong length = env->GetDirectBufferCapacity(data);

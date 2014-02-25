@@ -1,30 +1,17 @@
-
 #ifndef JACE_UNIX_VM_LOADER
 #define JACE_UNIX_VM_LOADER
 
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
 
 #ifdef JACE_GENERIC_UNIX
-
-#ifndef JACE_NAMESPACE_H
-#include "jace/namespace.h"
-#endif
-
-#ifndef JACE_VM_LOADER
 #include "jace/VmLoader.h"
-#endif
-
-#ifndef JACE_JNI_EXCEPTION_H
 #include "jace/JNIException.h"
-#endif
 
 #include <jni.h>
 
 #include <string>
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * A generic Virtual Machine loader for Unix based operating systems.
@@ -70,7 +57,7 @@ class UnixVmLoader : public ::jace::VmLoader {
   void* lib;
 };
 
-END_NAMESPACE( jace )
+}
 
 #endif // JACE_GENERIC_UNIX
 

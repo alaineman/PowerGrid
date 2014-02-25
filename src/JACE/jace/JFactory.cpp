@@ -1,7 +1,7 @@
 
 #include "jace/JFactory.h"
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * Destroys this JFactory.
@@ -9,6 +9,4 @@ BEGIN_NAMESPACE( jace )
 JFactory::~JFactory() {
 }
 
-
-END_NAMESPACE( jace )
-
+}

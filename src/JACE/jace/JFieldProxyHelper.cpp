@@ -1,15 +1,12 @@
 
 #include "jace/JFieldProxyHelper.h"
+#include "jace/JNIHelper.h"
 
 using jace::proxy::JObject;
 using jace::JClass;
 
-#ifndef JACE_JNI_HELPER_H
-#include "jace/JNIHelper.h"
-#endif
-
-BEGIN_NAMESPACE_2( jace, JFieldProxyHelper )
-
+namespace jace {
+namespace JFieldProxyHelper {
 
 jobject assign( const JObject& field, jobject parent, jfieldID fieldID, const JClass*) {
 
@@ -31,5 +28,5 @@ jobject assign( const JObject& field, jclass parentClass, jfieldID fieldID, cons
   return object;
 }
 
-
-END_NAMESPACE_2( jace, JFieldProxyHelper )
+}
+}

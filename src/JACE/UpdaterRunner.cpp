@@ -21,7 +21,6 @@
 #include "UpdaterRunner.h"
 #include "RSClassMapper.h"
 #include <QtCore>
-#include "jace/namespace.h"
 #include <string>
 
 using jace::JNIException;
@@ -41,7 +40,8 @@ JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterR
     }
 }
 
-BEGIN_NAMESPACE_2( bridge, updater )
+namespace bridge {
+namespace updater {
 
 /**
  * @brief Registers native methods for the net.pgrid.loader.bridge.UpdaterRunner class
@@ -72,4 +72,5 @@ void UpdaterRunner_registerNatives(JNIEnv* env)
     qDebug() << "Natives registered successfully for UpdaterRunner class";
 }
 
-END_NAMESPACE_2( bridge, updater )
+}
+}

@@ -2,14 +2,13 @@
 #define JACE_WRAPPER_VM_LOADER
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 #include "jace/JNIException.h"
 #include "jace/VmLoader.h"
 
 #include <jni.h>
 #include <string>
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * Wraps a preexisting Virtual Machine.
@@ -51,6 +50,6 @@ class WrapperVmLoader : public ::jace::VmLoader {
 	jint jniVersion;
 };
 
-END_NAMESPACE( jace )
+}
 
 #endif // JACE_WRAPPER_VM_LOADER

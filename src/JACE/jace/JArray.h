@@ -2,7 +2,6 @@
 #define JACE_JARRAY_H
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 
 #include "jace/JNIHelper.h"
 #include "jace/JClassImpl.h"

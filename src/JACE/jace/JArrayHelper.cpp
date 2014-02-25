@@ -4,7 +4,8 @@
 using jace::JClass;
 using jace::proxy::types::JInt;
 
-BEGIN_NAMESPACE_2( jace, JArrayHelper )
+namespace jace {
+namespace JArrayHelper {
 
 // Returns a local ref
 jobjectArray newArray( int size, const JClass* elementClass ) {
@@ -33,5 +34,5 @@ jvalue getElement( jobject obj, int index ) {
   return value;
 }
 
-END_NAMESPACE_2( jace, JArrayHelper )
-
+}
+}

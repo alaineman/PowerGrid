@@ -1,19 +1,14 @@
-
-
 #include "jace/proxy/types/JShort.h"
-
-#ifndef JACE_JCLASS_IMPL_H
 #include "jace/JClassImpl.h"
-#endif
 using jace::JClassImpl;
 
-BEGIN_NAMESPACE_3( jace, proxy, types )
-
+namespace jace {
+namespace proxy {
+namespace types {
 
 JShort::JShort( jvalue value ) {
   setJavaJniValue( value );
 }
-
 
 JShort::JShort( jshort short_ ) {
   jvalue value;
@@ -56,6 +51,6 @@ const JClass* JShort::getJavaJniClass() const throw ( JNIException ) {
   return JShort::staticGetJavaJniClass();
 }
 
-
-END_NAMESPACE_3( jace, proxy, types )
-
+}
+}
+}

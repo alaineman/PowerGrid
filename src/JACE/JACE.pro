@@ -385,7 +385,6 @@ HEADERS    += \
     jace/Peer.h \
     jace/os_dep.h \
     jace/OptionList.h \
-    jace/namespace.h \
     jace/JSignature.h \
     jace/JNIHelper.h \
     jace/JNIException.h \
@@ -404,7 +403,6 @@ HEADERS    += \
     jace/JArray.tsd \
     jace/JArray.h \
     jace/JArguments.h \
-    jace/ElementProxyHelper.h \
     jace/ElementProxy.h \
     jace/counted_ptr.h \
     jace/BaseException.h \
@@ -425,9 +423,7 @@ HEADERS    += \
     jace/JField.tsd \
     jace/javacast.tsp \
     jace/javacast.tsd \
-    jace/JArray.tsp \
-    jace/ElementProxy.tsp \
-    jace/ElementProxy.tsd
+    jace/JArray.tsp
 
 SOURCES    += \
     jace/WrapperVmLoader.cpp \
@@ -454,7 +450,6 @@ SOURCES    += \
     jace/JArrayHelper.cpp \
     jace/JArray.cpp \
     jace/JArguments.cpp \
-    jace/ElementProxyHelper.cpp \
     jace/ElementProxy.cpp \
     jace/BaseException.cpp \
     jace/proxy/JValue.cpp \

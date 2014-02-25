@@ -3,7 +3,6 @@
 #define JACE_JNI_HELPER_H
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 #include "jace/JNIException.h"
 #include "jace/JFactory.h"
 #include "jace/VmLoader.h"
@@ -35,7 +34,7 @@ namespace helper {
  *
  */
 JACE_API void createVm( const ::jace::VmLoader& loader, 
-               const ::jace::OptionList& options, 
+               const OptionList& options,
                bool ignoreUnrecognized = true );
 
 /**
@@ -187,7 +186,7 @@ JACE_API void catchAndThrow();
  * Returns the Peer for a given java Peer.
  *
  */
-JACE_API ::jace::Peer* getPeer( jobject jPeer );
+JACE_API Peer* getPeer( jobject jPeer );
 
 /**
  * Returns the ClassLoader being used by the current thread.

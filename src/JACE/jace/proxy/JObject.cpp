@@ -22,7 +22,8 @@ using std::endl;
 #include <exception>
 using std::exception;
 
-BEGIN_NAMESPACE_2( jace, proxy )
+namespace jace {
+namespace proxy {
 
 /**
  * The static instance of the NoOp.
@@ -243,5 +244,6 @@ const JClass *JObject::getJavaJniClass() const throw ( JNIException ) {
   return 0;
 }
 
-END_NAMESPACE_2( jace, proxy )
+}
+}
 

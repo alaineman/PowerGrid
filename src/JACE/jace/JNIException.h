@@ -2,7 +2,6 @@
 #define JACE_JNI_EXCEPTION_H
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 #include "jace/BaseException.h"
 #include "jni.h"
 #include <string>

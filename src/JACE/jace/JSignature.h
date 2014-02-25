@@ -2,23 +2,13 @@
 #ifndef JACE_JSIGNATURE_H
 #define JACE_JSIGNATURE_H
 
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
-
-#ifndef JACE_NAMESPACE_H
-#include "jace/namespace.h"
-#endif
-
-#ifndef JACE_JCLASS_H
 #include "jace/JClass.h"
-#endif
 
 #include <string>
 #include <list>
 
-BEGIN_NAMESPACE( jace )
-
+namespace jace {
 
 /**
  * A representation of the signature for a java method.
@@ -80,8 +70,7 @@ const JClass* mResultType;
 
 };
 
-
-END_NAMESPACE( jace )
+}
 
 #endif // #ifndef JACE_JSIGNATURE_H
 

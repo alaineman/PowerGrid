@@ -30,7 +30,7 @@ using std::copy;
 #include <iterator>
 using std::back_inserter;
 
-BEGIN_NAMESPACE (jace)
+namespace jace {
 std::string Verbose::Gc( "gc" );
 std::string Verbose::Jni( "jni" );
 std::string Verbose::Class( "class" );
@@ -232,4 +232,4 @@ Option* AbortHook::clone() const {
   return new AbortHook( hook );
 }
 
-END_NAMESPACE (jace)
+}

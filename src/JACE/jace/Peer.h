@@ -1,24 +1,11 @@
-
 #ifndef JACE_PEER_H
 #define JACE_PEER_H
 
-#ifndef JACE_OS_DEP_H
 #include "jace/os_dep.h"
-#endif
-
-#ifndef JACE_NAMESPACE_H
-#include "jace/namespace.h"
-#endif
-
-#ifndef JACE_JNI_HELPER_H
 #include "jace/JNIHelper.h"
-#endif
-
-#ifndef JACE_JCLASS_H
 #include "jace/JClass.h"
-#endif
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * The base class for all Jace Peers.
@@ -97,6 +84,6 @@ class Peer {
   jweak mWeakRef;
 };
 
-END_NAMESPACE( jace )
+}
 
 #endif // #ifndef JACE_PEER_H

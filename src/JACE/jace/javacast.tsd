@@ -6,7 +6,7 @@
  *
  */
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 
 /**
@@ -22,5 +22,4 @@ template <> inline jobject java_cast<jobject>( const ::jace::proxy::JObject& obj
   return obj.getJavaJniObject();
 }
 
-END_NAMESPACE( jace )
-
+}

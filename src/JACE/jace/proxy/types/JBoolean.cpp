@@ -1,12 +1,10 @@
-
 #include "jace/proxy/types/JBoolean.h"
-
-#ifndef JACE_JCLASS_IMPL_H
 #include "jace/JClassImpl.h"
-#endif
 using jace::JClassImpl;
 
-BEGIN_NAMESPACE_3( jace, proxy, types )
+namespace jace {
+namespace proxy {
+namespace types {
 
 
 JBoolean::JBoolean( jvalue value ) {
@@ -56,5 +54,7 @@ const JClass* JBoolean::getJavaJniClass() const throw ( JNIException ) {
 }
 
 
-END_NAMESPACE_3( jace, proxy, types )
+}
+}
+}
 

@@ -5,7 +5,7 @@ using jace::proxy::JObject;
 using jace::JClass;
 using std::string;
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 JFieldHelper::JFieldHelper( const std::string& name, const JClass* typeClass ) : 
   mFieldID( 0 ), 
@@ -98,6 +98,4 @@ jfieldID JFieldHelper::getFieldID( const JClass* parentClass, bool isStatic ) {
   return mFieldID;
 }
 
-
-END_NAMESPACE( jace )
-
+}

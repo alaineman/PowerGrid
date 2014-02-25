@@ -17,7 +17,7 @@ using std::list;
 #include <vector>
 using std::vector;
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 
 /**
@@ -39,7 +39,7 @@ vector<jvalue> toVector( const JArguments& arguments ) {
   return argsVector;
 }
 
-END_NAMESPACE( jace )
+}
 
 /**
  * For those (oddball) compilers that need the template specialization

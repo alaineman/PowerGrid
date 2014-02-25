@@ -3,7 +3,6 @@
 #define JACE_JVALUE_H
 
 #include "jace/os_dep.h"
-#include "jace/namespace.h"
 #include "jace/JClass.h"
 #include "jace/JNIException.h"
 

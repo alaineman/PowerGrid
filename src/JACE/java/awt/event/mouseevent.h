@@ -20,23 +20,41 @@ class Component;
 
 namespace event {
 
+/**
+ * @brief Proxy class for @c java.awt.event.MouseEvent
+ *
+ * This class represents AWT MouseEvent objects. They can be used for
+ * generating mouse movement and clicks to send to the client.
+ */
 class MouseEvent : public Object {
 public:
+    /**
+     * @brief The Mouse button constants for MouseEvents
+     *
+     * The values of the enum match the constants used by MouseEvent
+     */
     enum Button {
-        NoButton = 0,
-        Left     = 1,
-        Right    = 2,
-        Middle   = 3
+        NoButton = 0, ///< Indicates no button was pressed
+        Left     = 1, ///< Indicates the left mouse button
+        Right    = 2, ///< Indicates the right mouse button
+        Middle   = 3  ///< Indicates the middle mouse button
     };
+    /**
+     * @brief The AWT Event ids for MouseEvents
+     *
+     * The values of the enum constants are set to match the Event ids in AWT.
+     * The documentation of the individual enum values gives more info on when the event
+     * fires and/or if buttons are involved.
+     */
     enum Type {
-        Clicked  = 500,
-        Pressed  = 501,
-        Released = 502,
-        Moved    = 503,
-        Entered  = 504,
-        Exited   = 505,
-        Dragged  = 506,
-        Wheel    = 507
+        Clicked  = 500, ///< Indicates a button on the mouse was clicked (pressed and then released)
+        Pressed  = 501, ///< Indicates a button on the mouse was pressed
+        Released = 502, ///< Indicates a button on the mouse was released
+        Moved    = 503, ///< Indicates the mouse was moved (use NoButton as Button value)
+        Entered  = 504, ///< Indicates the mouse entered the window (use NoButton as Button value)
+        Exited   = 505, ///< Indicates the mouse exited the window (use NoButton as Button value)
+        Dragged  = 506, ///< Indicates the mouse was dragged (pressed and then moved)
+        Wheel    = 507  ///< Indicates the mouse wheel was scrolled (use NoButton as Button value)
     };
 
     static MouseEvent createEvent(Component source, Type id, JLong when, JInt modifiers, JInt x, JInt y,

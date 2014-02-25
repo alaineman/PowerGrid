@@ -28,14 +28,20 @@ public:
     JACE_PROXY_API JLong getID();
     /*!
      * \brief Returns the next Node in the sequence
+     *
+     * If the end of the sequence is reached, this returns the sentinel
+     * Node of the structure it belongs to.
+     * \internal ^ That's how it works, right?
      * \return the next Node.
-     * \internal does this return \c NULL or \c *this when the end of the list is reached?
      */
     JACE_PROXY_API Node getNext();
     /*!
      * \brief Returns the previous Node in the sequence
+     *
+     * If the beginning of the sequence is reached, this returns the sentinel
+     * Node of the structure it belongs to.
+     * \internal ^ That's how it works, right?
      * \return the previous Node.
-     * \internal does this return \c NULL or \c *this when the beginning of the list is reached?
      */
     JACE_PROXY_API Node getPrevious();
 private:

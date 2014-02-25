@@ -20,14 +20,43 @@ class Component;
 
 namespace event {
 
+/**
+ * @brief Proxy class for @c java.awt.event.KeyEvent
+ *
+ * This class represents AWT KeyEvent objects. They can be used for
+ * generating keystrokes to send to the client.
+ */
 class KeyEvent : public Object {
 public:
+    /**
+     * @brief The AWT Event ids for KeyEvents
+     *
+     * The values of the enum constants are set to match the Event ids in AWT.
+     */
     enum Type {
-        Typed    = 400,
-        Pressed  = 401,
-        Released = 402
+        Typed    = 400, ///< Indicates a character has been typed (alphanumeric key pressed and then released).
+        Pressed  = 401, ///< Indicates a key has been pressed.
+        Released = 402  ///< Indicates a key has been released.
     };
 
+    /**
+     * @brief Creates a KeyEvent object.
+     *
+     * A few pointers for providing semantically correct parameters:
+     * - For the @c Pressed and @c Released types, provide @c static_cast<JChar>(65536) as keyChar.
+     * - For the @c Typed event, provide @c -1 for keyCode.
+     * - For the source, provide the Canvas Component contained in the RS Applet.
+     * - For the @par when parameter, provide the current system time
+     * - For the modifiers, provide a mask as described in the JavaDoc for the KeyEvent constructor.
+     *
+     * @param source the source Component where the event originates
+     * @param id the AWT Event id
+     * @param when the system time (in ms) when this event happened
+     * @param modifiers a mask describing the modifiers active when this event happened
+     * @param keyCode the key code belonging to the key (-1 in case of a @c Typed event)
+     * @param keyChar the character that was types (65536 when @par id is not Typed)
+     * @return the created KeyEvent object
+     */
     static KeyEvent createEvent(Component source, Type id, JLong when, JInt modifiers,
                                 JInt keyCode, JChar keyChar);
 
@@ -40,8 +69,6 @@ public:
     explicit KeyEvent(jvalue value);
     explicit KeyEvent(jobject object);
     KeyEvent& operator = (const KeyEvent& obj);
-
-    JACE_PROXY_API JInt getID();
 private:
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 };

@@ -33,9 +33,6 @@
  * This class contains all data required for successfully mapping C++ class
  * names to their obfuscated names. This class is called by each of the RS
  * proxies to get the mapping data for each class.
- *
- * Warning: Do not call @c getRSClass(QString name) from here! Use
- * @c name::staticGetJavaJniClass() instead.
  */
 class RSClassMapper : public QObject {
     Q_OBJECT
@@ -64,9 +61,12 @@ public:
     /**
      * @brief Returns the RSClass belonging to the given name.
      *
-     * Warning: Calling this manually may prevent the actual proxy
-     * from collecting the RSClass*! Therefore, please call
-     * @c name::staticGetJavaJniClass() instead.
+     * If no binding for the given name exists, a MappingUnavailableException
+     * is thrown with the requested class name as message. This means that in
+     * places where this is (either directly or indirectly) used,
+     *
+     * @return a pointer to the created \c RSClass.
+     * @throws MappingUnavailableException when the name cannot be mapped
      */
     JACE_API RSClass* getRSClass(QString name);
 
@@ -80,6 +80,7 @@ public:
      */
     JACE_API void parseData(jbyteArray data);
 private:
+    /// Why keep these private? They may be useful for quick lookups
     JACE_API QMap<QString, QString> getFieldMap(QString className) const;
     JACE_API QMap<QString, int> getModifierMap(QString className) const;
     JACE_API QString getRealName(QString semanticName) const;

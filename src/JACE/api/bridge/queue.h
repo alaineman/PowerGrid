@@ -9,6 +9,14 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
+/**
+ * @brief LinkedList-like Queue
+ *
+ * This Queue is implemented as a LinkedList of NodeSub objects,
+ * and can be treated as such.
+ *
+ * @see api::bridge::NodeSub
+ */
 class Queue : public Object {
 public:
     RS_OBJECT(Queue)

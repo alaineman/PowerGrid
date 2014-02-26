@@ -226,7 +226,10 @@ HEADERS += \
     java/awt/event/mouseevent.h \
     java/awt/component.h \
     java/awt/event/keyevent.h \
-    namespace.h
+    namespace.h \
+    entity/component.h \
+    entity/entity.h \
+    entity/world.h
 
 SOURCES += \
     MappingUnavailableException.cpp \
@@ -367,7 +370,10 @@ SOURCES += \
     api/bridge/grounditem.cpp \
     java/awt/event/mouseevent.cpp \
     java/awt/component.cpp \
-    java/awt/event/keyevent.cpp
+    java/awt/event/keyevent.cpp \
+    entity/component.cpp \
+    entity/entity.cpp \
+    entity/world.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

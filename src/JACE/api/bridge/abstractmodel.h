@@ -8,6 +8,12 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
+/**
+ * @brief Superclass of all models
+ *
+ * This class acts as the superclass for the specific model types
+ * used by the 3D backend.
+ */
 class AbstractModel : public Object {
 public:
     RS_OBJECT(AbstractModel)

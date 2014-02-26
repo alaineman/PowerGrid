@@ -13,6 +13,9 @@ class ToolkitOpenGL : public GraphicsToolkit {
 public:
     RS_OBJECT(ToolkitOpenGL)
 
+    /**
+     * \brief the CameraMatrix associated with the camera position.
+     */
     JACE_PROXY_API CameraMatrix getCameraMatrix();
     JACE_PROXY_API JFloat getMaxX ();
     JACE_PROXY_API JFloat getMaxY ();

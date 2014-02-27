@@ -6,7 +6,7 @@ namespace awt {
 
 /*!
  * \class java::awt::Component
- * \brief Proxy class for \c{java.awt.Component}
+ * \brief Proxy class for \c java.awt.Component
  *
  * This class provides access to java AWT Component objects.
  */

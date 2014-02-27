@@ -26,7 +26,7 @@ namespace io {
 
 /*!
  * \class java::io::File
- * \brief Proxy class for \c{java.io.File}
+ * \brief Proxy class for \c java.io.File
  *
  * This class provides access to java File objects, and provides
  * additional operation to convert java File objects to QFile objects.

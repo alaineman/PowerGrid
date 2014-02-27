@@ -7,7 +7,7 @@ namespace awt {
 
 /*!
  * \class java::awt::Rectangle
- * \brief Proxy class for \c{java.awt.Rectangle}
+ * \brief Proxy class for \c java.awt.Rectangle
  *
  * This class provides access to java AWT Rectangle objects.
  */

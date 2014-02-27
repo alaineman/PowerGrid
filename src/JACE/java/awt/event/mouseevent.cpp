@@ -8,7 +8,7 @@ namespace event {
 
 /*!
  * \class java::awt::event::MouseEvent
- * \brief Proxy class for \c{java.awt.event.MouseEvent}
+ * \brief Proxy class for \c java.awt.event.MouseEvent
  *
  * This class provides access to java AWT MouseEvent objects.
  */

@@ -6,7 +6,7 @@ namespace lang {
 namespace ref {
 /*!
  * \class java::lang::ref::SoftReference
- * \brief Proxy class for \c{java.lang.ref.SoftReference}
+ * \brief Proxy class for \c java.lang.ref.SoftReference
  *
  * This class provides access to java SoftReference objects and provides a
  * way to get the referenced object.

@@ -1,7 +1,7 @@
 #ifndef JACE_COUNTED_PTR_H
 #define JACE_COUNTED_PTR_H
 
-/**
+/*
  * This implementation of a reference counted smart pointer 
  * was lifted from Mark E's website. Originally, I attempted 
  * to make use of boost::shared_ptr, but its inclusion 
@@ -33,18 +33,16 @@
   express or implied warranty.
 */
 
-/*
-  This header contains the classes counted_ptr and counted_array_ptr.
-  These classes implement reference-counted smart pointers that automatically
-  deletes the pointer it contains when no longer needed
-  i.e. (reference count drops to zero)
-*/
-
-
 #include <stddef.h>
 
 namespace jace {
 
+/**
+ * \brief smart pointer implementation
+ *
+ * A counted_ptr automatically deletes the pointer it is referencing when
+ * no longer needed (i.e. the reference count drops to zero).
+ */
 template <class X>
 class counted_ptr
 {

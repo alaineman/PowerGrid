@@ -33,7 +33,13 @@
 namespace java {
 namespace lang {
 
-
+/*!
+ * \brief Proxy class for \c java.lang.String
+ *
+ * This class provides access to java String objects, and provides
+ * additional operation to convert java Strings to \c std::string and
+ * \c QString objects.
+ */
 class String : public Object {
 public:
     String();

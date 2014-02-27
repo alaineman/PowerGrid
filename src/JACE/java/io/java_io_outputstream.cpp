@@ -7,7 +7,7 @@ namespace io {
 
 /*!
  * \class java::io::OutputStream
- * \brief Proxy class for \c{java.io.OutputStream}
+ * \brief Proxy class for \c java.io.OutputStream
  *
  * This class provides access to java OutputStream objects.
  */

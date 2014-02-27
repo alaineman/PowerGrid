@@ -4,7 +4,12 @@
 #include <QObject>
 
 /**
- * Contains classes related to the Entity framework.
+ * \brief Contains classes related to the Entity framework.
+ *
+ * The Entity framework drives the higher level API, by representing Runescape
+ * objects as collections of properties.
+ *
+ * \author Patrick Kramer
  */
 namespace entity {
 
@@ -57,20 +62,29 @@ public:
     /**
      * \brief Returns whether a Component of the given Type exists.
      *
-     * \return true if an Entity with the given type exists, false otherwise.
+     * This is a convenience wrapper around \c has(QString name) that automatically
+     * calls this function with the name of the provided type.
+     *
+     * \return true if a Component with the given type exists, false otherwise.
      */
     template<typename Type> bool has() Q_REQUIRED_RESULT;
+
+    /**
+     * \brief Returns whether a Component type with the given name exists.
+     * \return true if a Component type with the given name exists.
+     */
+    bool has(QString name) Q_REQUIRED_RESULT;
 
 signals:
 
     /**
-     * @brief Emitted when a Component has been added
+     * @brief Signal emitted when a Component has been added
      * @param the added Component
      */
     void componentAdded(Component* cmp);
 
     /**
-     * @brief Emitted when a Component has been removed
+     * @brief Signal emitted when a Component has been removed
      * @param the removed Component
      */
     void componentRemoved(Component* cmp);
@@ -79,6 +93,15 @@ public slots:
 
     /**
      * @brief Adds the given Component to this Entity.
+     *
+     * This causes this Entity to emit the \c componentAdded(Component*) signal
+     * Set @par overwrite to true to allow overwriting. When a Component is
+     * overwritten, a @c componentRemoved(Component*) is also emitted before the new
+     * Component is added.
+     *
+     * This slot does nothing if overwrite is false, and a Component with the same type
+     * is already assigned to this Entity, or if the provided Component is NULL.
+     *
      * @param cmp the Component to add.
      * @param overwrite (optional) true to allow overwriting any existing Component
      *        of the same type, false to prevent this. The default is false.
@@ -86,7 +109,11 @@ public slots:
     void addComponent(Component* cmp, bool overwrite=false);
 
     /**
-     * @brief Removes the given Componenty from this Entity
+     * @brief Removes the given Component from this Entity
+     *
+     * This causes this Entity to emit the \c componentRemoved(Component*) signal.
+     * This slot does nothing if the specified Component is NULL.
+     *
      * @param cmp the Component to remove
      */
     void removeComponent(Component* cmp);

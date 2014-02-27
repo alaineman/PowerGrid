@@ -6,7 +6,6 @@
 
 #ifdef Q_OS_WIN32
 
-#include "jace/namespace.h"
 #include "jace/JNIException.h"
 #include "jace/VmLoader.h"
 

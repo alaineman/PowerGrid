@@ -17,11 +17,6 @@
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* We require dynamic JVM loading instead of statically binding to the JVM library
- * This prevents the StaticVMLoader class from trying to statically bind to the jvm library
- */
-#define JACE_WANT_DYNAMIC_LOAD
-
 // Required Qt headers
 #include <QtCore>
 #include <QApplication>
@@ -29,7 +24,7 @@
 #ifdef Q_OS_MACX
 // There is a bug in Oracle's VM on Mac OS X, and as such we may not be able to load it
 // from here.
-#warning PowerGrid does not officially support Mac OS, use at your own risk!
+#warning PowerGrid does not officially support Mac OS (yet) due to a bug in Oracle`s JVM.
 #endif
 
 // Required standard headers
@@ -53,7 +48,7 @@
 #endif
 
 // Native methods that need to be registered
-#include "updaterrunner.h"
+#include "jace/updaterrunner.h"
 
 // Our own additional headers
 #include "mainwindow.h"
@@ -151,31 +146,17 @@ int main(int argc, char** argv) {
         if (!stringClass) {
             throw JNIException("String class not found");
         }
-        // This is needed to tell the loader the native client is available.
-        // Otherwise the loader will try to link with a PowerGrid dynamic library.
-        jstring arg1 = env->NewStringUTF("-c");
-        if (!arg1) {
-            throw JNIException("Failed to create UTF String \"-c\"");
-        }
-        jarray args = env->NewObjectArray(1, stringClass, arg1);
-        if (!args) {
-            throw JNIException("Failed to allocate String[] object");
-        }
 
         qDebug() << "Calling PGLoader.main(String[] args)";
-        env->CallStaticVoidMethod(pgLoaderClass, mainMethod, args);
+        env->CallStaticVoidMethod(pgLoaderClass, mainMethod, NULL);
 
         if (env->ExceptionCheck()) {
             throw JNIException("Exception in main method invocation");
         }
 
         // Clean up JNI references
-        env->DeleteLocalRef(arg1);
-        env->DeleteLocalRef(args);
         env->DeleteLocalRef(stringClass);
         env->DeleteLocalRef(pgLoaderClass);
-
-        helper::detach();
 
     } catch (JNIException& e) {
         qWarning() << "Error creating JVM loader: " << e.what();

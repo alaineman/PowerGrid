@@ -78,18 +78,18 @@ CONFIG     += staticlib thread c++11
 # JACE uses .tsd and .tsp files as C++ header files, so include those as well
 QMAKE_EXT_H += .tsp .tsd
 
-# Tell JACE we're building statically, and want to load the JVM dynamically.
-DEFINES += JACE_STATIC JACE_WANT_DYNAMIC_LOAD
+# Tell JACE we're exporting symbols, and want to load the JVM dynamically.
+DEFINES += JACE_WANT_DYNAMIC_LOAD JACE_EXPORTS JACE_PROXY_EXPORTS
 
 # In debug mode, have JACE check for null values
 # and out-of-bounds array indices
 CONFIG(debug, debug|release): DEFINES += JACE_CHECK_NULLS JACE_CHECK_ARRAYS
 
 HEADERS += \
-    MappingUnavailableException.h \
-    RSClass.h \
-    RSClassMapper.h \
-    UpdaterRunner.h \
+    jace/MappingUnavailableException.h \
+    jace/RSClass.h \
+    jace/RSClassMapper.h \
+    jace/UpdaterRunner.h \
     api/bridge/client.h \
     java/lang/object.h \
     java/lang/string.h \
@@ -229,10 +229,10 @@ HEADERS += \
     namespace.h
 
 SOURCES += \
-    MappingUnavailableException.cpp \
-    RSClass.cpp \
-    RSClassMapper.cpp \
-    UpdaterRunner.cpp \
+    jace/MappingUnavailableException.cpp \
+    jace/RSClass.cpp \
+    jace/RSClassMapper.cpp \
+    jace/UpdaterRunner.cpp \
     api/bridge/client.cpp \
     java/lang/object.cpp \
     java/lang/string.cpp \

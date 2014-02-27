@@ -90,7 +90,6 @@ public class PGLoader {
         parser.merge("debug", "d");   // debug mode enabled
         parser.merge("quiet", "q");   // quiet mode enabled (ignored when "debug" is specified)
         parser.merge("verbose", "v"); // verbose mode (ignored when "debug" or "quiet" is specified)
-        parser.merge("client-load", "c"); // loaded from native client (do not set this manually!)
         parser.merge("force-download", "f"); // force redownloading client
         
         if (parser.hasFlag("debug")) {
@@ -103,7 +102,6 @@ public class PGLoader {
         
         try {
             INSTANCE.start(parser.hasFlag("debug"),
-                           parser.hasFlag("client-load"),
                            parser.hasFlag("force-download"));
         } catch (IOException e) {
             LOGGER.log("Exception during PowerGrid startup", e);
@@ -132,11 +130,10 @@ public class PGLoader {
     /**
      * Starts the client with the specified settings.
      * @param debugMode true to enable debugging features, false to disable
-     * @param client true when loaded from native client, false otherwise
      * @param force true to force re-downloading the client, even when no new version is found
      * @throws java.io.IOException if collecting the data failed.
      */
-    public synchronized void start(boolean debugMode, boolean client, boolean force) throws IOException {
+    public synchronized void start(boolean debugMode, boolean force) throws IOException {
         long startTime;
         if (debugMode) {
             LOGGER.log("Debug mode enabled");

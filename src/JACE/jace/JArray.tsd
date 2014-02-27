@@ -1,8 +1,7 @@
 
 #include <string>
-#include "namespace.h"
 
-BEGIN_NAMESPACE( jace )
+namespace jace {
 
 /**
  * Contains the definitions for the template specializations of the template class, JArray.
@@ -565,5 +564,5 @@ const  jace::proxy::types::JShort JArray< jace::proxy::types::JShort>::operator[
   return  jace::proxy::types::JShort(value);
 }
 
-END_NAMESPACE( jace )
+}
 

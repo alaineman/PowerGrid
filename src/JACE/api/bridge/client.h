@@ -22,7 +22,7 @@
 
 #include "MethodHelper.h"
 
-#include "RSClass.h"
+#include "jace/RSClass.h"
 #include "java/lang/object.h"
 
 using namespace jace::proxy::types;

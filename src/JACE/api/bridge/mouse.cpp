@@ -1,6 +1,6 @@
 #include "mouse.h"
 #include "java/awt/event/mouseevent.h"
-#include "MappingUnavailableException.h"
+#include "jace/MappingUnavailableException.h"
 
 using java::awt::event::MouseEvent;
 namespace api {

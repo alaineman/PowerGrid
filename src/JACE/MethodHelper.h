@@ -26,8 +26,8 @@
 #ifndef METHODHELPER_H
 #define METHODHELPER_H
 
-#include "RSClassMapper.h"
-#include "RSClass.h"
+#include "jace/RSClassMapper.h"
+#include "jace/RSClass.h"
 #include "jace/JNIException.h"
 #include "jace/JArray.h"
 #include "jace/JField.h"

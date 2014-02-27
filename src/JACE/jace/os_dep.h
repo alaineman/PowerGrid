@@ -123,13 +123,6 @@
   #endif
 
   /**
-   * Visual C++ gives warnings on some unused local variables
-   * that no other compilers give warnings on.
-   *
-   */
-  #define JACE_UNUSED_LOCAL_VAR
-
-  /**
    * VC++ 7.0 doesn't support exception specifications correctly, so it generates hundreds
    * of warnings.
    *
@@ -188,9 +181,7 @@
     #define PUT_TSDS_IN_HEADER
     // and also needs explicit type names
     #define NO_IMPLICIT_TYPENAME
-
     #define SUPPORTS_SSTREAM
-    // And (unresolved) Clang cannot find symbols in libJACE.a after linking.
 #endif
 
 	/**

@@ -36,7 +36,7 @@ namespace lang {
 class String;
 
 /*!
- * \brief Proxy for \c{java.lang.Object}
+ * \brief Proxy for \c java.lang.Object
  *
  * This class is the base class of all java classes, and as such also
  * the base class of all proxy classes.

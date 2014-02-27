@@ -6,7 +6,7 @@ namespace zip {
 
 /*!
  * \class java::util::zip::Inflater
- * \brief Proxy class for \c{java.util.zip.Inflater}
+ * \brief Proxy class for \c java.util.zip.Inflater
  *
  * This class provides access to java Inflater objects.
  */

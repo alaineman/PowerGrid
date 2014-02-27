@@ -6,7 +6,7 @@ namespace io {
 
 /*!
  * \class java::io::InputStream
- * \brief Proxy class for \c{java.io.InputStream}
+ * \brief Proxy class for \c java.io.InputStream
  *
  * This class provides access to java InputStream objects.
  */

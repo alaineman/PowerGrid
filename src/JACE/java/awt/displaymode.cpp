@@ -6,7 +6,7 @@ namespace awt {
 
 /*!
  * \class java::awt::DisplayMode
- * \brief Proxy class for \c{java.awt.DisplayMode}
+ * \brief Proxy class for \c java.awt.DisplayMode
  *
  * This class provides access to java AWT DisplayMode objects.
  */

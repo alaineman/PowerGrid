@@ -6,7 +6,7 @@ namespace net {
 
 /*!
  * \class java::net::Socket
- * \brief Proxy class for \c{java.net.Socket}
+ * \brief Proxy class for \c java.net.Socket
  *
  * This class provides access to java Socket objects.
  */

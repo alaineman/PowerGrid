@@ -6,13 +6,13 @@ namespace util {
 
 /*!
  * \class java::util::Map
- * \brief Proxy class for \c{java.util.Map}
+ * \brief Proxy class for \c java.util.Map
  *
  * This class provides access to java Map objects.
  */
 
 /*!
- * \brief Creates a new Map object representing a \c{null} value
+ * \brief Creates a new Map object representing a \c null value
  */
 Map::Map() : Object() {}
 

@@ -6,7 +6,7 @@ namespace awt {
 
 /*!
  * \class java::awt::GraphicsDevice
- * \brief Proxy class for \c{java.awt.GraphicsDevice}
+ * \brief Proxy class for \c java.awt.GraphicsDevice
  *
  * This class provides access to java AWT GraphicsDevice objects.
  */

@@ -9,7 +9,7 @@ namespace event {
 
 /*!
  * \class java::awt::event::KeyEvent
- * \brief Proxy class for \c{java.awt.event.KeyEvent}
+ * \brief Proxy class for \c java.awt.event.KeyEvent
  *
  * This class provides access to java AWT KeyEvent objects.
  */

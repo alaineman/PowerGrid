@@ -2,6 +2,7 @@
 #define ENTITY_H
 
 #include <QObject>
+#include "entity/component.h"
 
 /**
  * \brief Contains classes related to the Entity framework.
@@ -13,7 +14,8 @@
  */
 namespace entity {
 
-class Component;
+
+class World;
 
 /**
  * \brief The Entity class
@@ -33,6 +35,8 @@ class Entity : public QObject {
     Q_DISABLE_COPY(Entity)
 private:
     QMap<QString, Component*> components; // maps className => Component
+
+    friend class World;
 public:
 
     /**

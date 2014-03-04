@@ -6,18 +6,18 @@
 
 namespace entity {
 
-Entity::Entity(QObject *parent) : QObject(parent) {
+Entity::Entity(QObject *parent) : QObject(parent){
     World* world = qobject_cast<World*>(parent);
     if (world != NULL) {
         world->addEntity(this);
     }
 }
 
-template<typename Type> Type* Entity::get() Q_REQUIRED_RESULT {
-    return qobject_cast<Type*>(get(Type.staticMetaObject.className()));
+template<typename Type> Type* Entity::get(){
+    return qobject_cast<Type*>(get(Type::staticMetaObject.className()));
 }
 
-Component* Entity::get(QString name) Q_REQUIRED_RESULT {
+Component* Entity::get(QString name){
     QMap<QString, Component*>::Iterator it = components.find(name);
     if (it == components.end()) {
         return NULL;
@@ -26,11 +26,11 @@ Component* Entity::get(QString name) Q_REQUIRED_RESULT {
     }
 }
 
-template<typename Type> bool Entity::has() Q_REQUIRED_RESULT {
-    return has(Type.staticMetaObject.className());
+template<typename Type> bool Entity::has(){
+    return has(Type::staticMetaObject.className());
 }
 
-bool Entity::has(QString name) Q_REQUIRED_RESULT {
+bool Entity::has(QString name){
     return components.contains(name);
 }
 

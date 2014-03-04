@@ -16,6 +16,12 @@ using namespace java::lang;
 namespace java {
 namespace awt {
 
+/*!
+ * \brief Proxy class for \c java.awt.Component
+ *
+ * This class provides access to java AWT Component objects.
+ */
+
 class Component : public Object {
 public:
     Component();

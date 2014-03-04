@@ -9,6 +9,8 @@ using std::initializer_list;
 
 namespace entity {
 
+World* World::theWorld = new World();
+
 World::~World() Q_DECL_NOTHROW {
     foreach(Entity* e, entities) {
         e->deleteLater();
@@ -42,7 +44,8 @@ Entity* World::createEntity(initializer_list<Component*> comps) {
 void World::deleteEntity(Entity *e) {
     entities.removeOne(e);
     foreach (Component* c, e->components.values()) {
-        QList<Component*> cList = componentMap.value(c->metaObject()->className(), QList());
+        QList<Entity*> cList = componentMap.value(c->metaObject()->className(), QList<Entity*>());
+        cList.removeOne(e);
         if (cList.isEmpty()) {
             componentMap.remove(c->metaObject()->className());
         }

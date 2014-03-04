@@ -7,9 +7,6 @@ using jace::JFactory;
 #include "jace/proxy/JObject.h"
 using jace::proxy::JObject;
 
-#include "jace/Peer.h"
-using jace::Peer;
-
 #include "jace/VmLoader.h"
 using ::jace::VmLoader;
 
@@ -544,38 +541,6 @@ void catchAndThrow() {
     //    cout << "Throwing Exception instead." << endl;
     string msg = string( "Can't find any linked in parent exception for " ) + exceptionTypeString + "\n";
     throw JNIException( msg );
-}
-
-
-
-::jace::Peer* getPeer( jobject jPeer ) {
-
-    JNIEnv* env = attach();
-
-    jclass peerClass = env->GetObjectClass( jPeer );
-    jmethodID handleID = env->GetMethodID( peerClass, "jaceGetNativeHandle", "()J" );
-
-    if ( ! handleID ) {
-        string msg = "Unable to locate the method, \"jaceGetNativeHandle\".\n" \
-                "The class has not been properly enhanced.";
-        try
-        {
-            helper::catchAndThrow();
-        }
-        catch (JNIException& e)
-        {
-            msg.append("\ncaused by:\n");
-            msg.append(e.what());
-        }
-        throw JNIException( msg );
-    }
-
-    jlong nativeHandle = env->CallLongMethod( jPeer, handleID );
-    catchAndThrow();
-
-    ::jace::Peer* peer = reinterpret_cast< ::jace::Peer*>( nativeHandle );
-
-    return peer;
 }
 
 namespace {

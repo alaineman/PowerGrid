@@ -2,6 +2,9 @@
 #define COMPONENT_H
 
 #include <QObject>
+#include "java/lang/object.h"
+
+using java::lang::Object;
 
 namespace entity {
 
@@ -17,6 +20,8 @@ namespace entity {
  */
 class Component : public QObject {
     Q_OBJECT
+private:
+    Object obj;
 public:
     /**
      * \brief Creates a new Component with the given parent
@@ -25,7 +30,8 @@ public:
      * assigned to that Entity.
      * \param parent the parent of this Component
      */
-    explicit Component(QObject *parent = 0);
+    explicit Component(Object ref, QObject* parent = 0);
+    Object getReference();
 };
 
 }

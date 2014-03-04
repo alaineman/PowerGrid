@@ -229,7 +229,9 @@ HEADERS += \
     namespace.h \
     entity/component.h \
     entity/entity.h \
-    entity/world.h
+    entity/world.h \
+    api/component/position.h \
+    api/component/size.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -369,11 +371,13 @@ SOURCES += \
     java/lang/ref/java_lang_ref_softreference.cpp \
     api/bridge/grounditem.cpp \
     java/awt/event/mouseevent.cpp \
-    java/awt/component.cpp \
     java/awt/event/keyevent.cpp \
     entity/component.cpp \
     entity/entity.cpp \
-    entity/world.cpp
+    entity/world.cpp \
+    api/component/position.cpp \
+    api/component/size.cpp \
+    java/awt/java_awt_component.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

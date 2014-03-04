@@ -2,6 +2,7 @@
 #define WORLD_H
 
 #include <QObject>
+#include "entity/entity.h"
 
 #ifdef Q_COMPILER_INITIALIZER_LISTS
 #include <initializer_list>
@@ -10,7 +11,6 @@ using std::initializer_list;
 
 namespace entity {
 
-class Entity;
 class Component;
 
 /**
@@ -33,7 +33,7 @@ private:
      */
     void addEntity(Entity* e);
 
-    static World* theWorld = new World();
+    static World* theWorld;
 
     QList<Entity*> entities;
     QMap<QString, QList<Entity*>> componentMap; // maps Component className => list of Entities with that Component

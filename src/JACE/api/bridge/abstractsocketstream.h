@@ -8,6 +8,9 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
+/**
+ * \brief Abstract version of the SocketStream class.
+ */
 class AbstractSocketStream : public Object {
 public:
     RS_OBJECT(AbstractSocketStream)

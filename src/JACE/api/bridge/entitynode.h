@@ -15,6 +15,8 @@ namespace bridge {
  *
  * This class is different from the other node-based classes in that instances
  * of this class often directly refer to objects in the Runescape world.
+ *
+ * \internal should be extending Node??
  */
 class EntityNode : public Object {
 public:

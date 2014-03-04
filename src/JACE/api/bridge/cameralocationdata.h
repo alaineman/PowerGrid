@@ -10,6 +10,14 @@ namespace bridge {
 class EntityPosition;
 class Quaternion;
 
+/*!
+ * \brief Represents the Camera Location.
+ *
+ * Uses the actual camera location \c Quaternion and the different angle and set-up
+ * from the \c EntityPosition to correspond with the two camera styles in Runescape.
+ *
+ * \internal needs confirmation
+ */
 class CameraLocationData : public AbstractCameraLocationData {
 public:
     RS_OBJECT(CameraLocationData)

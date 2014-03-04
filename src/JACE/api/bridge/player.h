@@ -25,7 +25,7 @@ public:
     JACE_PROXY_API JInt getLevel();
     JACE_PROXY_API ModelLD getModel();
     JACE_PROXY_API String getName();
-    JACE_PROXY_API String getNameSuffix ();
+    JACE_PROXY_API String getNameSuffix();
     JACE_PROXY_API JInt getPKHeadIconIndex();
     JACE_PROXY_API PlayerDef getPlayerDef();
     JACE_PROXY_API JInt getPrayerHeadIconIndex();

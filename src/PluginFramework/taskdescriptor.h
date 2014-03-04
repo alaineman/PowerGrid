@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QString>
 
-#include "mappingunavailableexception.h"
+#include "jace/mappingunavailableexception.h"
 
 #include "task.h"
 

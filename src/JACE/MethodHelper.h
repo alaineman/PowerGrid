@@ -216,16 +216,37 @@ JACE_PROXY_API QList<componentType> className::name() {\
         jace::JArray<jace::JArray<jace::JArray<componentType>>> jresult = \
                 jace::JField<jace::JArray<jace::JArray<jace::JArray<componentType>>>>(rsc->getFieldName(#name)).getReadOnly(*this);\
         QList<QList<QList<componentType>>> result;\
-        /* TODO: Maybe rewrite this to use Iterators? Because this copies the array twice. */\
-        foreach (jace::JArray<jace::JArray<componentType>> arr2D, jresult.toQList()) {\
+        for(int i=0; i<jresult.length(); i++) { \
+            jace::JArray<jace::JArray<componentType>> arr2D = jresult[i];\
             QList<QList<componentType>> result2D;\
-            foreach (jace::JArray<componentType> arr1D, arr2D.toQList()) {\
-                result2D << arr1D.toQList();\
+            for(int j=0;j<arr2D.length(); j++) {\
+                result2D << arr2D[i].toQList();\
             }\
             result << result2D;\
         }\
         return result;\
     }
 
+/*!
+ * \brief Implements a static proxy method that returns a 3-dimensional array.
+ * The return type is a QList of QLists of QLists with the data in the array.
+ * The method does NOT apply any modifier to the return values.
+ */
+#define IMPL_STATIC_ARRAY3_METHOD(className, name, componentType) \
+    JACE_PROXY_API QList<QList<QList<componentType>>> className::name() {\
+        const RSClass* rsc = staticGetJavaJniClass();\
+        jace::JArray<jace::JArray<jace::JArray<componentType>>> jresult = \
+                jace::JField<jace::JArray<jace::JArray<jace::JArray<componentType>>>>(rsc->getFieldName(#name)).getReadOnly(rsc);\
+        QList<QList<QList<componentType>>> result;\
+        for(int i=0; i<jresult.length(); i++) { \
+            jace::JArray<jace::JArray<componentType>> arr2D = jresult.get(i);\
+            QList<QList<componentType>> result2D;\
+            for(int j=0;j<arr2D.length(); j++) {\
+                result2D << arr2D[i].toQList();\
+            }\
+            result << result2D;\
+        }\
+        return result;\
+    }
 
 #endif // METHODHELPER_H

@@ -9,8 +9,7 @@ IMPL_JACE_CONSTRUCTORS(LandscapeDetails)
 IMPL_RSCLASS_GET(LandscapeDetails)
 
 IMPL_ARRAY_METHOD(LandscapeDetails, getLandscape, Landscape)
-//IMPL_ARRAY3_METHOD(LandscapeDetails, getRegionData, Tile)
-#warning api::bridge::LandscapeDetails.getRegionData()
+IMPL_ARRAY3_METHOD(LandscapeDetails, getRegionData, Tile)
 
 } // namespace bridge
 } // namespace api

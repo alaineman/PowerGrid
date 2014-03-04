@@ -138,7 +138,7 @@ JACE_API JObject& operator=( const JObject& object );
  *
  * \return the JClass* that represents the static type of this class.
  */
-JACE_API virtual const JClass* getJavaJniClass() const throw ( JNIException );
+JACE_API virtual const JClass* getJavaJniClass() const throw ( jace::JNIException );
 
 protected:
 

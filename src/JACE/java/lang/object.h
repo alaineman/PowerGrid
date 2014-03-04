@@ -43,12 +43,33 @@ class String;
  */
 class Object: public virtual jace::proxy::JObject {
 public:
+    /**
+     * \brief Creates a new Object that points to \c null.
+     */
     Object();
+    /**
+     * \brief Copy constructor.
+     *
+     * Creates a new Object that points to the same Java object as the provided
+     * Object.
+     * \param obj the original Object
+     */
     Object(const Object&obj);
+    /**
+     * \brief Creates a new Object that points to \c null.
+     *
+     * This constructor only exists for compatibility with the JACE framework.
+     *
+     * \param noop Special object indicating this constructor should not
+     *        do any initialization.
+     */
     Object(const NoOp& noop);
 
-    virtual const jace::JClass* getJavaJniClass() const throw (::jace::JNIException);
-    static const jace::JClass* staticGetJavaJniClass() throw (::jace::JNIException);
+    virtual const jace::JClass* getJavaJniClass() const throw (jace::JNIException);
+    /**
+     * \brief Returns the JClass object for java/lang/Object.
+     */
+    static const jace::JClass* staticGetJavaJniClass() throw (jace::JNIException);
 
     explicit Object(jvalue val);
     explicit Object(jobject obj);
@@ -71,6 +92,12 @@ public:
      */
     String toString();
 
+    /**
+     * @brief Writes the String value of an Object to \c out.
+     * @param out the ostream to write to
+     * @param object the object to write
+     * @return \c out after writing \c object to it.
+     */
     friend std::ostream& operator<<(std::ostream& out, Object& object);
 private:
     template <typename T> friend T (jace::java_cast)(const ::jace::proxy::JObject&);

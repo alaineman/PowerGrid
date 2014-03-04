@@ -22,6 +22,15 @@
  */
 
 /**
+ * \namespace api
+ * \brief contains all API classes
+ *
+ * This namespace contains all classes that provide access to the Runescape data. It is divided into
+ * various namespaces that contain different representations of the Runescape client data.
+ *
+ */
+
+/**
  * \namespace api::bridge
  * \brief contains the standard RS classes
  *

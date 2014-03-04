@@ -34,6 +34,7 @@ QT          = core gui widgets
 CONFIG     += thread c++11
 TEMPLATE    = app
 
+
 win32: RC_FILE = powergrid.rc
 
 # Make sure the executable/library is named PowerGrid and is in
@@ -78,10 +79,9 @@ else {
 # The files in this project
 #------------------------------------------------
 SOURCES       += main.cpp mainwindow.cpp
-HEADERS        = mainwindow.h versionInfo.h
+HEADERS        = mainwindow.h versionInfo.h powergrid.rc
 FORMS          = mainwindow.ui
 RESOURCES      = resources.qrc
-OTHER_FILES    = powergrid.rc
 
 win32 {
     # Windows has this specific VmLoader

@@ -28,7 +28,10 @@
 /// The version of Powergrid as a decimal number
 #define PG_VERSION 0.1
 
-/// The version of PowerGrid as a QString literal
-#define PG_VERSION_STR QStringLiteral("0.1 beta")
+/// The version of PowerGrid as a string literal
+#define PG_VERSION_STR "0.1 beta"
+
+/// The version of PowerGrid for compatibility with Windows RC files.
+#define PG_VERSION_RC 0,1,0,0
 
 #endif // VERSIONINFO_H

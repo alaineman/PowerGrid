@@ -16,13 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/*
+ * This file holds the Windows-specific information for the resulting executable
+ * This includes the product name and version, as well as some other Windows-specific
+ * information.
+ */
 #include "winver.h"
+#include "versionInfo.h"
 
 IDI_ICON1       ICON        "images/powergrid.ico"
 
-#define PG_VERSION      0,1,0,0
-#define PG_VERSION_STR  "0.1"
-#define PG_NAME         "PowerGrid"
 #define PG_DESCRIPTION  "PowerGrid - Revolutionary Runescape bot"
 #define PG_FILENAME     "PowerGrid.exe"
 #define PG_COMPANY      "none"
@@ -34,8 +38,8 @@ IDI_ICON1       ICON        "images/powergrid.ico"
 #endif
 
 1               VERSIONINFO
-FILEVERSION     PG_VERSION
-PRODUCTVERSION  PG_VERSION
+FILEVERSION     PG_VERSION_RC
+PRODUCTVERSION  PG_VERSION_RC
 FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 FILEFLAGS       PG_RC_DEBUG
 FILEOS          VOS_NT_WINDOWS32
@@ -50,9 +54,9 @@ BEGIN
             VALUE "CompanyName",        PG_COMPANY
             VALUE "FileDescription",    PG_DESCRIPTION
             VALUE "FileVersion",        PG_VERSION_STR
-            VALUE "InternalName",       PG_NAME
+            VALUE "InternalName",       PG_NAME_STR
             VALUE "OriginalFilename",   PG_FILENAME
-            VALUE "ProductName",        PG_NAME
+            VALUE "ProductName",        PG_NAME_STR
             VALUE "ProductVersion",     PG_VERSION_STR
         END
     END

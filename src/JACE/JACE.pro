@@ -378,11 +378,8 @@ SOURCES += \
 HEADERS    += \
     jni.h \
     jni_md.h \
-    jace/WrapperVmLoader.h \
     jace/VmLoader.h \
     jace/UnixVmLoader.h \
-    jace/StaticVmLoader.h \
-    jace/Peer.h \
     jace/os_dep.h \
     jace/OptionList.h \
     jace/JSignature.h \
@@ -394,7 +391,6 @@ HEADERS    += \
     jace/JFieldHelper.h \
     jace/JField.h \
     jace/JFactory.h \
-    jace/JEnlister.h \
     jace/JConstructor.h \
     jace/JClassImpl.h \
     jace/JClass.h \
@@ -426,11 +422,8 @@ HEADERS    += \
     jace/JArray.tsp
 
 SOURCES    += \
-    jace/WrapperVmLoader.cpp \
     jace/VmLoader.cpp \
     jace/UnixVmLoader.cpp \
-    jace/StaticVmLoader.cpp \
-    jace/Peer.cpp \
     jace/os_dep.cpp \
     jace/OptionList.cpp \
     jace/JSignature.cpp \
@@ -442,7 +435,6 @@ SOURCES    += \
     jace/JFieldHelper.cpp \
     jace/JField.cpp \
     jace/JFactory.cpp \
-    jace/JEnlister.cpp \
     jace/JConstructor.cpp \
     jace/JClassImpl.cpp \
     jace/JClass.cpp \

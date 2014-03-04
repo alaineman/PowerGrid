@@ -21,6 +21,10 @@ class Component;
  * This class represents an Entity in the runescape world.
  * Properties can be added to Entities in the form of Components.
  *
+ * Entities should always be created to be a part of a World instance.
+ * Therefore, instead of creating an entity directly, consider using
+ * \c entity::World.createEntity() instead.
+ *
  * \see entity::Component
  * \author Patrick Kramer
  */

@@ -21,6 +21,8 @@ public:
     /**
      * \brief Creates a new Component with the given parent
      *
+     * If the parent is an Entity, the newly created Component is directly
+     * assigned to that Entity.
      * \param parent the parent of this Component
      */
     explicit Component(QObject *parent = 0);

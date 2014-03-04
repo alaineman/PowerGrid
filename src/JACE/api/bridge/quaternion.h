@@ -8,6 +8,14 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
+/*!
+ * \brief Represents the Camera Location.
+ *
+ * The data of the location of the camera. This is build up with an
+ * 3-dimensional coordinate system and an angle \c getA() method.
+ *
+ * \internal needs confirmation
+ */
 class Quaternion : public Object {
 public:
     RS_OBJECT(Quaternion)

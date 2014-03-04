@@ -7,6 +7,15 @@
 namespace api {
 namespace bridge {
 
+/*!
+ * \brief The GroundEntity class
+ *
+ * All non-movable  interactable objects and items bound the Runescape World ground.
+ *
+ * \internal confirm non-movable
+ * \internal confirm bound to Tile
+ * \internal missing tons of methods in GroundEntity and it's subclasses
+ */
 class GroundEntity : public Interactable {
 public:
     RS_OBJECT(GroundEntity)

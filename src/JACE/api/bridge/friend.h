@@ -8,9 +8,21 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
+/*!
+ * \brief Represents Friends from the Runescape friendlist interface.
+ *
+ * Friends on the Friends List can contain a number of details
+ * about the friend.
+ *
+ * Friend objects are displayed as a list on the interface child Friends List
+ *
+ */
+
 class Friend : public Object {
 public:
     RS_OBJECT(Friend)
+
+    //Missing methods...
 private:
     DECLARE_FRIENDS
 };

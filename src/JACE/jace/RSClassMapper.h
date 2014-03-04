@@ -17,8 +17,8 @@
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RSCLASSMAPPER_H
-#define RSCLASSMAPPER_H
+#ifndef JACE_RSCLASSMAPPER_H
+#define JACE_RSCLASSMAPPER_H
 #include "jace/os_dep.h"
 #include "jni.h"
 #include "RSClass.h"
@@ -27,6 +27,7 @@
 #include <QMap>
 #include <QFile>
 
+namespace jace {
 /**
  * @brief Maps proxy classes to their Java equivalents
  *
@@ -86,4 +87,5 @@ private:
     JACE_API QString getRealName(QString semanticName) const;
 };
 
-#endif // RSCLASSMAPPER_H
+}
+#endif // JACE_RSCLASSMAPPER_H

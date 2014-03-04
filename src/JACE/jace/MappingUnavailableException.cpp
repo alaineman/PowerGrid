@@ -19,6 +19,8 @@
 
 #include "MappingUnavailableException.h"
 
+namespace jace {
+
 MappingUnavailableException::MappingUnavailableException(const char* msg) throw() :
     JNIException (msg) {
 }
@@ -43,4 +45,6 @@ MappingUnavailableException& MappingUnavailableException::operator =(const Mappi
     ( ( JNIException& ) *this ) = ( JNIException& ) rhs;
 
     return *this;
+}
+
 }

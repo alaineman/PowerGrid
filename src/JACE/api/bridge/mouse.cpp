@@ -3,6 +3,8 @@
 #include "jace/MappingUnavailableException.h"
 
 using java::awt::event::MouseEvent;
+using jace::MappingUnavailableException;
+
 namespace api {
 namespace bridge {
 

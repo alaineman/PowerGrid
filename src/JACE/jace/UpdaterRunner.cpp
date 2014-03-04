@@ -24,6 +24,7 @@
 #include <string>
 
 using jace::JNIException;
+using jace::RSClassMapper;
 
 /**
  * This method parses the updater data downloaded by the Java client.

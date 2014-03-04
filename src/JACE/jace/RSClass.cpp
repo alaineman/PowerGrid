@@ -21,6 +21,7 @@
 #include "MappingUnavailableException.h"
 using std::string;
 
+namespace jace {
 /**
  * Creates a new RSClass with the given name and type name.
  *
@@ -54,4 +55,6 @@ int RSClass::getFieldModifier(QString simpleName) const {
     } else {
         return it.value();
     }
+}
+
 }

@@ -17,8 +17,8 @@
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RSCLASS_H
-#define RSCLASS_H
+#ifndef JACE_RSCLASS_H
+#define JACE_RSCLASS_H
 
 #include "jace/os_dep.h"
 #include "jace/JClassImpl.h"
@@ -30,6 +30,7 @@ using std::string;
 #include <QMap>
 #include <QString>
 
+namespace jace {
 /**
  * @brief JClass representative for RS classes
  *
@@ -91,4 +92,5 @@ class RSClass : public jace::JClassImpl {
     JACE_API int getFieldModifier(QString simpleName) const;
 };
 
-#endif // RSCLASS_H
+}
+#endif // JACE_RSCLASS_H

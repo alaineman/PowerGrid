@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef MAPPINGUNAVAILABLEEXCEPTION_H
-#define MAPPINGUNAVAILABLEEXCEPTION_H
+#ifndef JACE_MAPPINGUNAVAILABLEEXCEPTION_H
+#define JACE_MAPPINGUNAVAILABLEEXCEPTION_H
 
 #include "jace/JNIException.h"
 using jace::JNIException;
@@ -25,6 +25,7 @@ using jace::JNIException;
 #include <string>
 using std::string;
 
+namespace jace {
 /**
  * @brief JNIException subclass for indicating missing bindings.
  *
@@ -71,4 +72,5 @@ public:
     JACE_API MappingUnavailableException& operator =(const MappingUnavailableException& rhs) throw();
 };
 
-#endif // MAPPINGUNAVAILABLEEXCEPTION_H
+}
+#endif // JACE_MAPPINGUNAVAILABLEEXCEPTION_H

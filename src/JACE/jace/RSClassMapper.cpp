@@ -26,11 +26,9 @@
 #include "jace/JNIException.h"
 #include "jace/JNIHelper.h"
 
-using namespace jace;
+namespace jace {
 
-
-
-RSClassMapper* RSClassMapper::classmapper = nullptr;
+RSClassMapper* RSClassMapper::classmapper = Q_NULLPTR;
 
 RSClassMapper* RSClassMapper::DefaultInstance() {
     if (! RSClassMapper::classmapper) {
@@ -159,4 +157,6 @@ void RSClassMapper::parseData(jbyteArray data) {
             throw JNIException("Error parsing XML file: " + reader.errorString());
         }
     }
+}
+
 }

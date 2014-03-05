@@ -27,7 +27,6 @@
  *
  * This namespace contains all classes that provide access to the Runescape data. It is divided into
  * various namespaces that contain different representations of the Runescape client data.
- *
  */
 
 /**
@@ -41,11 +40,22 @@
  */
 
 /**
+ * \namespace api::component
+ * \brief contains the Components for the Entity framework
+ *
+ * This namespace contains all Component types for Entities. These types act as properties for the
+ * entities in the Runescape world. Since operations on Entities actually operate on the properties
+ * of those Entities, this namespace plays a key role in using the Entity framework.
+ */
+
+/**
  * \namespace jace
- * \brief contains JNI bridge framework
+ * \brief contains the JNI bridge framework
  *
  * This namespace contains functionality to enable smooth interaction with the Java VM. Most of the
- * classes in this namespace are only used by the lower api and core PowerGrid classes.
+ * classes in this namespace are only used by the lower api and core PowerGrid classes. This namespace
+ * also contains the classes \c RSClass and \c RSClassMapper, which play a key role in successfully
+ * mapping the classes in the Runescape client to C++ classes.
  */
 
 /**
@@ -61,7 +71,9 @@
  * \namespace jace::proxy::types
  * \brief contains proxies for primitive Java types
  *
- * This namespace contains the proxies for all primitive Java types, including void.
+ * This namespace contains the proxies for all primitive Java types, including void, but not
+ * including \c java.lang.Object (which is contained in the java::lang namespace for analogy with packages
+ * in Java).
  */
 
 /**

@@ -73,11 +73,14 @@ public:
      * feature.
      *
      * This allows creation of Entities with Components like this:
-     * > Entity* e = world->createEntity({new MyComponent1(), new MyComponent2()});
+     *
+     *      Entity* e = world->createEntity({new MyComponent1(), new MyComponent2()});
+     *
      * This line behaves the same as:
-     * > Entity* e = world->createEntity();
-     * > e->addComponent(new MyComponent1());
-     * > e->addComponent(new MyComponent2());
+     *
+     *      Entity* e = world->createEntity();
+     *      e->addComponent(new MyComponent1());
+     *      e->addComponent(new MyComponent2());
      *
      * \param comps the Components to add
      * \return a pointer to the created Entity
@@ -107,5 +110,4 @@ public slots:
 };
 
 }
-
 #endif // WORLD_H

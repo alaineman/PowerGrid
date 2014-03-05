@@ -231,7 +231,11 @@ HEADERS += \
     entity/entity.h \
     entity/world.h \
     api/component/position.h \
-    api/component/size.h
+    api/component/size.h \
+    api/component/id.h \
+    api/component/name.h \
+    api/component/speed.h \
+    api/component/interaction.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -377,7 +381,11 @@ SOURCES += \
     entity/world.cpp \
     api/component/position.cpp \
     api/component/size.cpp \
-    java/awt/java_awt_component.cpp
+    java/awt/java_awt_component.cpp \
+    api/component/id.cpp \
+    api/component/name.cpp \
+    api/component/speed.cpp \
+    api/component/interaction.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

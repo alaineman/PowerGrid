@@ -29,7 +29,7 @@ namespace jace {
  *               a call to JNIEnv::FindClass.
  * @param simpleName the simple (semantic) name of the RSClass
  */
-RSClass::RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, int> mMap) :
+RSClass::RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, jlong> mMap) :
   JClassImpl(name),
   simpleName (simpleName),
   fieldMap (fMap),
@@ -48,8 +48,8 @@ string RSClass::getFieldName(QString name) const {
     return it.value().toStdString();
 }
 
-int RSClass::getFieldModifier(QString simpleName) const {
-    QMap<QString, int>::const_iterator it = modifierMap.find(simpleName);
+jlong RSClass::getFieldModifier(QString simpleName) const {
+    QMap<QString, jlong>::const_iterator it = modifierMap.find(simpleName);
     if (it == modifierMap.cend()) {
         return 1; // equivalent to no modifier ( f*1 == f )
     } else {

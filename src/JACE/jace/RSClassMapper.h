@@ -42,7 +42,7 @@ private:
 
     QMap<QString, QString> classMap;                // semanticClassName => realClassName
     QMap<QString, QMap<QString, QString>> fieldMap; // semanticClassName => ( semanticFieldName => realFieldName )
-    QMap<QString, QMap<QString, int>> modifiers;    // semanticClassName => ( semanticFieldName => modifier value )
+    QMap<QString, QMap<QString, jlong>> modifiers;    // semanticClassName => ( semanticFieldName => modifier value )
 
     QMap<QString, RSClass*> classes;                // semanticClassname => RSClass representative
 public:
@@ -83,7 +83,7 @@ public:
 private:
     /// Why keep these private? They may be useful for quick lookups
     JACE_API QMap<QString, QString> getFieldMap(QString className) const;
-    JACE_API QMap<QString, int> getModifierMap(QString className) const;
+    JACE_API QMap<QString, jlong> getModifierMap(QString className) const;
     JACE_API QString getRealName(QString semanticName) const;
 };
 

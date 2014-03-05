@@ -57,10 +57,10 @@ QMap<QString, QString> RSClassMapper::getFieldMap(QString className) const {
     return it.value();
 }
 
-QMap<QString, int> RSClassMapper::getModifierMap(QString className) const {
-    QMap<QString, QMap<QString, int>>::const_iterator it = modifiers.find(className);
+QMap<QString, jlong> RSClassMapper::getModifierMap(QString className) const {
+    QMap<QString, QMap<QString, jlong>>::const_iterator it = modifiers.find(className);
     if (it == modifiers.cend()) {
-        return QMap<QString, int>();
+        return QMap<QString, jlong>();
     }
     return it.value();
 }
@@ -121,7 +121,7 @@ void RSClassMapper::parseData(jbyteArray data) {
                     classMap.insert(currentClass,
                                     reader.attributes().value("className").toString());
                     fieldMap.insert(currentClass, QMap<QString, QString>());
-                    modifiers.insert(currentClass, QMap<QString, qint32>());
+                    modifiers.insert(currentClass, QMap<QString, jlong>());
                 } else {
                     fieldName = reader.name().toString();
                 }
@@ -138,11 +138,11 @@ void RSClassMapper::parseData(jbyteArray data) {
             case QXmlStreamReader::Characters:
                 if (readModifier) {
                     bool ok = true;
-                    int mod = reader.text().toInt(&ok);
+                    long mod = reader.text().toLong(&ok);
                     if (ok) {
                         modifiers.find(currentClass).value().insert(fieldName, mod);
                     } else {
-                        qDebug() << "Cannot convert" << currentClass << fieldName << "modifier" << reader.text() << "to integer";
+                        qDebug() << "Cannot convert" << currentClass << fieldName << "modifier" << reader.text() << "to long";
                     }
                 } else {
                     fieldMap.find(currentClass).value()

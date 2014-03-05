@@ -44,7 +44,7 @@ class RSClass : public jace::JClassImpl {
   private:
     QString simpleName;
     QMap<QString, QString> fieldMap;
-    QMap<QString, int> modifierMap;
+    QMap<QString, jlong> modifierMap;
   public:
     /**
      * @brief Creates a new RSClass instance from the provided data
@@ -53,7 +53,7 @@ class RSClass : public jace::JClassImpl {
      * @param fMap the map with field names
      * @param mMap the map with modifer values
      */
-    JACE_API RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, int> mMap);
+    JACE_API RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, jlong> mMap);
     JACE_API virtual ~RSClass() throw() {}
 
     /**
@@ -89,7 +89,7 @@ class RSClass : public jace::JClassImpl {
      * @param simpleName the simple field name
      * @return the modifier value for the field
      */
-    JACE_API int getFieldModifier(QString simpleName) const;
+    JACE_API jlong getFieldModifier(QString simpleName) const;
 };
 
 }

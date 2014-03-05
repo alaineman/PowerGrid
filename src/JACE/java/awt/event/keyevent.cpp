@@ -28,7 +28,7 @@ KeyEvent KeyEvent::createEvent(Component source, Type id, JLong when, JInt modif
     return KeyEvent(mEvent);
 }
 
-KeyEvent::KeyEvent() : Object() {
+KeyEvent::KeyEvent(Type _type) : Object(), type(_type) {
 }
 KeyEvent::KeyEvent(const KeyEvent &obj) :
     JObject(NoOp()), Object(obj) {

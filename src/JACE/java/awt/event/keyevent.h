@@ -60,7 +60,7 @@ public:
     static KeyEvent createEvent(Component source, Type id, JLong when, JInt modifiers,
                                 JInt keyCode, JChar keyChar);
 
-    KeyEvent();
+    KeyEvent(Type _type);
     KeyEvent(const KeyEvent&obj);
 
     virtual const jace::JClass* getJavaJniClass() const throw (jace::JNIException);
@@ -69,7 +69,12 @@ public:
     explicit KeyEvent(jvalue value);
     explicit KeyEvent(jobject object);
     KeyEvent& operator = (const KeyEvent& obj);
+
+    Type getType() const { return type; }
+
 private:
+    Type type;
+
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 };
 

@@ -31,7 +31,11 @@ public:
      * \param parent the parent of this Component
      */
     explicit Component(Object ref, QObject* parent = 0);
-    Object getReference();
+
+    /**
+     * @brief Returns the reference of this Component
+     */
+    Object getReference() const;
 };
 
 }

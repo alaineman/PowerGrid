@@ -235,7 +235,8 @@ HEADERS += \
     api/component/id.h \
     api/component/name.h \
     api/component/speed.h \
-    api/component/interaction.h
+    api/component/interaction.h \
+    api/component/action.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -385,7 +386,8 @@ SOURCES += \
     api/component/id.cpp \
     api/component/name.cpp \
     api/component/speed.cpp \
-    api/component/interaction.cpp
+    api/component/interaction.cpp \
+    api/component/action.cpp
 
 #------------------------------------------------
 # Files in this project. This contains all

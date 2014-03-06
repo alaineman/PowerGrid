@@ -60,7 +60,7 @@ Object& Object::operator =(Object& obj) {
  * \return true if the two objects are equal according to this
  *         object's equals method, false otherwise
  */
-bool Object::equals(const Object &other) {
+bool Object::equals(const Object &other) const {
     JNIEnv* env = jace::helper::attach();
     jmethodID equals_id = env->GetMethodID(
                 Object::staticGetJavaJniClass()->getClass(), "equals", "(Ljava/lang/Object;)Z");
@@ -72,7 +72,7 @@ bool Object::equals(const Object &other) {
  * This invokes the \c toString method on the java object in the Java VM.
  * \return the String value of the java Object, as a java String.
  */
-String Object::toString() {
+String Object::toString() const {
     JNIEnv* env = jace::helper::attach();
     jmethodID toString_id = env->GetMethodID(
                 Object::staticGetJavaJniClass()->getClass(), "toString", "()Ljava/lang/String;");

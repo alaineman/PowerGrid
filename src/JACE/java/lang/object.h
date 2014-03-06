@@ -84,13 +84,13 @@ public:
      * \return true if the two objects are equal according to this
      *         object's equals method, false otherwise
      */
-    bool equals(const Object& other);
+    bool equals(const Object& other) const;
     /*!
      * \brief Calls this Java Object's \c toString method.
      * This invokes the \c toString method on the java object in the Java VM.
      * \return the String value of the java Object, as a java String.
      */
-    String toString();
+    String toString() const;
 
     /**
      * @brief Writes the String value of an Object to \c out.

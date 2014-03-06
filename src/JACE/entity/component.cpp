@@ -12,7 +12,7 @@ Component::Component(Object ref, QObject* parent) : QObject(parent), obj(ref)  {
     }
 }
 
-Object Component::getReference(){
+Object Component::getReference() const {
     return obj;
 }
 

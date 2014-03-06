@@ -95,6 +95,14 @@ signals:
      */
     void entityCreated(Entity* e);
 
+    /**
+     * \brief signal emitted when processing of Entities has started
+     */
+    void processingStarted();
+    /**
+     * \brief signal emitted when processing of Entities has finished
+     */
+    void processingFinished();
 public slots:
     /**
      * \brief Deletes the entity at some point in the future.

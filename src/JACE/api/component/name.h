@@ -10,12 +10,26 @@ using jace::JField;
 namespace api {
 namespace component {
 
+/**
+ * @brief Component for entities with a name
+ *
+ * The name should be descriptive and (usually) human-readable.
+ */
 class Name: public Component {
     Q_OBJECT
 private:
     JField<java::lang::String> value;
 public:
-    explicit Name(Object ref, JField<java::lang::String> name, QObject* parent = 0);
+    /**
+     * @brief Creates a new Name Component
+     * @param ref the reference Object
+     * @param name the JField containing the name
+     * @param parent the parent of this Component
+     */
+    Name(Object ref, JField<java::lang::String> name, QObject* parent = 0);
+    /**
+     * @brief Returns the name value of this Name Component
+     */
     QString getName();
 };
 

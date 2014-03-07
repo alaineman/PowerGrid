@@ -17,6 +17,11 @@ namespace bridge {
 
 class ModelLD;
 class PlayerDef;
+
+/*!
+ * \brief The Player class represents playable characters in the Runescape World.
+ *
+ */
 class Player : public Character {
 public:
     RS_OBJECT(Player)

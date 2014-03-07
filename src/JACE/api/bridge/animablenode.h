@@ -10,7 +10,7 @@ namespace bridge {
 
 class Animable;
 
-/**
+/*!
  * \brief Node element containing an Animable
  *
  * Contrary to what the name might suggest, this is not a Node subclass.
@@ -21,12 +21,12 @@ class AnimableNode : public Object {
 public:
     RS_OBJECT(AnimableNode)
 
-    /**
+    /*!
      * \brief Returns the Animable in this AnimableNode
      * \return the Animable
      */
     JACE_PROXY_API Animable getAnimable();
-    /**
+    /*!
      * \brief Returns the next AnimableNode in the sequence
      * \return the next AnimableNode
      */

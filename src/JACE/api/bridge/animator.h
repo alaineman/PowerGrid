@@ -10,7 +10,7 @@ namespace bridge {
 
 class Animation;
 
-/**
+/*!
  * \brief Performs animations
  *
  * This class is often used by objects in the Runescape world to perform some
@@ -20,7 +20,7 @@ class Animator : public Object {
 public:
     RS_OBJECT(Animator)
 
-    /**
+    /*!
      * \brief the animation this Animator performs
      */
     JACE_PROXY_API Animation getAnimation();

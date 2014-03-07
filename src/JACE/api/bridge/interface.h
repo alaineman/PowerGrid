@@ -10,10 +10,20 @@ namespace bridge {
 
 class InterfaceChild;
 
+/*!
+ * \brief The Interface class
+ *
+ * The Interface class is basically a holder for the InterfaceChild hiarchy.
+ * Jagex uses it to easily group their interfaces.
+ */
 class Interface : public Object {
 public:
     RS_OBJECT(Interface)
-
+    /*!
+     * \brief The list of direct Children to this interface
+     *
+     * The first generation of Childs.
+     */
     JACE_PROXY_API QList<InterfaceChild> getChildren();
 private:
     DECLARE_FRIENDS

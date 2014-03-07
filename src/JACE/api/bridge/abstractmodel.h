@@ -8,7 +8,7 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
-/**
+/*!
  * @brief Superclass of all models
  *
  * This class acts as the superclass for the specific model types

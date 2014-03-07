@@ -11,7 +11,7 @@ namespace bridge {
 class AbstractCameraLocationData;
 class AbstractCentralLocationData;
 
-/**
+/*!
  * \brief Abstract version of the Camera class.
  *
  * This class provides information about the Camera in the Runescape world.
@@ -22,12 +22,12 @@ class AbstractCamera : public Object {
 public:
     RS_OBJECT(AbstractCamera)
 
-    /**
+    /*!
      * \brief Returns the location of the focussed object of the Camera
      * \internal Is this it?
      */
     JACE_PROXY_API AbstractCameraLocationData getCameraLocationData();
-    /**
+    /*!
      * \brief Returns the actual location of the Camera.
      * \internal Is this it?
      */

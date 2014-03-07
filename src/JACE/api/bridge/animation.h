@@ -8,7 +8,7 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
-/**
+/*!
  * \brief Represents a single animation
  *
  * Animator objects make use of this class to specify the animation to perform.
@@ -17,7 +17,7 @@ class Animation : public Object {
 public:
     RS_OBJECT(Animation)
 
-    /**
+    /*!
      * \brief Retunrns the unique id for the animation
      */
     JACE_PROXY_API JInt getID();

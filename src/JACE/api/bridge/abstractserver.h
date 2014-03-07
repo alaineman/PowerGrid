@@ -7,15 +7,14 @@ using namespace java::lang;
 
 namespace api {
 namespace bridge {
-
-/**
+/*!
  * \brief Abstract version of the \c Server class.
  */
 class AbstractServer : public Object {
 public:
     RS_OBJECT(AbstractServer)
 
-    /**
+    /*!
      * \brief descriptive flag for the \c AbstractServer.
      * \internal Needs details.
      */

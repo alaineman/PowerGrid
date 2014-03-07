@@ -22,8 +22,18 @@ public:
     RS_OBJECT(NPCDef)
 
     JACE_PROXY_API QList<String> getActions();
+
+    /*!
+     * \brief The ID of the NPCDef.
+     *
+     * \internal need confirmation on this!
+     */
     JACE_PROXY_API JInt getID();
     JACE_PROXY_API JInt getModelBoundRadius();
+
+    /*!
+     * \brief The displayed name of an NPC.
+     */
     JACE_PROXY_API String getName();
     JACE_PROXY_API NPCDefLoader getNPCDefLoader();
     JACE_PROXY_API HashTable getNodeTable();

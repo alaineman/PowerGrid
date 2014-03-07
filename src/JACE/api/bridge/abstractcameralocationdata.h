@@ -8,7 +8,7 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
-/**
+/*!
  * \brief Abstract version of the CameraLocationData class.
  */
 class AbstractCameraLocationData : public Object {

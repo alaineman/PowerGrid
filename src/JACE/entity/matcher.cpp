@@ -19,10 +19,10 @@ QList<QString> Matcher::matchedTypes() const {
     return result;
 }
 
-Matcher::afterProcessing() {}
-Matcher::beforeProcessing() {}
+void Matcher::afterProcessing() {}
+void Matcher::beforeProcessing() {}
 
-Matcher::process(Entity *e, Component *c) {
+void Matcher::process(Entity *e, Component *c) {
     Q_UNUSED(e)
     Q_UNUSED(c)
     // We throw an exception here because not overriding this makes the entire Matcher useless.

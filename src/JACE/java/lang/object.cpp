@@ -47,19 +47,19 @@ const jace::JClass* Object::getJavaJniClass() const throw(jace::JNIException) {
     return Object::staticGetJavaJniClass();
 }
 
-Object& Object::operator =(Object& obj) {
+Object& Object::operator =(const Object& obj) {
     setJavaJniObject(obj.getJavaJniObject());
     return *this;
 }
 
-/*!
- * \brief Calls this Java Object's \c equals method.
- * This invokes the equals method on the two java objects in the Java VM.
- *
- * \param other the object to call equals with
- * \return true if the two objects are equal according to this
- *         object's equals method, false otherwise
- */
+bool Object::operator ==(const Object& obj) {
+    return getJavaJniObject() == obj.getJavaJniObject() || (!isNull() && equals(obj));
+}
+
+bool Object::operator !=(const Object& obj) {
+    return !(*this == obj);
+}
+
 bool Object::equals(const Object &other) const {
     JNIEnv* env = jace::helper::attach();
     jmethodID equals_id = env->GetMethodID(
@@ -67,11 +67,6 @@ bool Object::equals(const Object &other) const {
     return env->CallBooleanMethod(getJavaJniObject(), equals_id, other.getJavaJniObject()) == JNI_TRUE;
 }
 
-/*!
- * \brief Calls this Java Object's \c toString method.
- * This invokes the \c toString method on the java object in the Java VM.
- * \return the String value of the java Object, as a java String.
- */
 String Object::toString() const {
     JNIEnv* env = jace::helper::attach();
     jmethodID toString_id = env->GetMethodID(

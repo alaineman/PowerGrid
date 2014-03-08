@@ -65,17 +65,62 @@ public:
      */
     Object(const NoOp& noop);
 
+    /*!
+     * \brief Returns a JClass* describing the class of this object.
+     *
+     * The returned JClass* should not be deleted.
+     */
     virtual const jace::JClass* getJavaJniClass() const throw (jace::JNIException);
     /**
      * \brief Returns the JClass object for java/lang/Object.
      */
     static const jace::JClass* staticGetJavaJniClass() throw (jace::JNIException);
 
+    /*!
+     * \brief Creates a new Object with the specified jvalue as value.
+     * \param val the value of this Object
+     */
     explicit Object(jvalue val);
-    explicit Object(jobject obj);
+    /*!
+     * \brief Creates a new Object with the specified jobject as java object.
+     * \param obj the java object of this Object
+     */
+    Object(jobject obj);
 
-    Object& operator= (Object& obj);
+    /*!
+     * \brief Assigns the java object of \c obj to this Object.
+     * \param obj the Object assigned to this Object
+     * \return this Object after the assignment
+     */
+    Object& operator= (const Object& obj);
 
+    /*!
+     * \brief Returns whether this Object is equal to \c obj
+     *
+     * This operator behaves the same as \c equals, except that
+     * this returns true if both objects are null. Simply calling
+     * \c equals results in undefined behavior when invoked on a
+     * null Object.
+     *
+     * Additionally, when the objects referenced by this Object
+     * and \c obj are in fact the same Object, this returns true
+     * without calling the equals method.
+     *
+     * \param obj the Object to compare with.
+     * \return true if these Objects are equal, false otherwise
+     */
+    bool operator== (const Object& obj);
+
+    /**
+     * @brief Checks whether two objects are not equal
+     *
+     * Invoking `a != b' for Objects a and b behaves exactly the same
+     * as `!(a == b)'.
+     *
+     * @param obj the Object to check with
+     * @return true if these Objects are not equal, false if they are
+     */
+    bool operator!= (const Object& obj);
     /*!
      * \brief Calls this Java Object's \c equals method.
      * This invokes the equals method on the two java objects in the Java VM.
@@ -101,7 +146,6 @@ public:
     friend std::ostream& operator<<(std::ostream& out, Object& object);
 private:
     template <typename T> friend T (jace::java_cast)(const ::jace::proxy::JObject&);
-    template <typename T> friend class ::jace::JMethod;
 };
 
 }

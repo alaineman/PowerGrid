@@ -19,6 +19,7 @@
 
 /*
  * This file contains Doxygen comments for all namespaces in this subproject.
+ * As such, it serves no purpose to include this header anywhere.
  */
 
 /**

@@ -54,17 +54,14 @@
 #------------------------------------------------------------------------
 
 #------------------------------------------------------------------------
-# All other files are part of the Oracle JDK.
-# These files are subject to the following license:
-#
-# Copyright (c) 1999, 2001, Oracle and/or its affiliates
-# All rights reserved.
-#
-# They are modified for optimization within the context of the project
+# jni.h and jni_md.h are part of the Oracle JDK.
+# They are modified for optimization within the context of the project.
+# However, the modifications do not change the behavior of the JNI or
+# invalidate any part of the JNI documentation.
 #------------------------------------------------------------------------
 
 #------------------------------------------------------------------------
-# .pro file for the JACE library.
+# .pro file for the Java-C++ bridge.
 # This subproject contains the functionality required to bridge the gap
 # between Java and C++. The JACE library is used for that purpose.
 # JACE has been optimized for use with PowerGrid.
@@ -72,7 +69,7 @@
 
 QT          = core concurrent
 TEMPLATE    = lib
-TARGET      = JACE
+TARGET      = Bridge
 CONFIG     += staticlib thread c++11
 
 # JACE uses .tsd and .tsp files as C++ header files, so include those as well
@@ -391,12 +388,6 @@ SOURCES += \
     api/component/action.cpp \
     entity/matcher.cpp
 
-#------------------------------------------------
-# Files in this project. This contains all
-# default JACE classes, as well as the
-# required JNI headers.
-#------------------------------------------------
-
 HEADERS    += \
     jni.h \
     jni_md.h \
@@ -477,5 +468,3 @@ SOURCES    += \
     jace/proxy/types/JChar.cpp \
     jace/proxy/types/JByte.cpp \
     jace/proxy/types/JBoolean.cpp \
-
-OTHER_FILES +=

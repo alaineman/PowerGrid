@@ -32,9 +32,9 @@ macx {
   warning("Mac OS X is not supported as of now, and things may not work as expected!")
 }
 
-SUBDIRS += JACE UserInterface PluginFramework   # DefaultPlugin
+SUBDIRS += Bridge UserInterface PluginFramework   # DefaultPlugin
 
-UserInterface.depends = JACE
-PluginFramework.depends = JACE
+UserInterface.depends = Bridge
+PluginFramework.depends = Bridge
 #DefaultPlugin.depends = PluginFramework
 

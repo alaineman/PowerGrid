@@ -20,7 +20,7 @@ To achieve this, we first have to locate the Ant tool within Netbeans. It is usu
 at "<NetbeansRoot>/extide/ant/bin". <NetbeansRoot> is usually "C:\Program Files\Netbeans <version>\" 
 on Windows, and "Applications/Netbeans/Netbeans <version>.app/Contents/Resources/NetBeans/" on 
 Mac OS X (right-click the Netbeans app and select "show package contents" to see it). On other 
-platforms it should be similar, although I haven't tested it.
+platforms it should be similar, although this hasn't been tested.
 
 Step 2: Make Qt Creator execute ant automatically.
 --------------------------------------------------
@@ -43,3 +43,27 @@ meaning that everything is put together automatically so that everything can be 
 Now Qt Creator will call Apache Ant to build and create the loader jar file after it finished building 
 the PowerGrid application, ensuring that you always run the latest version of both the C++ client and 
 the Java loader.
+
+Step 3: While we're busy...
+---------------------------
+Qt Creator will now invoke make and make install automatically, and copy all we need to the 'dist' 
+directory. However, for compiling (the most time-consuming task), MinGW's make will only use one 
+core by default. A waste of time if you have a multi-core processor! Therefore we are going to instruct 
+make to build multiple targets at the same time, making more efficient use of your multi-core processor.
+
+Beware that this only works for the GCC version of make! When you use the Visual Studio compiler on 
+Windows, Qt already does this step for you using a tool called jom. In other build configurations, 
+please look up the documentation for your build tools to achieve similar functionality.
+
+We go to the place we added the 'ant jar' command earlier. At the 'make' comment (not 'make install'),
+add '-j 4' (without the quotes) to the 'Make arguments' field (Replace '4' with the actual number of cores
+you want to use for compiling. Setting this higher than the amount of cores in your processor will 
+most likely not speed up compilation. For example, when you have a dual-core processor, you would
+enter '-j 2', instead of '-j 4'. 
+
+One last remark: when you use all cores in your processor for compilation, your computer may respond slow or
+seem to lag during compilation. This is normal, since all cores are being fully used. If you still want to do other 
+things at the same time, you may wish to reserve one (or maybe even two) cores for other things, so that 
+you can continue to use your computer normally in the meantime.
+
+

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "entity/entity.h"
+#include "entity/matcher.h"
 
 #ifdef Q_COMPILER_INITIALIZER_LISTS
 #include <initializer_list>
@@ -37,6 +38,7 @@ private:
 
     QList<Entity*> entities;
     QMap<QString, QList<Entity*>> componentMap; // maps Component className => list of Entities with that Component
+    QMap<QString, QList<Matcher*>> matchers;
 public:
     /**
      * \brief Returns the global World instance
@@ -64,6 +66,17 @@ public:
      * @brief Returns the amount of entities in this World
      */
     int count();
+
+    /**
+     * \brief Adds a Matcher to this World.
+     * \param m the Matcher to add
+     */
+    void addMatcher(Matcher* m);
+    /**
+     * \brief Removes a Matcher from this World.
+     * \param m the Matcher to remove
+     */
+    void removeMatcher(Matcher* m);
 
 #if defined(Q_COMPILER_INITIALIZER_LISTS) || defined(PG_DOC)
     /**
@@ -115,6 +128,14 @@ public slots:
      * \param e the Entity to delete
      */
     void deleteEntity(Entity* e);
+
+    /**
+     * \brief Processes the Entities.
+     *
+     * This is usually invoked based on a schedule. Manually invoking
+     * this may cause issues.
+     */
+    void processAll();
 };
 
 }

@@ -22,8 +22,6 @@ public class UpdaterRunner implements Runnable {
     
     private final RSVersionInfo info;
     private String updaterServer = null;
-    private int port = -1;
-    private final String checksum;
     
     private boolean profile;
 
@@ -31,19 +29,13 @@ public class UpdaterRunner implements Runnable {
      * Creates a new Updater object
      * @param info the RSVersionInfo
      * @param profile true to profile the updater and print the results, false to disable
-     * @param checksum the MD5 checksum of the client
      */
-    public UpdaterRunner(RSVersionInfo info, boolean profile, String checksum) {
-        if (info == null || checksum == null) {
+    public UpdaterRunner(RSVersionInfo info, boolean profile) {
+        if (info == null) {
             throw new IllegalArgumentException("null");
         }
-        this.checksum = checksum;
         this.info = info;
         this.profile = profile;
-    }
-
-    public String getChecksum() {
-        return checksum;
     }
     
     /**
@@ -51,11 +43,9 @@ public class UpdaterRunner implements Runnable {
      * <p/>
      * If {@code server == null}, the default server will be used
      * @param server the server to connect to
-     * @param port the port to connect to
      */
-    public synchronized void setUpdaterServer(String server, int port) {
+    public synchronized void setUpdaterServer(String server) {
         this.updaterServer = server;
-        this.port = port;
     }
     
     @Override
@@ -73,11 +63,10 @@ public class UpdaterRunner implements Runnable {
             update = new Updater(info);
         } else {
             // we use the custom updater server
-            update = new Updater(info, updaterServer, port);
+            update = new Updater(info, updaterServer);
         }
         
         try {
-            
             byte[] data = update.getData();
             LOGGER.log("Updater data acquired (" + data.length + " bytes)");
             
@@ -90,7 +79,7 @@ public class UpdaterRunner implements Runnable {
             }
             
             // Tell the native code the updater is done
-            signalUpdaterReady(checksum, data);
+            signalUpdaterReady(data);
             
             if (profile) {
                 long timeTaken = System.currentTimeMillis() - timeStarted;
@@ -107,5 +96,5 @@ public class UpdaterRunner implements Runnable {
      * @param checksum the checksum of the client
      * @param data the bytes of the updater data.
      */
-    private native void signalUpdaterReady(String checksum, byte[] data);
+    private static native void signalUpdaterReady(byte[] data);
 }

@@ -32,7 +32,7 @@ using jace::RSClassMapper;
  * net.pgrid.loader.bridge.UpdaterRunner class once it's ready.
  */
 JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
-  (JNIEnv*, jobject, jstring, jbyteArray bytes) {
+  (JNIEnv*, jclass, jbyteArray bytes) {
     RSClassMapper* mapper = RSClassMapper::DefaultInstance();
     if (mapper) {
         mapper->parseData(bytes);
@@ -61,7 +61,7 @@ void UpdaterRunner_registerNatives(JNIEnv* env)
     // The JNINativeMethod struct we need to register
     JNINativeMethod nativeMethod;
     nativeMethod.name = const_cast<char*> ("signalUpdaterReady");
-    nativeMethod.signature = const_cast<char*> ("(Ljava/lang/String;[B)V");
+    nativeMethod.signature = const_cast<char*> ("([B)V");
     nativeMethod.fnPtr = reinterpret_cast<void*>(&Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady);
 
     jint result = env->RegisterNatives(updaterRunner, &nativeMethod, 1);

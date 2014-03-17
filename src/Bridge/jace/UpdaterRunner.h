@@ -34,11 +34,11 @@ extern "C" {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Class:     net.pgrid.loader.bridge.UpdaterRunner
  * Method:    signalUpdaterReady
- * Signature: ()V
+ * Signature: ([B)V
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
-  (JNIEnv *, jobject, jstring, jbyteArray);
+  (JNIEnv *, jclass, jbyteArray);
 
 /**
  * \brief representative namespace for \c net.pgrid.loader.bridge

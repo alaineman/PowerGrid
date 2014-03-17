@@ -18,8 +18,16 @@
  */
 package net.pgrid.loader.bridge;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import net.pgrid.loader.GamepackIdentifier;
 import net.pgrid.loader.RSVersionInfo;
 import net.pgrid.loader.logging.Logger;
 
@@ -29,10 +37,8 @@ import net.pgrid.loader.logging.Logger;
  */
 public class Updater {
     
-    /** The default Updater Server address. */
-    public static final String DEFAULT_SERVER = "205.234.152.103";
-    /** The default Updater Server port. */
-    public static final int DEFAULT_PORT = 6739;
+    /** The default Updater server address. */
+    public static final String DEFAULT_SERVER = "http://pgrid.net/marneus/";
     
     /**
      * The Character set that will be used for all In- and OutputStreams
@@ -47,7 +53,6 @@ public class Updater {
     
     private final RSVersionInfo info;
     private final String server;
-    private final int serverPort;
 
     /**
      * Creates a new ClassMapDownloader instance that acquires updater 
@@ -60,7 +65,6 @@ public class Updater {
         }
         this.info = info;
         server = DEFAULT_SERVER;
-        serverPort = DEFAULT_PORT;
     }
     
     /**
@@ -68,19 +72,16 @@ public class Updater {
      * information for the provided RSVersionInfo object.
      * @param info the RSVersionInfo object
      * @param updaterServer the updater server
-     * @param port the port of the updater server to connect to
      */
-    public Updater(RSVersionInfo info, String updaterServer, int port) {
+    public Updater(RSVersionInfo info, String updaterServer) {
         if (info == null) {
             throw new IllegalArgumentException();
         }
         this.info = info;
-        if (updaterServer != null && port > 0 && port < 65536) {
+        if (updaterServer != null) {
             server = updaterServer;
-            serverPort = port;
         } else {
             server = DEFAULT_SERVER;
-            serverPort = DEFAULT_PORT;
         }
     }
     
@@ -89,8 +90,26 @@ public class Updater {
      * @throws IOException when an I/O error occurred
      */
     public byte[] getData() throws IOException {
-        // We currently have no available updater server, so we can only exit 
-        // directly.
-        return new byte[0];
+        long crc32 = GamepackIdentifier.computeChecksum("cache/client.jar", 
+                info.getEncryptionKey0(), info.getEncryptionKeyM1());
+        // Construct the URL from the CRC
+        URL u = new URL(server + "reflection_cache_" + crc32 + ".xml");
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        WritableByteChannel out = Channels.newChannel(bout);
+        try (InputStream uin = u.openStream()) {
+            ReadableByteChannel in = Channels.newChannel(uin);
+            ByteBuffer buf = ByteBuffer.allocateDirect(16 * 1024); // 16KB
+            while (in.read(buf) != -1) {
+                buf.flip();
+                out.write(buf);
+                buf.compact();
+            }
+            buf.flip();
+            while (buf.hasRemaining()) {
+                out.write(buf);
+            }
+        }
+        LOGGER.log("Updater data acquired");
+        return bout.toByteArray();
     }
 }

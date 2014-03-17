@@ -30,9 +30,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -63,7 +60,6 @@ public class RSDownloader {
      * URL of the Runescape config file. It is set in the constructor.
      */
     private URL configURL;
-    private String checksum = null;
     private RSVersionInfo versionInfo = null;
 
     /**
@@ -90,14 +86,6 @@ public class RSDownloader {
             throw new IllegalArgumentException();
         }
         this.configURL = configURL;
-    }
-
-    /**
-     * Returns the checksum of the client or null if the client has not been downloaded yet.
-     * @return the checksum of the client or null if the client has not been downloaded yet.
-     */
-    public String getChecksum() {
-        return checksum;
     }
 
     /**
@@ -174,37 +162,23 @@ public class RSDownloader {
         if (!cacheDirectory.isDirectory() && cacheDirectory.mkdir()) {
             LOGGER.log("Created cache directory");
         }
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            try (InputStream in = conn.getInputStream();
-                    FileOutputStream out = new FileOutputStream(new File(cacheDirectory, "client.jar"))) {
+        try (InputStream in = conn.getInputStream();
+                FileOutputStream out = new FileOutputStream(new File(cacheDirectory, "client.jar"))) {
 
-                DigestInputStream din = new DigestInputStream(in, md);
+            ReadableByteChannel reader = Channels.newChannel(in);               
+            FileChannel writer = out.getChannel();
 
-                ReadableByteChannel reader = Channels.newChannel(din);               
-                FileChannel writer = out.getChannel();
+            ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
 
-                ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
-
-                while (reader.read(buffer) != -1) {
-                    buffer.flip();
-                    writer.write(buffer);
-                    buffer.compact();
-                }
+            while (reader.read(buffer) != -1) {
                 buffer.flip();
-                while (buffer.hasRemaining()) {
-                    writer.write(buffer);
-                }
+                writer.write(buffer);
+                buffer.compact();
             }
-            byte[] digest = md.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) {
-                sb.append(String.format("%02X ", b&0xFF));
+            buffer.flip();
+            while (buffer.hasRemaining()) {
+                writer.write(buffer);
             }
-            checksum = sb.toString();
-            
-        } catch (NoSuchAlgorithmException e) {
-            throw new AssertionError("MD5 not supported", e);
         }
     }
 

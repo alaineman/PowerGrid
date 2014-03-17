@@ -165,7 +165,7 @@ public class PGLoader {
             }
             getFrame().showMessage("Downloading client...");
             downloader.loadClient();
-            UpdaterRunner updaterRunner = new UpdaterRunner(newVersion, debugMode, downloader.getChecksum());
+            UpdaterRunner updaterRunner = new UpdaterRunner(newVersion, debugMode);
             new Thread(updaterRunner, "PG_updater").start();
         }
         

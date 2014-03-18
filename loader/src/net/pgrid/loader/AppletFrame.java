@@ -22,9 +22,7 @@ import java.applet.Applet;
 import java.applet.AppletContext;
 import java.applet.AppletStub;
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -35,6 +33,7 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import net.pgrid.loader.draw.PGGlassPane;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -104,11 +103,12 @@ public class AppletFrame extends JFrame implements AppletStub {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
         } catch (IOException e) {
             // Since the icon is embedded in the jar file, this should never happen
-            throw new AssertionError(e);
+            throw new AssertionError("Cannot find jar resource", e);
         }
-        
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+        setGlassPane(new PGGlassPane(this));
+        getGlassPane().setVisible(true);
+        
         Insets in = getInsets();
         int bHeight = in.top + in.bottom;
         int bWidth = in.right + in.left;
@@ -158,38 +158,6 @@ public class AppletFrame extends JFrame implements AppletStub {
             return false;
         }
     }
-    
-    /**
-     * Finds and returns the Applet drawing Canvas.
-     * <p/>
-     * If either the Applet is null, or no Canvas is found, this method returns
-     * null.
-     * <p/>
-     * This method is relatively slow, so consider caching the result instead
-     * of calling this method repeatedly.
-     * <p/>
-     * If this method returns null, it does not mean the Runescape Applet is not present
-     * or not running. It merely indicates no Canvas instance was present 
-     * within the Component tree of the Runescape Applet.
-     * <p/>
-     * @return the Applet Canvas, or null if it wasn't found.
-     */
-    public Canvas getCanvas() {
-        if (applet != null) {
-            // We look for a Canvas instance inside the Applet's Component
-            // hierarchy. This makes the Canvas accessible to external 
-            // applications for drawing overlays, for example.
-            synchronized (applet.getTreeLock()) {
-                for (Component c : applet.getComponents()) {
-                    if (c instanceof Canvas) {
-                        return (Canvas) c;
-                    }
-                }
-            }
-        }
-        LOGGER.log("No Canvas found in Applet.");
-        return null;
-    }
 
     /**
      * Shows the given log message in the AppletFrame.
@@ -223,7 +191,13 @@ public class AppletFrame extends JFrame implements AppletStub {
         if (codebase != null) {
             try {
                 return new URL(codebase);
-            } catch (MalformedURLException e) {}
+            } catch (MalformedURLException e) {
+                // This normally never happens, as the codebase was validated when
+                // the client was downloaded. The only reason we don't throw 
+                // AssertionError here is, that we don't want to interfere 
+                // with the running Runescape client.
+                LOGGER.log("[WARNING] Applet requested codebase URL, but the codebase was invalid.");
+            }
         }
         return null;
     }
@@ -237,12 +211,32 @@ public class AppletFrame extends JFrame implements AppletStub {
      * Returns the AppletContext. 
      * <p/>
      * Since the Runescape Applet does not care about this, this method will 
-     * always return {@code null}
+     * always return {@code null}.
      * @return {@code null}
      */
     @Override
     public AppletContext getAppletContext() {
         return null;
     }
+    
+    /**
+     * Sets whether to enable the GlassPane overlay or not.
+     *
+     * Disabling this when the overlay is not used may improve performance or 
+     * responsiveness, while enabling this allows drawing on top of the 
+     * Runescape frame.
+     * 
+     * @param enable true to enable, false to disable
+     */
+    public void setEnableOverlay(boolean enable) {
+        getGlassPane().setVisible(enable);
+    }
+    
+    @Override
+    public PGGlassPane getGlassPane() {
+        // Overriding this here prevents casting it to PGGlassPane later
+        return (PGGlassPane) super.getGlassPane();
+    }
+    
     
 }

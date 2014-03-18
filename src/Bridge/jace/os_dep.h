@@ -188,10 +188,15 @@
 	 * All symbols that aren't local or static are exported by default.
 	 *
 	 */
-  #ifdef JACE_API
-    #undef JACE_API
-  #endif
-  #define JACE_API
+    #ifdef JACE_API
+        #undef JACE_API
+    #endif
+    #define JACE_API
+    #ifdef JACE_PROXY_API
+        #undef JACE_PROXY_API
+    #endif
+    #define JACE_PROXY_API
+
 
 	#define JACE_TEMPLATE_EXTERN
 	#define SUPPORTS_SSTREAM

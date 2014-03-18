@@ -29,6 +29,7 @@
 #ifndef METHODHELPER_H
 #define METHODHELPER_H
 
+#include "jace/os_dep.h"
 #include "jace/RSClassMapper.h"
 #include "jace/RSClass.h"
 #include "jace/JNIException.h"

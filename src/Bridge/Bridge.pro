@@ -412,8 +412,6 @@ HEADERS    += \
     jace/JClassImpl.h \
     jace/JClass.h \
     jace/javacast.h \
-    jace/JArrayHelper.h \
-    jace/JArray.tsd \
     jace/JArray.h \
     jace/JArguments.h \
     jace/ElementProxy.h \
@@ -435,8 +433,7 @@ HEADERS    += \
     jace/JField.tsp \
     jace/JField.tsd \
     jace/javacast.tsp \
-    jace/javacast.tsd \
-    jace/JArray.tsp
+    jace/javacast.tsd
 
 SOURCES    += \
     jace/VmLoader.cpp \
@@ -456,7 +453,6 @@ SOURCES    += \
     jace/JClassImpl.cpp \
     jace/JClass.cpp \
     jace/javacast.cpp \
-    jace/JArrayHelper.cpp \
     jace/JArray.cpp \
     jace/JArguments.cpp \
     jace/ElementProxy.cpp \

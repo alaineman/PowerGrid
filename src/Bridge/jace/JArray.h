@@ -133,7 +133,7 @@ JArray( const JArray& array ) : JObject( 0 ) {
   #endif
 
   if ( length_ == -1 ) {
-    length_ = helper::attach()->getArrayLength( this->getJavaJniArray() );
+    length_ = helper::attach()->GetArrayLength( this->getJavaJniArray() );
   }
 
   return length_;

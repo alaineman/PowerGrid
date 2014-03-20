@@ -34,6 +34,30 @@ int World::count() {
     return entities.count();
 }
 
+void World::addMatcher(Matcher *m) {
+    if (m) {
+        foreach(QString s, m->matchedTypes()) {
+            QMap<QString, QList<Matcher*>>::Iterator it = matchers.find(s);
+            if (it == matchers.end()) {
+                matchers.insert(s, QList<Matcher*>() << m);
+            } else {
+                (*it) << m;
+            }
+        }
+    }
+}
+
+void World::removeMatcher(Matcher *m) {
+    if (m) {
+        foreach(QString s, m->matchedTypes()) {
+            QMap<QString, QList<Matcher*>>::Iterator it = matchers.find(s);
+            if (it != matchers.end()) {
+                (*it).removeOne(m);
+            }
+        }
+    }
+}
+
 #ifdef Q_COMPILER_INITIALIZER_LISTS
 
 Entity* World::createEntity(initializer_list<Component*> comps) {

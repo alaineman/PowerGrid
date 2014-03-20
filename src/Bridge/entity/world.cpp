@@ -17,39 +17,21 @@ World::~World() Q_DECL_NOTHROW {
     }
 }
 
-Entity* World::createEntity() {
-    Entity* e = new Entity();
+void World::addEntity(Entity *e){
     entities << e;
     emit entityCreated(e);
+    connect(e, SIGNAL(componentAdded(Entity*,Component*)),this,SIGNAL(componentAdded(Entity*,Component*)));
+    connect(e, SIGNAL(componentRemoved(Entity*,Component*)),this,SIGNAL(componentRemoved(Entity*,Component*)));
+}
+
+Entity* World::createEntity() {
+    Entity* e = new Entity();
+    addEntity(e);
     return e;
 }
 
 int World::count() {
     return entities.count();
-}
-
-void World::addMatcher(Matcher *m) {
-    if (m) {
-        foreach(QString s, m->matchedTypes()) {
-            QMap<QString, QList<Matcher*>>::Iterator it = matchers.find(s);
-            if (it == matchers.end()) {
-                matchers.insert(s, QList<Matcher*>() << m);
-            } else {
-                (*it) << m;
-            }
-        }
-    }
-}
-
-void World::removeMatcher(Matcher *m) {
-    if (m) {
-        foreach(QString s, m->matchedTypes()) {
-            QMap<QString, QList<Matcher*>>::Iterator it = matchers.find(s);
-            if (it != matchers.end()) {
-                (*it).removeOne(m);
-            }
-        }
-    }
 }
 
 #ifdef Q_COMPILER_INITIALIZER_LISTS

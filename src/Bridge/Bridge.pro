@@ -234,7 +234,9 @@ HEADERS += \
     api/component/speed.h \
     api/component/interaction.h \
     api/component/action.h \
-    entity/matcher.h
+    entity/matcher.h \
+    api/component/transportation.h \
+    entity/mapper.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -386,7 +388,9 @@ SOURCES += \
     api/component/speed.cpp \
     api/component/interaction.cpp \
     api/component/action.cpp \
-    entity/matcher.cpp
+    entity/matcher.cpp \
+    api/component/transportation.cpp \
+    entity/mapper.cpp
 
 HEADERS    += \
     jni.h \

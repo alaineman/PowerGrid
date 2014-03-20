@@ -87,15 +87,17 @@ signals:
 
     /**
      * @brief Signal emitted when a Component has been added
-     * @param the added Component
+     * @param cmp the added Component
+     * @param e the Entity the Component is added to
      */
-    void componentAdded(Component* cmp);
+    void componentAdded(Entity* e, Component* cmp);
 
     /**
      * @brief Signal emitted when a Component has been removed
-     * @param the removed Component
+     * @param cmp the removed Component
+     * @param e the Entity the Component is removed from
      */
-    void componentRemoved(Component* cmp);
+    void componentRemoved(Entity* e, Component* cmp);
 
 public slots:
 

@@ -38,7 +38,6 @@ private:
 
     QList<Entity*> entities;
     QMap<QString, QList<Entity*>> componentMap; // maps Component className => list of Entities with that Component
-    QMap<QString, QList<Matcher*>> matchers;
 public:
     /**
      * \brief Returns the global World instance
@@ -66,17 +65,6 @@ public:
      * @brief Returns the amount of entities in this World
      */
     int count();
-
-    /**
-     * \brief Adds a Matcher to this World.
-     * \param m the Matcher to add
-     */
-    void addMatcher(Matcher* m);
-    /**
-     * \brief Removes a Matcher from this World.
-     * \param m the Matcher to remove
-     */
-    void removeMatcher(Matcher* m);
 
 #if defined(Q_COMPILER_INITIALIZER_LISTS) || defined(PG_DOC)
     /**
@@ -107,6 +95,10 @@ signals:
      * @param e the newly created Entity.
      */
     void entityCreated(Entity* e);
+
+    void componentAdded(Entity* e, Component* c);
+
+    void componentRemoved(Entity* e, Component* c);
 
     /**
      * \brief signal emitted when processing of Entities has started

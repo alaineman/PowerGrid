@@ -106,15 +106,9 @@ void RSClassMapper::parseData(jbyteArray data) {
         QString currentClass;
         QString fieldName;
         bool readModifier = false;
-<<<<<<< HEAD
         bool stop = false;
         uint nFields = 0;
         uint nClasses = 0;
-=======
-        bool stop = true;
-
-        uint classCount = 0, fieldCount = 0;
->>>>>>> 9ee578d99b30531626e568faa299736a49a1d0a1
         while (!stop && !reader.atEnd()) {
             reader.readNext();
             switch (reader.tokenType()) {
@@ -131,14 +125,9 @@ void RSClassMapper::parseData(jbyteArray data) {
                                     reader.attributes().value("className").toString());
                     fieldMap.insert(currentClass, QMap<QString, QString>());
                     modifiers.insert(currentClass, QMap<QString, jlong>());
-<<<<<<< HEAD
                     nClasses++;
-=======
-                    classCount++;
->>>>>>> 9ee578d99b30531626e568faa299736a49a1d0a1
                 } else {
                     fieldName = reader.name().toString();
-                    fieldCount++;
                 }
                 break;
             case QXmlStreamReader::EndElement:
@@ -169,7 +158,6 @@ void RSClassMapper::parseData(jbyteArray data) {
                 break;
             }
         }
-        qDebug() << "Parsed" << fieldCount << "fields in" << classCount << "classes";
         if (reader.hasError()) {
             throw JNIException("Error parsing XML file: " + reader.errorString());
         } else {

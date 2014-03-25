@@ -108,6 +108,10 @@ signals:
      */
     void entityCreated(Entity* e);
 
+    void componentAdded(Entity* e, Component* c);
+
+    void componentRemoved(Entity* e, Component* c);
+
     /**
      * \brief signal emitted when processing of Entities has started
      */

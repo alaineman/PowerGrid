@@ -39,11 +39,11 @@ void Entity::addComponent(Component *cmp, bool overwrite) {
         Component* orig = get(cmp->metaObject()->className());
         if (overwrite && orig != NULL) {
             components.remove(cmp->metaObject()->className());
-            emit componentRemoved(orig);
+            emit componentRemoved(this, orig);
         }
         if (overwrite || orig == NULL) {
             components.insert(cmp->metaObject()->className(), cmp);
-            emit componentAdded(cmp);
+            emit componentAdded(this, cmp);
         }
     }
 }
@@ -52,7 +52,7 @@ void Entity::removeComponent(Component *cmp) {
     if (cmp != NULL)  {
         int result = components.remove(cmp->metaObject()->className());
         if (result > 0) {
-            emit componentRemoved(cmp);
+            emit componentRemoved(this, cmp);
         }
     }
 }

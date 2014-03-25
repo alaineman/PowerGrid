@@ -9,8 +9,8 @@ Matcher::Matcher(World *world) : QObject(world) {
     }
 
     // Connect to the specified World.
-    connect(world, SIGNAL(processingStarted), this, SLOT(beforeProcessing));
-    connect(world, SIGNAL(processingFinished), this, SLOT(afterProcessing));
+    connect(world, SIGNAL(processingStarted()), this, SLOT(beforeProcessing()));
+    connect(world, SIGNAL(processingFinished()), this, SLOT(afterProcessing()));
 }
 
 QList<QString> Matcher::matchedTypes() const {

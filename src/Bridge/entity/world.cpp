@@ -17,10 +17,16 @@ World::~World() Q_DECL_NOTHROW {
     }
 }
 
-Entity* World::createEntity() {
-    Entity* e = new Entity();
+void World::addEntity(Entity *e){
     entities << e;
     emit entityCreated(e);
+    connect(e, SIGNAL(componentAdded(Entity*,Component*)),this,SIGNAL(componentAdded(Entity*,Component*)));
+    connect(e, SIGNAL(componentRemoved(Entity*,Component*)),this,SIGNAL(componentRemoved(Entity*,Component*)));
+}
+
+Entity* World::createEntity() {
+    Entity* e = new Entity();
+    addEntity(e);
     return e;
 }
 

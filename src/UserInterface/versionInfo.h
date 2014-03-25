@@ -19,7 +19,7 @@
 #ifndef VERSIONINFO_H
 #define VERSIONINFO_H
 
-/// The name of PowerGrid as a QString literal
+/// The name of PowerGrid as a string literal
 #define PG_NAME_STR "PowerGrid"
 
 

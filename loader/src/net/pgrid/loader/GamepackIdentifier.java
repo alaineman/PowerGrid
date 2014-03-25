@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -114,16 +115,16 @@ public class GamepackIdentifier {
 
         while (keyPos < skLength) {
             int unscrambledChar = lookup(param0.charAt(keyPos));
-            var12 = skLength <= keyPos + 1 ? -1 : lookup(param0.charAt(keyPos + 1));
-            var13 = keyPos + 2 < skLength ? lookup(param0.charAt(2 + keyPos)) : -1;
-            var14 = 3 + keyPos < skLength ? lookup(param0.charAt(3 + keyPos)) : -1;
+            var12 = keyPos + 1 < skLength ? lookup(param0.charAt(keyPos + 1)) : -1;
+            var13 = keyPos + 2 < skLength ? lookup(param0.charAt(keyPos + 2)) : -1;
+            var14 = keyPos + 3 < skLength ? lookup(param0.charAt(keyPos + 3)) : -1;
             skBytes[bytePos++] = (byte) (unscrambledChar << 2 | var12 >>> 4);
             if (var13 == -1) {
                 break;
             }
 
             skBytes[bytePos++] = (byte) ((var12 & 15) << 4 | var13 >>> 2);
-            if (~var14 == 0) {
+            if (var14 == -1) {
                 break;
             }
 
@@ -203,6 +204,7 @@ public class GamepackIdentifier {
                 try {
                     bytesRead = encryptedClient.read(tempData, streamIndex, 5242880 - streamIndex);
 
+                    // FIXME this fails if client size > 5242880 bytes
                     while (bytesRead != -1) {
                         streamIndex += bytesRead;
                         bytesRead = encryptedClient.read(tempData, streamIndex, 5242880 - streamIndex);
@@ -211,12 +213,13 @@ public class GamepackIdentifier {
                     LOGGER.log("I/O error reading inner.pack.gz", iox);
                 }
             }
-            byte[] var53 = new byte[streamIndex];
-            System.arraycopy(tempData, 0, var53, 0, streamIndex);
+            byte[] trimmedData = new byte[streamIndex];
+            System.arraycopy(tempData, 0, trimmedData, 0, streamIndex);
 
-            byte[] decipheredData = cipher.doFinal(var53);
+            byte[] decipheredData = cipher.doFinal(trimmedData);
             Unpacker jarUnpacker = Pack200.newUnpacker();
             encryptedClient.close();
+            
             // TODO try to not save it in between, this costs a lot of time.
             File file = new File("cache/temp.jar");
             try (JarOutputStream decryptedClient = new JarOutputStream(new FileOutputStream(file))) {
@@ -227,6 +230,7 @@ public class GamepackIdentifier {
             }
             long crc = getCRC32("cache/temp.jar");
             LOGGER.log("CRC32 Computed. Result: " + crc);
+            Files.delete(new File("cache/temp.jar").toPath());
             return crc;
         } catch (IOException e) {
             LOGGER.log("I/O error: ", e);

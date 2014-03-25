@@ -68,6 +68,7 @@ QMap<QString, jlong> RSClassMapper::getModifierMap(QString className) const {
 QString RSClassMapper::getRealName(QString semanticName) const {
     QMap<QString, QString>::const_iterator it = classMap.find(semanticName);
     if (it == classMap.end()) {
+
         throw MappingUnavailableException("class " + semanticName);
     }
     return it.value();
@@ -105,7 +106,9 @@ void RSClassMapper::parseData(jbyteArray data) {
         QString currentClass;
         QString fieldName;
         bool readModifier = false;
-        bool stop = true;
+        bool stop = false;
+        uint nFields = 0;
+        uint nClasses = 0;
         while (!stop && !reader.atEnd()) {
             reader.readNext();
             switch (reader.tokenType()) {
@@ -122,6 +125,7 @@ void RSClassMapper::parseData(jbyteArray data) {
                                     reader.attributes().value("className").toString());
                     fieldMap.insert(currentClass, QMap<QString, QString>());
                     modifiers.insert(currentClass, QMap<QString, jlong>());
+                    nClasses++;
                 } else {
                     fieldName = reader.name().toString();
                 }
@@ -145,6 +149,7 @@ void RSClassMapper::parseData(jbyteArray data) {
                         qDebug() << "Cannot convert" << currentClass << fieldName << "modifier" << reader.text() << "to long";
                     }
                 } else {
+                    nFields++;
                     fieldMap.find(currentClass).value()
                             .insert(fieldName, reader.name().toString());
                 }
@@ -155,6 +160,8 @@ void RSClassMapper::parseData(jbyteArray data) {
         }
         if (reader.hasError()) {
             throw JNIException("Error parsing XML file: " + reader.errorString());
+        } else {
+            qDebug() << "Read" << nClasses << "classes with" << nFields << "fields in total";
         }
     }
 }

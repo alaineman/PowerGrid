@@ -68,7 +68,7 @@ public:
      */
     JACE_PROXY_API JInt getTransferred();
 
-    //Missing getSlot?
+    //FIXME Missing getSlot?
 
 private:
     DECLARE_FRIENDS

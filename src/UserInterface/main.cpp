@@ -164,10 +164,12 @@ int main(int argc, char** argv) {
     }
 
     qDebug() << "JVM started, creating control panel";
+
     // The JVM is started and is running, now create our
     // PowerGrid Qt Application and frame.
     QApplication app (argc, argv);
     app.setApplicationName(PG_NAME_STR);
+    app.setApplicationVersion(PG_VERSION_STR);
     MainWindow window;
     window.show();
     window.setJVMVersion(jace::helper::getJavaProperty("java.version"));

@@ -64,9 +64,10 @@ public:
      *
      * If no binding for the given name exists, a MappingUnavailableException
      * is thrown with the requested class name as message. This means that in
-     * places where this is (either directly or indirectly) used,
+     * places where this is (either directly or indirectly) used, exceptions
+     * of this type should be caught and handled appropriately.
      *
-     * @return a pointer to the created \c RSClass.
+     * @return a pointer to the \c RSClass.
      * @throws MappingUnavailableException when the name cannot be mapped
      */
     JACE_API RSClass* getRSClass(QString name);
@@ -76,12 +77,11 @@ public:
      *
      * The provided @c jbytearray is parsed as XML to
      * read the mapping data. The parsed data is stored in this
-     * RSClassMapper for later retrieval using @c getRSClass(QString name)
+     * RSClassMapper for later retrieval using @c getRSClass(QString name).
      * @param data the java byte array containing the data
      */
     JACE_API void parseData(jbyteArray data);
 private:
-    /// Why keep these private? They may be useful for quick lookups
     JACE_API QMap<QString, QString> getFieldMap(QString className) const;
     JACE_API QMap<QString, jlong> getModifierMap(QString className) const;
     JACE_API QString getRealName(QString semanticName) const;

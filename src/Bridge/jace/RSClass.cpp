@@ -43,7 +43,7 @@ const QString &RSClass::getSimpleName() const {
 string RSClass::getFieldName(QString name) const {
     QMap<QString, QString>::const_iterator it = fieldMap.find(name);
     if (it == fieldMap.cend()) {
-        throw MappingUnavailableException(simpleName + name);
+        throw MappingUnavailableException(simpleName + "." + name);
     }
     return it.value().toStdString();
 }

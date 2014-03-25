@@ -84,6 +84,6 @@ void MainWindow::updateFPS() {
             ui->fps->setText(QStringLiteral("ERR: Client is null"));
         }
     } catch (jace::JNIException& e) {
-        ui->fps->setText(QStringLiteral("ERR: Client class missing"));
+        ui->fps->setText(QStringLiteral("ERR: ") + e.what());
     }
 }

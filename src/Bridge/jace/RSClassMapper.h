@@ -80,11 +80,16 @@ public:
      * RSClassMapper for later retrieval using @c getRSClass(QString name).
      * @param data the java byte array containing the data
      */
-    JACE_API void parseData(jbyteArray data);
+    JACE_API void parseData(jbyteArray data) throw(JNIException);
 private:
-    JACE_API QMap<QString, QString> getFieldMap(QString className) const;
-    JACE_API QMap<QString, jlong> getModifierMap(QString className) const;
-    JACE_API QString getRealName(QString semanticName) const;
+    QMap<QString, QString> getFieldMap(QString className) const;
+    QMap<QString, jlong> getModifierMap(QString className) const;
+    QString getRealName(QString semanticName) const;
+
+    // Helper functions for the parser
+    int parseClass(QXmlStreamReader *reader) throw(JNIException);
+    void parseField(QXmlStreamReader *reader, QString className) throw(JNIException);
+    void parseModifier(QXmlStreamReader *reader, QString className, QString fieldName) throw(JNIException);
 };
 
 }

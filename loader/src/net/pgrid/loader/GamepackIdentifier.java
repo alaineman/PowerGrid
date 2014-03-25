@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -230,7 +229,7 @@ public class GamepackIdentifier {
             }
             long crc = getCRC32("cache/temp.jar");
             LOGGER.log("CRC32 Computed. Result: " + crc);
-            Files.delete(new File("cache/temp.jar").toPath());
+            //Files.delete(new File("cache/temp.jar").toPath());
             return crc;
         } catch (IOException e) {
             LOGGER.log("I/O error: ", e);

@@ -35,7 +35,11 @@ JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterR
   (JNIEnv*, jclass, jbyteArray bytes) {
     RSClassMapper* mapper = RSClassMapper::DefaultInstance();
     if (mapper) {
-        mapper->parseData(bytes);
+        try {
+            mapper->parseData(bytes);
+        } catch (const JNIException& ex) {
+            qWarning() << "Cannot parse Updater data:" << ex.what();
+        }
     } else {
         qWarning() << "Cannot parse Updater data: mapper does not exist";
     }

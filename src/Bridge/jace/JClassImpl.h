@@ -32,9 +32,12 @@ public:
  *
  * For example, "Ljava/lang/Object;"
  *
+ * @param cls - the jclass reference, default @c NULL. If this is
+ *      @c NULL, the jclass will be loaded as required by the JVM.
+ *      Otherwise, the provided @c jclass is used.
+ *
  */
-JACE_API JClassImpl( const std::string name, const std::string nameAsType );
-
+JACE_API JClassImpl(const std::string name, const std::string nameAsType , jclass cls = NULL);
 
 /**
  * Creates a new JClassImpl with the given name.
@@ -57,15 +60,18 @@ JACE_API JClassImpl( const std::string name, const std::string nameAsType );
  *
  *  JClassImpl( "java/lang/String", "Ljava/lang/String;" );
  *
+ * @param cls - the jclass reference, default @c NULL. If this is
+ *      @c NULL, the jclass will be loaded as required by the JVM.
+ *      Otherwise, the provided @c jclass is used.
+ *
  */
-JACE_API JClassImpl( const std::string name );
+JACE_API JClassImpl(const std::string name , jclass cls = NULL);
 
 /**
  * Destroys this JClassImpl.
  *
  */
 JACE_API virtual ~JClassImpl() throw ();
-
 
 /**
  * Returns the name of this class. suitable for use in a call to
@@ -91,7 +97,7 @@ JACE_API virtual const std::string& getNameAsType() const;
  * Returns the JNI representation of this class.
  *
  */
-JACE_API virtual jclass getClass() const throw ( ::jace::JNIException );
+JACE_API virtual jclass getClass() const throw ( jace::JNIException );
 
 
 /**

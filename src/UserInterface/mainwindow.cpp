@@ -75,15 +75,21 @@ void MainWindow::setJVMVersion(QString version) {
  * periodically.
  */
 void MainWindow::updateFPS() {
+    static bool thrown = false;
     try {
         api::bridge::Client c = api::bridge::Client::getClient();
         if (!c.isNull()) {
+            jace::helper::printClass(c.getJavaJniObject());
             JInt fpsValue = c.getFPS();
             ui->fps->setText(QString::number(fpsValue.getInt()));
         } else {
             ui->fps->setText(QStringLiteral("ERR: Client is null"));
         }
     } catch (jace::JNIException& e) {
+        if (!thrown) {
+            thrown = true;
+            qDebug() << e.what();
+        }
         ui->fps->setText(QStringLiteral("ERR: ") + e.what());
     }
 }

@@ -29,7 +29,7 @@ QT       -= gui
 
 TARGET = PluginFramework
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += staticlib thread c++
 
 SOURCES += \
     task.cpp \

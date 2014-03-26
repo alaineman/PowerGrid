@@ -47,13 +47,19 @@ class RSClass : public jace::JClassImpl {
     QMap<QString, jlong> modifierMap;
   public:
     /**
-     * @brief Creates a new RSClass instance from the provided data
-     * @param name the real (obfuscated) name of the class
-     * @param simpleName the simple name of the class
-     * @param fMap the map with field names
-     * @param mMap the map with modifer values
+     * @brief Creates a new RSClass with the given name and type name.
+     *
+     * @param name - The name of this class, suitable for use in
+     *               a call to JNIEnv::FindClass.
+     * @param simpleName - the simple (semantic) name of the RSClass
+     * @param fMap - a Map with field mappings for the class.
+     * @param mMap - a Map with multiplier mappings for the class
+     * @param cls [optional] the jclass reference to be used with the JNI
+     *          Actually, in case of the Runescape client, this is required
+     *          because JNI cannot properly resolve RS client class names due to
+     *          the way they are loaded (through a custom ClassLoader).
      */
-    JACE_API RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, jlong> mMap);
+    JACE_API RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, jlong> mMap, jclass cls = NULL);
     JACE_API virtual ~RSClass() throw() {}
 
     /**

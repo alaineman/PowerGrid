@@ -202,6 +202,15 @@ public class PGLoader {
             long timePassed = System.currentTimeMillis() - startTime;
             LOGGER.log("Total startup time: " + (timePassed/1000d) + 's');
         }
+        
+        // This class is always named the same, so...
+        Class<?> clientClass = null;
+        while (clientClass == null) {
+            clientClass = Agent.findClass("client");
+        }
+        ClassLoader clientClassLoader = clientClass.getClassLoader();
+        RSClassLoader.INSTANCE.provideClassLoader(clientClassLoader);
+        out.println("Found Client ClassLoader: " + clientClassLoader.getClass().getName());
     }
     
     /**
@@ -280,6 +289,4 @@ public class PGLoader {
             }
         }
     }
-    
-    
 }

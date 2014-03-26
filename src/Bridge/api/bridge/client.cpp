@@ -48,16 +48,38 @@
 #include "cache.h"
 #include "server.h"
 
+#include "jace/RSClassMapper.h"
+
 // Work in the correct namespace (api::native for all RS proxies)
 namespace api {
 namespace bridge {
+
+using jace::RSClassMapper;
 
 // framework macros (required for all proxy classes)
 IMPL_JACE_CONSTRUCTORS(Client)
 IMPL_RSCLASS_GET(Client)
 
-// static fields, sorted A-Z
-IMPL_STATIC_OBJECT_METHOD(Client, getClient, Client)
+// Client::getClient() needs special attention since it's static.
+// Also see jace/RSClassMapper.h
+//Client Client::getClient() {
+//    JNIEnv* env = jace::helper::attach();
+//    RSClassMapper* rscm = RSClassMapper::DefaultInstance();
+//    QString clsName = rscm->getStaticFieldClass("getClient");
+//    std::string fldName = rscm->getStaticFieldName("getClient").toStdString();
+//    jclass cls = rscm->getClass(clsName);
+//    if (cls == NULL) {
+//        throw jace::JNIException("static class: " + clsName);
+//    }
+//    jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "Lclient;");
+//    if (field == 0) {
+//        throw jace::JNIException("static field " + fldName);
+//    }
+//    jobject obj = env->GetStaticObjectField(cls, field);
+//    Client result (obj);
+//    return result;
+//}
+IMPL_STATIC_OBJECT_FIELD(Client, getClient, Client)
 
 // virtual fields, organized by first character
 IMPL_OBJECT_METHOD(Client, getCamera, Camera)
@@ -72,7 +94,9 @@ IMPL_PRIMITIVE_METHOD(Client, getDestinationX, JInt)
 IMPL_PRIMITIVE_METHOD(Client, getDestinationY, JInt)
 IMPL_OBJECT_METHOD(Client, getDetailInfoNode, DetailInfoNode)
 
-IMPL_PRIMITIVE_METHOD(Client, getFPS, JInt)
+//IMPL_PRIMITIVE_METHOD(Client, getFPS, JInt)
+IMPL_STATIC_INT_FIELD(Client, getFPS)
+
 IMPL_OBJECT_METHOD(Client, getFacade, Facade)
 IMPL_PRIMITIVE_METHOD(Client, getFrameTime, JInt)
 IMPL_ARRAY_METHOD(Client, getFriendsList, Friend)

@@ -12,8 +12,6 @@
 
 namespace jace {
 
-class Peer;
-
 /**
  * A namespace for helper functions which make it easier to
  * use the JNI API.
@@ -181,12 +179,6 @@ JACE_API void enlist( ::jace::JFactory* factory );
  * 
  */
 JACE_API void catchAndThrow();
-
-/**
- * Returns the Peer for a given java Peer.
- *
- */
-JACE_API Peer* getPeer( jobject jPeer );
 
 /**
  * Returns the ClassLoader being used by the current thread.

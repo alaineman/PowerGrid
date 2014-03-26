@@ -69,7 +69,6 @@ QMap<QString, jlong> RSClassMapper::getModifierMap(QString className) const {
 QString RSClassMapper::getRealName(QString semanticName) const {
     QMap<QString, QString>::const_iterator it = classMap.find(semanticName);
     if (it == classMap.end()) {
-
         throw MappingUnavailableException("class " + semanticName);
     }
     return it.value();
@@ -78,20 +77,49 @@ QString RSClassMapper::getRealName(QString semanticName) const {
 RSClass* RSClassMapper::getRSClass(QString name) {
     QMap<QString, RSClass*>::const_iterator it = classes.find(name);
     if (it == classes.cend()) {
-        RSClass* rsc = new RSClass(getRealName(name).toStdString(), name, getFieldMap(name), getModifierMap(name));
+        QString realName = getRealName(name);
+        RSClass* rsc = new RSClass(realName.toStdString(),
+                                   name,
+                                   getFieldMap(name),
+                                   getModifierMap(name),
+                                   getClass(realName));
         classes.insert(name, rsc);
         // We delete the references from the maps to prevent redundancy
         classMap.remove(name);
         fieldMap.remove(name);
         modifiers.remove(name);
-        qDebug() << "Linked RS class:" << name;
+        qDebug() << "Linked RS class:" << qPrintable(name);
         return rsc;
     } else {
         return it.value();
     }
 }
 
-// FIXME: this never gets called when the client is not updated...
+QString RSClassMapper::getStaticFieldClass(QString fieldName) const {
+    QString className = staticClassMap.value(fieldName);
+    if (className.isEmpty()) {
+        throw MappingUnavailableException("class of static field " + fieldName);
+    }
+    return className;
+}
+
+QString RSClassMapper::getStaticFieldName(QString fieldName) const {
+    QString name = staticFieldMap.value(fieldName);
+    if (name.isEmpty()) {
+        throw MappingUnavailableException("static field " + fieldName);
+    }
+    return name;
+}
+
+jlong RSClassMapper::getStaticFieldModifier(QString fieldName) const {
+    QMap<QString, jlong>::ConstIterator it = staticModifierMap.find(fieldName);
+    if (it == staticModifierMap.cend()) {
+        return 1;
+    } else {
+        return it.value();
+    }
+}
+
 void RSClassMapper::parseData(jbyteArray data) throw(JNIException) {
     if (data == NULL) {
         throw JNIException("Received NULL jbyteArray as map data");
@@ -160,19 +188,20 @@ int RSClassMapper::parseClass(QXmlStreamReader* reader) throw(JNIException) {
     if (mappedClassName.isEmpty()) {
         throw JNIException("Missing \"classname\" attribute for class " + className.toString());
     }
+    bool isStatic = false;
     if (className == mappedClassName && className != "client") {
-        // For now, we ignore this type of classes
-        // These classes actually have static fields we may be able to use,
-        // but these are not accessible at the moment, so we skip them.
-        reader->skipCurrentElement();
-        return 0;
+        // These classes have static references we might need, so we need to treat them
+        // differently.
+        isStatic = true;
     }
     // prepare all map entries for this RS class
     QString cName = className.toString();
     //qDebug() << cName;
-    classMap.insert(cName, mappedClassName.toString());
-    fieldMap.insert(cName, QMap<QString, QString>());
-    modifiers.insert(cName, QMap<QString, jlong>());
+    if (!isStatic) {
+        classMap.insert(cName, mappedClassName.toString());
+        fieldMap.insert(cName, QMap<QString, QString>());
+        modifiers.insert(cName, QMap<QString, jlong>());
+    }
     int nFields = 0;
 
     while (!reader->atEnd()) {
@@ -186,7 +215,7 @@ int RSClassMapper::parseClass(QXmlStreamReader* reader) throw(JNIException) {
                 throw JNIException("[class] Undetermined Error parsing XML");
             }
         case QXmlStreamReader::StartElement:
-            parseField(reader, cName);
+            parseField(reader, cName, isStatic);
             nFields++;
             break;
         case QXmlStreamReader::EndElement:
@@ -202,7 +231,7 @@ int RSClassMapper::parseClass(QXmlStreamReader* reader) throw(JNIException) {
     return nFields;
 }
 
-void RSClassMapper::parseField(QXmlStreamReader *reader, QString className) throw(JNIException) {
+void RSClassMapper::parseField(QXmlStreamReader *reader, QString className, bool isStatic) throw(JNIException) {
     QString fieldName = reader->name().toString();
     //qDebug() << " ->" << fieldName;
 
@@ -218,7 +247,7 @@ void RSClassMapper::parseField(QXmlStreamReader *reader, QString className) thro
             }
         case QXmlStreamReader::StartElement:
             if (reader->name() == "multiplier") {
-                parseModifier(reader, className, fieldName);
+                parseModifier(reader, className, fieldName, isStatic);
             }
             break;
         case QXmlStreamReader::EndElement:
@@ -232,14 +261,21 @@ void RSClassMapper::parseField(QXmlStreamReader *reader, QString className) thro
             if (fieldName.isEmpty()) {
                 throw JNIException("[field] Cannot map an empty field name");
             }
-            QMap<QString, QString> map = fieldMap.value(className);
-            map.insert(fieldName, reader->text().toString());
+            if (isStatic) {
+                staticClassMap.insert(fieldName, className);
+                staticFieldMap.insert(fieldName, reader->text().toString());
+            } else {
+                QMap<QString, QString> map = fieldMap.value(className);
+                map.insert(fieldName, reader->text().toString());
+            }
+            break;
+        default:
             break;
         }
     }
 }
 
-void RSClassMapper::parseModifier(QXmlStreamReader *reader, QString className, QString fieldName) throw(JNIException) {
+void RSClassMapper::parseModifier(QXmlStreamReader *reader, QString className, QString fieldName, bool isStatic) throw(JNIException) {
     while (!reader->atEnd()) {
         reader->readNext();
         switch(reader->tokenType()) {
@@ -262,17 +298,48 @@ void RSClassMapper::parseModifier(QXmlStreamReader *reader, QString className, Q
                 throw JNIException("[mod] Unexpected end element: " + reader->name().toString());
             }
         case QXmlStreamReader::Characters:
-            // This is the actual modifier value
-            bool ok = true;
-            long mod = reader->text().toLong(&ok);
-            if (!ok) {
-                throw JNIException("[mod] Cannot convert text \"" + reader->text().toString() + "\" to long");
+            {// This is the actual modifier value
+                bool ok = true;
+                long mod = reader->text().toLong(&ok);
+                if (!ok) {
+                    throw JNIException("[mod] Cannot convert text \"" + reader->text().toString() + "\" to long");
+                }
+                if (isStatic) {
+                    staticModifierMap.insert(fieldName, mod);
+                } else {
+                    QMap<QString, jlong> map = modifiers.value(className);
+                    map.insert(fieldName, mod);
+                }
             }
-            QMap<QString, jlong> map = modifiers.value(className);
-            map.insert(fieldName, mod);
+            break;
+        default:
             break;
         }
     }
+}
+
+jclass RSClassMapper::getClass(QString name) {
+    JNIEnv* env = jace::helper::attach();
+    const char* cName = name.toUtf8().constData();
+    jclass classLoaderClass = env->FindClass("net/pgrid/loader/RSClassLoader");
+    if (! classLoaderClass) throw JNIException("RSClassLoader not found");
+    jstring cNameStr = env->NewStringUTF(cName);
+    if (! cNameStr) throw JNIException("Cannot create java String");
+    jfieldID instance = env->GetStaticFieldID(classLoaderClass, "INSTANCE", "Lnet/pgrid/loader/RSClassLoader;");
+    if (! instance) throw JNIException("Cannot find INSTANCE in RSClassLoader");
+    jmethodID getClass = env->GetMethodID(classLoaderClass, "findClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+    if (! getClass) throw JNIException("Cannot find getClass(String) in RSClassLoader");
+
+    jobject classLoader = env->GetStaticObjectField(classLoaderClass, instance);
+    if (! classLoader) throw JNIException("Cannot get ClassLoader");
+    jobject rsClass = env->CallObjectMethod(classLoader, getClass, cNameStr);
+    if (! rsClass) throw JNIException("Cannot find RS Class named " + name);
+
+    env->DeleteLocalRef(cNameStr);
+    env->DeleteLocalRef(classLoader);
+    env->DeleteLocalRef(classLoaderClass);
+
+    return static_cast<jclass>(rsClass);
 }
 
 }

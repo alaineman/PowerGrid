@@ -22,18 +22,12 @@
 using std::string;
 
 namespace jace {
-/**
- * Creates a new RSClass with the given name and type name.
- *
- * @param name - The name of this class, suitable for use in
- *               a call to JNIEnv::FindClass.
- * @param simpleName the simple (semantic) name of the RSClass
- */
-RSClass::RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, jlong> mMap) :
-  JClassImpl(name),
+
+RSClass::RSClass(const string name, const QString simpleName, QMap<QString, QString> fMap, QMap<QString, jlong> mMap, jclass cls) :
+  JClassImpl(name, cls),
   simpleName (simpleName),
   fieldMap (fMap),
-  modifierMap (mMap ) {
+  modifierMap (mMap) {
 }
 
 const QString &RSClass::getSimpleName() const {

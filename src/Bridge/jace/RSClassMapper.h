@@ -42,9 +42,18 @@ private:
 
     QMap<QString, QString> classMap;                // semanticClassName => realClassName
     QMap<QString, QMap<QString, QString>> fieldMap; // semanticClassName => ( semanticFieldName => realFieldName )
-    QMap<QString, QMap<QString, jlong>> modifiers;    // semanticClassName => ( semanticFieldName => modifier value )
+    QMap<QString, QMap<QString, jlong>> modifiers;  // semanticClassName => ( semanticFieldName => modifier value )
 
     QMap<QString, RSClass*> classes;                // semanticClassname => RSClass representative
+
+    // static fields may be stored in different classes between distributions,
+    // so we need to remember in which classes the static references are.
+    // For this purpose, we assume static field names are unique, and
+    // map both the actual field name, as well as the class in which the
+    // field is stored.
+    QMap<QString, QString> staticClassMap;          // [static] semanticFieldName => realClassName
+    QMap<QString, QString> staticFieldMap;          // [static] semanticFieldName => realFieldName
+    QMap<QString, jlong> staticModifierMap;         // [static] semanticFieldName => modifier value
 public:
     /**
      * @brief Returns the global RSClassMapper instance.
@@ -72,6 +81,13 @@ public:
      */
     JACE_API RSClass* getRSClass(QString name);
 
+    JACE_API QString getStaticFieldClass(QString fieldName) const;
+    JACE_API QString getStaticFieldName(QString fieldName) const;
+    JACE_API jlong getStaticFieldModifier(QString fieldName) const;
+
+    JACE_API jclass getClass(QString name);
+    JACE_API QString getRealName(QString semanticName) const;
+
     /**
      * @brief Parses the provided data
      *
@@ -84,12 +100,12 @@ public:
 private:
     QMap<QString, QString> getFieldMap(QString className) const;
     QMap<QString, jlong> getModifierMap(QString className) const;
-    QString getRealName(QString semanticName) const;
+
 
     // Helper functions for the parser
     int parseClass(QXmlStreamReader *reader) throw(JNIException);
-    void parseField(QXmlStreamReader *reader, QString className) throw(JNIException);
-    void parseModifier(QXmlStreamReader *reader, QString className, QString fieldName) throw(JNIException);
+    void parseField(QXmlStreamReader *reader, QString className, bool isStatic) throw(JNIException);
+    void parseModifier(QXmlStreamReader *reader, QString className, QString fieldName, bool isStatic) throw(JNIException);
 };
 
 }

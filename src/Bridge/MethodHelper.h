@@ -35,6 +35,7 @@
 #include "jace/JNIException.h"
 #include "jace/JArray.h"
 #include "jace/JField.h"
+#include "jace/MappingUnavailableException.h"
 #include <QList>
 
 /*!
@@ -69,10 +70,10 @@
 #define IMPL_JACE_CONSTRUCTORS(name) \
     name::name() : JObject(NoOp()) {}\
     name::name(const name& obj) : JObject(NoOp()), java::lang::Object(obj) {}\
-    name::name(jobject obj) {\
+    name::name(jobject obj) : JObject(NoOp()) {\
         setJavaJniObject(obj);\
     }\
-    name::name(jvalue val) {\
+    name::name(jvalue val) : JObject(NoOp()) {\
         setJavaJniValue(val);\
     }\
     name& name::operator =(const name& other) {\
@@ -86,12 +87,12 @@
  * please use \c IMPL_JACE_CONSTRUCTORS instead.
  */
 #define IMPL_JACE_CONSTRUCTORS_SUPERTYPE(name, superType) \
-name::name() {}\
+name::name() : JObject(NoOp()) {}\
 name::name(const name& obj) : JObject(NoOp()), superType(obj) {}\
-name::name(jobject obj) {\
+name::name(jobject obj) : JObject(NoOp()) {\
     setJavaJniObject(obj);\
 }\
-name::name(jvalue val) {\
+name::name(jvalue val) : JObject(NoOp()) {\
     setJavaJniValue(val);\
 }\
 name& name::operator =(const name& other) {\
@@ -113,16 +114,6 @@ JACE_PROXY_API const jace::RSClass* name::getJavaJniClass() const throw(jace::JN
 }
 
 /*!
- * \brief Implements a static proxy method.
- * The method does NOT apply any modifier to the return value.
- */
-#define IMPL_STATIC_OBJECT_METHOD(className, name, returnType) \
-JACE_PROXY_API returnType className::name() {\
-    const jace::RSClass* rsc = staticGetJavaJniClass();\
-    returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).getReadOnly(rsc);\
-    return result;\
-}
-/*!
  * \brief Implements a proxy method.
  * The method does NOT apply any modifier to the return value.
  */
@@ -132,16 +123,7 @@ JACE_PROXY_API returnType className::name() {\
     returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).getReadOnly(*this);\
     return result;\
 }
-/*!
- * \brief Implements a static proxy method.
- * The method applies a modifier (if any) to the return value.
- */
-#define IMPL_STATIC_PRIMITIVE_METHOD(className, name, returnType) \
-JACE_PROXY_API returnType className::name() {\
-    const jace::RSClass* rsc = staticGetJavaJniClass();\
-    returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).getReadOnly(rsc);\
-    return static_cast<returnType> (result * rsc->getFieldModifier(#name));\
-}
+
 /*!
  * \brief Implements a proxy method.
  * The method applies a modifier (if any) to the return value.
@@ -153,17 +135,6 @@ JACE_PROXY_API returnType className::name() {\
     return static_cast<returnType> (result * rsc->getFieldModifier(#name));\
 }
 
-/*!
- * \brief Implements a static proxy method. Can only be used for arrays.
- * The return type is a QList with the data in the array.
- * The method does NOT apply any modifier to the return value.
- */
-#define IMPL_STATIC_ARRAY_METHOD(className, name, componentType) \
-JACE_PROXY_API QList<componentType> className::name() {\
-    const jace::RSClass* rsc = staticGetJavaJniClass();\
-    jace::JArray<componentType> result = jace::JField<jace::JArray<componentType>>(rsc->getFieldName(#name)).getReadOnly(rsc);\
-    return result.toQList();\
-}
 /*!
  * \brief Implements a proxy method. Can only be used for arrays.
  * The return type is a QList with the data in the array.
@@ -193,21 +164,6 @@ JACE_PROXY_API QList<componentType> className::name() {\
         }\
         return result;\
     }
-/*!
- * \brief Implements a static proxy method that returns a 2-dimensional array.
- * The return type is a QList of QLists with the data in the array.
- * The method does NOT apply any modifier to the return values.
- */
-#define IMPL_STATIC_ARRAY2_METHOD(className, name, componentType) \
-    JACE_PROXY_API QList<QList<componentType>> className::name() {\
-        const jace::RSClass* rsc = staticGetJavaJniClass();\
-        jace::JArray<jace::JArray<componentType>> jresult = jace::JField<jace::JArray<jace::JArray<componentType>>>(rsc->getFieldName(#name)).getReadOnly(rsc);\
-        QList<QList<componentType>> result;\
-        for (int i=0;i<jresult.length(); i++) {\
-            result << jresult[i].toQList();\
-        }\
-        return result;\
-    }
 
 /*!
  * \brief Implements a proxy method that returns a 3-dimensional array.
@@ -231,26 +187,34 @@ JACE_PROXY_API QList<componentType> className::name() {\
         return result;\
     }
 
-/*!
- * \brief Implements a static proxy method that returns a 3-dimensional array.
- * The return type is a QList of QLists of QLists with the data in the array.
- * The method does NOT apply any modifier to the return values.
- */
-#define IMPL_STATIC_ARRAY3_METHOD(className, name, componentType) \
-    JACE_PROXY_API QList<QList<QList<componentType>>> className::name() {\
-        const jace::RSClass* rsc = staticGetJavaJniClass();\
-        jace::JArray<jace::JArray<jace::JArray<componentType>>> jresult = \
-                jace::JField<jace::JArray<jace::JArray<jace::JArray<componentType>>>>(rsc->getFieldName(#name)).getReadOnly(rsc);\
-        QList<QList<QList<componentType>>> result;\
-        for(int i=0; i<jresult.length(); i++) { \
-            jace::JArray<jace::JArray<componentType>> arr2D = jresult.get(i);\
-            QList<QList<componentType>> result2D;\
-            for(int j=0;j<arr2D.length(); j++) {\
-                result2D << arr2D[i].toQList();\
-            }\
-            result << result2D;\
-        }\
-        return result;\
+#define IMPL_STATIC_OBJECT_FIELD(className, name, returnType) \
+    JACE_PROXY_API returnType className::name() { \
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        QString retName = "L" + rscm->getRealName(#returnType) + ";"; \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), retName.toUtf8().constData()); \
+        if (field == 0) throw jace::MappingUnavailableException(""); \
+        jobject obj = env->GetStaticObjectField(cls, field); \
+        returnType result (obj); \
+        return result; \
+    }
+
+#define IMPL_STATIC_INT_FIELD(className, name) \
+    JACE_PROXY_API JInt className::name() { \
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        jlong multiplier = rscm->getStaticFieldModifier(#name); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "I"); \
+        if (field == 0) throw jace::MappingUnavailableException(""); \
+        return JInt(static_cast<jint>(env->GetStaticIntField(cls, field) * multiplier)); \
     }
 
 #endif // METHODHELPER_H

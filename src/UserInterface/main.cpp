@@ -113,7 +113,8 @@ int main(int argc, char** argv) {
 
         OptionList options;
         // Add the PowerGrid jar file to the classpath
-        options.push_back( CustomOption("-Djava.class.path=./PowerGridLoader.jar") );
+        options.push_back( CustomOption("-Djava.class.path=PowerGridLoader.jar") );
+        options.push_back( CustomOption("-javaagent:PowerGridLoader.jar") );
 #ifdef PG_DEBUG
         options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
 #endif
@@ -151,6 +152,7 @@ int main(int argc, char** argv) {
         env->CallStaticVoidMethod(pgLoaderClass, mainMethod, NULL);
 
         if (env->ExceptionCheck()) {
+            env->ExceptionDescribe();
             throw JNIException("Exception in main method invocation");
         }
 
@@ -164,13 +166,13 @@ int main(int argc, char** argv) {
     }
 
 
-
+    // The JVM is started and is running, now create our
+    // PowerGrid Qt Application and frame.
     qDebug() << "JVM started, creating control panel";
     QApplication app (argc, argv);
     app.setApplicationName(PG_NAME_STR);
     app.setApplicationVersion(PG_VERSION_STR);
-    // The JVM is started and is running, now create our
-    // PowerGrid Qt Application and frame.
+
     MainWindow window;
     window.show();
     window.setJVMVersion(jace::helper::getJavaProperty("java.version"));

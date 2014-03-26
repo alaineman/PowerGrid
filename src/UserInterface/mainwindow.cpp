@@ -79,7 +79,6 @@ void MainWindow::updateFPS() {
     try {
         api::bridge::Client c = api::bridge::Client::getClient();
         if (!c.isNull()) {
-            jace::helper::printClass(c.getJavaJniObject());
             JInt fpsValue = c.getFPS();
             ui->fps->setText(QString::number(fpsValue.getInt()));
         } else {

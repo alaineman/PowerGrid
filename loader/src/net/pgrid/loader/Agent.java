@@ -46,18 +46,17 @@ public class Agent {
     
     
     public static void agentmain(String agentArgs, Instrumentation inst) {
-        
     }
     
     /**
      * Searches the classes in the JVM for a Class with the specified name.
      * 
      * This method is different from Class.forName in that this does not silently
-     * load the class, or depends on the ClassLoader. Instead, this method makes
-     * use of the Instrumentation interface to get the loaded classes.
+     * load the class, or depend on the ClassLoader. Instead, this method makes
+     * use of the Instrumentation interface to get ALL loaded classes.
      * 
      * Please note that this method may take a relatively long time to complete,
-     * as it may have to go over all loaded classes in the JVM.
+     * as it may have to go over a large number of classes in the JVM.
      * 
      * @param name the name of the desired Class
      * @return the Class with the provided name, or null if it doesn't exist.
@@ -70,11 +69,10 @@ public class Agent {
         Class[] classes = instrumentation.getAllLoadedClasses();
         for (Class<?> c : classes) {
             if (c.getName().equals(name)) {
-                PGLoader.out.println("Found class " + name);
                 return c;
             }
         }
-        
+        PGLoader.out.println("Failed to find class: " + name);
         return null;
     } 
 }

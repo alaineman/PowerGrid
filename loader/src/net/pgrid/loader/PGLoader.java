@@ -210,7 +210,6 @@ public class PGLoader {
         }
         ClassLoader clientClassLoader = clientClass.getClassLoader();
         RSClassLoader.INSTANCE.provideClassLoader(clientClassLoader);
-        out.println("Found Client ClassLoader: " + clientClassLoader.getClass().getName());
     }
     
     /**

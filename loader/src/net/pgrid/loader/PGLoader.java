@@ -152,9 +152,13 @@ public class PGLoader {
         RSDownloader downloader = new RSDownloader();
         RSVersionInfo newVersion = downloader.loadConfig(currentVersion);
         
-        if (!force && currentVersion != null && newVersion != null && 
-                versionManager.checkVersions(currentVersion, newVersion)) {
-            // re-use the encryption keys
+        boolean canUseLocal = !force && currentVersion != null && newVersion != null && 
+                versionManager.checkVersions(currentVersion, newVersion);
+        
+        UpdaterRunner updaterRunner = new UpdaterRunner(newVersion, canUseLocal, debugMode);
+        
+        if (canUseLocal) {
+            // re-use the existing client
             LOGGER.log("Client version not changed; skipping client re-downloading");
         } else {
             // download the client
@@ -165,9 +169,9 @@ public class PGLoader {
             }
             getFrame().showMessage("Downloading client...");
             downloader.loadClient();
-            UpdaterRunner updaterRunner = new UpdaterRunner(newVersion, debugMode);
-            new Thread(updaterRunner, "PG_updater").start();
+            
         }
+        new Thread(updaterRunner, "PG_updater").start();
         
         try {
             versionManager.writeCurrentVersion(newVersion);

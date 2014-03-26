@@ -3,6 +3,7 @@ package net.pgrid.loader.bridge;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import net.pgrid.loader.RSVersionInfo;
 import net.pgrid.loader.logging.Logger;
 
@@ -22,19 +23,23 @@ public class UpdaterRunner implements Runnable {
     
     private final RSVersionInfo info;
     private String updaterServer = null;
+    private boolean useLocal;
     
     private boolean profile;
+    
 
     /**
-     * Creates a new Updater object
+     * Creates a new UpdaterRunner object
      * @param info the RSVersionInfo
+     * @param useLocal true to use local updater data, false to call the Updater server
      * @param profile true to profile the updater and print the results, false to disable
      */
-    public UpdaterRunner(RSVersionInfo info, boolean profile) {
+    public UpdaterRunner(RSVersionInfo info, boolean useLocal, boolean profile) {
         if (info == null) {
             throw new IllegalArgumentException("null");
         }
         this.info = info;
+        this.useLocal = useLocal;
         this.profile = profile;
     }
     
@@ -50,34 +55,38 @@ public class UpdaterRunner implements Runnable {
     
     @Override
     public synchronized void run() {
-        long timeStarted;
-        if (profile) {
-            timeStarted = System.currentTimeMillis();
-        } else {
-            timeStarted = 0;
-        }
-        
-        Updater update;
-        if (updaterServer == null) {
-            // we use the default server and port
-            update = new Updater(info);
-        } else {
-            // we use the custom updater server
-            update = new Updater(info, updaterServer);
-        }
-        
         try {
-            byte[] data = update.getData();
-            LOGGER.log("Updater data acquired (" + data.length + " bytes)");
-            
-            if (!DESTINATION.isFile() && !DESTINATION.createNewFile()) {
-                throw new IOException("Cannot write to updater info destination");
+            long timeStarted;
+            if (profile) {
+                timeStarted = System.currentTimeMillis();
+            } else {
+                timeStarted = 0;
             }
             
-            try (FileOutputStream out = new FileOutputStream(DESTINATION)) {
-                out.write(data);
+            byte[] data;
+            if (useLocal) {
+                data = Files.readAllBytes(DESTINATION.toPath());
+                LOGGER.log("Re-used local updater data");
+            } else {
+                Updater update;
+                if (updaterServer == null) {
+                    // we use the default server and port
+                    update = new Updater(info);
+                } else {
+                    // we use the custom updater server
+                    update = new Updater(info, updaterServer);
+                }
+
+                data = update.getData();
+                if (!DESTINATION.isFile() && !DESTINATION.createNewFile()) {
+                    throw new IOException("Cannot write to updater info destination");
+                }
+
+                try (FileOutputStream out = new FileOutputStream(DESTINATION)) {
+                    out.write(data);
+                }
+                LOGGER.log("Updater data acquired (" + data.length + " bytes)");
             }
-            
             // Tell the native code the updater is done
             signalUpdaterReady(data);
             

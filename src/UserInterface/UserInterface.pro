@@ -78,9 +78,12 @@ else {
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-SOURCES       += main.cpp mainwindow.cpp
-HEADERS        = mainwindow.h versionInfo.h powergrid.rc
-FORMS          = mainwindow.ui
+SOURCES       += main.cpp mainwindow.cpp \
+    setting.cpp
+HEADERS        = mainwindow.h versionInfo.h powergrid.rc \
+    setting.h
+FORMS          = mainwindow.ui \
+    setting.ui
 RESOURCES      = resources.qrc
 
 win32 {

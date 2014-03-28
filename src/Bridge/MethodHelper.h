@@ -203,6 +203,19 @@ JACE_PROXY_API QList<componentType> className::name() {\
         return result; \
     }
 
+#define IMPL_STATIC_BYTE_FIELD(className, name) \
+    JACE_PROXY_API JByte className::name() { \
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "B"); \
+        if (field == 0) throw jace::MappingUnavailableException(""); \
+        return JByte(static_cast<jbyte>(env->GetStaticIntField(cls, field))); \
+    }
+
 #define IMPL_STATIC_INT_FIELD(className, name) \
     JACE_PROXY_API JInt className::name() { \
         JNIEnv* env = jace::helper::attach(); \
@@ -240,7 +253,7 @@ JACE_PROXY_API QList<componentType> className::name() {\
         jlong multiplier = rscm->getStaticFieldModifier(#name); \
         jclass cls = rscm->getClass(clsName); \
         if (cls == NULL) throw jace::MappingUnavailableException(""); \
-        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "L"); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "J"); \
         if (field == 0) throw jace::MappingUnavailableException(""); \
         return JLong(static_cast<jlong>(env->GetStaticLongField(cls, field) * multiplier)); \
     }
@@ -279,9 +292,22 @@ JACE_PROXY_API QList<componentType> className::name() {\
         std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
         jclass cls = rscm->getClass(clsName); \
         if (cls == NULL) throw jace::MappingUnavailableException(""); \
-        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "B"); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "Z"); \
         if (field == 0) throw jace::MappingUnavailableException(""); \
         return JBoolean(static_cast<jboolean>(env->GetStaticIntField(cls, field))); \
+    }
+
+#define IMPL_STATIC_CHAR_FIELD(className, name) \
+    JACE_PROXY_API JChar className::name() { \
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "C"); \
+        if (field == 0) throw jace::MappingUnavailableException(""); \
+        return JChar(static_cast<jchar>(env->GetStaticCharField(cls, field))); \
     }
 
 #endif // METHODHELPER_H

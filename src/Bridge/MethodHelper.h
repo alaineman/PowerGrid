@@ -217,4 +217,71 @@ JACE_PROXY_API QList<componentType> className::name() {\
         return JInt(static_cast<jint>(env->GetStaticIntField(cls, field) * multiplier)); \
     }
 
+#define IMPL_STATIC_SHORT_FIELD(className, name) \
+    JACE_PROXY_API JShort className::name() { \
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        jlong multiplier = rscm->getStaticFieldModifier(#name); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "S"); \
+        if (field == 0) throw jace::MappingUnavailableException(""); \
+        return JShort(static_cast<jshort>(env->GetStaticShortField(cls, field) * multiplier)); \
+    }
+
+#define IMPL_STATIC_LONG_FIELD(className, name) \
+    JACE_PROXY_API JLong className::name() { \
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        jlong multiplier = rscm->getStaticFieldModifier(#name); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "L"); \
+        if (field == 0) throw jace::MappingUnavailableException(""); \
+        return JLong(static_cast<jlong>(env->GetStaticLongField(cls, field) * multiplier)); \
+    }
+
+#define IMPL_STATIC_DOUBLE_FIELD(className, name) \
+    JACE_PROXY_API JDouble className::name() { \
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "D"); \
+        if (field == 0) throw jace::MappingUnavailableException(""); \
+        return JDouble(static_cast<jdouble>(env->GetStaticDoubleField(cls, field))); \
+    }
+
+#define IMPL_STATIC_FLOAT_FIELD(className, name) \
+    JACE_PROXY_API JFloat className::name() { \
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "F"); \
+        if (field == 0) throw jace::MappingUnavailableException(""); \
+        return JFloat(static_cast<jfloat>(env->GetStaticIntField(cls, field))); \
+    }
+
+#define IMPL_STATIC_BOOLEAN_FIELD(className, name) \
+    JACE_PROXY_API JBoolean className::name() { \
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "B"); \
+        if (field == 0) throw jace::MappingUnavailableException(""); \
+        return JBoolean(static_cast<jboolean>(env->GetStaticIntField(cls, field))); \
+    }
+
 #endif // METHODHELPER_H

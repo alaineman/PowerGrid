@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>291</width>
-    <height>150</height>
+    <height>230</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,12 +17,6 @@
    </sizepolicy>
   </property>
   <property name="minimumSize">
-   <size>
-    <width>291</width>
-    <height>150</height>
-   </size>
-  </property>
-  <property name="maximumSize">
    <size>
     <width>291</width>
     <height>150</height>
@@ -39,82 +33,130 @@
    <locale language="English" country="UnitedStates"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGroupBox" name="SysInfoBox">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>271</width>
-      <height>121</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>System Information</string>
-    </property>
-    <widget class="QWidget" name="formLayoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>251</width>
-       <height>91</height>
-      </rect>
-     </property>
-     <layout class="QFormLayout" name="SysInfo">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabView">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <property name="horizontalSpacing">
-       <number>20</number>
-      </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="jvmVersionLabel">
-        <property name="text">
-         <string>Java version</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="jvmVersion">
-        <property name="text">
-         <string>Undetermined</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="pgVersionLabel">
-        <property name="text">
-         <string>PowerGrid version</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="pgVersion">
-        <property name="text">
-         <string>Undetermined</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="fpsLabel">
-        <property name="text">
-         <string>Current FPS</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="fps">
-        <property name="text">
-         <string>Undetermined</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
+      <widget class="QWidget" name="overviewTab">
+       <attribute name="title">
+        <string>Overview</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QGroupBox" name="SysInfoBox">
+          <property name="title">
+           <string>System Information</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="jvmVersionLabel">
+             <property name="text">
+              <string>Java version</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="jvmVersion">
+             <property name="text">
+              <string>Undetermined</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="pgVersionLabel">
+             <property name="text">
+              <string>PowerGrid version</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="pgVersion">
+             <property name="text">
+              <string>Undetermined</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="fpsLabel">
+             <property name="text">
+              <string>Current FPS</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="fps">
+             <property name="text">
+              <string>Undetermined</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="CurrentTaskBox">
+          <property name="title">
+           <string>Current Task</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_2">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Task name</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>&lt;No current Task&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Task Progress</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QProgressBar" name="progressBar">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="textVisible">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="settingsTab">
+       <attribute name="title">
+        <string>Settings</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources>

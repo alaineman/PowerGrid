@@ -224,9 +224,9 @@ JACE_PROXY_API QList<componentType> className::name() {\
         std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
         jlong multiplier = rscm->getStaticFieldModifier(#name); \
         jclass cls = rscm->getClass(clsName); \
-        if (cls == NULL) throw jace::MappingUnavailableException(""); \
+        if (cls == NULL) throw jace::MappingUnavailableException("static class"); \
         jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), "I"); \
-        if (field == 0) throw jace::MappingUnavailableException(""); \
+        if (field == 0) throw jace::MappingUnavailableException("static field"); \
         return JInt(static_cast<jint>(env->GetStaticIntField(cls, field) * multiplier)); \
     }
 

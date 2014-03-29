@@ -85,7 +85,7 @@ public:
     JACE_PROXY_API JInt getDestinationX();
     JACE_PROXY_API JInt getDestinationY();
     JACE_PROXY_API DetailInfoNode getDetailInfoNode();
-    JACE_PROXY_API JInt getFPS();
+    static JACE_PROXY_API JInt getFPS();
     JACE_PROXY_API Facade getFacade();
     JACE_PROXY_API JInt getFrameTime();
     JACE_PROXY_API QList<Friend> getFriendsList();

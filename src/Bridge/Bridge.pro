@@ -236,7 +236,9 @@ HEADERS += \
     api/component/action.h \
     entity/matcher.h \
     api/component/transportation.h \
-    entity/mapper.h
+    entity/mapper.h \
+    api/draw/drawaction.h \
+    java/awt/graphics.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -390,7 +392,9 @@ SOURCES += \
     api/component/action.cpp \
     entity/matcher.cpp \
     api/component/transportation.cpp \
-    entity/mapper.cpp
+    entity/mapper.cpp \
+    api/draw/drawaction.cpp \
+    java/awt/java_awt_graphics.cpp
 
 HEADERS    += \
     jni.h \

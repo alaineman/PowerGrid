@@ -24,6 +24,7 @@ import java.awt.Graphics;
  * 
  * implementations of this interface can be used to draw on the overlay provided
  * by the PGGlassPane.
+ * 
  * @author Patrick Kramer
  */
 public interface DrawAction {

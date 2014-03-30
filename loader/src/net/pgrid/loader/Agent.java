@@ -28,6 +28,7 @@ import java.lang.instrument.Instrumentation;
 public class Agent {
     
     private static Instrumentation instrumentation;
+    private static volatile boolean exceptionOccurred = false;
     
     public Instrumentation getInstrumentation() {
         return instrumentation;
@@ -63,7 +64,10 @@ public class Agent {
      */
     public static Class<?> findClass(String name) {
         if (instrumentation == null) {
-            PGLoader.out.println("Failed to get Instrumentation");
+            if (!exceptionOccurred) {
+                PGLoader.out.println("Failed to get Instrumentation");
+                exceptionOccurred = true;
+            }
             return null;
         }
         Class[] classes = instrumentation.getAllLoadedClasses();

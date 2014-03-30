@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import net.pgrid.loader.RSVersionInfo;
 import net.pgrid.loader.logging.Logger;
 
@@ -65,8 +66,14 @@ public class UpdaterRunner implements Runnable {
             
             byte[] data;
             if (useLocal) {
-                data = Files.readAllBytes(DESTINATION.toPath());
-                LOGGER.log("Re-used local updater data");
+                Path dest = DESTINATION.toPath();
+                if (Files.exists(dest)) {
+                    data = Files.readAllBytes(dest);
+                    LOGGER.log("Re-used local updater data");
+                } else {
+                    LOGGER.log("[WARNING] Local client re-used but no updater data available!");
+                    return;
+                }
             } else {
                 Updater update;
                 if (updaterServer == null) {

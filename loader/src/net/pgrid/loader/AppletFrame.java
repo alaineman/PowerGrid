@@ -34,6 +34,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import net.pgrid.loader.draw.PGGlassPane;
+import net.pgrid.loader.draw.TestDrawAction;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -106,7 +107,9 @@ public class AppletFrame extends JFrame implements AppletStub {
             throw new AssertionError("Cannot find jar resource", e);
         }
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
         setGlassPane(new PGGlassPane(this));
+        getGlassPane().addDrawAction(new TestDrawAction()); // !! TEST CODE !!
         getGlassPane().setVisible(true);
         
         Insets in = getInsets();
@@ -151,6 +154,10 @@ public class AppletFrame extends JFrame implements AppletStub {
             revalidate();
             applet.start();
             LOGGER.log("Applet started");
+            
+            // Start the renderer for the glass pane
+            //new Thread(getGlassPane().createPaintScheduler(getBufferStrategy()), "PG_RENDERER").start();
+            
             return true;
         } catch (RuntimeException e) {
             LOGGER.log("Failed to start client.", e);

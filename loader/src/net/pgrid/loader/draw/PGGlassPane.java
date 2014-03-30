@@ -18,12 +18,14 @@
 package net.pgrid.loader.draw;
 
 import java.awt.AWTEvent;
+import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.InputEvent;
+import java.awt.image.BufferStrategy;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.JComponent;
+import net.pgrid.loader.PGLoader;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -43,7 +45,7 @@ import net.pgrid.loader.logging.Logger;
  *           as a nice (as well as a non-intrusive and undetectable) way to 
  *           draw overlays...
  */
-public class PGGlassPane extends JComponent {
+public class PGGlassPane extends Canvas {
     
     private final Component parent;
     private final Set<DrawAction> drawActions;
@@ -57,21 +59,30 @@ public class PGGlassPane extends JComponent {
         this.parent = parent;
         this.drawActions = new HashSet<>(8);
     }
+
+    @Override
+    public boolean isLightweight() {
+        return false; // hack override
+    }
     
     @Override
-    public void paintComponents(Graphics g) {
-        super.paintComponents(g);
+    public void paint(Graphics g) {
+        PGLoader.out.println("paintComponents called");
         
         // Don't bother drawing if we're not visible
         if (!isShowing()) return;
         
         for (DrawAction a : drawActions) {
+            // Create a copy of our original Graphics object to pass around.
+            Graphics scratchGraphics = g.create();
             try {
-                a.draw(g);
+                a.draw(scratchGraphics);
             } catch (RuntimeException e) {
                 // We want to continue drawing even if one of the DrawActions
                 // throws a RuntimeException.
-                Logger.get("OVERLAY").log("DrawAction \"" + e.toString() + "\" failed: ", e);
+                Logger.get("OVERLAY").log("DrawAction \"" + a.toString() + "\" failed: ", e);
+            } finally {
+                scratchGraphics.dispose();
             }
         }
     }
@@ -152,4 +163,37 @@ public class PGGlassPane extends JComponent {
         }
     }
     
+    public RepaintHelper createPaintScheduler(BufferStrategy strategy) {
+        RepaintHelper helper = new RepaintHelper(strategy);
+        setIgnoreRepaint(true);
+        return helper;
+    }
+    
+    public class RepaintHelper implements Runnable {
+        private final BufferStrategy strategy;
+        public RepaintHelper(BufferStrategy strategy) {
+            this.strategy = strategy;
+        }
+        @Override
+        @SuppressWarnings("SleepWhileInLoop")
+        public void run() {
+            // Calls paint(Graphics) roughly every 37-40 milliseconds.
+            // This is equivalent to approximately 25 frames/second.
+            while (true) {
+                long start = System.nanoTime();
+                Graphics g = strategy.getDrawGraphics();
+                paint(g);
+                strategy.show();
+                try {
+                    long timeTaken = System.nanoTime() - start;
+                    if (timeTaken < 37000000) { // (37 ms)
+                        // The remaining 3 ms can be lost in the computation
+                        // and System.nanoTime() calls. 
+                        Thread.sleep(40 - (timeTaken/1000000));
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+    }
 }

@@ -26,7 +26,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -110,7 +112,7 @@ public class AppletFrame extends JFrame implements AppletStub {
         
         setGlassPane(new PGGlassPane(this));
         getGlassPane().addDrawAction(new TestDrawAction()); // !! TEST CODE !!
-        getGlassPane().setVisible(true);
+        getGlassPane().setVisible(false); // Do not interfere right now.
         
         Insets in = getInsets();
         int bHeight = in.top + in.bottom;
@@ -155,8 +157,15 @@ public class AppletFrame extends JFrame implements AppletStub {
             applet.start();
             LOGGER.log("Applet started");
             
+            createBufferStrategy(2);
+            BufferStrategy strategy = getBufferStrategy();
+            setIgnoreRepaint(true);
+            getGlassPane().setVisible(true);
+            
             // Start the renderer for the glass pane
-            //new Thread(getGlassPane().createPaintScheduler(getBufferStrategy()), "PG_RENDERER").start();
+            new Thread(getGlassPane().createPaintScheduler(
+                    this,
+                    strategy), "PG_RENDERER").start();
             
             return true;
         } catch (RuntimeException e) {
@@ -166,6 +175,12 @@ public class AppletFrame extends JFrame implements AppletStub {
         }
     }
 
+    @Override
+    public void paintComponents(Graphics g) {
+        super.paintComponents(g);
+        getGlassPane().paint(g);
+    }
+    
     /**
      * Shows the given log message in the AppletFrame.
      * <p/>
@@ -200,7 +215,7 @@ public class AppletFrame extends JFrame implements AppletStub {
                 return new URL(codebase);
             } catch (MalformedURLException e) {
                 // This normally never happens, as the codebase was validated when
-                // the client was downloaded. The only reason we don't throw 
+                // the client was downloaded. The reason we don't throw 
                 // AssertionError here is, that we don't want to interfere 
                 // with the running Runescape client.
                 LOGGER.log("[WARNING] Applet requested codebase URL, but the codebase was invalid.");

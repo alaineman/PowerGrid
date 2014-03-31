@@ -22,10 +22,10 @@ import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.InputEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.image.BufferStrategy;
 import java.util.HashSet;
 import java.util.Set;
-import net.pgrid.loader.PGLoader;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -62,15 +62,16 @@ public class PGGlassPane extends Canvas {
 
     @Override
     public boolean isLightweight() {
-        return false; // hack override
+        // If this is true, the glasspane is painted in front of the applet 
+        // (like expected), but it's not transparent. When false, it's supposed 
+        // to be transparent, but it's drawn behind the client, so it's useless.
+        return false; 
     }
     
     @Override
     public void paint(Graphics g) {
-        PGLoader.out.println("paintComponents called");
-        
         // Don't bother drawing if we're not visible
-        if (!isShowing()) return;
+        //if (!isShowing()) return;
         
         for (DrawAction a : drawActions) {
             // Create a copy of our original Graphics object to pass around.
@@ -163,15 +164,19 @@ public class PGGlassPane extends Canvas {
         }
     }
     
-    public RepaintHelper createPaintScheduler(BufferStrategy strategy) {
-        RepaintHelper helper = new RepaintHelper(strategy);
+    public RepaintHelper createPaintScheduler(Component source, BufferStrategy strategy) {
+        //createBufferStrategy(2);
+        //strategy = getBufferStrategy();
+        RepaintHelper helper = new RepaintHelper(source, strategy);
         setIgnoreRepaint(true);
         return helper;
     }
     
-    public class RepaintHelper implements Runnable {
+    public class RepaintHelper extends WindowAdapter implements Runnable {
+        private final Component content;
         private final BufferStrategy strategy;
-        public RepaintHelper(BufferStrategy strategy) {
+        public RepaintHelper(Component contentPane, BufferStrategy strategy) {
+            content = contentPane;
             this.strategy = strategy;
         }
         @Override
@@ -179,11 +184,19 @@ public class PGGlassPane extends Canvas {
         public void run() {
             // Calls paint(Graphics) roughly every 37-40 milliseconds.
             // This is equivalent to approximately 25 frames/second.
+            // Note that it may appear that the framerate is lower due to the
+            // additional delay caused by drawing this. Also, the RS client's 
+            // Canvas may look distorted while this is active.
             while (true) {
                 long start = System.nanoTime();
                 Graphics g = strategy.getDrawGraphics();
+                Graphics scratchGraphics = g.create();
+                content.paint(scratchGraphics);
+                scratchGraphics.dispose();
                 paint(g);
                 strategy.show();
+                content.getToolkit().sync();
+                
                 try {
                     long timeTaken = System.nanoTime() - start;
                     if (timeTaken < 37000000) { // (37 ms)

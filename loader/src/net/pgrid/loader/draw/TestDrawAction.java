@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.UIManager;
-import net.pgrid.loader.PGLoader;
 
 /**
  * Testing class for DrawActions.
@@ -33,7 +32,6 @@ import net.pgrid.loader.PGLoader;
 public class TestDrawAction implements DrawAction {
     @Override
     public void draw(Graphics g) {
-        PGLoader.out.println("TestDrawAction: draw called");
         
         g.setColor(Color.RED);
         g.setFont(UIManager.getFont("Label.font").deriveFont(Font.BOLD));

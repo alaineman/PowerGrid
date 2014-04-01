@@ -9,6 +9,11 @@ PowerGrid is, unlike other bots, written in C++. While this causes a delay in tr
 
 The loader itself is inspired by the official open-source loader for Runescape, also written in C++. Because of this, PowerGrid will appear to be a normal loader application, while in reality, PowerGrid monitors various settings, objects, and data structures to use for botting purposes.
 
+## Building PowerGrid ##
+PowerGrid depends on Qt 5.1 (or higher) and Java (a JDK is required for building).
+For complete instructions on how to build PowerGrid, please refer to 
+“doc/BuildInstructions.md”
+
 ## Using PowerGrid ##
 PowerGrid comes with its own control frame that is separate from the main Runescape frame.  This is because the Runescape frame is in reality a Java frame, and PowerGrid's control frame is not.
 
@@ -19,7 +24,7 @@ We believe in the power of free software, and as such we decided to make the ent
 
 The license information that applies to PowerGrid (the GNU GPL v3) is mentioned below:
 
-Copyright 2012-2014 Patrick Kramer, Vincent Wassenaar
+Copyright 2014 Patrick Kramer, Vincent Wassenaar
 
 PowerGrid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,6 +47,10 @@ GNU General Public License. These parts are mentioned here, along
 with the appropriate license.
 
 #### JACE ####
+PowerGrid makes use of a modified version of JACE, a wrapper around the JNI to make it
+easier (and more intuitive) to communicate between Java and C++. The following license 
+applies:
+
 Copyright (c) 2002, Toby Reyelts
 All rights reserved.
 

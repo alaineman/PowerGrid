@@ -26,17 +26,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import net.pgrid.loader.draw.PGGlassPane;
-import net.pgrid.loader.draw.TestDrawAction;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -57,13 +53,13 @@ public class AppletFrame extends JFrame implements AppletStub {
      */
     protected JLabel label;
     private Applet applet = null;
-    private transient RSVersionInfo info = null;
+    private RSVersionInfo info = null;
 
     /**
      * Creates a new AppletFrame instance.
      */
     public AppletFrame() {
-        super("Runescape (running through PowerGrid loader)");
+        super("PowerGrid (Runescape client)");
     }
     
     /**
@@ -106,13 +102,9 @@ public class AppletFrame extends JFrame implements AppletStub {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
         } catch (IOException e) {
             // Since the icon is embedded in the jar file, this should never happen
-            throw new AssertionError("Cannot find jar resource", e);
+            throw new InternalError("Cannot find jar resource", e);
         }
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        setGlassPane(new PGGlassPane(this));
-        getGlassPane().addDrawAction(new TestDrawAction()); // !! TEST CODE !!
-        getGlassPane().setVisible(false); // Do not interfere right now.
         
         Insets in = getInsets();
         int bHeight = in.top + in.bottom;
@@ -132,8 +124,6 @@ public class AppletFrame extends JFrame implements AppletStub {
         add(label, "Center");
 
         setVisible(true);
-
-        createBufferStrategy(2);
     }
 
     /**
@@ -153,32 +143,15 @@ public class AppletFrame extends JFrame implements AppletStub {
             applet.init();
             getContentPane().add(applet, BorderLayout.CENTER);
             getContentPane().remove(label);
+            label = null;
             revalidate();
             applet.start();
             LOGGER.log("Applet started");
-            
-            createBufferStrategy(2);
-            BufferStrategy strategy = getBufferStrategy();
-            setIgnoreRepaint(true);
-            getGlassPane().setVisible(true);
-            
-            // Start the renderer for the glass pane
-            new Thread(getGlassPane().createPaintScheduler(
-                    this,
-                    strategy), "PG_RENDERER").start();
-            
             return true;
         } catch (RuntimeException e) {
             LOGGER.log("Failed to start client.", e);
-            setIgnoreRepaint(false);
             return false;
         }
-    }
-
-    @Override
-    public void paintComponents(Graphics g) {
-        super.paintComponents(g);
-        getGlassPane().paint(g);
     }
     
     /**
@@ -240,25 +213,4 @@ public class AppletFrame extends JFrame implements AppletStub {
     public AppletContext getAppletContext() {
         return null;
     }
-    
-    /**
-     * Sets whether to enable the GlassPane overlay or not.
-     *
-     * Disabling this when the overlay is not used may improve performance or 
-     * responsiveness, while enabling this allows drawing on top of the 
-     * Runescape frame.
-     * 
-     * @param enable true to enable, false to disable
-     */
-    public void setEnableOverlay(boolean enable) {
-        getGlassPane().setVisible(enable);
-    }
-    
-    @Override
-    public PGGlassPane getGlassPane() {
-        // Overriding this here prevents casting it to PGGlassPane later
-        return (PGGlassPane) super.getGlassPane();
-    }
-    
-    
 }

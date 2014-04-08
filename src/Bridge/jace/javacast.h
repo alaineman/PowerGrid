@@ -108,16 +108,17 @@ template <typename T> bool instanceof( const ::jace::proxy::JObject& object ) {
   return isValid;
 }
 
-}
-
 /**
- * For those (oddball) compilers that need the template specialization
- * definitions in the header.
+ * Performs a safe cast from a JObject to a jobject.
+ *
+ * For example,
+ *
+ *  Object obj;
+ *  jobject jObj = java_cast<jobject>( obj );
+ *
  */
-#ifdef PUT_TSDS_IN_HEADER
-  #include "jace/javacast.tsd"
-#else
-  #include "jace/javacast.tsp"
-#endif
+template<> jobject java_cast(const jace::proxy::JObject& obj);
+
+}
 
 #endif // #ifndef JACE_JAVACAST_H

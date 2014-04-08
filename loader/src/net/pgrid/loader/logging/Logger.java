@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import static net.pgrid.loader.logging.Logger.Verbosity.DEBUG;
 import static net.pgrid.loader.logging.Logger.Verbosity.NORMAL;
 import static net.pgrid.loader.logging.Logger.Verbosity.QUIET;
@@ -265,6 +266,26 @@ public class Logger {
                 target.println();
             }
         }
+    }
+    
+    /**
+     * Logs a message to this Logger's target PrintStream.
+     * 
+     * The message may consist of multiple values of any type. This method
+     * appends their String values to the target PrintStream, making this
+     * method slightly faster when invoking Logger.log(String) would require String 
+     * concatenations.
+     * 
+     * No stack trace information is printed when this method is invoked, 
+     * regardless of the set Verbosity.
+     * @param message the message to print
+     */
+    public synchronized void log(Object... message) {
+        target.print(getPrefix());
+        for (Object o : message) {
+            target.append(String.valueOf(o));
+        }
+        target.println();
     }
 
     /**

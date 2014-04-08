@@ -28,7 +28,6 @@ import java.lang.instrument.Instrumentation;
 public class Agent {
     
     private static Instrumentation instrumentation;
-    private static volatile boolean exceptionOccurred = false;
     
     public Instrumentation getInstrumentation() {
         return instrumentation;
@@ -39,9 +38,13 @@ public class Agent {
      * 
      * @param agentArgs the arguments for this Agent (ignored)
      * @param inst the Instrumentation instance for this Agent
+     * @internal Note that you cannot use the agent from within an IDE. In fact,
+     *           the agent needs to be set when the JVM is started. The native
+     *           client does this automatically, making this construction work 
+     *           when running PowerGrid normally.
      */
     public static void premain(String agentArgs, Instrumentation inst) {
-        System.out.println("Agent started");
+        System.out.println("AGENT        | Agent started");
         instrumentation = inst;
     }
     
@@ -64,19 +67,15 @@ public class Agent {
      */
     public static Class<?> findClass(String name) {
         if (instrumentation == null) {
-            if (!exceptionOccurred) {
-                PGLoader.out.println("Failed to get Instrumentation");
-                exceptionOccurred = true;
-            }
-            return null;
+            throw new IllegalStateException("The Agent was not started");
         }
-        Class[] classes = instrumentation.getAllLoadedClasses();
+        Class<?>[] classes = instrumentation.getAllLoadedClasses();
         for (Class<?> c : classes) {
             if (c.getName().equals(name)) {
                 return c;
             }
         }
-        PGLoader.out.println("Failed to find class: " + name);
+        PGLoader.out.println("AGENT        | Failed to find class: " + name);
         return null;
     } 
 }

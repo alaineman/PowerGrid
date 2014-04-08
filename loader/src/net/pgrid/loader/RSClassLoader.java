@@ -26,7 +26,6 @@ package net.pgrid.loader;
 public class RSClassLoader {
     public static final RSClassLoader INSTANCE = new RSClassLoader();
     
-    
     private ClassLoader classLoader = null;
     
     private RSClassLoader() {
@@ -45,11 +44,19 @@ public class RSClassLoader {
             return null;
         }
         try {
+            // First try to get the Class from the RS class loader.
             return classLoader.loadClass(name);
-        } catch (ClassNotFoundException e) {
-            PGLoader.err.append(e.getClass().getSimpleName()).append(": ").println(e.getMessage());
-            // simplify things on the C++ end by returning null
-            return null;
+        } catch (ClassNotFoundException e1) {
+            // If that didn't work, try to get the Class from our Agent:
+            try {
+                // If the Agent is started, we can get any Class that is loaded
+                // by the JVM, so this should always work (if the Agent is started)
+                return Agent.findClass(name);
+            } catch (IllegalStateException e2) {
+                // The Agent was not started, do there's nothing we can do...
+                return null;
+            }
         }
+        
     }
 }

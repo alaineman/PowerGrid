@@ -204,12 +204,16 @@ public class PGLoader {
         }
         
         // This class is always named the same, so...
-        Class<?> clientClass = null;
-        while (clientClass == null) {
-            clientClass = Agent.findClass("client");
+        try {
+            Class<?> clientClass = null;
+            while (clientClass == null) {
+                clientClass = Agent.findClass("client");
+            }
+            ClassLoader clientClassLoader = clientClass.getClassLoader();
+            RSClassLoader.INSTANCE.provideClassLoader(clientClassLoader);
+        } catch (IllegalStateException e) {
+            LOGGER.log("Could not find ClassLoader, RS classes may not be available", e);
         }
-        ClassLoader clientClassLoader = clientClass.getClassLoader();
-        RSClassLoader.INSTANCE.provideClassLoader(clientClassLoader);
     }
     
     /**

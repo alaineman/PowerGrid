@@ -1,10 +1,7 @@
-
 #include "jace/javacast.h"
 
-/**
- * For those (oddball) compilers that need the template specialization
- * definitions in the header.
- */
-#ifndef PUT_TSDS_IN_HEADER
-  #include "jace/javacast.tsd"
-#endif
+namespace jace {
+    jobject java_cast(const proxy::JObject &obj) {
+        return obj.getJavaJniObject();
+    }
+}

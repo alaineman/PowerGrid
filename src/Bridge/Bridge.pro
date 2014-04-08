@@ -236,9 +236,7 @@ HEADERS += \
     api/component/action.h \
     entity/matcher.h \
     api/component/transportation.h \
-    entity/mapper.h \
-    api/draw/drawaction.h \
-    java/awt/graphics.h
+    entity/mapper.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -392,9 +390,7 @@ SOURCES += \
     api/component/action.cpp \
     entity/matcher.cpp \
     api/component/transportation.cpp \
-    entity/mapper.cpp \
-    api/draw/drawaction.cpp \
-    java/awt/java_awt_graphics.cpp
+    entity/mapper.cpp
 
 HEADERS    += \
     jni.h \
@@ -435,9 +431,7 @@ HEADERS    += \
     jace/JMethod.tsp \
     jace/JMethod.tsd \
     jace/JField.tsp \
-    jace/JField.tsd \
-    jace/javacast.tsp \
-    jace/javacast.tsd
+    jace/JField.tsd
 
 SOURCES    += \
     jace/VmLoader.cpp \

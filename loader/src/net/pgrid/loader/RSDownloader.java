@@ -71,7 +71,7 @@ public class RSDownloader {
             configURL = new URL(CONFIG_LINK);
         } catch (MalformedURLException e) {
             // should normally not happen
-            throw (Error) new AssertionError("Invalid CONFIG_LINK constant").initCause(e);
+            throw new AssertionError("Invalid CONFIG_LINK constant", e);
         }
     }
 

@@ -4,6 +4,7 @@
 #include <QObject>
 #include "entity/entity.h"
 #include "entity/matcher.h"
+#include "entity/mapper.h"
 
 #ifdef Q_COMPILER_INITIALIZER_LISTS
 #include <initializer_list>
@@ -30,15 +31,16 @@ private:
      *
      * Please ensure the Entity is not already registered with another
      * World instance, as this may lead to unexpected behavior.
-     * @param e
+     * @param e the Entity to add
      */
     void addEntity(Entity* e);
 
     static World* theWorld;
 
     QList<Entity*> entities;
-    QMap<QString, QList<Entity*>> componentMap; // maps Component className => list of Entities with that Component
-    QMap<QString, QList<Matcher*>> matchers;
+    QHash<QString, QList<Entity*>> componentMap; // maps Component className => list of Entities with that Component
+    QHash<QString, QList<Matcher*>> matchers;    // maps Component className => list of Matcher for that Component type
+    QHash<QString, Mapper*> mappers;             // maps Component className => Mapper for that Component type
 public:
     /**
      * \brief Returns the global World instance
@@ -78,12 +80,38 @@ public:
      */
     void removeMatcher(Matcher* m);
 
+    /**
+     * \brief Returns the Mapper instance for the Type
+     *
+     * Any two Mappers* with the same Type returned by this member
+     * function are guaranteed to point to the same Mapper instance.
+     *
+     * This is a convenience function for @c getMapper(QString).
+     * It allows Mapper to be acquired like this:
+     *     Mapper* nameMapper = world->getMapper<Name>();
+     *
+     * \param Type the Type
+     * \return the Mapper instance that maps the provided Type
+     */
+    template<class Type> Mapper* getMapper();
+
+    /**
+     * \brief Returns the Mapper instance for the Type with the given name
+     *
+     * Any two Mappers* with the same Type returned by this member
+     * function are guaranteed to point to the same Mapper instance.
+     *
+     * \param Type the Type
+     * \return the Mapper instance that maps the provided Type
+     */
+    Mapper* getMapper(QString type);
+
 #if defined(Q_COMPILER_INITIALIZER_LISTS) || defined(PG_DOC)
     /**
      * \brief Convenience function to create an Entity with Components in one go.
      *
      * Your compiler must support C++11 initializer lists to make use of this
-     * feature.
+     * member function.
      *
      * This allows creation of Entities with Components like this:
      *
@@ -137,7 +165,7 @@ public slots:
      * \brief Processes the Entities.
      *
      * This is usually invoked based on a schedule. Manually invoking
-     * this may cause issues.
+     * this may cause a variety of issues.
      */
     void processAll();
 };

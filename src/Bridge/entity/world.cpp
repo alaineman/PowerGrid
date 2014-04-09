@@ -1,4 +1,4 @@
-#include "world.h"
+ #include "world.h"
 #include "entity.h"
 #include "component.h"
 
@@ -56,6 +56,20 @@ void World::removeMatcher(Matcher *m) {
             }
         }
     }
+}
+
+template<class Type>
+Mapper* World::getMapper() {
+    return getMapper(Type::staticMetaObject.className());
+}
+
+Mapper* World::getMapper(QString type) {
+    Mapper* mapper = mappers.value(type, NULL);
+    if (!mapper) {
+        mapper = new Mapper(type, this);
+        mappers.insert(type, mapper);
+    }
+    return mapper;
 }
 
 #ifdef Q_COMPILER_INITIALIZER_LISTS

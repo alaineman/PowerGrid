@@ -6,14 +6,16 @@
 
 namespace entity {
 
-Entity::Entity(QObject *parent) : QObject(parent){
-    World* world = qobject_cast<World*>(parent);
+Entity::Entity(World *world) : QObject(world){
     if (world != NULL) {
         world->addEntity(this);
+    } else {
+        throw std::logic_error("World cannot be NULL");
     }
 }
 
-template<typename Type> Type* Entity::get(){
+template<typename Type>
+Type* Entity::get(){
     return qobject_cast<Type*>(get(Type::staticMetaObject.className()));
 }
 

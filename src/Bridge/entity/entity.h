@@ -43,7 +43,7 @@ public:
      * \brief Creates a new Entity
      * \param parent the parent of this Entity
      */
-    explicit Entity(QObject *parent = 0);
+    explicit Entity(World *parent = 0);
 
     /**
      * \brief Finds the Component of the given type.

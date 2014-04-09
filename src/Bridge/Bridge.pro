@@ -402,7 +402,6 @@ HEADERS    += \
     jace/JSignature.h \
     jace/JNIHelper.h \
     jace/JNIException.h \
-    jace/JMethod.h \
     jace/JFieldProxyHelper.h \
     jace/JFieldProxy.h \
     jace/JFieldHelper.h \
@@ -427,9 +426,7 @@ HEADERS    += \
     jace/proxy/types/JDouble.h \
     jace/proxy/types/JChar.h \
     jace/proxy/types/JByte.h \
-    jace/proxy/types/JBoolean.h \
-    jace/JMethod.tsp \
-    jace/JMethod.tsd
+    jace/proxy/types/JBoolean.h
 
 SOURCES    += \
     jace/VmLoader.cpp \
@@ -439,7 +436,6 @@ SOURCES    += \
     jace/JSignature.cpp \
     jace/JNIHelper.cpp \
     jace/JNIException.cpp \
-    jace/JMethod.cpp \
     jace/JFieldProxyHelper.cpp \
     jace/JFieldProxy.cpp \
     jace/JFieldHelper.cpp \

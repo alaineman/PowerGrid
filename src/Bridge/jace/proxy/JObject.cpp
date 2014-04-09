@@ -9,9 +9,6 @@ using jace::JClassImpl;
 #include "../JConstructor.h"
 using jace::JConstructor;
 
-#include "../JMethod.h"
-using jace::JMethod;
-
 #include "../JArguments.h"
 using jace::JArguments;
 

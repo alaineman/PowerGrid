@@ -6,7 +6,6 @@
 
 #include "jace/proxy/JObject.h"
 #include "jace/JArray.h"
-#include "jace/JMethod.h"
 #include "jace/JField.h"
 #include "jace/JClass.h"
 

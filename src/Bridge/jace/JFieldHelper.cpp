@@ -91,10 +91,6 @@ jfieldID JFieldHelper::getFieldID( const JClass* parentClass, bool isStatic ) {
 		}
     throw JNIException( msg );
   }
-
-//  cout << "JMethod::getMethodID() - Found the method:" << endl;
-//  cout << "  <" << mName << "> with signature <" << methodSignature << "> for " << jClass->getName() << endl;
-
   return mFieldID;
 }
 

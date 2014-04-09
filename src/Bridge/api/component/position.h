@@ -4,21 +4,25 @@
 #include "entity/component.h"
 #include "jace/JField.h"
 
-using entity::Component;
+using entity::HashableComponent;
 using jace::JField;
 
 namespace api {
 namespace component {
 
-class Position : public Component {
+class Position : public HashableComponent {
     Q_OBJECT
 private:
     JField<JInt> x, y, z;
 public:
-    explicit Position(Object ref, JField<JInt> _x, JField<JInt> _y, JField<JInt> _z, QObject* parent = 0);
-    int getX();
-    int getY();
-    int getZ();
+    explicit Position(java::lang::Object ref, JField<JInt> _x, JField<JInt> _y,
+                      JField<JInt> _z, entity::Entity *parent = Q_NULLPTR);
+
+    int getX() const;
+    int getY() const;
+    int getZ() const;
+
+    virtual uint hash(uint seed) const;
 };
 
 } // namespace component

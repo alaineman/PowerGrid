@@ -42,7 +42,7 @@ protected:
      * \param isStatic [optional] true if the field is static, false otherwise (default is false)
      * \return the field ID for this field.
      */
-    jfieldID getFieldID(const JClass* parentClass, bool isStatic = false) {
+    jfieldID getFieldID(const JClass* parentClass, bool isStatic = false) const {
         if (id) {
             return id;
         }
@@ -80,13 +80,13 @@ public:
      * \param obj the object to retrieve the field value for
      * \return the value of the field
      */
-    virtual Type get(proxy::JObject& obj) = 0;
+    virtual Type get(const proxy::JObject& obj) const = 0;
     /**
      * \brief Returns the (static) field's value
      * \param cls the class that defines the field
      * \return the value of the field
      */
-    virtual Type get(const JClass* cls) = 0;
+    virtual Type get(const JClass* cls) const = 0;
 };
 
 /**
@@ -101,14 +101,14 @@ public:
      * \param name the name of the field
      */
     JField( const std::string& name ) : JFieldBase<Type>(name) {}
-    virtual Type get(jace::proxy::JObject& obj) {
+    virtual Type get(const jace::proxy::JObject& obj) const {
         jfieldID fieldID = this->getFieldID( obj.getJavaJniClass() );
         JNIEnv* env = helper::attach();
         jobject res = env->GetObjectField(obj.getJavaJniObject(), fieldID);
         helper::catchAndThrow();
         return Type(res);
     }
-    virtual Type get(const JClass *cls) {
+    virtual Type get(const JClass *cls) const {
         jfieldID fieldID = this->getFieldID( cls, true );
         JNIEnv* env = helper::attach();
         jobject res = env->GetStaticObjectField(cls->getClass(), fieldID);
@@ -121,57 +121,57 @@ public:
 template <> class JField<JBoolean> : public JFieldBase<JBoolean> {
 public:
     JField(const std::string& name);
-    virtual JBoolean get(proxy::JObject& obj);
-    virtual JBoolean get(const JClass *cls);
+    virtual JBoolean get(const proxy::JObject& obj) const;
+    virtual JBoolean get(const JClass *cls) const;
 };
 
 template <> class JField<JByte> : public JFieldBase<JByte> {
 public:
     JField(const std::string& name);
-    virtual JByte get(proxy::JObject& obj);
-    virtual JByte get(const JClass *cls);
+    virtual JByte get(const proxy::JObject& obj) const;
+    virtual JByte get(const JClass *cls) const;
 };
 
 template <> class JField<JChar> : public JFieldBase<JChar> {
 public:
     JField(const std::string& name);
-    virtual JChar get(proxy::JObject& obj);
-    virtual JChar get(const JClass *cls);
+    virtual JChar get(const proxy::JObject& obj) const;
+    virtual JChar get(const JClass *cls) const;
 };
 
 template <> class JField<JShort> : public JFieldBase<JShort> {
 public:
     JField(const std::string& name);
-    virtual JShort get(proxy::JObject& obj);
-    virtual JShort get(const JClass *cls);
+    virtual JShort get(const proxy::JObject& obj) const;
+    virtual JShort get(const JClass *cls) const;
 };
 
 template <> class JField<JInt> : public JFieldBase<JInt> {
 public:
     JField(const std::string& name);
-    virtual JInt get(proxy::JObject& obj);
-    virtual JInt get(const JClass *cls);
+    virtual JInt get(const proxy::JObject& obj) const;
+    virtual JInt get(const JClass *cls) const;
 };
 
 template <> class JField<JLong> : public JFieldBase<JLong> {
 public:
     JField(const std::string& name);
-    virtual JLong get(proxy::JObject& obj);
-    virtual JLong get(const JClass *cls);
+    virtual JLong get(const proxy::JObject& obj) const;
+    virtual JLong get(const JClass *cls) const;
 };
 
 template <> class JField<JDouble> : public JFieldBase<JDouble> {
 public:
     JField(const std::string& name);
-    virtual JDouble get(proxy::JObject& obj);
-    virtual JDouble get(const JClass *cls);
+    virtual JDouble get(const proxy::JObject& obj) const;
+    virtual JDouble get(const JClass *cls) const;
 };
 
 template <> class JField<JFloat> : public JFieldBase<JFloat> {
 public:
     JField(const std::string& name);
-    virtual JFloat get(proxy::JObject& obj);
-    virtual JFloat get(const JClass *cls);
+    virtual JFloat get(const proxy::JObject& obj) const;
+    virtual JFloat get(const JClass *cls) const;
 };
 
 }

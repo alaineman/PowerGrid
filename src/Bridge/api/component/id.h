@@ -4,7 +4,7 @@
 #include "entity/component.h"
 #include "jace/JField.h"
 
-using entity::Component;
+using entity::HashableComponent;
 using jace::JField;
 
 namespace api {
@@ -16,7 +16,7 @@ namespace component {
  * This Component can be used to identify Entities by a number.
  * This number should be unique or pseudo-unique.
  */
-class ID : public Component {
+class ID : public HashableComponent {
     Q_OBJECT
 private:
     JField<JInt> value;
@@ -27,11 +27,13 @@ public:
      * @param id the JField containing the id value
      * @param parent the parent of this Component
      */
-    explicit ID(Object ref, JField<JInt> id, QObject* parent = 0);
+    explicit ID(Object ref, JField<JInt> id, entity::Entity* parent = 0);
     /**
      * @brief Returns the id value of this ID Component
      */
-    int getID();
+    int getID() const;
+
+    virtual uint hash(uint seed) const;
 };
 
 

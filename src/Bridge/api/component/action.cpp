@@ -3,7 +3,7 @@
 namespace api {
 namespace component {
 
-Action::Action(Object ref, QObject *parent) : Component(ref, parent) {
+Action::Action(Object ref, Entity *parent) : Component(ref, parent) {
 }
 
 bool Action::operator ==(const Action& other) {

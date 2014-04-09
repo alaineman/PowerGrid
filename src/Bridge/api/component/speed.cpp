@@ -7,10 +7,10 @@ using java::lang::Object;
 namespace api {
 namespace component {
 
-Speed::Speed(Object ref, JField<JDouble> speed, QObject* parent):
+Speed::Speed(Object ref, JField<JDouble> speed, entity::Entity* parent):
     Component(ref, parent), value(speed){}
 
-double Speed::getCurrentSpeed() {
+double Speed::getCurrentSpeed() const {
     Object o = getReference();
     return value.get(o);
 }

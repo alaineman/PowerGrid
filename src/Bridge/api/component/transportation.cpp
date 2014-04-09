@@ -5,8 +5,11 @@
 namespace api {
 namespace component {
 
-Transportation::Transportation(Position* _from, Position* _to, int _cost, Action* _action, QObject* parent):
-    Component(Object(), parent), from(_from), to(_to), cost(_cost), action(_action){}
+using java::lang::Object;
+
+Transportation::Transportation(Position* _from, Position* _to, int _cost,
+                               Action* _action, entity::Entity* parent):
+    HashableComponent(Object(), parent), from(_from), to(_to), cost(_cost), action(_action){}
 
 Position* Transportation::getFrom() const {
     return from;
@@ -19,6 +22,10 @@ int Transportation::getCost() const {
 }
 Action* Transportation::getAction() const {
     return action;
+}
+
+uint Transportation::hash(uint seed) const {
+    return qHash(from, seed) ^ qHash(to, seed) ^ rol(cost, 4);
 }
 
 } // namespace component

@@ -7,22 +7,27 @@ using java::lang::Object;
 namespace api {
 namespace component {
 
-Position::Position(Object ref, JField<JInt> _x, JField<JInt> _y, JField<JInt> _z, QObject* parent):
-    Component(ref, parent), x(_x), y(_y), z(_z) {}
+Position::Position(java::lang::Object ref, JField<JInt> _x, JField<JInt> _y, JField<JInt> _z, entity::Entity* parent):
+    HashableComponent(ref, parent), x(_x), y(_y), z(_z) {}
 
-int Position::getX() {
+int Position::getX() const {
     Object o = getReference();
     return x.get(o);
 }
 
-int Position::getY(){
+int Position::getY() const {
     Object o = getReference();
     return y.get(o);
 }
 
-int Position::getZ(){
+int Position::getZ() const {
     Object o = getReference();
     return z.get(o);
+}
+
+uint Position::hash(uint seed) const {
+    uint x = uint(getX()), y = uint(getY()), z = uint(getZ());
+    return (seed ^ x) * (seed ^ rol(y, 4)) * (seed ^ ror(z, 8));
 }
 
 

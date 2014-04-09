@@ -4,20 +4,23 @@
 #include "entity/component.h"
 #include "jace/JField.h"
 
-using entity::Component;
+using entity::HashableComponent;
 using jace::JField;
 
 namespace api {
 namespace component {
 
-class Size : public Component {
+class Size : public HashableComponent {
     Q_OBJECT
 private:
     JField<JInt> x, y;
 public:
-    explicit Size(Object ref, JField<JInt> width, JField<JInt> height, QObject* parent = NULL);
-    int getWidth();
-    int getHeight();
+    explicit Size(java::lang::Object ref, JField<JInt> width, JField<JInt> height,
+                  entity::Entity *parent = Q_NULLPTR);
+    int getWidth() const;
+    int getHeight() const;
+
+    virtual uint hash(uint seed) const;
 };
 
 } // namespace component

@@ -10,13 +10,15 @@ using jace::JField;
 namespace api {
 namespace component {
 
+// Note: Speed is not Hashable, because an object's
+// speed usually changes, making any hash lookups fail
 class Speed : public Component {
     Q_OBJECT
 private:
     JField<JDouble> value;
 public:
-    explicit Speed(Object ref, JField<JDouble> speed, QObject* parent = 0);
-    double getCurrentSpeed();
+    explicit Speed(java::lang::Object ref, JField<JDouble> speed, entity::Entity *parent = 0);
+    double getCurrentSpeed() const;
 };
 
 } // namespace component

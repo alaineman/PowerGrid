@@ -8,14 +8,14 @@ using jace::proxy::JObject;
 // JField<JBoolean> specialization
 JField<JBoolean>::JField(const std::string &name) : JFieldBase(name) {}
 
-JBoolean JField<JBoolean>::get(JObject& object ) {
+JBoolean JField<JBoolean>::get(const JObject& object ) const {
     jfieldID fieldID = this->getFieldID( object.getJavaJniClass() );
     JNIEnv* env = helper::attach();
     jboolean result = env->GetBooleanField( object.getJavaJniObject(), fieldID );
     helper::catchAndThrow();
     return JBoolean( result );
 }
-JBoolean JField<JBoolean>::get(const JClass* cls ) {
+JBoolean JField<JBoolean>::get(const JClass* cls) const {
     jfieldID fieldID = this->getFieldID( cls, true );
     JNIEnv* env = helper::attach();
     jboolean result = env->GetStaticBooleanField( cls->getClass(), fieldID );
@@ -26,14 +26,14 @@ JBoolean JField<JBoolean>::get(const JClass* cls ) {
 // JField<JByte> specialization
 JField<JByte>::JField(const std::string &name) : JFieldBase(name) {}
 
-JByte JField<JByte>::get(JObject& object ) {
+JByte JField<JByte>::get(const JObject& object ) const {
     jfieldID fieldID = this->getFieldID( object.getJavaJniClass() );
     JNIEnv* env = helper::attach();
     jbyte result = env->GetByteField( object.getJavaJniObject(), fieldID );
     helper::catchAndThrow();
     return JByte( result );
 }
-JByte JField<JByte>::get(const JClass* cls ) {
+JByte JField<JByte>::get(const JClass* cls) const {
     jfieldID fieldID = this->getFieldID( cls, true );
     JNIEnv* env = helper::attach();
     jbyte result = env->GetStaticByteField( cls->getClass(), fieldID );
@@ -44,14 +44,14 @@ JByte JField<JByte>::get(const JClass* cls ) {
 // JField<JChar> specialization
 JField<JChar>::JField(const std::string &name) : JFieldBase(name) {}
 
-JChar JField<JChar>::get(JObject& object ) {
+JChar JField<JChar>::get(const JObject& object ) const {
     jfieldID fieldID = this->getFieldID( object.getJavaJniClass() );
     JNIEnv* env = helper::attach();
     JChar result = env->GetCharField( object.getJavaJniObject(), fieldID );
     helper::catchAndThrow();
     return JChar( result );
 }
-JChar JField<JChar>::get(const JClass* cls ) {
+JChar JField<JChar>::get(const JClass* cls) const {
     jfieldID fieldID = this->getFieldID( cls, true );
     JNIEnv* env = helper::attach();
     jchar result = env->GetStaticCharField( cls->getClass(), fieldID );
@@ -62,14 +62,14 @@ JChar JField<JChar>::get(const JClass* cls ) {
 // JField<JShort> specialization
 JField<JShort>::JField(const std::string &name) : JFieldBase(name) {}
 
-JShort JField<JShort>::get(JObject& object ) {
+JShort JField<JShort>::get(const JObject& object ) const {
     jfieldID fieldID = this->getFieldID( object.getJavaJniClass() );
     JNIEnv* env = helper::attach();
     jshort result = env->GetShortField( object.getJavaJniObject(), fieldID );
     helper::catchAndThrow();
     return JShort( result );
 }
-JShort JField<JShort>::get(const JClass* cls ) {
+JShort JField<JShort>::get(const JClass* cls) const {
     jfieldID fieldID = this->getFieldID( cls, true );
     JNIEnv* env = helper::attach();
     jshort result = env->GetStaticShortField( cls->getClass(), fieldID );
@@ -80,14 +80,14 @@ JShort JField<JShort>::get(const JClass* cls ) {
 // JField<JInt> specialization
 JField<JInt>::JField(const std::string &name) : JFieldBase(name) {}
 
-JInt JField<JInt>::get(JObject& object ) {
+JInt JField<JInt>::get(const JObject& object ) const {
     jfieldID fieldID = this->getFieldID( object.getJavaJniClass() );
     JNIEnv* env = helper::attach();
     jint result = env->GetIntField( object.getJavaJniObject(), fieldID );
     helper::catchAndThrow();
     return JInt( result );
 }
-JInt JField<JInt>::get(const JClass* cls ) {
+JInt JField<JInt>::get(const JClass* cls) const {
     jfieldID fieldID = this->getFieldID( cls, true );
     JNIEnv* env = helper::attach();
     jint result = env->GetStaticIntField( cls->getClass(), fieldID );
@@ -98,14 +98,14 @@ JInt JField<JInt>::get(const JClass* cls ) {
 // JField<JLong> specialization
 JField<JLong>::JField(const std::string &name) : JFieldBase(name) {}
 
-JLong JField<JLong>::get(JObject& object ) {
+JLong JField<JLong>::get(const JObject& object ) const {
     jfieldID fieldID = this->getFieldID( object.getJavaJniClass() );
     JNIEnv* env = helper::attach();
     jlong result = env->GetLongField( object.getJavaJniObject(), fieldID );
     helper::catchAndThrow();
     return JLong( result );
 }
-JLong JField<JLong>::get(const JClass* cls ) {
+JLong JField<JLong>::get(const JClass* cls) const {
     jfieldID fieldID = this->getFieldID( cls, true );
     JNIEnv* env = helper::attach();
     jlong result = env->GetStaticLongField( cls->getClass(), fieldID );
@@ -116,14 +116,14 @@ JLong JField<JLong>::get(const JClass* cls ) {
 // JField<JDouble> specialization
 JField<JDouble>::JField(const std::string &name) : JFieldBase(name) {}
 
-JDouble JField<JDouble>::get(JObject& object ) {
+JDouble JField<JDouble>::get(const JObject& object ) const {
     jfieldID fieldID = this->getFieldID( object.getJavaJniClass() );
     JNIEnv* env = helper::attach();
     jdouble result = env->GetDoubleField( object.getJavaJniObject(), fieldID );
     helper::catchAndThrow();
     return JDouble( result );
 }
-JDouble JField<JDouble>::get(const JClass* cls ) {
+JDouble JField<JDouble>::get(const JClass* cls) const {
     jfieldID fieldID = this->getFieldID( cls, true );
     JNIEnv* env = helper::attach();
     jdouble result = env->GetStaticDoubleField( cls->getClass(), fieldID );
@@ -134,14 +134,14 @@ JDouble JField<JDouble>::get(const JClass* cls ) {
 // JField<JFloat> specialization
 JField<JFloat>::JField(const std::string &name) : JFieldBase(name) {}
 
-JFloat JField<JFloat>::get(JObject& object ) {
+JFloat JField<JFloat>::get(const JObject& object ) const {
     jfieldID fieldID = this->getFieldID( object.getJavaJniClass() );
     JNIEnv* env = helper::attach();
     jfloat result = env->GetFloatField( object.getJavaJniObject(), fieldID );
     helper::catchAndThrow();
     return JFloat( result );
 }
-JFloat JField<JFloat>::get(const JClass* cls ) {
+JFloat JField<JFloat>::get(const JClass* cls) const {
     jfieldID fieldID = this->getFieldID( cls, true );
     JNIEnv* env = helper::attach();
     jfloat result = env->GetStaticFloatField( cls->getClass(), fieldID );

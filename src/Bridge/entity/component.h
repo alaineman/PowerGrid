@@ -8,6 +8,8 @@ using java::lang::Object;
 
 namespace entity {
 
+class Entity;
+
 /**
  * \brief Base class for all components.
  *
@@ -30,7 +32,7 @@ public:
      * assigned to that Entity.
      * \param parent the parent of this Component
      */
-    explicit Component(Object ref, QObject* parent = 0);
+    explicit Component(Object ref, Entity* parent = 0);
 
     /**
      * @brief Returns the reference of this Component
@@ -40,8 +42,34 @@ public:
      * returns @c true).
      */
     Object getReference() const;
+
 };
 
+class HashableComponent : public Component {
+public:
+    explicit HashableComponent(Object ref, Entity* parent = 0);
+
+    virtual uint hash(uint seed) const = 0;
+
+    bool operator ==(const HashableComponent& other) const {
+        return getReference() == other.getReference();
+    }
+};
+
+}
+
+uint qHash(entity::HashableComponent* key, uint seed) {
+    return key == 0 ? 0 : key->hash(seed);
+}
+
+template<typename T>
+T rol(T val, uint amount) {
+    return (val << amount) | (val >> (sizeof(T)*8 - amount));
+}
+
+template<typename T>
+T ror(T val, uint amount) {
+    return (val >> amount) | (val << (sizeof(T)*8 - amount));
 }
 
 #endif // COMPONENT_H

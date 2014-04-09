@@ -31,7 +31,8 @@ public:
      * @param ref [optional] the reference Object
      * @param parent [optional] the parent of this Component
      */
-    explicit Interaction(QMap<QString, Action*> _actions, Object ref = Object(), QObject* parent = 0);
+    explicit Interaction(QMap<QString, Action*> _actions, Object ref = Object(),
+                         entity::Entity *parent = 0);
 
     /**
      * @brief Returns the Action* with the given name.

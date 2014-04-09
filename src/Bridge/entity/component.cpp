@@ -5,10 +5,9 @@ using java::lang::Object;
 
 namespace entity {
 
-Component::Component(Object ref, QObject* parent) : QObject(parent), obj(ref)  {
-    Entity* e = qobject_cast<Entity*>(parent);
-    if (e != NULL) {
-        e->addComponent(this);
+Component::Component(Object ref, Entity* parent) : QObject(parent), obj(ref)  {
+    if (parent != NULL) {
+        parent->addComponent(this);
     }
 }
 

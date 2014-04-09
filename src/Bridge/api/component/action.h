@@ -30,7 +30,7 @@ public:
         \param ref the referenced Java Object
         \param parent the parent QObject
      */
-    Action(Object ref, QObject* parent = Q_NULLPTR);
+    Action(Object ref, Entity *parent = Q_NULLPTR);
 
     /**
         \brief Executes the action on the provided Entity

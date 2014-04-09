@@ -7,7 +7,7 @@ using java::lang::Object;
 namespace api {
 namespace component {
 
-Interaction::Interaction(QMap<QString, Action *> _actions, java::lang::Object ref, QObject *parent) :
+Interaction::Interaction(QMap<QString, Action *> _actions, java::lang::Object ref, entity::Entity *parent) :
         Component(ref, parent), actions(_actions) {
 }
 

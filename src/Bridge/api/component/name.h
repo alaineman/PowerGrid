@@ -5,7 +5,7 @@
 #include "jace/JField.h"
 #include "java/lang/string.h"
 
-using entity::Component;
+using entity::HashableComponent;
 using jace::JField;
 
 namespace api {
@@ -16,7 +16,7 @@ namespace component {
  *
  * The name should be descriptive and (usually) human-readable.
  */
-class Name: public Component {
+class Name: public HashableComponent {
     Q_OBJECT
 private:
     JField<java::lang::String> value;
@@ -27,11 +27,13 @@ public:
      * @param name the JField containing the name
      * @param parent the parent of this Component
      */
-    Name(Object ref, JField<java::lang::String> name, QObject* parent = 0);
+    Name(Object ref, JField<java::lang::String> name, entity::Entity *parent = 0);
     /**
      * @brief Returns the name value of this Name Component
      */
-    QString getName();
+    QString getName() const;
+
+    virtual uint hash(uint seed) const;
 };
 
 } // namespace component

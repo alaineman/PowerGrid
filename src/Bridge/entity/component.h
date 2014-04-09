@@ -46,8 +46,10 @@ public:
 };
 
 class HashableComponent : public Component {
+    Q_OBJECT
 public:
-    explicit HashableComponent(Object ref, Entity* parent = 0);
+    explicit HashableComponent(Object ref, Entity* parent = 0) :
+        Component(ref, parent) {}
 
     virtual uint hash(uint seed) const = 0;
 

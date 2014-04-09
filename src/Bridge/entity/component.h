@@ -9,7 +9,7 @@ using java::lang::Object;
 namespace entity {
 
 /**
- * \brief base class for all components.
+ * \brief Base class for all components.
  *
  * Components are assigned to Entities to give them properties.
  * The Component class by itself does not define any properties.
@@ -34,6 +34,10 @@ public:
 
     /**
      * @brief Returns the reference of this Component
+     *
+     * Note that not all Components may make use of reference Objects, and
+     * they may return null-Objects (Objects for which @c Object::isNull()
+     * returns @c true).
      */
     Object getReference() const;
 };

@@ -25,9 +25,7 @@ void World::addEntity(Entity *e){
 }
 
 Entity* World::createEntity() {
-    Entity* e = new Entity();
-    addEntity(e);
-    return e;
+    return new Entity(this);
 }
 
 int World::count() {
@@ -37,7 +35,7 @@ int World::count() {
 void World::addMatcher(Matcher *m) {
     if (m) {
         foreach(QString s, m->matchedTypes()) {
-            QMap<QString, QList<Matcher*>>::Iterator it = matchers.find(s);
+            auto it = matchers.find(s);
             if (it == matchers.end()) {
                 matchers.insert(s, QList<Matcher*>() << m);
             } else {
@@ -50,7 +48,7 @@ void World::addMatcher(Matcher *m) {
 void World::removeMatcher(Matcher *m) {
     if (m) {
         foreach(QString s, m->matchedTypes()) {
-            QMap<QString, QList<Matcher*>>::Iterator it = matchers.find(s);
+            auto it = matchers.find(s);
             if (it != matchers.end()) {
                 (*it).removeOne(m);
             }
@@ -72,11 +70,27 @@ Mapper* World::getMapper(QString type) {
     return mapper;
 }
 
+void World::initMapper(Mapper *mapper) {
+    if (mapper) {
+        QString type = mapper->getMappedType();
+        QList<Entity*> list = componentMap.value(type);
+        foreach(Entity* e, list) {
+            // Add all Entities with the Mapper's type.'
+            mapper->add(e, e->get(type));
+        }
+        // Connect the signals/slots
+        connect(this, SIGNAL(componentAdded(Entity*,Component*)), mapper, SLOT(add(Entity*,Component*)));
+        connect(this, SIGNAL(componentRemoved(Entity*,Component*)), mapper, SLOT(remove(Entity*,Component*)));
+
+        mappers.insert(type, mapper);
+    }
+}
+
 #ifdef Q_COMPILER_INITIALIZER_LISTS
 
 Entity* World::createEntity(initializer_list<Component*> comps) {
     Entity* e = createEntity();
-    initializer_list<Component*>::iterator it = comps.begin();
+    auto it = comps.begin();
     for (; it != comps.end(); it++) {
         e->addComponent(*it);
     }
@@ -102,7 +116,7 @@ void World::deleteEntity(Entity *e) {
 void World::processAll() {
     emit processingStarted();
 
-    QMapIterator<QString, QList<Matcher*>> it (matchers);
+    QHashIterator<QString, QList<Matcher*>> it (matchers);
     for (;it.hasNext(); it.next()) {                        // For each Component type
         QList<Entity*> ents = componentMap.value(it.key()); // The Entities with this Component
         foreach(Matcher* m, it.value()) {                   // Now for each Matcher,

@@ -24,10 +24,14 @@ class World;
  * Properties can be added to Entities in the form of Components.
  *
  * Entities should always be created to be a part of a World instance.
- * Therefore, instead of creating an entity directly, consider using
- * \c entity::World.createEntity() instead.
+ * Therefore, either provide a World* in the constructor, or invoke
+ * World::createEntity() create Entities.
+ *
+ * The constructor of Entity will throw a std::logic_error when the
+ * provided World parameter is invalid.
  *
  * \see entity::Component
+ * \see entity::World
  * \author Patrick Kramer
  */
 class Entity : public QObject {
@@ -122,7 +126,8 @@ public slots:
      * @brief Removes the given Component from this Entity
      *
      * This causes this Entity to emit the \c componentRemoved(Component*) signal.
-     * This slot does nothing if the specified Component is NULL.
+     * This slot does nothing if the specified Component is NULL or if the Component
+     * does not belong to this Entity.
      *
      * @param cmp the Component to remove
      */

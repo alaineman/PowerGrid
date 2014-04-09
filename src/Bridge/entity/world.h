@@ -70,17 +70,6 @@ public:
     int count();
 
     /**
-     * \brief Adds a Matcher to this World.
-     * \param m the Matcher to add
-     */
-    void addMatcher(Matcher* m);
-    /**
-     * \brief Removes a Matcher from this World.
-     * \param m the Matcher to remove
-     */
-    void removeMatcher(Matcher* m);
-
-    /**
      * \brief Returns the Mapper instance for the Type
      *
      * Any two Mappers* with the same Type returned by this member
@@ -136,8 +125,18 @@ signals:
      */
     void entityCreated(Entity* e);
 
+    /**
+     * @brief Signal emitted when a Component is added to an Entity
+     * @param e the Entity
+     * @param c the Component that was added
+     */
     void componentAdded(Entity* e, Component* c);
 
+    /**
+     * @brief Signal emitted when a Component is removed from an Entity
+     * @param e the Entity
+     * @param c the Component that was removed
+     */
     void componentRemoved(Entity* e, Component* c);
 
     /**
@@ -168,6 +167,31 @@ public slots:
      * this may cause a variety of issues.
      */
     void processAll();
+
+    /**
+     * \brief Adds a Matcher to this World.
+     * \param m the Matcher to add
+     */
+    void addMatcher(Matcher* m);
+    /**
+     * \brief Removes a Matcher from this World.
+     * \param m the Matcher to remove
+     */
+    void removeMatcher(Matcher* m);
+
+    /**
+     * \brief Initializes the provided Mapper for this World
+     *
+     * The Mapper is updated with the current state, and registered with this World.
+     * This function should be invoked exactly once for each Mapper instance, invoking
+     * it more than once for a single Mapper may lead to undesired effects.
+     *
+     * Also, the default Mapper implementation already invokes this when it's created,
+     * so this should only be invoked for customized Mapper instances that don't .
+     *
+     * \param mapper the Mapper to initialize.
+     */
+    void initMapper(Mapper* mapper);
 };
 
 }

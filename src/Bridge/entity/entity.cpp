@@ -52,8 +52,9 @@ void Entity::addComponent(Component *cmp, bool overwrite) {
 
 void Entity::removeComponent(Component *cmp) {
     if (cmp != NULL)  {
-        int result = components.remove(cmp->metaObject()->className());
-        if (result > 0) {
+        Component* val = components.value(cmp->metaObject()->className());
+        if (cmp == val) {
+            components.remove(cmp->metaObject()->className());
             emit componentRemoved(this, cmp);
         }
     }

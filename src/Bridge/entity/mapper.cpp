@@ -3,14 +3,15 @@
 
 namespace entity {
 
-Mapper::Mapper(QString type, World* parent) : QObject(parent), type(type) {
+Mapper::Mapper(QString type, bool init, World* parent) : QObject(parent), type(type) {
     if (parent == NULL) {
-        throw std::runtime_error("NULL world is not allowed");
+        parent = World::instance();
+        setParent(parent);
     }
-
     // Connect to the specified World.
-    connect(parent, SIGNAL(componentAdded(Entity*,Component*)), this, SLOT(add(Entity*,Component*)));
-    connect(parent, SIGNAL(componentRemoved(Entity*,Component*)), this, SLOT(remove(Entity*,Component*)));
+    if (init) {
+        parent->initMapper(this);
+    }
 }
 
 bool Mapper::contains(Entity* e) const{

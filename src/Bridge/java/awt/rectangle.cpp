@@ -40,19 +40,19 @@ Rectangle& Rectangle::operator =(const Rectangle &obj) {
 }
 
 JACE_PROXY_API JInt Rectangle::getX() {
-    return jace::JField<JInt>("x").getReadOnly(*this);
+    return jace::JField<JInt>("x").get(*this);
 }
 
 JACE_PROXY_API JInt Rectangle::getY() {
-    return jace::JField<JInt>("y").getReadOnly(*this);
+    return jace::JField<JInt>("y").get(*this);
 }
 
 JACE_PROXY_API JInt Rectangle::getWidth() {
-    return jace::JField<JInt>("width").getReadOnly(*this);
+    return jace::JField<JInt>("width").get(*this);
 }
 
 JACE_PROXY_API JInt Rectangle::getHeight() {
-    return jace::JField<JInt>("height").getReadOnly(*this);
+    return jace::JField<JInt>("height").get(*this);
 }
 
 } // namespace awt

@@ -12,7 +12,7 @@ ID::ID(Object ref, JField<JInt> id, QObject* parent):
 
 int ID::getID() {
     Object o = getReference();
-    return value.getReadOnly(o);
+    return value.get(o);
 }
 
 } // namespace component

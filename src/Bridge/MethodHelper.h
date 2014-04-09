@@ -120,7 +120,7 @@ JACE_PROXY_API const jace::RSClass* name::getJavaJniClass() const throw(jace::JN
 #define IMPL_OBJECT_METHOD(className, name, returnType) \
 JACE_PROXY_API returnType className::name() {\
     const jace::RSClass* rsc = getJavaJniClass();\
-    returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).getReadOnly(*this);\
+    returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).get(*this);\
     return result;\
 }
 
@@ -131,7 +131,7 @@ JACE_PROXY_API returnType className::name() {\
 #define IMPL_PRIMITIVE_METHOD(className, name, returnType) \
 JACE_PROXY_API returnType className::name() {\
     const jace::RSClass* rsc = getJavaJniClass();\
-    returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).getReadOnly(*this);\
+    returnType result = jace::JField<returnType>(rsc->getFieldName(#name)).get(*this);\
     return static_cast<returnType> (result * rsc->getFieldModifier(#name));\
 }
 
@@ -145,7 +145,7 @@ JACE_PROXY_API returnType className::name() {\
 #define IMPL_ARRAY_METHOD(className, name, componentType) \
 JACE_PROXY_API QList<componentType> className::name() {\
     const jace::RSClass* rsc = getJavaJniClass();\
-    jace::JArray<componentType> result = jace::JField<jace::JArray<componentType>>(rsc->getFieldName(#name)).getReadOnly(*this);\
+    jace::JArray<componentType> result = jace::JField<jace::JArray<componentType>>(rsc->getFieldName(#name)).get(*this);\
     return result.toQList();\
 }
 
@@ -157,7 +157,7 @@ JACE_PROXY_API QList<componentType> className::name() {\
 #define IMPL_ARRAY2_METHOD(className, name, componentType) \
     JACE_PROXY_API QList<QList<componentType>> className::name() {\
         const jace::RSClass* rsc = getJavaJniClass();\
-        jace::JArray<jace::JArray<componentType>> jresult = jace::JField<jace::JArray<jace::JArray<componentType>>>(rsc->getFieldName(#name)).getReadOnly(*this);\
+        jace::JArray<jace::JArray<componentType>> jresult = jace::JField<jace::JArray<jace::JArray<componentType>>>(rsc->getFieldName(#name)).get(*this);\
         QList<QList<componentType>> result;\
         for (int i=0;i<jresult.length(); i++) {\
             result << jresult[i].toQList();\
@@ -174,7 +174,7 @@ JACE_PROXY_API QList<componentType> className::name() {\
     JACE_PROXY_API QList<QList<QList<componentType>>> className::name() {\
         const jace::RSClass* rsc = getJavaJniClass();\
         jace::JArray<jace::JArray<jace::JArray<componentType>>> jresult = \
-                jace::JField<jace::JArray<jace::JArray<jace::JArray<componentType>>>>(rsc->getFieldName(#name)).getReadOnly(*this);\
+                jace::JField<jace::JArray<jace::JArray<jace::JArray<componentType>>>>(rsc->getFieldName(#name)).get(*this);\
         QList<QList<QList<componentType>>> result;\
         for(int i=0; i<jresult.length(); i++) { \
             jace::JArray<jace::JArray<componentType>> arr2D = jresult[i];\

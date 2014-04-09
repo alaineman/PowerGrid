@@ -12,12 +12,12 @@ Size::Size(Object ref, JField<JInt> width, JField<JInt> height, QObject* parent)
 
 int Size::getWidth() {
     Object o = getReference();
-    return x.getReadOnly(o);
+    return x.get(o);
 }
 
 int Size::getHeight(){
     Object o = getReference();
-    return y.getReadOnly(o);
+    return y.get(o);
 }
 
 } // namespace component

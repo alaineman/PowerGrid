@@ -67,11 +67,11 @@ bool Object::equals(const Object &other) const {
     return env->CallBooleanMethod(getJavaJniObject(), equals_id, other.getJavaJniObject()) == JNI_TRUE;
 }
 
-String Object::toString() const {
+jstring Object::toString() const {
     JNIEnv* env = jace::helper::attach();
     jmethodID toString_id = env->GetMethodID(
                 Object::staticGetJavaJniClass()->getClass(), "toString", "()Ljava/lang/String;");
-    String result (env->CallObjectMethod(getJavaJniObject(), toString_id));
+    jstring result = static_cast<jstring>(env->CallObjectMethod(getJavaJniObject(), toString_id));
     return result;
 }
 

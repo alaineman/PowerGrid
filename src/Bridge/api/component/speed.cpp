@@ -12,7 +12,7 @@ Speed::Speed(Object ref, JField<JDouble> speed, QObject* parent):
 
 double Speed::getCurrentSpeed() {
     Object o = getReference();
-    return value.getReadOnly(o);
+    return value.get(o);
 }
 
 } // namespace component

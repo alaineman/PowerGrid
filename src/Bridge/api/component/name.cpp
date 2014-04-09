@@ -13,7 +13,7 @@ Name::Name(Object ref, JField<java::lang::String> name, QObject* parent):
 
 QString Name::getName() {
     Object o = getReference();
-    return value.getReadOnly(o).toQString();
+    return value.get(o).toQString();
 }
 
 } // namespace component

@@ -3,6 +3,7 @@
 
 #include "entity/component.h"
 #include "jace/JField.h"
+#include "java/lang/string.h"
 
 using entity::Component;
 using jace::JField;

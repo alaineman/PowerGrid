@@ -94,7 +94,6 @@ IMPL_STATIC_INT_FIELD(Client, getDestinationX)
 IMPL_STATIC_INT_FIELD(Client, getDestinationY)
 IMPL_STATIC_OBJECT_FIELD(Client, getDetailInfoNode, DetailInfoNode)
 
-//IMPL_STATIC_INT_FIELD(Client, getFPS, JInt)
 IMPL_STATIC_INT_FIELD(Client, getFPS)
 
 IMPL_STATIC_OBJECT_FIELD(Client, getFacade, Facade)

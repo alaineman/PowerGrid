@@ -429,9 +429,7 @@ HEADERS    += \
     jace/proxy/types/JByte.h \
     jace/proxy/types/JBoolean.h \
     jace/JMethod.tsp \
-    jace/JMethod.tsd \
-    jace/JField.tsp \
-    jace/JField.tsd
+    jace/JMethod.tsd
 
 SOURCES    += \
     jace/VmLoader.cpp \

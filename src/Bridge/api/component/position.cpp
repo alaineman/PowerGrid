@@ -12,17 +12,17 @@ Position::Position(Object ref, JField<JInt> _x, JField<JInt> _y, JField<JInt> _z
 
 int Position::getX() {
     Object o = getReference();
-    return x.getReadOnly(o);
+    return x.get(o);
 }
 
 int Position::getY(){
     Object o = getReference();
-    return y.getReadOnly(o);
+    return y.get(o);
 }
 
 int Position::getZ(){
     Object o = getReference();
-    return z.getReadOnly(o);
+    return z.get(o);
 }
 
 

@@ -83,12 +83,6 @@ HEADERS        = mainwindow.h versionInfo.h powergrid.rc
 FORMS          = mainwindow.ui
 RESOURCES      = resources.qrc
 
-win32 {
-    # Windows has this specific VmLoader
-    SOURCES += Win32VmLoader.cpp
-    HEADERS += Win32VmLoader.h
-}
-
 # helper defines to detect build mode.
 CONFIG(debug, debug|release) {
     DEFINES += PG_DEBUG

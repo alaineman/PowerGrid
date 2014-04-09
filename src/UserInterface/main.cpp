@@ -44,7 +44,7 @@
 #  include <QList>
 #  include <QDir>
 #elif defined(Q_OS_WIN32)
-#  include "Win32VmLoader.h"
+#  include "jace/Win32VmLoader.h"
 #endif
 
 // Native methods that need to be registered

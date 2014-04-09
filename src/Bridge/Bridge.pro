@@ -82,6 +82,13 @@ DEFINES += JACE_WANT_DYNAMIC_LOAD JACE_EXPORTS JACE_PROXY_EXPORTS
 # and out-of-bounds array indices
 CONFIG(debug, debug|release): DEFINES += JACE_CHECK_NULLS JACE_CHECK_ARRAYS
 
+
+win32 {
+    # Windows has this specific VmLoader
+    SOURCES += jace/Win32VmLoader.cpp
+    HEADERS += jace/Win32VmLoader.h
+}
+
 HEADERS += \
     jace/MappingUnavailableException.h \
     jace/RSClass.h \

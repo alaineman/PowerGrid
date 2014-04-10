@@ -43,7 +43,7 @@ namespace plugins {
        * \brief Returns a cost estimate (in ms) this Task will take to execute.
        * \return the estimated cost of the Task in milliseconds.
        */
-      virtual uint cost() const throw();
+      virtual quint64 cost() const throw();
 
       /**
        * @brief Executes the Task

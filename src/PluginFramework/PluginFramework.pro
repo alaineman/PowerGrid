@@ -34,14 +34,16 @@ CONFIG += staticlib thread c++
 SOURCES += \
     task.cpp \
     taskdescriptor.cpp \
-    plugin.cpp \
-    pgpluginloader.cpp
+    pgpluginloader.cpp \
+    pgplugin.cpp \
+    classifier.cpp
 
 HEADERS += \
     task.h \
     taskdescriptor.h \
-    plugin.h \
-    pgpluginloader.h
+    pgpluginloader.h \
+    pgplugin.h \
+    classifier.h
 
 # Dependency for Bridge
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Bridge/release/ -lBridge

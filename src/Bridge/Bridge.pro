@@ -72,9 +72,6 @@ TEMPLATE    = lib
 TARGET      = Bridge
 CONFIG     += staticlib thread c++11
 
-# JACE uses .tsd and .tsp files as C++ header files, so include those as well
-QMAKE_EXT_H += .tsp .tsd
-
 # Tell JACE we're exporting symbols, and want to load the JVM dynamically.
 DEFINES += JACE_WANT_DYNAMIC_LOAD JACE_EXPORTS JACE_PROXY_EXPORTS
 

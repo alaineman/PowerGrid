@@ -11,6 +11,11 @@ PGPluginLoader::PGPluginLoader(QString dir)
     : directoryName(dir), loaded(false) {
 }
 
+PGPluginLoader::~PGPluginLoader() throw() {
+    // Delete all QPluginLoader instances.
+    unloadPlugins();
+}
+
 QString PGPluginLoader::directory() const {
     return directoryName;
 }
@@ -47,23 +52,18 @@ void PGPluginLoader::unloadPlugins() {
     }
 }
 
-QList<PGPlugin*> PGPluginLoader::plugins() {
-    if (!loaded) {
-        loadPlugins();
-    }
+QList<PGPlugin*> PGPluginLoader::plugins() const {
     QList<PGPlugin*> ps;
     for (int i=0;i<pluginList.size();i++) {
-        QPluginLoader* loader = pluginList[i];
+        QPluginLoader* loader = pluginList.at(i);
         if (loader) {
-            QObject* obj = loader->instance();
-            if (obj) {
-                PGPlugin* pgplugin = qobject_cast<PGPlugin*>(obj);
-                if (pgplugin) {
-                    ps.append(pgplugin);
-                }
+            PGPlugin* pgplugin = qobject_cast<PGPlugin*>(loader->instance());
+            if (pgplugin) {
+                ps.append(pgplugin);
             }
         }
     }
     return ps;
 }
+
 }

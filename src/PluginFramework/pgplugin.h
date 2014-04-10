@@ -4,11 +4,14 @@
 #include <QObject>
 #include <QString>
 #include <QList>
-#include "taskdescriptor.h"
 
 using namespace std;
 
 namespace plugins {
+
+  class TaskDescriptor;
+  class Classifier;
+
   /**
    * @brief Interface defining a PowerGrid plugin
    */
@@ -19,10 +22,19 @@ namespace plugins {
       /**
        * @brief Returns a list of TaskDescriptors
        * The TaskDescriptors returned can be used
-       * to create and run Task
+       * to create and run Tasks
        * @return a list of TaskDescriptors
        */
       virtual QList<TaskDescriptor*> tasks() const = 0;
+
+      /**
+       * @brief Returns a list of Classifiers this Plugin provides.
+       *
+       * The returned Classifiers can be used to detect Entities and
+       * assign Components to them.
+       * @return a list of Classifiers.
+       */
+      virtual QList<Classifier*> classifiers() const = 0;
 
       /**
        * @brief Returns the name of this plugin

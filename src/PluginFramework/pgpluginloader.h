@@ -3,8 +3,7 @@
 
 #include <QString>
 #include <QPluginLoader>
-#include "plugin.h"
-
+#include "pgplugin.h"
 
 namespace plugins {
 
@@ -25,7 +24,9 @@ public:
      * Passing an empty string causes this PluginLoader to load from the default directory.
      * @param dir the directory to load from
      */
-    PGPluginLoader(QString dir = "");
+    PGPluginLoader(QString dir = QString());
+
+    ~PGPluginLoader() throw();
 
     /**
      * @brief Returns the directory this PGPluginLoader loads from
@@ -53,8 +54,10 @@ public:
 
     /**
      * @brief Returns a list of all loaded Plugin instances.
+     *
+     * If @c loadPlugins() has not been invoked yet, this returns an empty QList.
      */
-    QList<PGPlugin*> plugins();
+    QList<PGPlugin*> plugins() const;
 };
 
 }

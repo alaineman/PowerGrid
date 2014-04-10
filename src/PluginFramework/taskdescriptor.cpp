@@ -1,11 +1,17 @@
 #include "taskdescriptor.h"
-#include <stdexcept>
+#include "task.h"
+
+#include <limits>
 
 namespace plugins {
   TaskDescriptor::TaskDescriptor(QString name, QString description) :
     nm(name), desc(description) {}
 
-  Task TaskDescriptor::createTask() {
-    throw std::runtime_error("Cannot create Task");
+  quint64 TaskDescriptor::cost() const throw() {
+      return std::numeric_limits<quint64>::max();
+  }
+
+  Task* TaskDescriptor::createTask() {
+    return new Task(nm, desc, this);
   }
 }

@@ -4,11 +4,10 @@
 #include <QObject>
 #include <QString>
 
-#include "jace/mappingunavailableexception.h"
-
-#include "task.h"
-
 namespace plugins {
+
+  class Task;
+
   /**
    * @brief Describes a Task type
    * TaskDescriptors serve to describe task types.
@@ -31,6 +30,38 @@ namespace plugins {
       TaskDescriptor(QString name, QString description);
 
       /**
+       * \brief Executes the Task of this TaskDescriptor.
+       *
+       * Note for Plugin developers: It is possible either
+       * implement this function for a Task, or subclass
+       * Task itself and override @c execute there. Either way will
+       * work. Note that if you subclass Task, you will have to
+       * override this TaskDescriptor's @c createTask() function
+       * to return an instance of your subclass.
+       *
+       * Subclassing Task gives the advantage of having a separate object
+       * for each time the Task is executed. This allows Tasks of the
+       * same type to be configured differently. When implementing the
+       * @c execute() here, this is not possible.
+       *
+       * Also note that if the Task's execute() and this function are both
+       * overridden (and createTask is overridden as required), then the
+       * Task's execute will always be invoked.
+       */
+      virtual void execute() {}
+
+      /**
+       * \brief Returns a cost estimate for this TaskDescriptor in milliseconds.
+       *
+       * Similar to execute() this function can be overridden in both TaskDescriptor
+       * and Task, and the implementation of Task takes precedence over this one.
+       *
+       * The default return value is the maximum value of the quint64 data type.
+       * \return the expected duration of the TaskDescriptor's execute().
+       */
+      virtual quint64 cost() const throw();
+
+      /**
        * @brief The name of the Task type
        * @return the name of the Task type
        */
@@ -42,10 +73,14 @@ namespace plugins {
       QString description() const { return desc; }
 
       /**
-       * @brief Creates an instance of a Task
-       * @return a Task instance
+       * @brief Creates a new Task instance.
+       *
+       * The caller is responsible for proper
+       * deletion of the returned Task*.
+       *
+       * @return a pointer to a Task instance
        */
-      virtual Task createTask();
+      virtual Task* createTask();
   };
 }
 #endif // TASKDESCRIPTOR_H

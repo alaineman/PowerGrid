@@ -3,6 +3,9 @@
 desktop.ini
 *.DS_Store
 
+# Unix backups
+*.*~ # For example: a file named "client.cpp" may have a backup named "client.cp~"
+
 # MS Office backup files
 ~$*
 ~*.tmp
@@ -38,3 +41,8 @@ cache/
 
 # Generated Doxygen documentation
 doc/output/
+
+# LaTeX temporary files
+*.aux
+*.synctex.gz
+*.pdf # May cause problems, but whatever...

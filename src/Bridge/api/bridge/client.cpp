@@ -36,6 +36,7 @@
 #include "interface.h"
 #include "hashtable.h"
 #include "itemdefloader.h"
+#include "keyboard.h"
 #include "landscapeinfo.h"
 #include "hintarrow.h"
 #include "npcnode.h"
@@ -107,6 +108,8 @@ IMPL_ARRAY_METHOD(Client, getInterfaceBoundsArray, java::awt::Rectangle)
 IMPL_STATIC_INT_FIELD(Client, getInterfaceIndex)
 IMPL_STATIC_OBJECT_FIELD(Client, getInterfaceNodeCache, HashTable)
 IMPL_STATIC_OBJECT_FIELD(Client, getItemDefLoader, ItemDefLoader)
+
+IMPL_STATIC_OBJECT_FIELD(Client, getKeyboard, Keyboard)
 
 IMPL_STATIC_OBJECT_FIELD(Client, getLandscapeInfo, LandscapeInfo)
 IMPL_STATIC_OBJECT_FIELD(Client, getLastSelectedItemName, String)

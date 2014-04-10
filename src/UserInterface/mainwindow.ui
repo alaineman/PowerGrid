@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>controlPanel</class>
- <widget class="QMainWindow" name="controlPanel">
+ <class>mainWindow</class>
+ <widget class="QMainWindow" name="mainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -37,7 +37,7 @@
     <item>
      <widget class="QTabWidget" name="tabView">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="overviewTab">
        <attribute name="title">
@@ -153,6 +153,29 @@
        <attribute name="title">
         <string>Settings</string>
        </attribute>
+       <widget class="QLineEdit" name="textToSend">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>241</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="sendText">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>40</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Send!</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>

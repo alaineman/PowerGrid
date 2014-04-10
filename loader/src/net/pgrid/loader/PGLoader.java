@@ -58,6 +58,14 @@ public class PGLoader {
      */
     public static final PGLoader INSTANCE;
     
+    public static Applet getRSApplet() {
+        if (INSTANCE != null) {
+            return INSTANCE.getFrame().getApplet();
+        } else {
+            return null;
+        }
+    }
+    
     /**
      * Convenience method for displaying a message to the user prior to starting
      * the client. 

@@ -21,7 +21,7 @@
 
 #include <QMainWindow>
 
-class Ui_controlPanel;
+class Ui_mainWindow;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -29,11 +29,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 private:
-    Ui_controlPanel *ui;
+    Ui_mainWindow *ui;
     QTimer* timer;
 public slots:
     void setJVMVersion(QString version);
     void updateFPS();
+    void sendText();
 };
 
 #endif // MAINWINDOW_H

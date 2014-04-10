@@ -21,6 +21,12 @@
 #include "versionInfo.h"
 
 #include "api/bridge/client.h"
+#include "api/bridge/keyboard.h"
+
+#include "java/awt/event/keyevent.h"
+using java::awt::event::KeyEvent;
+
+#include "net/pgrid/loader/pgloader.h"
 
 /*!
  * \class MainWindow
@@ -44,10 +50,12 @@
  */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui_controlPanel),
+    ui(new Ui_mainWindow),
     timer(new QTimer) {
     ui->setupUi(this);
     ui->pgVersion->setText(PG_VERSION_STR);
+
+    connect(ui->sendText, SIGNAL(clicked()), this, SLOT(sendText()));
 
     timer->setInterval(1000); // Update every second
     connect(timer, SIGNAL(timeout()), this, SLOT(updateFPS()));
@@ -90,5 +98,23 @@ void MainWindow::updateFPS() {
             qDebug() << e.what();
         }
         ui->fps->setText(QStringLiteral("ERR: ") + e.what());
+    }
+}
+
+void MainWindow::sendText() {
+    try {
+        api::bridge::Keyboard keyboard = api::bridge::Client::getKeyboard();
+        java::awt::Component source = net::pgrid::loader::PGLoader::getApplet();
+        QString text = ui->textToSend->text();
+        for(int i=0;i<text.length();i++) {
+            QDateTime time (QDateTime::currentDateTime());
+            qint64 msec = time.toMSecsSinceEpoch();
+            keyboard.dispatch(KeyEvent::createEvent(source,
+                              KeyEvent::Typed, msec, 0, -1,
+                              JChar(text.at(i).toLatin1())));
+            qDebug() << "Char" << text.at(i) << "sent.";
+        }
+    } catch (jace::JNIException& e) {
+        qDebug() << "Exception in sendText():" << e.what();
     }
 }

@@ -240,7 +240,8 @@ HEADERS += \
     api/component/action.h \
     entity/matcher.h \
     api/component/transportation.h \
-    entity/mapper.h
+    entity/mapper.h \
+    net/pgrid/loader/pgloader.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -394,7 +395,8 @@ SOURCES += \
     api/component/action.cpp \
     entity/matcher.cpp \
     api/component/transportation.cpp \
-    entity/mapper.cpp
+    entity/mapper.cpp \
+    net/pgrid/loader/pgloader.cpp
 
 HEADERS    += \
     jni.h \

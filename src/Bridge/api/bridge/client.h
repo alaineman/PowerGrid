@@ -56,6 +56,7 @@ class GraphicsToolkit;
 class Interface;
 class HashTable;
 class ItemDefLoader;
+class Keyboard;
 class LandscapeInfo;
 class HintArrow;
 class NPCNode;
@@ -95,6 +96,7 @@ public:
     static JACE_PROXY_API JInt getInterfaceIndex();
     static JACE_PROXY_API HashTable getInterfaceNodeCache();
     static JACE_PROXY_API ItemDefLoader getItemDefLoader();
+    static JACE_PROXY_API Keyboard getKeyboard();
     static JACE_PROXY_API LandscapeInfo getLandscapeInfo();
     static JACE_PROXY_API String getLastSelectedItemName();
     JACE_PROXY_API QList<HintArrow> getLoadedHintArrows();

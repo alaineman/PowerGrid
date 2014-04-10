@@ -109,7 +109,7 @@ public slots:
      * @brief Adds the given Component to this Entity.
      *
      * This causes this Entity to emit the \c componentAdded(Component*) signal
-     * Set @par overwrite to true to allow overwriting. When a Component is
+     * Set overwrite to true to allow overwriting. When a Component is
      * overwritten, a @c componentRemoved(Component*) is also emitted before the new
      * Component is added.
      *

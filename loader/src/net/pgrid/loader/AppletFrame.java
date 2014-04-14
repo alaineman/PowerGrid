@@ -102,7 +102,7 @@ public class AppletFrame extends JFrame implements AppletStub {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
         } catch (IOException e) {
             // Since the icon is embedded in the jar file, this should never happen
-            throw new InternalError("Cannot find jar resource", e);
+            throw (Error) new InternalError("Cannot find jar resource").initCause(e);
         }
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         

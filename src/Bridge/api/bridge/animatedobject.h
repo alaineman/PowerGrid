@@ -11,6 +11,7 @@ namespace bridge {
 class Animator;
 class Interactable;
 class ObjectDefLoader;
+class ModelLD;
 
 class AnimatedObject : public Object {
 public:
@@ -23,6 +24,7 @@ public:
     JACE_PROXY_API JInt getLocalY();
     JACE_PROXY_API JInt getLocationX();
     JACE_PROXY_API JInt getLocationY();
+    JACE_PROXY_API ModelLD getModel();
     JACE_PROXY_API ObjectDefLoader getObjectDefLoader();
     JACE_PROXY_API JInt getOrientation();
 

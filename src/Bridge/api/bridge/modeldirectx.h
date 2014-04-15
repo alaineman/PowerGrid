@@ -9,10 +9,23 @@ using namespace java::lang;
 namespace api {
 namespace bridge {
 
+class ToolkitDirectX;
+
 class ModelDirectX : public AbstractModel {
 public:
     RS_OBJECT(ModelDirectX)
 
+    JACE_PROXY_API ToolkitDirectX getToolkit();
+    JACE_PROXY_API QList<JByte> getTriangleAlphas();
+    JACE_PROXY_API QList<JShort> getTriangleColors();
+    JACE_PROXY_API JInt getTriangleCount();
+    JACE_PROXY_API QList<JShort> getTriangleX();
+    JACE_PROXY_API QList<JShort> getTriangleY();
+    JACE_PROXY_API QList<JShort> getTriangleZ();
+    JACE_PROXY_API JInt getVertexCount();
+    JACE_PROXY_API QList<JInt> getVerticiesX();
+    JACE_PROXY_API QList<JInt> getVerticiesY();
+    JACE_PROXY_API QList<JInt> getVerticiesZ();
 private:
     DECLARE_FRIENDS
 };

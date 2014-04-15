@@ -15,7 +15,7 @@ public:
     RS_OBJECT(AnimableObject)
 
     JACE_PROXY_API JInt getID();
-    JACE_PROXY_API ModelLD getLDModel();
+    JACE_PROXY_API ModelLD getModel();
     JACE_PROXY_API JInt getLocationX();
     JACE_PROXY_API JInt getLocationY();
     JACE_PROXY_API ObjectDefLoader getObjectDefLoader();

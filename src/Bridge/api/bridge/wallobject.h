@@ -14,7 +14,7 @@ public:
     RS_OBJECT(WallObject)
 
     JACE_PROXY_API JInt getID();
-    JACE_PROXY_API ModelLD getLDModel();
+    JACE_PROXY_API ModelLD getModel();
     JACE_PROXY_API JDouble getLocalX();
     JACE_PROXY_API JDouble getLocalY();
     JACE_PROXY_API JInt getLocationX();

@@ -32,7 +32,7 @@ public:
      * \internal We need to test this to see in which order the values in the
      *           matrix are returned.
      */
-    JACE_PROXY_API QList<JFloat> getID();
+    JACE_PROXY_API QList<JFloat> getFloats();
 private:
     DECLARE_FRIENDS
 };

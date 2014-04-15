@@ -25,6 +25,7 @@ public:
     JACE_PROXY_API Cache getDefCache();
     JACE_PROXY_API QList<String> getGroundActions();
     JACE_PROXY_API Cache getModelCache();
+    JACE_PROXY_API JBoolean isShowingActions();
 
 private:
     DECLARE_FRIENDS

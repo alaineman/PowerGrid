@@ -26,6 +26,8 @@ public:
     JACE_PROXY_API Cache getItemDefCache();
     JACE_PROXY_API Cache getItemModelCache();
     JACE_PROXY_API JInt getLanguage();
+    JACE_PROXY_API JBoolean isMembers();
+
 private:
     DECLARE_FRIENDS
 };

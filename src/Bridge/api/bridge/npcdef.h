@@ -22,14 +22,18 @@ public:
     RS_OBJECT(NPCDef)
 
     JACE_PROXY_API QList<String> getActions();
-
+    JACE_PROXY_API Object getChildrenIDs(); //TODO find type
+    JACE_PROXY_API JBoolean isClickable(); //TODO
+    JACE_PROXY_API Object getDialogModels(); //TODO find type
     /*!
      * \brief The ID of the NPCDef.
      *
      * \internal need confirmation on this!
      */
     JACE_PROXY_API JInt getID();
+    JACE_PROXY_API JInt getLevel(); //TODO
     JACE_PROXY_API JInt getModelBoundRadius();
+    JACE_PROXY_API QList<JShort> getModifiedColors(); //TODO
 
     /*!
      * \brief The displayed name of an NPC.
@@ -37,8 +41,10 @@ public:
     JACE_PROXY_API String getName();
     JACE_PROXY_API NPCDefLoader getNPCDefLoader();
     JACE_PROXY_API HashTable getNodeTable();
+    JACE_PROXY_API QList<JShort> getOriginalColors();
     JACE_PROXY_API JInt getPrayerHeadIconIndex();
     JACE_PROXY_API JInt getRenderEmote();
+    JACE_PROXY_API JBoolean isVisibleOnMinimap();
 private:
     DECLARE_FRIENDS
 };

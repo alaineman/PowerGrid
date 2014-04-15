@@ -9,7 +9,7 @@ IMPL_JACE_CONSTRUCTORS_SUPERTYPE(FloorObject, FloorDecoration)
 IMPL_RSCLASS_GET(FloorObject)
 
 IMPL_PRIMITIVE_METHOD(FloorObject, getID, JInt)
-IMPL_OBJECT_METHOD(FloorObject, getLDModel, ModelLD)
+IMPL_OBJECT_METHOD(FloorObject, getModel, ModelLD)
 IMPL_PRIMITIVE_METHOD(FloorObject, getLocalX, JDouble)
 IMPL_PRIMITIVE_METHOD(FloorObject, getLocalY, JDouble)
 IMPL_PRIMITIVE_METHOD(FloorObject,getLocationX, JInt)

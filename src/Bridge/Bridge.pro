@@ -242,7 +242,8 @@ HEADERS += \
     api/component/transportation.h \
     entity/mapper.h \
     net/pgrid/loader/pgloader.h \
-    jace/macvmloader.h
+    jace/macvmloader.h \
+    api/bridge/toolkitdirectx.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -398,7 +399,8 @@ SOURCES += \
     api/component/transportation.cpp \
     entity/mapper.cpp \
     net/pgrid/loader/pgloader.cpp \
-    jace/macvmloader.cpp
+    jace/macvmloader.cpp \
+    api/bridge/toolkitdirectx.cpp
 
 HEADERS    += \
     jni.h \

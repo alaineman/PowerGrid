@@ -13,6 +13,7 @@ IMPL_OBJECT_METHOD(ObjectDefLoader, getComposite, ObjectComposite)
 IMPL_OBJECT_METHOD(ObjectDefLoader, getDefCache, Cache)
 IMPL_ARRAY_METHOD(ObjectDefLoader, getGroundActions, String)
 IMPL_OBJECT_METHOD(ObjectDefLoader, getModelCache, Cache)
+IMPL_PRIMITIVE_METHOD(ObjectDefLoader, isShowingActions, JBoolean)
 
 } // namespace bridge
 } // namespace api

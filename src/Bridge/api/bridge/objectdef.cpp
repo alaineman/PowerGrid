@@ -14,6 +14,7 @@ IMPL_ARRAY_METHOD(ObjectDef, getModifiedColors, JShort)
 IMPL_OBJECT_METHOD(ObjectDef, getName, String)
 IMPL_OBJECT_METHOD(ObjectDef, getObjectDefLoader, ObjectDefLoader)
 IMPL_ARRAY_METHOD(ObjectDef, getOriginalColors, JShort)
+IMPL_PRIMITIVE_METHOD(ObjectDef, isWalkable, JBoolean)
 
 } // namespace bridge
 } // namespace api

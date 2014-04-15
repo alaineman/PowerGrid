@@ -26,7 +26,7 @@ public:
     JACE_PROXY_API String getName();
     JACE_PROXY_API ObjectDefLoader getObjectDefLoader();
     JACE_PROXY_API QList<JShort> getOriginalColors();
-
+    JACE_PROXY_API JBoolean isWalkable();
 private:
     DECLARE_FRIENDS
 };

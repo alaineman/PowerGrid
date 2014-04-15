@@ -39,7 +39,7 @@ public:
     /*!
      * \brief the level of the NPC.
      *
-     * Obviously, this is only usefull for combatable NPCs.
+     * Obviously, this is only useful for combatable NPCs.
      */
     JACE_PROXY_API JInt getLevel();
 
@@ -52,7 +52,7 @@ public:
      * \brief The internal NPC name.
      *
      */
-    JACE_PROXY_API String getNPCName();
+    JACE_PROXY_API String getName();
 
 private:
     DECLARE_FRIENDS

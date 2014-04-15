@@ -14,6 +14,7 @@ IMPL_PRIMITIVE_METHOD(ItemDefLoader, getItemCount, JInt)
 IMPL_OBJECT_METHOD(ItemDefLoader, getItemDefCache, Cache)
 IMPL_OBJECT_METHOD(ItemDefLoader, getItemModelCache, Cache)
 IMPL_PRIMITIVE_METHOD(ItemDefLoader, getLanguage, JInt)
+IMPL_PRIMITIVE_METHOD(ItemDefLoader, isMembers, JBoolean)
 
 } // namespace bridge
 } // namespace api

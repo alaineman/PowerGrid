@@ -14,6 +14,7 @@ public:
 
     JACE_PROXY_API QList<JInt> getBodypartColors();
     JACE_PROXY_API QList<JInt> getEquipment();
+    JACE_PROXY_API JBoolean isFemale(); //TODO
     JACE_PROXY_API JInt getID();
     JACE_PROXY_API JLong getModelHash();
 private:

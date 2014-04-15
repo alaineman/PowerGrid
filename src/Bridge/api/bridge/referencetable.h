@@ -23,6 +23,7 @@ public:
     JACE_PROXY_API JInt getEntryCount();
     JACE_PROXY_API QList<JInt> getEntryIdentifiers();
     JACE_PROXY_API LookupTable getEntryIdentityTable();
+    JACE_PROXY_API JInt getEntryIndexCount();
     JACE_PROXY_API QList<JInt> getEntryIndices();
     JACE_PROXY_API QList<JInt> getEntryVersions();
     JACE_PROXY_API JInt getIndex();

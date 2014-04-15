@@ -58,12 +58,13 @@ class HashTable;
 class ItemDefLoader;
 class Keyboard;
 class LandscapeInfo;
+class MenuGroupNode;
 class HintArrow;
 class NPCNode;
 class OverheadMessage;
 class Player;
 class Deque;
-class Mouse;
+class MouseListener;
 class Sprite;
 class ObjectDefLoader;
 class Cache;
@@ -77,11 +78,14 @@ public:
     JACE_PROXY_API static Client getClient();
 
     static JACE_PROXY_API Camera getCamera();
+    static JACE_PROXY_API JFloat getCameraPitch(); //TODO verify type
+    static JACE_PROXY_API JFloat getCameraYaw(); //TODO verify type
     static JACE_PROXY_API Canvas getCanvas();
     static JACE_PROXY_API java::util::Map getChatChannels();
     static JACE_PROXY_API NodeSubQueue getCollapsedMenuItems();
     static JACE_PROXY_API JInt getConnectionState();
     static JACE_PROXY_API String getCurrentAction();
+    static JACE_PROXY_API MenuGroupNode getCurrentMenuGroupNode();
     JACE_PROXY_API QList<GrandExchangeOffer> getCurrentGrandExchangeOffers();
     static JACE_PROXY_API JInt getDestinationX();
     static JACE_PROXY_API JInt getDestinationY();
@@ -96,6 +100,7 @@ public:
     static JACE_PROXY_API JInt getInterfaceIndex();
     static JACE_PROXY_API HashTable getInterfaceNodeCache();
     static JACE_PROXY_API ItemDefLoader getItemDefLoader();
+    static JACE_PROXY_API JBoolean isItemSelected();
     static JACE_PROXY_API Keyboard getKeyboard();
     static JACE_PROXY_API LandscapeInfo getLandscapeInfo();
     static JACE_PROXY_API String getLastSelectedItemName();
@@ -108,8 +113,10 @@ public:
     static JACE_PROXY_API Deque getLoadedProjectiles();
     static JACE_PROXY_API Player getLocalPlayer();
     static JACE_PROXY_API JInt getLoopCycle();
+    static JACE_PROXY_API JBoolean isMenuCollapsed();
     static JACE_PROXY_API JInt getMenuHeight();
     static JACE_PROXY_API Deque getMenuItems();
+    static JACE_PROXY_API JBoolean isMenuOpen();
     JACE_PROXY_API QList<String> getMenuOptions();
     static JACE_PROXY_API JInt getMenuOptionsCount();
     static JACE_PROXY_API JInt getMenuOptionsCountCollapsed();
@@ -121,12 +128,13 @@ public:
     static JACE_PROXY_API JInt getMinimapOffset();
     static JACE_PROXY_API JInt getMinimapScale();
     static JACE_PROXY_API JInt getMinimapSetting();
-    static JACE_PROXY_API Mouse getMouse();
+    static JACE_PROXY_API MouseListener getMouse();
     static JACE_PROXY_API JInt getMouseCrosshairSpriteCycleIndex();
     JACE_PROXY_API QList<Sprite> getMouseCrosshairSprites();
     static JACE_PROXY_API JInt getMouseCrosshairState();
     static JACE_PROXY_API JInt getNPCCombatCount();
     JACE_PROXY_API QList<JInt> getNPCCombatIndexArray();
+    JACE_PROXY_API QList<JInt> getNPCIndexArray();
     static JACE_PROXY_API HashTable getNPCNodeCache();
     static JACE_PROXY_API ObjectDefLoader getObjectDefLoader();
     static JACE_PROXY_API JInt getPlane();
@@ -134,6 +142,7 @@ public:
     JACE_PROXY_API QList<JInt> getPlayerIndexArray();
     static JACE_PROXY_API Cache getPlayerModels();
     JACE_PROXY_API QList<Server> getServers();
+    static JACE_PROXY_API JBoolean isSpellSelected();
     static JACE_PROXY_API JInt getSubMenuHeight();
     static JACE_PROXY_API JInt getSubMenuWidth();
     static JACE_PROXY_API JInt getSubMenuX();

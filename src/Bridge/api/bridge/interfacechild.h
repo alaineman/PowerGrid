@@ -96,11 +96,11 @@ public:
      * \brief Returns the height corresponding to this InterfaceChild.
      */
     JACE_PROXY_API JInt getHeight();
-    JACE_PROXY_API JBoolean isHorizontallyFlipped(); //TODO
+    JACE_PROXY_API JBoolean isHorizontallyFlipped();
     JACE_PROXY_API JInt getHorizontalScrollbarPosition();
     JACE_PROXY_API JInt getHorizontalScrollbarSize();
     JACE_PROXY_API JInt getHorizontalScrollbarThumbSize();
-    JACE_PROXY_API JBoolean isHovering(); //TODO
+    JACE_PROXY_API JBoolean isHovering();
 
     /*!
      * \brief The ID corresponding to this InterfaceChild itself.
@@ -108,7 +108,7 @@ public:
      * \return The integer (ID) of this InterFaceChild object.
      */
     JACE_PROXY_API JInt getID();
-    JACE_PROXY_API JBoolean isInventoryInterface(); //TODO
+    JACE_PROXY_API JBoolean isInventoryInterface();
     JACE_PROXY_API JInt getModelID();
     JACE_PROXY_API JInt getModelType();
     JACE_PROXY_API JInt getModelZoom();
@@ -161,11 +161,11 @@ public:
     JACE_PROXY_API JInt getTextureID();
     JACE_PROXY_API String getTooltip();
     JACE_PROXY_API JInt getType();
-    JACE_PROXY_API JBoolean isVerticallyFlipped(); //TODO
+    JACE_PROXY_API JBoolean isVerticallyFlipped();
     JACE_PROXY_API JInt getVerticalScrollbarPosition();
     JACE_PROXY_API JInt getVerticalScrollbarSize();
     JACE_PROXY_API JInt getVerticalScrollbarThumbSize();
-    JACE_PROXY_API JBoolean isVisible(); //TODO
+    JACE_PROXY_API JBoolean isVisible();
 
     /*!
      * \brief Returns the width corresponding to this InterfaceChild.

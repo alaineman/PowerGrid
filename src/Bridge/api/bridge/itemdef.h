@@ -22,7 +22,7 @@ class ItemDefLoader;
  * \brief The ItemDef contains pivotal information on the Item.
  *
  * The ItemDef (item definition) is linked to the actual Item with the ID.
- * It can also be linked to InterFaceChild components with the ID.
+ * It can also be linked to InterfaceChild components with the ID.
  *
  */
 class ItemDef : public Object {
@@ -47,6 +47,7 @@ public:
      */
     JACE_PROXY_API ItemDefLoader getItemDefLoader();
 
+    JACE_PROXY_API JBoolean isMembers();
     /*!
      * \brief The name the Item.
      *

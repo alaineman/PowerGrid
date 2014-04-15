@@ -12,7 +12,7 @@ class GroundBytes : public Object {
 public:
     RS_OBJECT(GroundBytes)
 
-    JACE_PROXY_API QList<QList<QList<JByte>>> getBytes();
+    JACE_PROXY_API QList<QList<QList<JByte>>> getGroundBytes();
 private:
     DECLARE_FRIENDS
 };

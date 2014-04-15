@@ -43,7 +43,7 @@
 #include "overheadmessage.h"
 #include "player.h"
 #include "deque.h"
-#include "mouse.h"
+#include "mouselistener.h"
 #include "sprite.h"
 #include "objectdefloader.h"
 #include "cache.h"
@@ -84,12 +84,15 @@ IMPL_STATIC_OBJECT_FIELD(Client, getClient, Client)
 
 // virtual fields, organized by first character
 IMPL_STATIC_OBJECT_FIELD(Client, getCamera, Camera)
+IMPL_STATIC_FLOAT_FIELD(Client, getCameraPitch)
+IMPL_STATIC_FLOAT_FIELD(Client, getCameraYaw)
 IMPL_STATIC_OBJECT_FIELD(Client, getCanvas, Canvas)
 IMPL_STATIC_OBJECT_FIELD(Client, getChatChannels, java::util::Map)
 IMPL_STATIC_OBJECT_FIELD(Client, getCollapsedMenuItems, NodeSubQueue)
 IMPL_STATIC_INT_FIELD(Client, getConnectionState)
 IMPL_STATIC_OBJECT_FIELD(Client, getCurrentAction, String)
 IMPL_ARRAY_METHOD(Client, getCurrentGrandExchangeOffers, GrandExchangeOffer)
+IMPL_STATIC_OBJECT_FIELD(Client, getCurrentMenuGroupNode, MenuGroupNode)
 
 IMPL_STATIC_INT_FIELD(Client, getDestinationX)
 IMPL_STATIC_INT_FIELD(Client, getDestinationY)
@@ -123,7 +126,9 @@ IMPL_STATIC_OBJECT_FIELD(Client, getLoadedProjectiles, Deque)
 IMPL_STATIC_OBJECT_FIELD(Client, getLocalPlayer, Player)
 IMPL_STATIC_INT_FIELD(Client, getLoopCycle)
 
+IMPL_STATIC_BOOLEAN_FIELD(Client, isMenuCollapsed)
 IMPL_STATIC_INT_FIELD(Client, getMenuHeight)
+IMPL_STATIC_BOOLEAN_FIELD(Client, isMenuOpen)
 IMPL_ARRAY_METHOD(Client, getMenuOptions, String)
 IMPL_STATIC_INT_FIELD(Client, getMenuOptionsCount)
 IMPL_STATIC_INT_FIELD(Client, getMenuOptionsCountCollapsed)
@@ -135,13 +140,14 @@ IMPL_STATIC_FLOAT_FIELD(Client, getMinimapAngle)
 IMPL_STATIC_INT_FIELD(Client, getMinimapOffset)
 IMPL_STATIC_INT_FIELD(Client, getMinimapScale)
 IMPL_STATIC_INT_FIELD(Client, getMinimapSetting)
-IMPL_STATIC_OBJECT_FIELD(Client, getMouse, Mouse)
+IMPL_STATIC_OBJECT_FIELD(Client, getMouse, MouseListener)
 IMPL_STATIC_INT_FIELD(Client, getMouseCrosshairSpriteCycleIndex)
 IMPL_ARRAY_METHOD(Client, getMouseCrosshairSprites, Sprite)
 IMPL_STATIC_INT_FIELD(Client, getMouseCrosshairState)
 
 IMPL_STATIC_INT_FIELD(Client, getNPCCombatCount)
 IMPL_ARRAY_METHOD(Client, getNPCCombatIndexArray, JInt)
+IMPL_ARRAY_METHOD(Client, getNPCIndexArray, JInt)
 IMPL_STATIC_OBJECT_FIELD(Client, getNPCNodeCache, HashTable)
 
 IMPL_STATIC_OBJECT_FIELD(Client, getObjectDefLoader, ObjectDefLoader)
@@ -152,6 +158,7 @@ IMPL_ARRAY_METHOD(Client, getPlayerIndexArray, JInt)
 IMPL_STATIC_OBJECT_FIELD(Client, getPlayerModels, Cache)
 
 IMPL_ARRAY_METHOD(Client, getServers, Server)
+IMPL_STATIC_BOOLEAN_FIELD(Client, isSpellSelected)
 IMPL_STATIC_INT_FIELD(Client, getSubMenuHeight)
 IMPL_STATIC_INT_FIELD(Client, getSubMenuWidth)
 IMPL_STATIC_INT_FIELD(Client, getSubMenuX)

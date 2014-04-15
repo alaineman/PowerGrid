@@ -23,9 +23,9 @@ public:
     JACE_PROXY_API QList<JShort> getTriangleY();
     JACE_PROXY_API QList<JShort> getTriangleZ();
     JACE_PROXY_API JInt getVertexCount();
-    JACE_PROXY_API QList<JInt> getVerticiesX();
-    JACE_PROXY_API QList<JInt> getVerticiesY();
-    JACE_PROXY_API QList<JInt> getVerticiesZ();
+    JACE_PROXY_API QList<JInt> getVerticesX();
+    JACE_PROXY_API QList<JInt> getVerticesY();
+    JACE_PROXY_API QList<JInt> getVerticesZ();
 private:
     DECLARE_FRIENDS
 };

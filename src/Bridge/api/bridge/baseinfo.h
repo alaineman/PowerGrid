@@ -12,8 +12,8 @@ class BaseInfo : public Object {
 public:
     RS_OBJECT(BaseInfo)
 
-    JACE_PROXY_API JInt getX();
-    JACE_PROXY_API JInt getY();
+    JACE_PROXY_API JInt getMinX();
+    JACE_PROXY_API JInt getMinY();
 private:
     DECLARE_FRIENDS
 };

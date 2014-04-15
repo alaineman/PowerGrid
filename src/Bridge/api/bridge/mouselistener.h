@@ -18,9 +18,9 @@ using java::awt::event::MouseEvent;
 namespace api {
 namespace bridge {
 
-class Mouse : public Object {
+class MouseListener : public Object {
 public:
-    RS_OBJECT(Mouse)
+    RS_OBJECT(MouseListener)
 
     // This class is supposed to serve as both MouseListener and
     // MouseMotionListener in the Client. We just implement the
@@ -35,6 +35,13 @@ public:
     JACE_PROXY_API void mouseExited   (MouseEvent e);
     JACE_PROXY_API void mouseDragged  (MouseEvent e);
     JACE_PROXY_API void mouseWheel    (MouseEvent e);
+
+    JACE_PROXY_API JInt getClickState(); //TODO verify type
+    JACE_PROXY_API JInt getTarget(); //TODO verify type
+    JACE_PROXY_API JInt getX();
+    JACE_PROXY_API JInt getY();
+
+
 
 private:
     DECLARE_FRIENDS

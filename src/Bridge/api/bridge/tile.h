@@ -26,7 +26,12 @@ class Tile : public Object {
 public:
     RS_OBJECT(Tile)
 
-    JACE_PROXY_API AnimableNode getAnimableList(); // What exactly does this represent?
+    /*!
+     * \brief Returns the list of Animables on this Tile
+     * \return the AnimableNode for this Tile
+     * \internal Can we assume we can traverse the AnimableNodes like a LinkedList?
+     */
+    JACE_PROXY_API AnimableNode getAnimableList();
     /*!
      * \brief Returns the first Boundary object on this Tile.
      * \return the first Boundary object, or \c NULL if no Boundary exists on this Tile.

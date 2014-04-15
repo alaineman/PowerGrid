@@ -17,10 +17,10 @@ public:
      * \brief the CameraMatrix associated with the camera position.
      */
     JACE_PROXY_API CameraMatrix getCameraMatrix();
-    JACE_PROXY_API JFloat getAbsoluteX ();
-    JACE_PROXY_API JFloat getAbsoluteY ();
-    JACE_PROXY_API JFloat getXMultiplier ();
-    JACE_PROXY_API JFloat getYMultiplier ();
+    JACE_PROXY_API JFloat getAbsoluteX();
+    JACE_PROXY_API JFloat getAbsoluteY();
+    JACE_PROXY_API JFloat getXMultiplier();
+    JACE_PROXY_API JFloat getYMultiplier();
     JACE_PROXY_API Object getOpenGLEngine();
     JACE_PROXY_API JInt getPixelFormat();
 

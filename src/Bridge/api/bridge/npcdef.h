@@ -23,7 +23,7 @@ public:
 
     JACE_PROXY_API QList<String> getActions();
     JACE_PROXY_API Object getChildrenIDs(); //TODO find type
-    JACE_PROXY_API JBoolean isClickable(); //TODO
+    JACE_PROXY_API JBoolean isClickable();
     JACE_PROXY_API Object getDialogModels(); //TODO find type
     /*!
      * \brief The ID of the NPCDef.
@@ -31,9 +31,9 @@ public:
      * \internal need confirmation on this!
      */
     JACE_PROXY_API JInt getID();
-    JACE_PROXY_API JInt getLevel(); //TODO
+    JACE_PROXY_API JInt getLevel();
     JACE_PROXY_API JInt getModelBoundRadius();
-    JACE_PROXY_API QList<JShort> getModifiedColors(); //TODO
+    JACE_PROXY_API QList<JShort> getModifiedColors();
 
     /*!
      * \brief The displayed name of an NPC.

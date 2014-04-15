@@ -137,7 +137,6 @@ HEADERS += \
     api/bridge/itemnode.h \
     api/bridge/keyboard.h \
     api/bridge/mlstring.h \
-    api/bridge/mouse.h \
     api/bridge/passiveanimator.h \
     api/bridge/quaternion.h \
     api/bridge/skillinfo.h \
@@ -243,7 +242,8 @@ HEADERS += \
     entity/mapper.h \
     net/pgrid/loader/pgloader.h \
     jace/macvmloader.h \
-    api/bridge/toolkitdirectx.h
+    api/bridge/toolkitdirectx.h \
+    api/bridge/mouselistener.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \

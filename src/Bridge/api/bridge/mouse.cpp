@@ -1,4 +1,4 @@
-#include "mouse.h"
+#include "mouselistener.h"
 #include "java/awt/event/mouseevent.h"
 #include "jace/MappingUnavailableException.h"
 
@@ -8,68 +8,73 @@ using jace::MappingUnavailableException;
 namespace api {
 namespace bridge {
 
-IMPL_JACE_CONSTRUCTORS(Mouse)
-IMPL_RSCLASS_GET(Mouse)
+IMPL_JACE_CONSTRUCTORS(MouseListener)
+IMPL_RSCLASS_GET(MouseListener)
+
+IMPL_PRIMITIVE_METHOD(MouseListener, getClickState, JInt)
+IMPL_PRIMITIVE_METHOD(MouseListener, getTarget, JInt)
+IMPL_PRIMITIVE_METHOD(MouseListener, getX, JInt)
+IMPL_PRIMITIVE_METHOD(MouseListener, getY, JInt)
 
 // Remember: these are methods, not fields
-void Mouse::mouseClicked(MouseEvent e) {
-    jclass mouseClass = Mouse::getJavaJniClass()->getClass();
+void MouseListener::mouseClicked(MouseEvent e) {
+    jclass mouseClass = MouseListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseClicked", "(Ljava/awt/event/MouseEvent;)V");
     if (mID == NULL) throw MappingUnavailableException("Mouse.mouseClicked(MouseEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-void Mouse::mousePressed(MouseEvent e) {
-    jclass mouseClass = Mouse::getJavaJniClass()->getClass();
+void MouseListener::mousePressed(MouseEvent e) {
+    jclass mouseClass = MouseListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mousePressed", "(Ljava/awt/event/MouseEvent;)V");
     if (mID == NULL) throw MappingUnavailableException("Mouse.mousePressed(MouseEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-void Mouse::mouseReleased(MouseEvent e) {
-    jclass mouseClass = Mouse::getJavaJniClass()->getClass();
+void MouseListener::mouseReleased(MouseEvent e) {
+    jclass mouseClass = MouseListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseReleased", "(Ljava/awt/event/MouseEvent;)V");
     if (mID == NULL) throw MappingUnavailableException("Mouse.mouseReleased(MouseEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-void Mouse::mouseMoved(MouseEvent e) {
-    jclass mouseClass = Mouse::getJavaJniClass()->getClass();
+void MouseListener::mouseMoved(MouseEvent e) {
+    jclass mouseClass = MouseListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseMoved", "(Ljava/awt/event/MouseEvent;)V");
     if (mID == NULL) throw MappingUnavailableException("Mouse.mouseMoved(MouseEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-void Mouse::mouseEntered(MouseEvent e) {
-    jclass mouseClass = Mouse::getJavaJniClass()->getClass();
+void MouseListener::mouseEntered(MouseEvent e) {
+    jclass mouseClass = MouseListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseEntered", "(Ljava/awt/event/MouseEvent;)V");
     if (mID == NULL) throw MappingUnavailableException("Mouse.mouseEntered(MouseEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-void Mouse::mouseExited(MouseEvent e) {
-    jclass mouseClass = Mouse::getJavaJniClass()->getClass();
+void MouseListener::mouseExited(MouseEvent e) {
+    jclass mouseClass = MouseListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseExited", "(Ljava/awt/event/MouseEvent;)V");
     if (mID == NULL) throw MappingUnavailableException("Mouse.mouseExited(MouseEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-void Mouse::mouseDragged(MouseEvent e) {
-    jclass mouseClass = Mouse::getJavaJniClass()->getClass();
+void MouseListener::mouseDragged(MouseEvent e) {
+    jclass mouseClass = MouseListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseDragged", "(Ljava/awt/event/MouseEvent;)V");
     if (mID == NULL) throw MappingUnavailableException("Mouse.mouseDragged(MouseEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-void Mouse::mouseWheel(MouseEvent e) {
-    jclass mouseClass = Mouse::getJavaJniClass()->getClass();
+void MouseListener::mouseWheel(MouseEvent e) {
+    jclass mouseClass = MouseListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(mouseClass, "mouseWheel", "(Ljava/awt/event/MouseEvent;)V");
     if (mID == NULL) throw MappingUnavailableException("Mouse.mouseWheel(MouseEvent)");

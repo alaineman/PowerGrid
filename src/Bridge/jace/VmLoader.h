@@ -15,22 +15,14 @@ namespace jace {
  * To create a virtual machine using jace::helper::createVm(),
  * you need to specify a VmLoader.
  *
- * The default VmLoader is DefaultVmLoader. This loader statically links
- * to the VM, and thus works on every platform, although it limits your choice
- * to the virtual machine you compiled and linked against.
- *
- * In order to dynamically load a virtual machine, you must #define
- * JACE_WANT_DYNAMIC_LOAD. This keeps DefaultVmLoader from trying to statically
- * link with a VM. Then, you must instantiate your platform specific VmLoader.
- *
  * For Windows, you can use Win32VmLoader. It is capable of querying the registry
  * to discover different flavors of installed virtual machines.
  *
+ * For Mac OS X, you can use MacVmLoader. It calls the java_home tool shipped with
+ * Mac OS X to find the location of the latest Java VM installed on the system.
+ *
  * For generic flavors of Unix, you can use UnixVmLoader. It uses the standard
  * dlsym function to load a virtual machine.
- *
- * You may also subclass VmLoader for yourself if your platform isn't supported
- * or if you want tighter control over the loading and unloading process.
  *
  * @author Toby Reyelts
  */

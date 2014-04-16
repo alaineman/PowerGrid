@@ -3,7 +3,8 @@
 
 #include <QtCore>
 
-// This header only makes sense to use on Mac OS X.
+// This header only makes sense to use on Mac OS X, so we disable the entire class
+// on other platforms to prevent problems.
 #ifdef Q_OS_MACX
 
 #include "VmLoader.h"
@@ -11,6 +12,8 @@
 
 namespace jace {
 
+typedef jint (*CreateJavaVMFunc)(JavaVM**,void**,void*);
+typedef jint (*GetCreatedJavaVMsFunc)(JavaVM**,jsize,jsize*);
 /**
  * \brief JVM Loader class for Mac OS X.
  *
@@ -20,14 +23,18 @@ namespace jace {
  */
 class MacVmLoader : public VmLoader {
 private:
-    jint version;  ///< The JNI version used for loading the VM.
+    jint ver;      ///< The JNI version used for loading the VM.
     QString path;  ///< The path to the libJVM dynamic library
+    QLibrary jvmLib; ///< The QLibrary object representing the (loaded) library
+    CreateJavaVMFunc fn_createJavaVM; ///< The pointer to the JNI_CreateJavaVM function
+    GetCreatedJavaVMsFunc fn_getCreatedJavaVMs; ///< The pointer to the JNI_GetCreatedJavaVMs function
 public:
     /**
      * \brief Creates a new MacVmLoader instance.
      * \param path the path to libJVM. If empty, the path is detected from the OS.
+     * \param version the JNI version to use. Default (and recommended) is \c JNI_VERSION_1_6.
      */
-    MacVmLoader(QString path = QString());
+    MacVmLoader(QString path = QString(), jint version=JNI_VERSION_1_6);
     ~MacVmLoader() {}
 
     /**

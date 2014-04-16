@@ -10,11 +10,13 @@ MacVmLoader::MacVmLoader(QString path, jint version) :
 QString MacVmLoader::getJVMPath() throw (JNIException) {
     if (path.isEmpty()) {
         QProcess proc;
-        proc.execute("/usr/libexec/java_home");
-        proc.waitForFinished();
-        if (proc.canReadLine()) {
-            QByteArray pathBytes = proc.readAllStandardOutput();
-            path = QString::fromLocal8Bit(pathBytes.constData()) + "jre/lib/server/libjvm.dylib";
+        proc.start("/usr/libexec/java_home",QIODevice::ReadOnly);
+        if (proc.waitForReadyRead()) {
+            QByteArray pathBytes = proc.readAll();
+            QString line = QString::fromLocal8Bit(pathBytes.constData());
+            line.chop(1); // chop removes the '\n' at the end of the output.
+            path = line + "/jre/lib/server/libjvm.dylib";
+            proc.waitForFinished();
             if (! QFile::exists(path) ) {
                 throw JNIException("libjvm.dylib not found at expected location: " + path);
             }
@@ -38,9 +40,9 @@ void MacVmLoader::loadVm() throw (JNIException) {
         if (!fn_createJavaVM) {
             throw JNIException("Could not find JNI_CreateJavaVM function");
         }
-        fn_getCreatedJavaVMs = (GetCreatedJavaVMsFunc) jvmLib.resolve("JNI_GetCreatesJavaVMs");
+        fn_getCreatedJavaVMs = (GetCreatedJavaVMsFunc) jvmLib.resolve("JNI_GetCreatedJavaVMs");
         if (!fn_getCreatedJavaVMs) {
-            throw JNIException("Could not find JNI_GetCreatesJavaVMs function");
+            throw JNIException("Could not find JNI_GetCreatedJavaVMs function");
         }
     }
 }

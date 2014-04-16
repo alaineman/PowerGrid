@@ -21,12 +21,6 @@
 #include <QtCore>
 #include <QApplication>
 
-#ifdef Q_OS_MACX
-// There is a bug in Oracle's VM on Mac OS X, and as such we may not be able to load it
-// from here.
-#warning PowerGrid does not officially support Mac OS (yet) due to a bug in Oracle`s JVM.
-#endif
-
 // Required standard headers
 #include <stdexcept>
 #include <string>
@@ -39,7 +33,9 @@
 #include "jace/OptionList.h"
 
 // OS-dependant headers
-#ifdef Q_OS_UNIX
+#ifdef Q_OS_MACX
+#include "jace/macvmloader.h"
+#elif defined(Q_OS_UNIX)
 #  include "jace/UnixVmLoader.h"
 #  include <QList>
 #  include <QDir>
@@ -64,8 +60,8 @@ int main(int argc, char** argv) {
 
     // Create the loader instance with the appropriate configuration options.
     try {
-
-#if defined(Q_OS_UNIX)
+#if !defined(Q_OS_MACX) && defined(Q_OS_UNIX)
+        //TODO integrate this into UnixVmLoader
         QString jvmPath;
         // get the JAVA_HOME environment variable.
         QByteArray java_home_bytes = qgetenv("JAVA_HOME");
@@ -106,16 +102,33 @@ int main(int argc, char** argv) {
         }
 
         UnixVmLoader loader (jvmPath.toStdString(), JNI_VERSION_1_6);
-#else
+#endif
+
+#if defined(Q_OS_WIN32)
         // Windows installations have a key in registry indicating the Java installation.
         // The special Win32VmLoader makes use of this key to find a JVM.
         Win32VmLoader loader;
+#elif defined(Q_OS_MACX)
+        // Mac OS X has a tool named java_home that indicates the path to the Java
+        // installation. We use the MacVmLoader to dynamically load the JVM library in this way.
+        MacVmLoader loader;
+#else
+        // Not Mac OS X, but generic Unix. We use the UnixVmLoader to load the JVM.
+        // We expect the JAVA_HOME environment variable to be set for this.
+        // TODO Add JAVA_HOME checking to UnixVmLoader. //UnixVmLoader loader;
 #endif
 
         OptionList options;
         // Add the PowerGrid jar file to the classpath
+#ifdef Q_OS_MACX
+        // Temporary fix for issue caused by Mac OS X application bundle layout.
+        options.push_back( CustomOption("-Djava.class.path=../../../PowerGridLoader.jar") );
+        options.push_back( CustomOption("-javaagent:../../../PowerGridLoader.jar") );
+#else
         options.push_back( CustomOption("-Djava.class.path=PowerGridLoader.jar") );
         options.push_back( CustomOption("-javaagent:PowerGridLoader.jar") );
+#endif
+
 #ifdef PG_DEBUG
         options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
 #endif
@@ -134,8 +147,13 @@ int main(int argc, char** argv) {
         bridge::updater::UpdaterRunner_registerNatives(env);
 
         // Start the PowerGridLoader
-        // Actual command (in java): net.pgrid.loader.PGLoader.main(new String[]{"-c"});
+        // Actual command (in java): net.pgrid.loader.PGLoader.main(null);
 
+        qDebug() << "Calling PGLoader.main";
+        //FIXME The env->FindClass call here never returns under Mac OS X.
+        //      This is strange, as the above call to registerNatives works
+        //      just fine (which also uses FindClass). On Windows, there are
+        //      no problems here, so what might cause this?
         jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PGLoader");
         if (!pgLoaderClass) {
             throw JNIException("PGLoader class not found");
@@ -144,12 +162,6 @@ int main(int argc, char** argv) {
         if (!mainMethod) {
             throw JNIException("PGLoader.main method not found");
         }
-        jclass stringClass = env->FindClass("java/lang/String");
-        if (!stringClass) {
-            throw JNIException("String class not found");
-        }
-
-        qDebug() << "Calling PGLoader.main(String[] args)";
         env->CallStaticVoidMethod(pgLoaderClass, mainMethod, NULL);
 
         if (env->ExceptionCheck()) {
@@ -158,7 +170,6 @@ int main(int argc, char** argv) {
         }
 
         // Clean up JNI references
-        env->DeleteLocalRef(stringClass);
         env->DeleteLocalRef(pgLoaderClass);
 
     } catch (JNIException& e) {

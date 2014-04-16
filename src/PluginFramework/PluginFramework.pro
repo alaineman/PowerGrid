@@ -36,14 +36,16 @@ SOURCES += \
     taskdescriptor.cpp \
     pgpluginloader.cpp \
     pgplugin.cpp \
-    classifier.cpp
+    classifier.cpp \
+    skilltrainer.cpp
 
 HEADERS += \
     task.h \
     taskdescriptor.h \
     pgpluginloader.h \
     pgplugin.h \
-    classifier.h
+    classifier.h \
+    skilltrainer.h
 
 # Dependency for Bridge
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Bridge/release/ -lBridge

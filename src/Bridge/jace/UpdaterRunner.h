@@ -23,6 +23,9 @@
 #include <jni.h>
 #include "jace/JNIException.h"
 
+Q_DECLARE_LOGGING_CATEGORY(logNatives)
+Q_DECLARE_LOGGING_CATEGORY(logMapper)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -39,6 +42,10 @@ extern "C" {
  */
 JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
   (JNIEnv *, jclass, jbyteArray);
+
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * \brief representative namespace for \c net.pgrid.loader.bridge
@@ -58,9 +65,5 @@ void UpdaterRunner_registerNatives(JNIEnv* env) throw(jace::JNIException);
 
 } // namespace updater
 } // namespace bridge
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

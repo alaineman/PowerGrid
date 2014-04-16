@@ -27,6 +27,8 @@
 #include "jace/JNIException.h"
 #include "jace/JNIHelper.h"
 
+Q_LOGGING_CATEGORY(logMapper, "MAPPER")
+
 namespace jace {
 
 RSClassMapper* RSClassMapper::classmapper = Q_NULLPTR;
@@ -88,7 +90,7 @@ RSClass* RSClassMapper::getRSClass(QString name) {
         classMap.remove(name);
         fieldMap.remove(name);
         modifiers.remove(name);
-        qDebug() << "Linked RS class:" << qPrintable(name);
+        qCDebug(logMapper) << "Linked RS class:" << qPrintable(name);
         return rsc;
     } else {
         return it.value();
@@ -132,7 +134,7 @@ void RSClassMapper::parseData(jbyteArray data) throw(JNIException) {
         char buffer [length];
         char* chars = buffer;
         env->GetByteArrayRegion(data, 0, length, reinterpret_cast<jbyte*>(chars));
-        qDebug() << "Received" << length << "bytes of updater data";
+        qCDebug(logMapper) << "Received" << length << "bytes of updater data";
 
         // Parse the data using QXmlStreamReader
         QByteArray byteArray (const_cast<const char*>(buffer), length);
@@ -141,7 +143,7 @@ void RSClassMapper::parseData(jbyteArray data) throw(JNIException) {
         while (reader->tokenType() != QXmlStreamReader::StartElement) {
             reader->readNext();
         }
-        qDebug() << "Parsing updater data for client with CRC32 =" << reader->attributes().value("crc");
+        qCDebug(logMapper) << "Parsing updater data for client with CRC32 =" << reader->attributes().value("crc");
 
         int nFields = 0;
         while (!reader->atEnd()) {
@@ -178,7 +180,7 @@ void RSClassMapper::parseData(jbyteArray data) throw(JNIException) {
         modifiers.insert("Client", mods);
         classMap.insert("Client", realname);
 
-        qDebug() << "Read" << classMap.size() << "classes with" << nFields << "fields in total";
+        qCDebug(logMapper) << "Read" << classMap.size() << "classes with" << nFields << "fields in total";
     }
 }
 
@@ -196,7 +198,7 @@ int RSClassMapper::parseClass(QXmlStreamReader* reader) throw(JNIException) {
     }
     // prepare all map entries for this RS class
     QString cName = className.toString();
-    //qDebug() << cName;
+    //qCDebug(logMapper) << cName;
     if (!isStatic) {
         classMap.insert(cName, mappedClassName.toString());
         fieldMap.insert(cName, QMap<QString, QString>());
@@ -233,7 +235,7 @@ int RSClassMapper::parseClass(QXmlStreamReader* reader) throw(JNIException) {
 
 void RSClassMapper::parseField(QXmlStreamReader *reader, QString className, bool isStatic) throw(JNIException) {
     QString fieldName = reader->name().toString();
-    //qDebug() << " ->" << fieldName;
+    //qCDebug(logMapper) << " ->" << fieldName;
 
     while (!reader->atEnd()) {
         reader->readNext();

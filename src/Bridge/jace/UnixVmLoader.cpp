@@ -1,79 +1,88 @@
 
 #include "jace/UnixVmLoader.h"
 
-#ifdef JACE_GENERIC_UNIX
-
-using ::jace::UnixVmLoader;
-using ::jace::VmLoader;
-using ::jace::JNIException;
-
-using std::string;
-
-#include <dlfcn.h>
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MACX)
 
 namespace jace {
 
-UnixVmLoader::UnixVmLoader( std::string path_, jint jniVer ) : 
-  jniVersion( jniVer ), path( path_ ), lib( 0 ) {
+UnixVmLoader::UnixVmLoader( QString path_, jint jniVersion ) :
+  ver(jniVersion), path( path_ ) {
+}
 
-  createJavaVMPtr = 0;
-  getCreatedJavaVMsPtr = 0; 
+QString UnixVmLoader::getJVMPath() throw(JNIException) {
+    if (path.isEmpty()) {
+        QByteArray javaHomeBytes = qgetenv("JAVA_HOME");
+        QString javaHome = QString::fromLocal8Bit(javaHomeBytes.constData());
+        QDir dir (javaHome);
+        QDirIterator it (dir, QDir::NoSymLinks | QDir::Files,
+                         QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            QString entry = it.next();
+            if (entry.endsWith("libjvm.so")) {
+                path = entry;
+                return path;
+            }
+        }
+        // Still not found, so we throw an exception
+        throw JNIException("Cannot find libjvm.so in JAVA_HOME path");
+    } else {
+        return path;
+    }
 }
 
 jint UnixVmLoader::createJavaVM( JavaVM **pvm, void **env, void *args ) {
-  return createJavaVMPtr( pvm, env, args );
+    loadVm();
+    if (!fn_createJavaVM) {
+        return JNI_ERR;
+    } else {
+        return fn_createJavaVM( pvm, env, args );
+    }
 }
 
 jint UnixVmLoader::getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs ) {
-  return getCreatedJavaVMsPtr( vmBuf, bufLen, nVMs );
+    loadVm();
+    if (!fn_getCreatedJavaVMs) {
+        return JNI_ERR;
+    } else {
+        return fn_getCreatedJavaVMs(vmBuf, bufLen, nVMs);
+    }
 }
 
-void UnixVmLoader::loadVm() throw ( JNIException ) {
-
-  lib = dlopen( path.c_str(), RTLD_NOW | RTLD_GLOBAL );
-
-  if ( ! lib ) {
-    string msg = "Unable to load the library at " + path;
-    throw JNIException( msg );
-  }
-
-  createJavaVMPtr = ( CreateJavaVM_t ) dlsym( lib, "JNI_CreateJavaVM" );
-
-  if ( ! createJavaVMPtr ) {
-    string msg = "Unable to resolve the function, JNI_CreateJavaVM from library " + path;
-    throw JNIException( msg );
-  }
-
-  getCreatedJavaVMsPtr = ( GetCreatedJavaVMs_t ) dlsym( lib, "JNI_GetCreatedJavaVMs" );
-
-  if ( ! getCreatedJavaVMsPtr ) {
-    string msg = "Unable to resolve the function, JNI_GetCreatedJavaVMs from library " 
-      + path;
-    throw JNIException( msg );
-  }
+void UnixVmLoader::loadVm() throw(JNIException) {
+    if (jvmLib.isLoaded()) {
+        return;
+    }
+    QString p = getJVMPath();
+    jvmLib.setFileName(p);
+    if (jvmLib.load()) {
+        fn_createJavaVM = (CreateJavaVMFunc) jvmLib.resolve("JNI_CreateJavaVM");
+        if (!fn_createJavaVM) {
+            throw JNIException("Cannot resolve \"JNI_CreateJavaVM\" function");
+        }
+        fn_getCreatedJavaVMs = (GetCreatedJavaVMsFunc) jvmLib.resolve("JNI_GetCreatedJavaVMs");
+        if (!fn_getCreatedJavaVMs) {
+            throw JNIException("Cannot resolve \"JNI_GetCreatedJavaVMs\" function");
+        }
+    } else {
+        throw JNIException("Cannot load JVM library: " + jvmLib.errorString());
+    }
 }
 
 
 void UnixVmLoader::unloadVm() {
-  if ( lib ) {
-    dlclose( lib );
-    lib = 0;
+  if (jvmLib.isLoaded()) {
+      fn_createJavaVM = NULL;
+      fn_getCreatedJavaVMs = NULL;
+      jvmLib.unload();
   }
 }
 
 VmLoader* UnixVmLoader::clone() const {
-
-  UnixVmLoader* loader = new UnixVmLoader( path, jniVersion );
-
-  loader->lib = lib;
-  loader->createJavaVMPtr = createJavaVMPtr;
-  loader->getCreatedJavaVMsPtr = getCreatedJavaVMsPtr;
-
-  return loader;
+    return new UnixVmLoader(path, ver);
 }
 
 jint UnixVmLoader::version() {
-  return jniVersion;
+  return ver;
 }
 
 }

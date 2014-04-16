@@ -26,6 +26,8 @@
 using jace::JNIException;
 using jace::RSClassMapper;
 
+
+
 /**
  * This method parses the updater data downloaded by the Java client.
  * It is normally invoked from the JVM by the
@@ -38,15 +40,17 @@ JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterR
         try {
             mapper->parseData(bytes);
         } catch (const JNIException& ex) {
-            qWarning() << "Cannot parse Updater data:" << ex.what();
+            qCWarning(logMapper) << "Cannot parse Updater data:" << ex.what();
         }
     } else {
-        qWarning() << "Cannot parse Updater data: mapper does not exist";
+        qCWarning(logMapper) << "Cannot parse Updater data: mapper does not exist";
     }
 }
 
 namespace bridge {
 namespace updater {
+
+Q_LOGGING_CATEGORY(logNatives, "NATIVES")
 
 /**
  * @brief Registers native methods for the net.pgrid.loader.bridge.UpdaterRunner class
@@ -74,7 +78,7 @@ void UpdaterRunner_registerNatives(JNIEnv* env)
         throw JNIException("RegisterNatives failed for UpdaterRunner: "
                            + jace::JNIError_toString(result));
     }
-    qDebug() << "Natives registered successfully for UpdaterRunner class";
+    qCDebug(logNatives) << "Natives registered successfully for UpdaterRunner class";
 }
 
 }

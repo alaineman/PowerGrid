@@ -12,8 +12,6 @@
 
 namespace jace {
 
-typedef jint (*CreateJavaVMFunc)(JavaVM**,void**,void*);
-typedef jint (*GetCreatedJavaVMsFunc)(JavaVM**,jsize,jsize*);
 /**
  * \brief JVM Loader class for Mac OS X.
  *
@@ -23,6 +21,9 @@ typedef jint (*GetCreatedJavaVMsFunc)(JavaVM**,jsize,jsize*);
  */
 class MacVmLoader : public VmLoader {
 private:
+    typedef jint (*CreateJavaVMFunc)(JavaVM**,void**,void*);
+    typedef jint (*GetCreatedJavaVMsFunc)(JavaVM**,jsize,jsize*);
+
     jint ver;      ///< The JNI version used for loading the VM.
     QString path;  ///< The path to the libJVM dynamic library
     QLibrary jvmLib; ///< The QLibrary object representing the (loaded) library
@@ -53,36 +54,36 @@ public:
      * The JVM library is located using \c getJVMPath(), and then
      * the library at the resulting path is loaded.
      */
-    JACE_API virtual void loadVm() throw (JNIException);
+    JACE_API void loadVm() throw (JNIException);
 
     /**
      * \brief Unloads the Virtual Machine library.
      */
-    JACE_API virtual void unloadVm();
+    JACE_API void unloadVm();
 
     /**
      * \brief Returns the JNI version used by this loader's VM.
      */
-    JACE_API virtual jint version();
+    JACE_API jint version();
 
     /**
      * \brief Creates and returns a clone of this VmLoader.
      */
-    JACE_API virtual VmLoader* clone() const;
+    JACE_API VmLoader* clone() const;
 
     /**
      * \brief Creates a Java VM with the specified arguments.
      *
      * This redirects to a call to JNI_CreateJavaVM in the loaded library.
      */
-    JACE_API virtual jint createJavaVM(JavaVM **pvm, void **env, void *args);
+    JACE_API jint createJavaVM(JavaVM **pvm, void **env, void *args);
 
     /**
      * \brief Retrieves all created Java VMs.
      *
      * This redirects to a call to JNI_GetCreatedJavaVMs.
      */
-    JACE_API virtual jint getCreatedJavaVMs(JavaVM **vmBuf, jsize bufLen, jsize *nVms);
+    JACE_API jint getCreatedJavaVMs(JavaVM **vmBuf, jsize bufLen, jsize *nVms);
 };
 
 } // namespace jace

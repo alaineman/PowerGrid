@@ -1,15 +1,14 @@
 #ifndef JACE_UNIX_VM_LOADER
 #define JACE_UNIX_VM_LOADER
 
-#include "jace/os_dep.h"
+#include <QtGlobal>
 
-#ifdef JACE_GENERIC_UNIX
+// Only use this class for generic Unix.
+// (do not use for Mac OS X, see MacVmLoader class).
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MACX)
+#include "jni.h"
 #include "jace/VmLoader.h"
 #include "jace/JNIException.h"
-
-#include <jni.h>
-
-#include <string>
 
 namespace jace {
 
@@ -17,49 +16,48 @@ namespace jace {
  * A generic Virtual Machine loader for Unix based operating systems.
  * This simple loader should work fine on most Unices.
  *
- * @author Toby Reyelts
- *
+ * @author Toby Reyelts   (original)
+ * @author Patrick Kramer (use of Qt and JAVE_HOME environment variable)
  */
-class UnixVmLoader : public ::jace::VmLoader {
+class UnixVmLoader : public VmLoader {
+private:
+    jint ver;
+    QString path;
+    typedef jint (*CreateJavaVMFunc)(JavaVM**,void**,void*);
+    typedef jint (*GetCreatedJavaVMsFunc)(JavaVM**,jsize,jsize*);
+    QLibrary jvmLib;
+    CreateJavaVMFunc fn_createJavaVM;
+    GetCreatedJavaVMsFunc fn_getCreatedJavaVMs;
+public:    
+    /**
+     * Creates a new VM loader for the specified VM.
+     * The VM to be loaded is specified by the path to the shared library.
+     *
+     * @param path The path to the shared library implementing the VM.
+     *
+     * @param jniVersion The version of JNI to use. Default is \c JNI_VERSION_1_6.
+     *
+     */
+    UnixVmLoader( QString path_ = QString(), jint jniVersion = JNI_VERSION_1_6);
 
-  public:
+    /**
+     * @brief Finds the path to the JVM library.
+     * @return the detected jvm library path
+     * @throws JNIException if the path cannot be found
+     */
+    QString getJVMPath() throw(JNIException);
 
-  /**
-   * Creates a new VM loader for the specified VM.
-   * The VM to be loaded is specified by the path to the shared library.
-   *
-   * @param path - The path to the shared library implementing the VM.
-   *
-   * @param jniVersion - The version of JNI to use. For example, JNI_VERSION_1_2 or
-   * JNI_VERSION_1_4.
-   *
-   */
-  UnixVmLoader( std::string path_, jint jniVersion );
-
-  void loadVm() throw ( ::jace::JNIException );
-  void unloadVm();
-  jint createJavaVM( JavaVM **pvm, void **env, void *args );
-  jint getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs );
-  ::jace::VmLoader* clone() const;
-  jint version();
-
-  private:
-
-  jint jniVersion;
-
-  typedef jint ( JNICALL *CreateJavaVM_t )( JavaVM **pvm, void **env, void *args );
-  typedef jint ( JNICALL *GetCreatedJavaVMs_t )( JavaVM **vmBuf, jsize bufLen, jsize *nVMs );
-
-  CreateJavaVM_t createJavaVMPtr;
-  GetCreatedJavaVMs_t getCreatedJavaVMsPtr;
-
-  std::string path;
-  void* lib;
+    void loadVm() throw(JNIException);
+    void unloadVm();
+    jint createJavaVM( JavaVM **pvm, void **env, void *args );
+    jint getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs );
+    VmLoader* clone() const;
+    jint version();
 };
 
 }
 
-#endif // JACE_GENERIC_UNIX
+#endif // Q_OS_UNIX && !Q_OS_MACX
 
 #endif // JACE_UNIX_VM_LOADER
 

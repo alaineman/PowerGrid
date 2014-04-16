@@ -27,6 +27,8 @@
 #include <QMap>
 #include <QFile>
 
+Q_DECLARE_LOGGING_CATEGORY(logMapper)
+
 namespace jace {
 /**
  * @brief Maps proxy classes to their Java equivalents

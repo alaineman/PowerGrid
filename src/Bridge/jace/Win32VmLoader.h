@@ -19,6 +19,8 @@
 
 #include <string>
 
+Q_DECLARE_LOGGING_CATEGORY(logLauncher)
+
 namespace jace {
 
 class Win32VmLoader : public VmLoader {

@@ -13,10 +13,6 @@ using ::jace::JNIException;
 using std::string;
 using std::to_string;
 
-#include <iostream>
-using std::cout;
-using std::endl;
-
 namespace {
 
 /**
@@ -154,7 +150,7 @@ void Win32VmLoader::specifyVm() throw (JNIException) {
     try {
         size = 256;
         path = getRegistryValue("SOFTWARE\\JavaSoft\\Java Runtime Environment\\" + jvmVersion, "RuntimeLib", &size);
-        std::cout << "Using JVM v" << jvmVersion.c_str() << " at " << path.c_str() << endl;
+        qCDebug(logLauncher) << "Using JVM version" << jvmVersion.c_str() << "at" << path.c_str();
     } catch (JNIException& e) {
         throw JNIException(std::string("Missing RuntimeLib key for JVM version ") + jvmVersion + ": " + e.what());
     }

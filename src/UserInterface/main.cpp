@@ -34,12 +34,10 @@
 
 // OS-dependant headers
 #ifdef Q_OS_MACX
-#include "jace/macvmloader.h"
+#  include "jace/macvmloader.h"
 #elif defined(Q_OS_UNIX)
 #  include "jace/UnixVmLoader.h"
-#  include <QList>
-#  include <QDir>
-#elif defined(Q_OS_WIN32)
+#else //Q_OS_WIN32
 #  include "jace/Win32VmLoader.h"
 #endif
 
@@ -50,60 +48,64 @@
 #include "mainwindow.h"
 #include "versionInfo.h"
 
+Q_DECLARE_LOGGING_CATEGORY(logLauncher)
+Q_LOGGING_CATEGORY(logLauncher, "LAUNCHER")
+
 using namespace jace;
 using namespace std;
 
+// We use our own custom message handler for qDebug, qWarning, etc... messages to match the format
+// used by the Java client.
+void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg) {
+    Q_UNUSED(type)
+
+    // We prefer to label the message with its category. However, if no category is defined,
+    // we use a prefix based on the message type (debug, warning, critical, or fatal).
+    const char* prefix = context.category;
+    int len = strlen(prefix);
+    if (len == 0) {
+        switch (type) {
+        case QtDebugMsg:
+            cout << "INFORMATION  | ";
+            break;
+        case QtWarningMsg:
+            cout << "WARNING      | ";
+            break;
+        case QtCriticalMsg:
+            cout << "CRITICAL     | ";
+            break;
+        case QtFatalMsg:
+            cout << "FATAL ERROR  | ";
+        }
+    } else {
+        // Print the prefix and pad it to a length of (at least) 13.
+        cout << prefix;
+        while (len < 13) {
+            cout << ' ';
+            len++;
+        }
+        cout << "| ";
+    }
+    // After the label we print the message.
+    cout << qPrintable(msg) << endl;
+#if defined(PG_DEBUG) && !defined(PG_DEBUG_NO_TRACE)
+    // We print the origin of the message in debug builds
+    // (unless this was specifically disabled with PG_DEBUG_NO_TRACE)
+    cout << "             | at " << context.file << ": " << context.line << endl;
+#else
+    Q_UNUSED(context)
+#endif
+}
 
 int main(int argc, char** argv) {
-
-    qDebug() << "Attempting to load JVM...";
+    // Enable debug output for all categories by default
+    QLoggingCategory::setFilterRules(QStringLiteral("*.debug=true"));
+    qInstallMessageHandler(PGMessageHandler);
+    qCDebug(logLauncher) << "Attempting to load JVM...";
 
     // Create the loader instance with the appropriate configuration options.
     try {
-#if !defined(Q_OS_MACX) && defined(Q_OS_UNIX)
-        //TODO integrate this into UnixVmLoader
-        QString jvmPath;
-        // get the JAVA_HOME environment variable.
-        QByteArray java_home_bytes = qgetenv("JAVA_HOME");
-        QString java_home(java_home_bytes);
-        if (java_home.isEmpty()) {
-            throw JNIException("JAVA_HOME is not set; cannot find installed jre");
-        }
-        // Now we have to look for libjvm.so in this directory
-        // and subdirectories. We do this iteratively using a
-        // queue of directories (implemented as a QList).
-        QList<QDir> directories;
-        directories.append(java_home);
-
-        while (!directories.empty()) {
-            QDir current = directories.takeFirst();
-            QFileInfoList entries = current.entryInfoList();
-            QFileInfoList::iterator it = entries.begin();
-            for (;it != entries.end(); it++) {
-                QFileInfo info = *it;
-                if (info.fileName() == QStringLiteral("libjvm.so")) {
-                    // We found it
-                    jvmPath = info.canonicalFilePath();
-                    break;
-                }
-                if (info.isDir()) {
-                    // Add the directories to the list of directories
-                    // to search.
-                    directories.prepend(info.absoluteDir());
-                }
-            }
-            if (!jvmPath.isEmpty()) {
-                break;
-            }
-        }
-
-        if (jvmPath.isEmpty()) {
-            throw JNIException("Cannot find libjvm.so in JAVA_HOME directory");
-        }
-
-        UnixVmLoader loader (jvmPath.toStdString(), JNI_VERSION_1_6);
-#endif
-
+        OptionList options;
 #if defined(Q_OS_WIN32)
         // Windows installations have a key in registry indicating the Java installation.
         // The special Win32VmLoader makes use of this key to find a JVM.
@@ -115,10 +117,9 @@ int main(int argc, char** argv) {
 #else
         // Not Mac OS X, but generic Unix. We use the UnixVmLoader to load the JVM.
         // We expect the JAVA_HOME environment variable to be set for this.
-        // TODO Add JAVA_HOME checking to UnixVmLoader. //UnixVmLoader loader;
+        UnixVmLoader loader;
 #endif
 
-        OptionList options;
         // Add the PowerGrid jar file to the classpath
 #ifdef Q_OS_MACX
         // Temporary fix for issue caused by Mac OS X application bundle layout.
@@ -132,12 +133,16 @@ int main(int argc, char** argv) {
 #ifdef PG_DEBUG
         options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
 #endif
+
+        options.push_back( CustomOption("-Xmx1G") );
+        options.push_back( CustomOption("-Xss2M") );
+
         // create the JVM
         try {
             helper::createVm(loader, options);
-            qDebug() << "JVM created";
+            qCDebug(logLauncher) << "JVM created";
         } catch (JNIException& e) {
-            qWarning() << "[FAILURE] Creating VM failed:" << e.what();
+            qCWarning(logLauncher) << "[FAILURE] Creating VM failed:" << e.what();
             return EXIT_FAILURE;
         }
 
@@ -149,7 +154,7 @@ int main(int argc, char** argv) {
         // Start the PowerGridLoader
         // Actual command (in java): net.pgrid.loader.PGLoader.main(null);
 
-        qDebug() << "Calling PGLoader.main";
+        qCDebug(logLauncher) << "Calling PGLoader.main";
         //FIXME The env->FindClass call here never returns under Mac OS X.
         //      This is strange, as the above call to registerNatives works
         //      just fine (which also uses FindClass). On Windows, there are
@@ -173,14 +178,14 @@ int main(int argc, char** argv) {
         env->DeleteLocalRef(pgLoaderClass);
 
     } catch (JNIException& e) {
-        qWarning() << "Error creating JVM loader: " << e.what();
+        qCWarning(logLauncher) << "Error creating JVM loader: " << e.what();
         return EXIT_FAILURE;
     }
 
 
     // The JVM is started and is running, now create our
     // PowerGrid Qt Application and frame.
-    qDebug() << "JVM started, creating control panel";
+    qCDebug(logLauncher) << "JVM started, creating control panel";
     QApplication app (argc, argv);
     app.setApplicationName(PG_NAME_STR);
     app.setApplicationVersion(PG_VERSION_STR);
@@ -188,6 +193,6 @@ int main(int argc, char** argv) {
     MainWindow window;
     window.show();
     window.setJVMVersion(jace::helper::getJavaProperty("java.version"));
-    qDebug() << "Done.";
+    qCDebug(logLauncher) << "Done.";
     return app.exec();
 }

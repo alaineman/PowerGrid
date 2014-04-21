@@ -1,6 +1,7 @@
- #include "world.h"
+#include "world.h"
 #include "entity.h"
 #include "component.h"
+#include "classifier.h"
 
 #include <QMap>
 #ifdef Q_COMPILER_INITIALIZER_LISTS
@@ -116,6 +117,7 @@ void World::deleteEntity(Entity *e) {
 void World::processAll() {
     emit processingStarted();
 
+    // Then, go over all Matchers and provide all matching Entities
     QHashIterator<QString, QList<Matcher*>> it (matchers);
     for (;it.hasNext(); it.next()) {                        // For each Component type
         QList<Entity*> ents = componentMap.value(it.key()); // The Entities with this Component
@@ -127,6 +129,18 @@ void World::processAll() {
     }
 
     emit processingFinished();
+}
+
+void World::addClassifier(Classifier *classifier) {
+    if (classifier && !classifiers.contains(classifier)) {
+        classifiers.append(classifier);
+    }
+}
+
+void World::removeClassifier(Classifier *classifier) {
+    if (classifier) {
+        classifiers.removeOne(classifier);
+    }
 }
 
 }

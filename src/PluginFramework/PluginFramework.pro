@@ -36,7 +36,6 @@ SOURCES += \
     taskdescriptor.cpp \
     pgpluginloader.cpp \
     pgplugin.cpp \
-    classifier.cpp \
     skilltrainer.cpp
 
 HEADERS += \
@@ -44,7 +43,6 @@ HEADERS += \
     taskdescriptor.h \
     pgpluginloader.h \
     pgplugin.h \
-    classifier.h \
     skilltrainer.h
 
 # Dependency for Bridge

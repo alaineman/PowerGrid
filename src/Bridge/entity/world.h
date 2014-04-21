@@ -14,6 +14,7 @@ using std::initializer_list;
 namespace entity {
 
 class Component;
+class Classifier;
 
 /**
  * @brief Management class for Entity objects.
@@ -41,6 +42,7 @@ private:
     QHash<QString, QList<Entity*>> componentMap; // maps Component className => list of Entities with that Component
     QHash<QString, QList<Matcher*>> matchers;    // maps Component className => list of Matcher for that Component type
     QHash<QString, Mapper*> mappers;             // maps Component className => Mapper for that Component type
+    QList<Classifier*> classifiers;              // lists all registered Classifiers.
 public:
     /**
      * \brief Returns the global World instance
@@ -72,7 +74,7 @@ public:
     /**
      * \brief Returns the Mapper instance for the Type
      *
-     * Any two Mappers* with the same Type returned by this member
+     * Any two Mapper* with the same Type returned by this member
      * function are guaranteed to point to the same Mapper instance.
      *
      * This is a convenience function for @c getMapper(QString).
@@ -87,7 +89,7 @@ public:
     /**
      * \brief Returns the Mapper instance for the Type with the given name
      *
-     * Any two Mappers* with the same Type returned by this member
+     * Any two Mapper* with the same Type returned by this member
      * function are guaranteed to point to the same Mapper instance.
      *
      * \param Type the Type
@@ -180,6 +182,18 @@ public slots:
     void removeMatcher(Matcher* m);
 
     /**
+     * \brief Adds a Classifier to this World
+     * \param classifier the Classifier to add
+     */
+    void addClassifier(Classifier* classifier);
+
+    /**
+     * \brief Removes a Classifier from this World
+     * \param classifier the Classifier to remove
+     */
+    void removeClassifier(Classifier* classifier);
+
+    /**
      * \brief Initializes the provided Mapper for this World
      *
      * The Mapper is updated with the current state, and registered with this World.
@@ -187,7 +201,8 @@ public slots:
      * it more than once for a single Mapper may lead to undesired effects.
      *
      * Also, the default Mapper implementation already invokes this when it's created,
-     * so this should only be invoked for customized Mapper instances that don't .
+     * so this should only be invoked for Mapper created with the \c init parameter set
+     * to false.
      *
      * \param mapper the Mapper to initialize.
      */

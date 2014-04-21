@@ -243,7 +243,8 @@ HEADERS += \
     net/pgrid/loader/pgloader.h \
     jace/macvmloader.h \
     api/bridge/toolkitdirectx.h \
-    api/bridge/mouselistener.h
+    api/bridge/mouselistener.h \
+    entity/classifier.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -400,7 +401,8 @@ SOURCES += \
     entity/mapper.cpp \
     net/pgrid/loader/pgloader.cpp \
     jace/macvmloader.cpp \
-    api/bridge/toolkitdirectx.cpp
+    api/bridge/toolkitdirectx.cpp \
+    entity/classifier.cpp
 
 HEADERS    += \
     jni.h \

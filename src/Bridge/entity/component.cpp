@@ -16,3 +16,7 @@ Object Component::getReference() const {
 }
 
 }
+
+uint qHash(entity::HashableComponent* key, uint seed) {
+    return key == 0 ? 0 : key->hash(seed);
+}

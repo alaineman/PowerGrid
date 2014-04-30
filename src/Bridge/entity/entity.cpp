@@ -14,11 +14,6 @@ Entity::Entity(World *world) : QObject(world){
     }
 }
 
-template<typename Type>
-Type* Entity::get(){
-    return qobject_cast<Type*>(get(Type::staticMetaObject.className()));
-}
-
 Component* Entity::get(QString name){
     QMap<QString, Component*>::Iterator it = components.find(name);
     if (it == components.end()) {
@@ -26,10 +21,6 @@ Component* Entity::get(QString name){
     } else {
         return (*it);
     }
-}
-
-template<typename Type> bool Entity::has(){
-    return has(Type::staticMetaObject.className());
 }
 
 bool Entity::has(QString name){

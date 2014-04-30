@@ -21,6 +21,8 @@ class Entity;
 class Classifier : public QObject {
     Q_OBJECT
     Q_DISABLE_COPY(Classifier)
+public:
+    Classifier() {}
 public slots:
     /**
      * \brief Processes the provided Entity.

@@ -60,9 +60,7 @@ public:
 
 }
 
-uint qHash(entity::HashableComponent* key, uint seed) {
-    return key == 0 ? 0 : key->hash(seed);
-}
+uint qHash(entity::HashableComponent* key, uint seed);
 
 template<typename T>
 T rol(T val, uint amount) {

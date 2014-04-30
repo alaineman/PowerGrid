@@ -26,15 +26,16 @@
 #
 #------------------------------------------------
 TEMPLATE = subdirs
-CONFIG += ordered
 
 macx {
   warning("Mac OS X is not supported as of now, and things may not work as expected!")
 }
 
-SUBDIRS += Bridge UserInterface PluginFramework   # DefaultPlugin
+SUBDIRS += Bridge UserInterface PluginFramework \   # DefaultPlugin
+    TestPlugin
 
 UserInterface.depends = Bridge
 PluginFramework.depends = Bridge
 #DefaultPlugin.depends = PluginFramework
+TestPlugin.depends = PluginFramework Bridge
 

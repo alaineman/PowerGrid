@@ -61,7 +61,9 @@ public:
      *         type, or NULL if this Entity has no
      *         Component of that Type.
      */
-    template<typename Type> Type* get() Q_REQUIRED_RESULT;
+    template<typename Type> Type* get() {
+        return qobject_cast<Type*>(get(Type::staticMetaObject.className()));
+    }
 
     /**
      * \brief Finds the Component of the given type
@@ -79,7 +81,9 @@ public:
      *
      * \return true if a Component with the given type exists, false otherwise.
      */
-    template<typename Type> bool has() Q_REQUIRED_RESULT;
+    template<typename Type> bool has() {
+        return has(Type::staticMetaObject.className());
+    }
 
     /**
      * \brief Returns whether a Component type with the given name exists.

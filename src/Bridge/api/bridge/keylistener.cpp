@@ -1,4 +1,4 @@
-#include "keyboard.h"
+#include "keylistener.h"
 using java::awt::event::KeyEvent;
 
 #include "jace/MappingUnavailableException.h"
@@ -7,10 +7,10 @@ using jace::MappingUnavailableException;
 namespace api {
 namespace bridge {
 
-IMPL_JACE_CONSTRUCTORS(Keyboard)
-IMPL_RSCLASS_GET(Keyboard)
+IMPL_JACE_CONSTRUCTORS(KeyListener)
+IMPL_RSCLASS_GET(KeyListener)
 
-void Keyboard::dispatch(KeyEvent e) {
+void KeyListener::dispatch(KeyEvent e) {
     switch (e.getType()) {
     case KeyEvent::Pressed:
         keyPressed(e);
@@ -27,27 +27,27 @@ void Keyboard::dispatch(KeyEvent e) {
     }
 }
 
-void Keyboard::keyPressed(KeyEvent e) {
-    jclass keyClass = Keyboard::getJavaJniClass()->getClass();
+void KeyListener::keyPressed(KeyEvent e) {
+    jclass keyClass = KeyListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(keyClass, "keyPressed", "(Ljava/awt/event/KeyEvent;)V");
-    if (mID == NULL) throw MappingUnavailableException("Keyboard.keyPressed(KeyEvent)");
+    if (mID == NULL) throw MappingUnavailableException("KeyListener.keyPressed(KeyEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-void Keyboard::keyReleased(KeyEvent e) {
-    jclass keyClass = Keyboard::getJavaJniClass()->getClass();
+void KeyListener::keyReleased(KeyEvent e) {
+    jclass keyClass = KeyListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(keyClass, "keyReleased", "(Ljava/awt/event/KeyEvent;)V");
-    if (mID == NULL) throw MappingUnavailableException("Keyboard.keyReleased(KeyEvent)");
+    if (mID == NULL) throw MappingUnavailableException("KeyListener.keyReleased(KeyEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 
-void Keyboard::keyTyped(KeyEvent e) {
-    jclass keyClass = Keyboard::getJavaJniClass()->getClass();
+void KeyListener::keyTyped(KeyEvent e) {
+    jclass keyClass = KeyListener::getJavaJniClass()->getClass();
     JNIEnv* env = jace::helper::attach();
     jmethodID mID = env->GetMethodID(keyClass, "keyTyped", "(Ljava/awt/event/KeyEvent;)V");
-    if (mID == NULL) throw MappingUnavailableException("Keyboard.keyTyped(KeyEvent)");
+    if (mID == NULL) throw MappingUnavailableException("KeyListener.keyTyped(KeyEvent)");
     env->CallVoidMethod(getJavaJniObject(), mID, e.getJavaJniObject());
 }
 

@@ -1,5 +1,5 @@
-#ifndef API_BRIDGE_KEYBOARD_H
-#define API_BRIDGE_KEYBOARD_H
+#ifndef API_BRIDGE_KEYLISTENER_H
+#define API_BRIDGE_KEYLISTENER_H
 
 #include "MethodHelper.h"
 #include "java/lang/object.h"
@@ -22,9 +22,9 @@ namespace bridge {
  *
  * \see api::bridge::Client::getKeyboard()
  */
-class Keyboard : public Object {
+class KeyListener : public Object {
 public:
-    RS_OBJECT(Keyboard)
+    RS_OBJECT(KeyListener)
 
     /**
      * \brief Dispatches the given KeyEvent according to its Type
@@ -55,4 +55,4 @@ private:
 } // namespace bridge
 } // namespace api
 
-#endif // API_BRIDGE_KEYBOARD_H
+#endif // API_BRIDGE_KEYLISTENER_H

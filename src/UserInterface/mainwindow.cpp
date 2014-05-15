@@ -21,12 +21,14 @@
 #include "versionInfo.h"
 
 #include "api/bridge/client.h"
-#include "api/bridge/keyboard.h"
+#include "api/bridge/keylistener.h"
 
 #include "java/awt/event/keyevent.h"
 using java::awt::event::KeyEvent;
 
 #include "net/pgrid/loader/pgloader.h"
+
+Q_LOGGING_CATEGORY(guiLogger, "GUI")
 
 /*!
  * \class MainWindow
@@ -85,17 +87,12 @@ void MainWindow::setJVMVersion(QString version) {
 void MainWindow::updateFPS() {
     static bool thrown = false;
     try {
-        api::bridge::Client c = api::bridge::Client::getClient();
-        if (!c.isNull()) {
-            JInt fpsValue = c.getFPS();
-            ui->fps->setText(QString::number(fpsValue.getInt()));
-        } else {
-            ui->fps->setText(QStringLiteral("ERR: Client is null"));
-        }
+        JInt fpsValue = api::bridge::Client::getFPS();
+        ui->fps->setText(QString::number(fpsValue.getInt()));
     } catch (jace::JNIException& e) {
         if (!thrown) {
             thrown = true;
-            qDebug() << e.what();
+            qCDebug(guiLogger) << "Error fetching FPS:" << e.what();
         }
         ui->fps->setText(QStringLiteral("ERR: ") + e.what());
     }
@@ -103,7 +100,7 @@ void MainWindow::updateFPS() {
 
 void MainWindow::sendText() {
     try {
-        api::bridge::Keyboard keyboard = api::bridge::Client::getKeyboard();
+        api::bridge::KeyListener keyboard = api::bridge::Client::getKeyboard();
         java::awt::Component source = net::pgrid::loader::PGLoader::getApplet();
         QString text = ui->textToSend->text();
         for(int i=0;i<text.length();i++) {

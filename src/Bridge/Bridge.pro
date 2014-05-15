@@ -135,7 +135,6 @@ HEADERS += \
     api/bridge/animatedanimableobject.h \
     api/bridge/animatedboundaryobject.h \
     api/bridge/itemnode.h \
-    api/bridge/keyboard.h \
     api/bridge/mlstring.h \
     api/bridge/passiveanimator.h \
     api/bridge/quaternion.h \
@@ -244,7 +243,8 @@ HEADERS += \
     jace/macvmloader.h \
     api/bridge/toolkitdirectx.h \
     api/bridge/mouselistener.h \
-    entity/classifier.h
+    entity/classifier.h \
+    api/bridge/keylistener.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -294,7 +294,6 @@ SOURCES += \
     api/bridge/animatedanimableobject.cpp \
     api/bridge/animatedboundaryobject.cpp \
     api/bridge/itemnode.cpp \
-    api/bridge/keyboard.cpp \
     api/bridge/mlstring.cpp \
     api/bridge/mouse.cpp \
     api/bridge/passiveanimator.cpp \
@@ -402,7 +401,8 @@ SOURCES += \
     net/pgrid/loader/pgloader.cpp \
     jace/macvmloader.cpp \
     api/bridge/toolkitdirectx.cpp \
-    entity/classifier.cpp
+    entity/classifier.cpp \
+    api/bridge/keylistener.cpp
 
 HEADERS    += \
     jni.h \

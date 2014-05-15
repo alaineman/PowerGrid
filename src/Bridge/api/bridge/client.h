@@ -56,7 +56,7 @@ class GraphicsToolkit;
 class Interface;
 class HashTable;
 class ItemDefLoader;
-class Keyboard;
+class KeyListener;
 class LandscapeInfo;
 class MenuGroupNode;
 class HintArrow;
@@ -101,7 +101,7 @@ public:
     static JACE_PROXY_API HashTable getInterfaceNodeCache();
     static JACE_PROXY_API ItemDefLoader getItemDefLoader();
     static JACE_PROXY_API JBoolean isItemSelected();
-    static JACE_PROXY_API Keyboard getKeyboard();
+    static JACE_PROXY_API KeyListener getKeyboard();
     static JACE_PROXY_API LandscapeInfo getLandscapeInfo();
     static JACE_PROXY_API String getLastSelectedItemName();
     JACE_PROXY_API QList<HintArrow> getLoadedHintArrows();

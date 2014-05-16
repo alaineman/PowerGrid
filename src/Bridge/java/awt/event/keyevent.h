@@ -27,6 +27,7 @@ namespace event {
  */
 class KeyEvent : public Object {
 public:
+    static const jchar CHAR_UNDEFINED = 65536;
     /**
      * @brief The AWT Event ids for KeyEvents
      *
@@ -42,7 +43,7 @@ public:
      * @brief Creates a KeyEvent object.
      *
      * A few pointers for providing semantically correct parameters:
-     * - For the @c Pressed and @c Released types, provide @c static_cast<JChar>(65536) as keyChar.
+     * - For the @c Pressed and @c Released types, provide @c CHAR_UNDEFINED as keyChar.
      * - For the @c Typed event, provide @c -1 for keyCode.
      * - For the source, provide the Canvas Component contained in the RS Applet.
      * - For the @par when parameter, provide the current system time
@@ -53,7 +54,7 @@ public:
      * @param when the system time (in ms) when this event happened
      * @param modifiers a mask describing the modifiers active when this event happened
      * @param keyCode the key code belonging to the key (-1 in case of a @c Typed event)
-     * @param keyChar the character that was types (65536 when @par id is not Typed)
+     * @param keyChar the character that was typed (@c CHAR_UNDEFINED when @par id is not Typed)
      * @return the created KeyEvent object
      */
     static KeyEvent createEvent(Component source, Type id, JLong when, JInt modifiers,

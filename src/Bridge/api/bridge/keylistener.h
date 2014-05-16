@@ -18,7 +18,7 @@ namespace bridge {
  * It provides functionality to push AWT KeyEvents to the Runescape client.
  *
  * The client's Keyboard object is accessible through the following invocation:
- *      Keyboard kb = Client::getClient().getKeyboard();
+ *      Keyboard kb = Client::getKeyboard();
  *
  * \see api::bridge::Client::getKeyboard()
  */

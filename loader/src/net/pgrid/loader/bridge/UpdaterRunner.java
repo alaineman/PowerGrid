@@ -40,7 +40,7 @@ public class UpdaterRunner implements Runnable {
      */
     public static final File DESTINATION = new File("cache", "updaterInfo.dat");
     
-    public static final String DEFAULT_SERVER = "http://pgrid.net/marneus/";
+    public static final String DEFAULT_SERVER = "http://pgrid.net/marneus/newupdater/";
     
     private final String updaterServer;
     private final boolean useLocal;

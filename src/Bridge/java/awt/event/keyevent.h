@@ -27,7 +27,7 @@ namespace event {
  */
 class KeyEvent : public Object {
 public:
-    static const jchar CHAR_UNDEFINED = 65536;
+    static const jchar CHAR_UNDEFINED = 65535;
     /**
      * @brief The AWT Event ids for KeyEvents
      *

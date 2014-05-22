@@ -143,7 +143,7 @@ void RSClassMapper::parseData(jbyteArray data) throw(JNIException) {
         while (reader->tokenType() != QXmlStreamReader::StartElement) {
             reader->readNext();
         }
-        qCDebug(logMapper) << "Parsing updater data for client with CRC32 =" << reader->attributes().value("crc");
+        qCDebug(logMapper) << "Parsing updater data for client with hash " << reader->attributes().value("crc");
 
         int nFields = 0;
         while (!reader->atEnd()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Patrick Kramer, Vincent Wassenaar
+ * Copyright 2014 Patrick Kramer, Vincent Wassenaar
  * 
  * This file is part of PowerGrid.
  *
@@ -101,8 +101,9 @@ public class AppletFrame extends JFrame implements AppletStub {
         try {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
         } catch (IOException e) {
+            LOGGER.log("Unexpected Exception", e);
             // Since the icon is embedded in the jar file, this should never happen
-            throw (Error) new InternalError("Cannot find jar resource").initCause(e);
+            throw new InternalError("Cannot find jar resource");
         }
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
@@ -189,9 +190,9 @@ public class AppletFrame extends JFrame implements AppletStub {
             } catch (MalformedURLException e) {
                 // This normally never happens, as the codebase was validated when
                 // the client was downloaded. The reason we don't throw 
-                // AssertionError here is, that we don't want to interfere 
+                // anything here is, that we don't want to interfere 
                 // with the running Runescape client.
-                LOGGER.log("[WARNING] Applet requested codebase URL, but the codebase was invalid.");
+                LOGGER.log("[WARNING] Applet requested codebase URL, but the codebase was invalid.", e);
             }
         }
         return null;

@@ -1,3 +1,21 @@
+/*
+ * Copyright 2014 Patrick Kramer, Vincent Wassenaar
+ * 
+ * This file is part of PowerGrid.
+ *
+ * PowerGrid is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PowerGrid is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.pgrid.loader;
 
 import java.applet.Applet;
@@ -163,7 +181,7 @@ public class PGLoader {
         boolean canUseLocal = !force && currentVersion != null && newVersion != null && 
                 versionManager.checkVersions(currentVersion, newVersion);
         
-        UpdaterRunner updaterRunner = new UpdaterRunner(newVersion, canUseLocal, debugMode);
+        UpdaterRunner updaterRunner = new UpdaterRunner(canUseLocal, debugMode);
         
         if (canUseLocal) {
             // re-use the existing client
@@ -211,7 +229,8 @@ public class PGLoader {
             LOGGER.log("Total startup time: " + (timePassed/1000d) + 's');
         }
         
-        // This class is always named the same, so...
+        // This class is always named the same, so we can easily access that 
+        // Class through our Agent.
         try {
             Class<?> clientClass = null;
             while (clientClass == null) {

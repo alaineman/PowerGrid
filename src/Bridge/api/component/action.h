@@ -37,6 +37,7 @@ public:
 
         This operation is allowed to throw any kind of
         exception when the operation fails.
+
         \param e the Entity* to execute the action on
      */
     virtual void execute(Entity* e) = 0;

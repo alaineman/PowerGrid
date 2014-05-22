@@ -1,20 +1,21 @@
 /*
- * Copyright (C) 2014 Patrick Kramer
+ * Copyright 2014 Patrick Kramer, Vincent Wassenaar
+ * 
+ * This file is part of PowerGrid.
  *
- * This program is free software: you can redistribute it and/or modify
+ * PowerGrid is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * PowerGrid is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.pgrid.loader;
 
 /**
@@ -24,13 +25,23 @@ package net.pgrid.loader;
  * @author Patrick Kramer
  */
 public class RSClassLoader {
+    /**
+     * The global RSClassLoader instance.
+     */
     public static final RSClassLoader INSTANCE = new RSClassLoader();
     
     private ClassLoader classLoader = null;
     
+    /**
+     * Private constructor prevents external instantiation of this singleton.
+     */
     private RSClassLoader() {
     }
     
+    /**
+     * Sets the ClassLoader to use for this RSClassLoader.
+     * @param loader the ClassLoader of the RS Classes.
+     */
     public synchronized void provideClassLoader(ClassLoader loader) {
         if (classLoader == null) {
             classLoader = loader;
@@ -39,24 +50,50 @@ public class RSClassLoader {
         }
     }
     
+    /**
+     * Returns the runtime Class object for the RS Class with the given name.
+     * 
+     * The name refers to the normal, obfuscated name.
+     * 
+     * This method first tries to load the Class through the RS ClassLoader. If 
+     * that fails, it tries to get the Class from the Agent using 
+     * {@code findClassFromAgent(String)}.
+     * 
+     * @param name the name of the class.
+     * @return the Class with the given name, or null if the Class could 
+     *         not be found
+     */
     public synchronized Class<?> findClass(String name) {
         if (classLoader == null) {
-            return null;
+            return findClassFromAgent(name);
         }
         try {
             // First try to get the Class from the RS class loader.
             return classLoader.loadClass(name);
-        } catch (ClassNotFoundException e1) {
+        } catch (ClassNotFoundException e) {
             // If that didn't work, try to get the Class from our Agent:
-            try {
-                // If the Agent is started, we can get any Class that is loaded
-                // by the JVM, so this should always work (if the Agent is started)
-                return Agent.findClass(name);
-            } catch (IllegalStateException e2) {
-                // The Agent was not started, do there's nothing we can do...
-                return null;
-            }
+            return findClassFromAgent(name);
         }
-        
+    }
+    
+    /**
+     * Returns the runtime Class object for the RS Class with the given name.
+     * 
+     * This method makes use of the PowerGrid Agent to find the Class. This 
+     * method returns null if either the Agent was not started, or the Class
+     * could not be found. If the Agent is started, then every Class is 
+     * accessible through the Agent. In that case, this method returns null
+     * if and only if no Class with the given name exists.
+     * 
+     * @param name the name of the Class
+     * @return the Class, or null if the Class could not be found
+     */
+    public synchronized Class<?> findClassFromAgent(String name) {
+        try {
+            return Agent.findClass(name);
+        } catch (IllegalStateException e) {
+            // The Agent was not started, do there's nothing we can do...
+            return null;
+        }
     }
 }

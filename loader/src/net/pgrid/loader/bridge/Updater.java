@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Patrick Kramer, Vincent Wassenaar
+ * Copyright 2014 Patrick Kramer, Vincent Wassenaar
  * 
  * This file is part of PowerGrid.
  *
@@ -19,6 +19,7 @@
 package net.pgrid.loader.bridge;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -28,7 +29,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import net.pgrid.loader.GamepackIdentifier;
-import net.pgrid.loader.RSVersionInfo;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -37,63 +37,46 @@ import net.pgrid.loader.logging.Logger;
  */
 public class Updater {
     
-    /** The default Updater server address. */
-    public static final String DEFAULT_SERVER = "http://pgrid.net/marneus/";
-    
     /**
-     * The Character set that will be used for all In- and OutputStreams
+     * The Character encoding that will be used for all In- and OutputStreams
      * related to network traffic.
-     * <p/>
-     * It is set as ISO-8859-1 based on the default encoding of config files as 
-     * provided to us by the RuneScape servers and the Updater Server.
+     * 
+     * It is set as ISO-8859-1 (AKA Windows-1252, the default Windows encoding) 
+     * based on the default encoding of config files as provided to us by the 
+     * RuneScape servers and the Updater Server.
      */
     public static final Charset CHARSET = Charset.forName("ISO-8859-1");
     
     private static final Logger LOGGER = Logger.get("UPDATER");
     
-    private final RSVersionInfo info;
     private final String server;
-
-    /**
-     * Creates a new ClassMapDownloader instance that acquires updater 
-     * information for the provided RSVersionInfo object.
-     * @param info the RSVersionInfo object
-     */
-    public Updater(RSVersionInfo info) {
-        if (info == null) {
-            throw new IllegalArgumentException();
-        }
-        this.info = info;
-        server = DEFAULT_SERVER;
-    }
+    private final GamepackIdentifier identifier;
+    private final File target;
     
     /**
-     * Creates a new ClassMapDownloader instance that acquires updater 
-     * information for the provided RSVersionInfo object.
-     * @param info the RSVersionInfo object
+     * Creates a new Updater instance that connects to the provided server.
      * @param updaterServer the updater server
      */
-    public Updater(RSVersionInfo info, String updaterServer) {
-        if (info == null) {
+    public Updater(String updaterServer) {
+        if (updaterServer == null || updaterServer.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        this.info = info;
-        if (updaterServer != null) {
-            server = updaterServer;
-        } else {
-            server = DEFAULT_SERVER;
-        }
+        server = updaterServer;
+        target = new File("cache/client.jar");
+        identifier = new GamepackIdentifier(target);
     }
     
     /**
+     * Connects to the server of this Updater and tries to load the data 
+     * from it.
+     * 
      * @return the updater data as a byte array
      * @throws IOException when an I/O error occurred
      */
     public byte[] getData() throws IOException {
-        long crc32 = GamepackIdentifier.computeChecksum("cache/client.jar", 
-                info.getEncryptionKey0(), info.getEncryptionKeyM1());
-        // Construct the URL from the CRC
-        URL u = new URL(server + "reflection_cache_" + crc32 + ".xml");
+        String template = server + "reflection_cache_{hash}.xml";
+        URL u = identifier.createUrl(template);
+        
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         WritableByteChannel out = Channels.newChannel(bout);
         try (InputStream uin = u.openStream()) {

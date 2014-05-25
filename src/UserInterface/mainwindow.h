@@ -38,6 +38,7 @@ public slots:
     void setJVMVersion(QString version);
     void updateFPS();
     void sendText();
+    void showMonitorWindow();
 };
 
 #endif // MAINWINDOW_H

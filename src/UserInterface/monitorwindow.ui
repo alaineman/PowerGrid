@@ -1,25 +1,72 @@
-<?xml version='1.0'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>MonitorWindow</class>
- <widget name="MonitorWindow" class="QMainWindow">
+ <widget class="QMainWindow" name="MonitorWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>640</height>
+    <width>474</width>
+    <height>124</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
-  <widget name="menubar" class="QMenuBar"/>
-  <widget name="centralwidget" class="QWidget"/>
-  <widget name="statusbar" class="QStatusBar"/>
+  <property name="windowTitle">
+   <string>Monitor Window</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/images/icon.png</normaloff>:/icons/images/icon.png</iconset>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QFormLayout" name="formLayout">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="exprLabel">
+      <property name="text">
+       <string>Expression</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="expression"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="evaluateButton">
+      <property name="text">
+       <string>Evaluate</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="resultLabel">
+      <property name="text">
+       <string>Result</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLabel" name="result">
+      <property name="text">
+       <string>&lt;Undefined&gt;</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
- <pixmapfunction/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

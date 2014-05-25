@@ -37,7 +37,7 @@
     <item>
      <widget class="QTabWidget" name="tabView">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="overviewTab">
        <attribute name="title">
@@ -157,7 +157,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>10</y>
+          <y>30</y>
           <width>241</width>
           <height>20</height>
          </rect>
@@ -166,14 +166,40 @@
        <widget class="QPushButton" name="sendText">
         <property name="geometry">
          <rect>
-          <x>170</x>
-          <y>40</y>
+          <x>260</x>
+          <y>30</y>
           <width>75</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
          <string>Send!</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>241</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Send input to the client</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="monitorButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>70</y>
+          <width>231</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Show Monitor Window</string>
         </property>
        </widget>
       </widget>

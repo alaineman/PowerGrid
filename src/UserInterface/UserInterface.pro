@@ -78,9 +78,12 @@ else {
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-SOURCES       += main.cpp mainwindow.cpp
-HEADERS        = mainwindow.h versionInfo.h powergrid.rc
-FORMS          = mainwindow.ui
+SOURCES       += main.cpp mainwindow.cpp \
+    monitorwindow.cpp
+HEADERS        = mainwindow.h versionInfo.h powergrid.rc \
+    monitorwindow.h
+FORMS          = mainwindow.ui \
+    monitorwindow.ui
 RESOURCES      = resources.qrc
 
 # helper defines to detect build mode.

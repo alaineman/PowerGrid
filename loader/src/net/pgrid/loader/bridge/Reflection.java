@@ -39,6 +39,18 @@ public class Reflection {
     private Reflection() {}
     
     /**
+     * Returns whether the Agent class is loaded properly.
+     * 
+     * This ensures that calls to {@code evaluate(String)} and 
+     * {@code evaluateToString(String)} do not throw an 
+     * {@code IllegalStateException} when invoked.
+     * @return 
+     */
+    public static boolean checkAvailability() {
+        return Agent.getInstrumentation() != null;
+    }
+    
+    /**
      * Returns the type name of the indicated field.
      * @param cls the Class object
      * @param fieldName the field name
@@ -70,7 +82,7 @@ public class Reflection {
      * @throws RuntimeException if the expression could not be evaluated.
      */
     public static Object evaluate(String expression) {
-        String[] parts = expression.split(".");
+        String[] parts = expression.split("\\.");
         Object result = Agent.findClass(parts[0].replace('/', '.'));
         if (result == null) {
             throw new RuntimeException("Could not find Class named " + parts[0]);
@@ -102,12 +114,20 @@ public class Reflection {
             cls    = (Class<?>) o;
         }
         try {
-            Field f = cls.getField(field);
-            f.setAccessible(true);
-            return f.get(target);
+            Class<?> current = cls;
+            do {
+                try {
+                    Field f = cls.getDeclaredField(field);
+                    f.setAccessible(true);
+                    return f.get(target);
+                } catch (NoSuchFieldException e) {
+                    current = current.getSuperclass();
+                }
+            } while (cls != Object.class);
+            throw new NoSuchFieldException(field + " in class " + cls.getName());
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Could not access field named " + field 
-                                     + " in class " + cls.getName());
+            throw new RuntimeException("Could not access field: " + 
+                    e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
     
@@ -121,7 +141,7 @@ public class Reflection {
         try {
             return String.valueOf(evaluate(expression));
         } catch (RuntimeException e) {
-            return e.getMessage();
+            return "ERR: " + e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     }
 }

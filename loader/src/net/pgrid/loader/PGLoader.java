@@ -30,6 +30,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import net.pgrid.loader.bridge.Reflection;
 import net.pgrid.loader.bridge.UpdaterRunner;
 import net.pgrid.loader.logging.Logger;
 import net.pgrid.loader.util.ArgumentParser;
@@ -125,6 +126,13 @@ public class PGLoader {
         } else if (parser.hasFlag("verbose")) {
             Logger.setVerbosity(Logger.Verbosity.VERBOSE);
         } // else we leave it on NORMAL
+        
+        // Touch the Reflection class so that it's loaded when the native client
+        // needs it. At the same time, checks if the Agent is loaded.
+        if (!Reflection.checkAvailability()) {
+            // Log a warning message to the console.
+            LOGGER.log("Cannot load Reflection component, some debug tools may not be available");
+        }
         
         try {
             INSTANCE.start(parser.hasFlag("debug"),

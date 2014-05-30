@@ -191,7 +191,7 @@ int RSClassMapper::parseClass(QXmlStreamReader* reader) throw(JNIException) {
         throw JNIException("Missing \"classname\" attribute for class " + className.toString());
     }
     bool isStatic = false;
-    if (className == mappedClassName && className != "client") {
+    if (mappedClassName == "client" && className != "client") {
         // These classes have static references we might need, so we need to treat them
         // differently.
         isStatic = true;

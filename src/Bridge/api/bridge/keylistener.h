@@ -10,6 +10,8 @@ using namespace java::lang;
 using java::awt::event::KeyEvent;
 using java::awt::Component;
 
+#include "api/bridge/deque.h"
+
 namespace api {
 namespace bridge {
 
@@ -32,17 +34,18 @@ public:
      * \brief Returns the keys that are currently pressed.
      * \return the keys that are currently pressed
      */
-    JACE_PROXY_API JInt getKeysPressed();
+    JACE_PROXY_API QList<JBoolean> getKeysPressed();
 
-    JACE_PROXY_API JInt getNext();
+    JACE_PROXY_API Deque getNext();
 
-    JACE_PROXY_API JInt getRecorded();
+    JACE_PROXY_API Deque getRecorded();
 
     /**
      * \brief Returns the currently focused target.
      * \return the currently focused target
      */
     JACE_PROXY_API Component getTarget();
+
 
     /**
      * \brief Dispatches the given KeyEvent according to its Type

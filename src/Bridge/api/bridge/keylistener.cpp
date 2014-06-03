@@ -15,8 +15,8 @@ IMPL_RSCLASS_GET(KeyListener)
 
 
 IMPL_PRIMITIVE_METHOD(KeyListener, getKeysPressed, JInt)
-IMPL_PRIMITIVE_METHOD(KeyListener, getNext, JInt)
-IMPL_PRIMITIVE_METHOD(KeyListener, getRecorded, JInt)
+IMPL_OBJECT_METHOD(KeyListener, getNext, Deque)
+IMPL_OBJECT_METHOD(KeyListener, getRecorded, Deque)
 IMPL_OBJECT_METHOD(KeyListener, getTarget, Component)
 
 void KeyListener::dispatch(KeyEvent e) {

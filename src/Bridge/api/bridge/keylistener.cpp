@@ -13,7 +13,6 @@ namespace bridge {
 IMPL_JACE_CONSTRUCTORS(KeyListener)
 IMPL_RSCLASS_GET(KeyListener)
 
-
 IMPL_ARRAY_METHOD(KeyListener, getKeysPressed, JBoolean)
 IMPL_OBJECT_METHOD(KeyListener, getNext, Deque)
 IMPL_OBJECT_METHOD(KeyListener, getRecorded, Deque)

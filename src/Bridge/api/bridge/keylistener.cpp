@@ -22,8 +22,7 @@ void KeyListener::dispatch(KeyEvent e) {
         keyTyped(e);
         break;
     default:
-        // Should not be possible, but still...
-        throw std::runtime_error("Invalid KeyEvent ID");
+        Q_UNREACHABLE();
     }
 }
 

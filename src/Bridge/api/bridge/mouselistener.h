@@ -7,12 +7,15 @@ using namespace java::lang;
 
 namespace java {
  namespace awt {
+  class Component;
+
   namespace event {
    class MouseEvent;
   }
  }
 }
 
+using java::awt::Component;
 using java::awt::event::MouseEvent;
 
 namespace api {
@@ -36,8 +39,8 @@ public:
     JACE_PROXY_API void mouseDragged  (MouseEvent e);
     JACE_PROXY_API void mouseWheel    (MouseEvent e);
 
-    JACE_PROXY_API JInt getClickState(); //TODO verify type
-    JACE_PROXY_API JInt getTarget(); //TODO verify type
+    JACE_PROXY_API JInt getClickState();
+    JACE_PROXY_API Component getTarget();
     JACE_PROXY_API JInt getX();
     JACE_PROXY_API JInt getY();
 

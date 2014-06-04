@@ -1,7 +1,10 @@
 #include "mouselistener.h"
+
 #include "java/awt/event/mouseevent.h"
 #include "jace/MappingUnavailableException.h"
+#include "java/awt/component.h"
 
+using java::awt::Component;
 using java::awt::event::MouseEvent;
 using jace::MappingUnavailableException;
 
@@ -12,7 +15,7 @@ IMPL_JACE_CONSTRUCTORS(MouseListener)
 IMPL_RSCLASS_GET(MouseListener)
 
 IMPL_PRIMITIVE_METHOD(MouseListener, getClickState, JInt)
-IMPL_PRIMITIVE_METHOD(MouseListener, getTarget, JInt)
+IMPL_OBJECT_METHOD(MouseListener, getTarget, Component)
 IMPL_PRIMITIVE_METHOD(MouseListener, getX, JInt)
 IMPL_PRIMITIVE_METHOD(MouseListener, getY, JInt)
 

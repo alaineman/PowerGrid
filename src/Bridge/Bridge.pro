@@ -297,7 +297,6 @@ SOURCES += \
     api/bridge/animatedboundaryobject.cpp \
     api/bridge/itemnode.cpp \
     api/bridge/mlstring.cpp \
-    api/bridge/mouse.cpp \
     api/bridge/passiveanimator.cpp \
     api/bridge/quaternion.cpp \
     api/bridge/skillinfo.cpp \
@@ -406,7 +405,8 @@ SOURCES += \
     entity/classifier.cpp \
     api/bridge/keylistener.cpp \
     api/bridge/keydata.cpp \
-    api/bridge/mousedata.cpp
+    api/bridge/mousedata.cpp \
+    api/bridge/mouselistener.cpp
 
 HEADERS    += \
     jni.h \

@@ -7,10 +7,15 @@
 
 using namespace std;
 
+namespace entity {
+ class Classifier;
+}
+
+using entity::Classifier;
+
 namespace plugins {
 
   class TaskDescriptor;
-  class Classifier;
 
   /**
    * @brief Interface defining a PowerGrid plugin

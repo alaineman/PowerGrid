@@ -276,18 +276,26 @@ void RSClassMapper::parseField(QXmlStreamReader *reader, QString className, bool
                 throw JNIException("[field] Unexpected end element: " + reader->name().toString());
             }
         case QXmlStreamReader::Characters:
-            // This is the real field name
-            if (fieldName.isEmpty()) {
-                throw JNIException("[field] Cannot map an empty field name");
+            {
+                // This is the real field name
+                if (fieldName.isEmpty()) {
+                    throw JNIException("[field] Cannot map an empty field name");
+                }
+                QString realFieldName = reader->text().toString();
+                if (isStatic) {
+                    staticClassMap.insert(fieldName, className);
+                    staticFieldMap.insert(fieldName, realFieldName);
+                    // DEBUG
+                    if (fieldName == "getMouse") {
+                        qCDebug(logMapper) << fieldName << "found in" << className << "as" << realFieldName;
+                    }
+                    // END DEBUG
+                } else {
+                    QMap<QString, QString> map = fieldMap.value(className);
+                    map.insert(fieldName, realFieldName);
+                }
+                break;
             }
-            if (isStatic) {
-                staticClassMap.insert(fieldName, className);
-                staticFieldMap.insert(fieldName, reader->text().toString());
-            } else {
-                QMap<QString, QString> map = fieldMap.value(className);
-                map.insert(fieldName, reader->text().toString());
-            }
-            break;
         default:
             break;
         }

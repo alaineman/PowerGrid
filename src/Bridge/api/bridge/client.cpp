@@ -44,7 +44,7 @@
 #include "overheadmessage.h"
 #include "player.h"
 #include "deque.h"
-#include "mouselistener.h"
+#include "abstractmouselistener.h"
 #include "sprite.h"
 #include "objectdefloader.h"
 #include "cache.h"
@@ -120,7 +120,7 @@ IMPL_STATIC_FLOAT_FIELD(Client, getMinimapAngle)
 IMPL_STATIC_INT_FIELD(Client, getMinimapOffset)
 IMPL_STATIC_INT_FIELD(Client, getMinimapScale)
 IMPL_STATIC_INT_FIELD(Client, getMinimapSetting)
-IMPL_STATIC_OBJECT_FIELD(Client, getMouse, MouseListener)
+IMPL_STATIC_OBJECT_FIELD(Client, getMouse, AbstractMouseListener)
 IMPL_STATIC_INT_FIELD(Client, getMouseCrosshairSpriteCycleIndex)
 IMPL_ARRAY_METHOD(Client, getMouseCrosshairSprites, Sprite)
 IMPL_STATIC_INT_FIELD(Client, getMouseCrosshairState)

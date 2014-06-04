@@ -16,9 +16,14 @@ public:
 
 private slots:
     void on_evaluateButton_clicked();
+    void on_MonitorWindow_destroyed();
+
+public slots:
+    void updateMousePos();
 
 private:
     Ui::MonitorWindow *ui;
+    QTimer* timer;
 };
 
 #endif // MONITORWINDOW_H

@@ -10,7 +10,7 @@ namespace examples {
 using entity::Classifier;
 using entity::Entity;
 
-class TESTPLUGINSHARED_EXPORT DummyClassifier : Classifier {
+class TESTPLUGINSHARED_EXPORT DummyClassifier : public Classifier {
 public:
     DummyClassifier();
     void process(Entity* e);

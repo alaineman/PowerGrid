@@ -64,7 +64,7 @@ class NPCNode;
 class OverheadMessage;
 class Player;
 class Deque;
-class MouseListener;
+class AbstractMouseListener;
 class Sprite;
 class ObjectDefLoader;
 class Cache;
@@ -128,7 +128,7 @@ public:
     static JACE_PROXY_API JInt getMinimapOffset();
     static JACE_PROXY_API JInt getMinimapScale();
     static JACE_PROXY_API JInt getMinimapSetting();
-    static JACE_PROXY_API MouseListener getMouse();
+    static JACE_PROXY_API AbstractMouseListener getMouse();
     static JACE_PROXY_API JInt getMouseCrosshairSpriteCycleIndex();
     JACE_PROXY_API QList<Sprite> getMouseCrosshairSprites();
     static JACE_PROXY_API JInt getMouseCrosshairState();

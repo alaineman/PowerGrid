@@ -11,7 +11,7 @@ using jace::MappingUnavailableException;
 namespace api {
 namespace bridge {
 
-IMPL_JACE_CONSTRUCTORS(MouseListener)
+IMPL_JACE_CONSTRUCTORS_SUPERTYPE(MouseListener, AbstractMouseListener)
 IMPL_RSCLASS_GET(MouseListener)
 
 IMPL_PRIMITIVE_METHOD(MouseListener, getClickState, JInt)

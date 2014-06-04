@@ -2,8 +2,7 @@
 #define API_BRIDGE_MOUSE_H
 
 #include "MethodHelper.h"
-#include "java/lang/object.h"
-using namespace java::lang;
+#include "abstractmouselistener.h"
 
 namespace java {
  namespace awt {
@@ -27,7 +26,7 @@ namespace bridge {
  * This class acts as the listener for Mouse events in the RS client.
  * It also provides information about the state of the mouse.
  */
-class MouseListener : public Object {
+class MouseListener : public AbstractMouseListener {
 public:
     RS_OBJECT(MouseListener)
 

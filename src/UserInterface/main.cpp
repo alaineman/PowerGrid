@@ -47,6 +47,8 @@
 // Our own additional headers
 #include "mainwindow.h"
 #include "versionInfo.h"
+#include "net/pgrid/loader/pgloader.h"
+using net::pgrid::loader::PGLoader;
 
 Q_DECLARE_LOGGING_CATEGORY(logLauncher)
 Q_LOGGING_CATEGORY(logLauncher, "LAUNCHER")
@@ -158,6 +160,9 @@ int main(int argc, char** argv) {
         //      This is strange, as the above call to registerNatives works
         //      just fine (which also uses FindClass). On Windows, there are
         //      no problems here, so what might cause this?
+        //Note  Loading the class through JACE (with a ClassLoader), causes
+        //      the JVM to crash.
+
         jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PGLoader");
         if (!pgLoaderClass) {
             throw JNIException("PGLoader class not found");

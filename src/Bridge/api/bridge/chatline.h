@@ -18,6 +18,10 @@ class ChatLine : public Object {
 public:
     RS_OBJECT(ChatLine)
 
+    /**
+     * @brief Returns the message on this line
+     * @return the message on this line.
+     */
     JACE_PROXY_API String getMessage();
 private:
     DECLARE_FRIENDS

@@ -18,7 +18,7 @@ namespace bridge {
  * Offers consists of selling or buying of Items and hence
  * contain a set of information about the offer.
  *
- * \internal the ID is the Item ID (mostlikely) ?? *
+ * \internal the ID is the Item ID (most likely)
  */
 
 class GrandExchangeOffer : public Object {
@@ -50,6 +50,7 @@ public:
      * \li \c Pending waiting for Item(s) to sell/buy for the given price.
      * \li \c Finished all Item(s) have been sold/bought for their given price or better.
      * \li \c Cancelled the offer was cancelled.
+     *
      * \return The state of the offer.
      * \internal which byte corresponds with which type?
      */
@@ -67,8 +68,6 @@ public:
      * \return The number of Item(s) already bought/sold.
      */
     JACE_PROXY_API JInt getTransferred();
-
-    //FIXME Missing getSlot?
 
 private:
     DECLARE_FRIENDS

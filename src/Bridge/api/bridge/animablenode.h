@@ -16,6 +16,7 @@ class Animable;
  * Contrary to what the name might suggest, this is not a Node subclass.
  * Instead, the \c AnimableNode class represents a single-linked list
  * of \c Animable objects.
+ *
  */
 class AnimableNode : public Object {
 public:

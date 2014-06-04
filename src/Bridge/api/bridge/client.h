@@ -78,8 +78,8 @@ public:
     JACE_PROXY_API static Client getClient();
 
     static JACE_PROXY_API Camera getCamera();
-    static JACE_PROXY_API JFloat getCameraPitch(); //TODO verify type
-    static JACE_PROXY_API JFloat getCameraYaw(); //TODO verify type
+    static JACE_PROXY_API JInt getCameraPitch();
+    static JACE_PROXY_API JInt getCameraYaw();
     static JACE_PROXY_API Canvas getCanvas();
     static JACE_PROXY_API java::util::Map getChatChannels();
     static JACE_PROXY_API NodeSubQueue getCollapsedMenuItems();

@@ -31,7 +31,8 @@ public:
      */
     JACE_PROXY_API Animator getActiveAnimator();
     /*!
-     * \internal Passive or Active animation ID?
+     * @brief Returns the current Animation ID
+     * @return the current Animation ID
      */
     JACE_PROXY_API JInt getAnimationID();
     JACE_PROXY_API QList<JInt> getAnimationQueue();
@@ -76,6 +77,10 @@ public:
      * \brief the movement speed of the Character
      */
     JACE_PROXY_API JInt getMovementSpeed();
+    /*!
+     * \brief Returns the orientation of the Character
+     * \return the Character's orientation
+     */
     JACE_PROXY_API JInt getOrientation();
     /*!
      * \brief the OverheadMessage for this Character

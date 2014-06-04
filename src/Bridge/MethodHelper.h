@@ -188,6 +188,21 @@ JACE_PROXY_API QList<componentType> className::name() {\
         return result;\
     }
 
+#define IMPL_STATIC_ARRAY_FIELD(className, name, componentType) \
+    JACE_PROXY_API QList<componentType> className::name() {\
+        JNIEnv* env = jace::helper::attach(); \
+        jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
+        QString clsName = rscm->getStaticFieldClass(#name); \
+        QString retName = rscm->getRealName(#componentType); \
+        std::string fldName = rscm->getStaticFieldName(#name); \
+        jclass cls = rscm->getClass(clsName); \
+        if (cls == NULL) throw jace::MappingUnavailableException(QStringLiteral("Class of Static Field ").append(#name)); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), retName.toUtf8().constData()); \
+        if (field == 0) throw jace::MappingUnavailableException(QStringLiteral("Static Field ").append(#name)); \
+        jarray arr = static_cast<jarray>(env->GetStaticObjectField(cls, field)); \
+        return jace::JArray<componentType>(arr).toQList(); \
+    }
+
 #define IMPL_STATIC_OBJECT_FIELD(className, name, returnType) \
     JACE_PROXY_API returnType className::name() { \
         JNIEnv* env = jace::helper::attach(); \

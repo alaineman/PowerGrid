@@ -134,7 +134,6 @@ int main(int argc, char** argv) {
         options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
 #endif
 
-        options.push_back( CustomOption("-Xmx1G") );
         options.push_back( CustomOption("-Xss2M") );
 
         // create the JVM

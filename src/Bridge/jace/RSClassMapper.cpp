@@ -122,6 +122,23 @@ jlong RSClassMapper::getStaticFieldModifier(QString fieldName) const {
     }
 }
 
+bool RSClassMapper::isAvailable(QString className, QString fieldName) const {
+    if (!classMap.contains(className) || !fieldMap.contains(className)) {
+        return false;
+    }
+    return fieldMap.find(className).value().contains(fieldName);
+}
+
+void RSClassMapper::assertAvailable(QString className, QString fieldName) const
+        throw(JNIException) {
+    if (!classMap.contains(className) || !fieldMap.contains(className)) {
+        throw MappingUnavailableException(className);
+    }
+    if (!fieldMap.find(className).value().contains(fieldName)) {
+        throw MappingUnavailableException(className + "." + fieldName);
+    }
+}
+
 void RSClassMapper::parseData(jbyteArray data) throw(JNIException) {
     if (data == NULL) {
         throw JNIException("Received NULL jbyteArray as map data");
@@ -191,7 +208,7 @@ int RSClassMapper::parseClass(QXmlStreamReader* reader) throw(JNIException) {
         throw JNIException("Missing \"classname\" attribute for class " + className.toString());
     }
     bool isStatic = false;
-    if (className == mappedClassName && className != "client") {
+    if (mappedClassName == "client" && className != "client") {
         // These classes have static references we might need, so we need to treat them
         // differently.
         isStatic = true;

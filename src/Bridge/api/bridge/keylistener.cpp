@@ -4,11 +4,19 @@ using java::awt::event::KeyEvent;
 #include "jace/MappingUnavailableException.h"
 using jace::MappingUnavailableException;
 
+#include "java/awt/component.h"
+using java::awt::Component;
+
 namespace api {
 namespace bridge {
 
 IMPL_JACE_CONSTRUCTORS(KeyListener)
 IMPL_RSCLASS_GET(KeyListener)
+
+IMPL_ARRAY_METHOD(KeyListener, getKeysPressed, JBoolean)
+IMPL_OBJECT_METHOD(KeyListener, getNext, Deque)
+IMPL_OBJECT_METHOD(KeyListener, getRecorded, Deque)
+IMPL_OBJECT_METHOD(KeyListener, getTarget, Component)
 
 void KeyListener::dispatch(KeyEvent e) {
     switch (e.getType()) {

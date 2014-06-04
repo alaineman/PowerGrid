@@ -28,6 +28,8 @@ using java::awt::event::KeyEvent;
 
 #include "net/pgrid/loader/pgloader.h"
 
+#include "monitorwindow.h"
+
 Q_LOGGING_CATEGORY(guiLogger, "GUI")
 
 /*!
@@ -56,11 +58,15 @@ MainWindow::MainWindow(QWidget *parent) :
     timer(new QTimer) {
     ui->setupUi(this);
     ui->pgVersion->setText(PG_VERSION_STR);
-
-    connect(ui->sendText, SIGNAL(clicked()), this, SLOT(sendText()));
-
     timer->setInterval(1000); // Update every second
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateFPS()));
+
+    connect(ui->sendText,      SIGNAL(clicked()),
+            this,              SLOT(sendText()));
+    connect(ui->monitorButton, SIGNAL(clicked()),
+            this,              SLOT(showMonitorWindow()));
+    connect(timer,             SIGNAL(timeout()),
+            this,              SLOT(updateFPS()));
+
     timer->start();
 }
 
@@ -114,4 +120,9 @@ void MainWindow::sendText() {
     } catch (jace::JNIException& e) {
         qDebug() << "Exception in sendText():" << e.what();
     }
+}
+
+void MainWindow::showMonitorWindow() {
+    MonitorWindow* window = new MonitorWindow();
+    window->show();
 }

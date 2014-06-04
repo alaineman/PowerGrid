@@ -91,6 +91,26 @@ public:
     JACE_API QString getRealName(QString semanticName) const;
 
     /**
+     * \brief Checks and returns if a binding exists for the indicated field.
+     *
+     * If the binding does not exist, this function returns false. Otherwise
+     * (if the binding does exist), this function returns true.
+     *
+     * \return true if the binding exists, false otherwise
+     */
+    JACE_API bool isAvailable(QString className, QString fieldName) const;
+
+    /**
+     * \brief Checks and asserts that a binding exists for the indicated field.
+     *
+     * If the binding does not exist, a \c JNIException will be thrown indicating
+     * the missing binding. Otherwise (if the binding does exist), this function
+     * does nothing.
+     */
+    JACE_API void assertAvailable(QString className, QString fieldName) const
+            throw(JNIException);
+
+    /**
      * @brief Parses the provided data
      *
      * The provided @c jbytearray is parsed as XML to

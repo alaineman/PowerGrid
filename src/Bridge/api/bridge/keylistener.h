@@ -2,11 +2,15 @@
 #define API_BRIDGE_KEYLISTENER_H
 
 #include "MethodHelper.h"
+
 #include "java/lang/object.h"
 using namespace java::lang;
 
 #include "java/awt/event/keyevent.h"
 using java::awt::event::KeyEvent;
+using java::awt::Component;
+
+#include "api/bridge/deque.h"
 
 namespace api {
 namespace bridge {
@@ -25,6 +29,23 @@ namespace bridge {
 class KeyListener : public Object {
 public:
     RS_OBJECT(KeyListener)
+
+    /**
+     * \brief Returns the keys that are currently pressed.
+     * \return the keys that are currently pressed
+     */
+    JACE_PROXY_API QList<JBoolean> getKeysPressed();
+
+    JACE_PROXY_API Deque getNext();
+
+    JACE_PROXY_API Deque getRecorded();
+
+    /**
+     * \brief Returns the currently focused target.
+     * \return the currently focused target
+     */
+    JACE_PROXY_API Component getTarget();
+
 
     /**
      * \brief Dispatches the given KeyEvent according to its Type

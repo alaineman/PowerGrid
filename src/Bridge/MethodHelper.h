@@ -194,10 +194,10 @@ JACE_PROXY_API QList<componentType> className::name() {\
         jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
         QString clsName = rscm->getStaticFieldClass(#name); \
         QString retName = rscm->getRealName(#componentType); \
-        std::string fldName = rscm->getStaticFieldName(#name); \
+        QString fldName = rscm->getStaticFieldName(#name); \
         jclass cls = rscm->getClass(clsName); \
         if (cls == NULL) throw jace::MappingUnavailableException(QStringLiteral("Class of Static Field ").append(#name)); \
-        jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), retName.toUtf8().constData()); \
+        jfieldID field = env->GetStaticFieldID(cls, fldName.toUtf8().constData(), retName.toUtf8().constData()); \
         if (field == 0) throw jace::MappingUnavailableException(QStringLiteral("Static Field ").append(#name)); \
         jarray arr = static_cast<jarray>(env->GetStaticObjectField(cls, field)); \
         return jace::JArray<componentType>(arr).toQList(); \

@@ -86,7 +86,7 @@ public:
     static JACE_PROXY_API JInt getConnectionState();
     static JACE_PROXY_API String getCurrentAction();
     static JACE_PROXY_API MenuGroupNode getCurrentMenuGroupNode();
-    JACE_PROXY_API QList<GrandExchangeOffer> getCurrentGrandExchangeOffers();
+    static JACE_PROXY_API QList<GrandExchangeOffer> getCurrentGrandExchangeOffers();
     static JACE_PROXY_API JInt getDestinationX();
     static JACE_PROXY_API JInt getDestinationY();
     static JACE_PROXY_API DetailInfoNode getDetailInfoNode();

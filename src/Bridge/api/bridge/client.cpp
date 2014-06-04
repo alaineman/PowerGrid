@@ -71,7 +71,7 @@ IMPL_STATIC_OBJECT_FIELD(Client, getClient, Client)
 IMPL_STATIC_OBJECT_FIELD(Client, getCollapsedMenuItems, NodeSubQueue)
 IMPL_STATIC_INT_FIELD(Client, getConnectionState)
 IMPL_STATIC_OBJECT_FIELD(Client, getCurrentAction, String)
-IMPL_ARRAY_METHOD(Client, getCurrentGrandExchangeOffers, GrandExchangeOffer)
+IMPL_STATIC_ARRAY_FIELD(Client, getCurrentGrandExchangeOffers, GrandExchangeOffer)
 IMPL_STATIC_OBJECT_FIELD(Client, getCurrentMenuGroupNode, MenuGroupNode)
 
 IMPL_STATIC_INT_FIELD(Client, getDestinationX)

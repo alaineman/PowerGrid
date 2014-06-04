@@ -1,5 +1,6 @@
 #include "testplugin.h"
 #include "dummytaskdescriptor.h"
+#include "dummyclassifier.h"
 
 namespace plugins {
 namespace examples {
@@ -14,7 +15,9 @@ QList<TaskDescriptor*> TestPlugin::tasks() const {
 }
 
 QList<Classifier*> TestPlugin::classifiers() const {
-    return QList<Classifier*>();
+    return QList<Classifier*>( {
+        new DummyClassifier()
+    } );
 }
 
 }

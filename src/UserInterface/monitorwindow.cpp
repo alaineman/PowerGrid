@@ -4,6 +4,14 @@
 #include "jace/RSClassMapper.h"
 #include "jace/RSClass.h"
 #include "jace/jnihelper.h"
+#include "jace/JNIException.h"
+
+#include "api/bridge/client.h"
+#include "api/bridge/mouselistener.h"
+#include "jace/javacast.h"
+using namespace api::bridge;
+using jace::java_cast;
+using namespace std;
 
 #include <QDebug>
 
@@ -13,8 +21,13 @@ using jace::RSClassMapper;
 using jace::RSClass;
 
 MonitorWindow::MonitorWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MonitorWindow) {
+    QMainWindow(parent), ui(new Ui::MonitorWindow), timer(new QTimer) {
     ui->setupUi(this);
+
+    timer->setInterval(200); // 5 times per second
+    connect(timer, SIGNAL(timeout()),
+            this,  SLOT(updateMousePos()));
+    timer->start();
 }
 
 MonitorWindow::~MonitorWindow() {
@@ -62,4 +75,24 @@ void MonitorWindow::on_evaluateButton_clicked() {
             ui->result->setText("Could not convert Java result to local string");
         }
     }
+}
+
+void MonitorWindow::updateMousePos() {
+    try {
+        MouseListener listener = java_cast<MouseListener>(Client::getMouse());
+        if (listener.isNull()) {
+            throw jace::JNIException("MouseListener is null");
+        }
+        QString position = QString("(")
+                .append(to_string(listener.getX().getInt()).c_str()).append(",")
+                .append(to_string(listener.getY().getInt()).c_str()).append(")");
+        ui->mousePos->setText(position);
+    } catch(jace::JNIException& ex) {
+        qCDebug(guiLogger) << "Exception in updateMousePos:" << ex.what();
+        ui->mousePos->setText(ex.what());
+    }
+}
+
+void MonitorWindow::on_MonitorWindow_destroyed() {
+    timer->deleteLater();
 }

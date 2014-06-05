@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>474</width>
-    <height>124</height>
+    <height>125</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -59,6 +59,20 @@
      <widget class="QLabel" name="result">
       <property name="text">
        <string>&lt;Undefined&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="mouseLabel">
+      <property name="text">
+       <string>Mouse Position</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLabel" name="mousePos">
+      <property name="text">
+       <string>&lt;Unknown&gt;</string>
       </property>
      </widget>
     </item>

@@ -246,7 +246,8 @@ HEADERS += \
     entity/classifier.h \
     api/bridge/keylistener.h \
     api/bridge/keydata.h \
-    api/bridge/mousedata.h
+    api/bridge/mousedata.h \
+    api/bridge/abstractmouselistener.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -406,7 +407,8 @@ SOURCES += \
     api/bridge/keylistener.cpp \
     api/bridge/keydata.cpp \
     api/bridge/mousedata.cpp \
-    api/bridge/mouselistener.cpp
+    api/bridge/mouselistener.cpp \
+    api/bridge/abstractmouselistener.cpp
 
 HEADERS    += \
     jni.h \

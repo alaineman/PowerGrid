@@ -246,6 +246,16 @@ public class PGLoader {
             }
             ClassLoader clientClassLoader = clientClass.getClassLoader();
             RSClassLoader.INSTANCE.provideClassLoader(clientClassLoader);
+            try {
+                Class<?> cls = clientClassLoader.loadClass("qd");
+                Field f = cls.getDeclaredField("eg");
+                LOGGER.log("Found field qd.eg with type: ", 
+                           f.getType().getTypeName());
+            } catch (ClassNotFoundException e) {
+                LOGGER.log("No such class: qd", e);
+            } catch (NoSuchFieldException e) {
+                LOGGER.log("No such field: eg", e);
+            }
         } catch (IllegalStateException e) {
             LOGGER.log("Could not find ClassLoader, RS classes may not be available", e);
         }

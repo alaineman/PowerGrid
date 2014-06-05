@@ -36,6 +36,7 @@
 #include "jace/JArray.h"
 #include "jace/JField.h"
 #include "jace/MappingUnavailableException.h"
+#include "java/lang/object.h"
 #include <QList>
 #include <QString>
 
@@ -193,7 +194,7 @@ JACE_PROXY_API QList<componentType> className::name() {\
         JNIEnv* env = jace::helper::attach(); \
         jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
         QString clsName = rscm->getStaticFieldClass(#name); \
-        QString retName = rscm->getRealName(#componentType); \
+        QString retName = "[" + rscm->getRealName(#componentType); \
         QString fldName = rscm->getStaticFieldName(#name); \
         jclass cls = rscm->getClass(clsName); \
         if (cls == NULL) throw jace::MappingUnavailableException(QStringLiteral("Class of Static Field ").append(#name)); \
@@ -209,11 +210,19 @@ JACE_PROXY_API QList<componentType> className::name() {\
         jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
         QString clsName = rscm->getStaticFieldClass(#name); \
         QString retName = "L" + rscm->getRealName(#returnType) + ";"; \
+        qDebug() << "Class Name:" << clsName; \
+        qDebug() << "Return typeName:" << retName; \
         std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
+        qDebug() << "Field Name:" << fldName.c_str(); \
         jclass cls = rscm->getClass(clsName); \
         if (cls == NULL) throw jace::MappingUnavailableException(QStringLiteral("Class of Static Field ").append(#name)); \
         jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), retName.toUtf8().constData()); \
-        if (field == 0) throw jace::MappingUnavailableException(QStringLiteral("Static Field ").append(#name)); \
+        if (env->ExceptionCheck()) { \
+            jthrowable thrown = env->ExceptionOccurred(); \
+            qDebug() << jace::helper::toString(env->GetObjectClass(thrown)).c_str() \
+                     << "->" << jace::helper::toString(thrown).c_str(); \
+        } \
+        if (field == NULL) throw jace::MappingUnavailableException(QStringLiteral("Static Field ").append(#name)); \
         jobject obj = env->GetStaticObjectField(cls, field); \
         returnType result (obj); \
         return result; \

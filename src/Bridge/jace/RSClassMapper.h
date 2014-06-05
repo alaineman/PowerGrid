@@ -111,6 +111,17 @@ public:
             throw(JNIException);
 
     /**
+     * @brief Returns the type of the field with the given name.
+     *
+     * @param className the name of the class.
+     * @param fieldName the name of the field.
+     * @return the name of the field type.
+     * @throws JNIException if the type cannot be deduced, or if an error
+     *         occurred in the JVM.
+     */
+    JACE_API QString getType(QString className, QString fieldName) const;
+
+    /**
      * @brief Parses the provided data
      *
      * The provided @c jbytearray is parsed as XML to

@@ -139,6 +139,22 @@ void RSClassMapper::assertAvailable(QString className, QString fieldName) const
     }
 }
 
+QString RSClassMapper::getType(QString className, QString fieldName) const {
+    RSClass* rsc = getRSClass(className);
+    fieldName = fieldMap.value(className).value(fieldName, fieldName);
+    JNIEnv* env = jace::helper::attach();
+    jclass reflection = env->FindClass("net/pgrid/loader/bridge/Reflection");
+    if (reflection == NULL) throw JNIException("No such class: Reflection");
+    jmethodID getTypeName = env->GetStaticMethodID(reflection, "getTypeName",
+                                                   "(Ljava/lang/String;)Ljava/lang/String;");
+    jstring jFieldName = env->NewStringUTF(fieldName.toUtf8().constData());
+    jstring result = static_cast<jstring>(
+                env->CallStaticObjectMethod(reflection, getTypeName,
+                                            rsc->getClass(), jFieldName));
+    const char* data = env->GetStringUTFChars(result, NULL);
+    return data;
+}
+
 void RSClassMapper::parseData(jbyteArray data) throw(JNIException) {
     if (data == NULL) {
         throw JNIException("Received NULL jbyteArray as map data");

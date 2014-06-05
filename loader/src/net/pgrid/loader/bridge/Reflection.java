@@ -44,7 +44,9 @@ public class Reflection {
      * This ensures that calls to {@code evaluate(String)} and 
      * {@code evaluateToString(String)} do not throw an 
      * {@code IllegalStateException} when invoked.
-     * @return 
+     * 
+     * @return true if the Agent has a valid Instrumentation instance, 
+     *         false otherwise.
      */
     public static boolean checkAvailability() {
         return Agent.getInstrumentation() != null;

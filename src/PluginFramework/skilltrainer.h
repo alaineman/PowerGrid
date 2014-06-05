@@ -55,7 +55,7 @@ public:
      *
      *     template<> uint getXP<Mining>() { return 20; }
      *
-     * @param S the Skill for which to get the amount of experience.
+     * @param s the Skill for which to get the amount of experience.
      * @return The amount of experience
      *
      */

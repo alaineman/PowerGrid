@@ -53,10 +53,10 @@ public:
      * \brief Finds the Component of the given type.
      *
      * Suppose there is an Entity named e and a Component
-     * type named \c MyComponent.
-     * Then the following invocation would return the
-     * component of the \c MyComponent type:
-     * > MyComponent* myComp = e->get<MyComponent>();
+     * type named \c MyComponent. Then the following invocation
+     * would return the component of the \c MyComponent type:
+     *     MyComponent* myComp = e->get<MyComponent>();
+     *
      * \return a pointer to the requested Component
      *         type, or NULL if this Entity has no
      *         Component of that Type.

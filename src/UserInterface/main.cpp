@@ -156,12 +156,9 @@ int main(int argc, char** argv) {
         // Actual command (in java): net.pgrid.loader.PGLoader.main(null);
 
         qCDebug(logLauncher) << "Calling PGLoader.main";
-        //FIXME The env->FindClass call here never returns under Mac OS X.
-        //      This is strange, as the above call to registerNatives works
-        //      just fine (which also uses FindClass). On Windows, there are
-        //      no problems here, so what might cause this?
-        //Note  Loading the class through JACE (with a ClassLoader), causes
-        //      the JVM to crash.
+        //FIXME It appears that on Mac OS X, a bug in the JVM causes problems with
+        //      loading the PGLoader class, when the JVM is started from native
+        //      code. No known workaround exists as of now.
 
         jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PGLoader");
         if (!pgLoaderClass) {

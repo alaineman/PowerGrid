@@ -119,7 +119,7 @@ public:
      * @throws JNIException if the type cannot be deduced, or if an error
      *         occurred in the JVM.
      */
-    JACE_API QString getType(QString className, QString fieldName) const;
+    JACE_API QString getType(QString className, QString fieldName);
 
     /**
      * @brief Parses the provided data

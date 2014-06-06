@@ -139,7 +139,7 @@ void RSClassMapper::assertAvailable(QString className, QString fieldName) const
     }
 }
 
-QString RSClassMapper::getType(QString className, QString fieldName) const {
+QString RSClassMapper::getType(QString className, QString fieldName) {
     RSClass* rsc = getRSClass(className);
     fieldName = fieldMap.value(className).value(fieldName, fieldName);
     JNIEnv* env = jace::helper::attach();

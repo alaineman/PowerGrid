@@ -32,7 +32,8 @@ macx {
 }
 
 SUBDIRS += Bridge UserInterface PluginFramework \   # DefaultPlugin
-    TestPlugin
+    TestPlugin \
+    UnitTests
 
 UserInterface.depends = Bridge
 PluginFramework.depends = Bridge

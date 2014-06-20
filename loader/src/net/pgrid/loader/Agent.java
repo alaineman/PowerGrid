@@ -39,7 +39,7 @@ import java.lang.instrument.Instrumentation;
  */
 public class Agent {
     
-    private static Instrumentation instrumentation;
+    private static Instrumentation instrumentation = null;
     
     /**
      * Prevent instantiation of this JVM agent (utility) class.
@@ -56,16 +56,21 @@ public class Agent {
     /**
      * Called by the JVM when the Agent is loaded (before main is invoked).
      * 
+     * When this method is called again afterwards, it does nothing.
+     * 
      * @param agentArgs the arguments for the Agent (ignored)
      * @param inst the Instrumentation instance for the Agent
+     * 
      * @internal Note that you cannot use the agent from within an IDE. In fact,
      *           the agent needs to be set when the JVM is started. The native
      *           client does this automatically, making this construction work 
      *           when running PowerGrid normally (through the native C++ client).
      */
-    public static void premain(String agentArgs, Instrumentation inst) {
+    public static synchronized void premain(String agentArgs, Instrumentation inst) {
         System.out.println("AGENT        | Agent started");
-        instrumentation = inst;
+        if (instrumentation == null) {
+            instrumentation = inst;
+        }
     }
     
     /**
@@ -73,7 +78,6 @@ public class Agent {
      * 
      * Since our Agent performs its initialization in {@code premain}, and does 
      * not need to perform any additional actions, this method does nothing.
-     * 
      * 
      * @param agentArgs the arguments for the Agent (ignored)
      * @param inst the Instrumentation instance for the Agent.

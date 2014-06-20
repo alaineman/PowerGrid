@@ -153,7 +153,8 @@ public class RSDownloader {
      * @throws IllegalStateException when the client data is not available
      */
     public synchronized void loadClient() throws IOException {
-        URL url = new URL(versionInfo.getClientParameter("codebase") + versionInfo.getClientParameter("initial_jar"));
+        URL url = new URL(versionInfo.getClientParameter("codebase") + 
+                          versionInfo.getClientParameter("initial_jar"));
         URLConnection conn = url.openConnection();
 
         // Using stream copy with Java NIO Channels. This is at least as fast
@@ -163,7 +164,8 @@ public class RSDownloader {
             LOGGER.log("Created cache directory");
         }
         try (InputStream in = conn.getInputStream();
-                FileOutputStream out = new FileOutputStream(new File(cacheDirectory, "client.jar"))) {
+                FileOutputStream out = new FileOutputStream(
+                        new File(cacheDirectory, "client.jar"))) {
 
             ReadableByteChannel reader = Channels.newChannel(in);               
             FileChannel writer = out.getChannel();
@@ -184,10 +186,14 @@ public class RSDownloader {
 
     /**
      * Parses the required data from the downloaded config data.
-     * <p/>
+     * 
      * All {@code Applet} parameters are parsed, as well as all client
      * parameters.
-     * <p/>
+     * 
+     * @param userFlow the userflow ID of the client.
+     * @param configData the raw data retrieved from the RS servers.
+     * @return the RSVersionInfo parsed from the provided data.
+     * 
      * @throws IllegalStateException when the configData is not yet loaded.
      */
     private RSVersionInfo parseConfig(String userFlow, String configData) {

@@ -38,6 +38,38 @@ import net.pgrid.loader.util.NullOutputStream;
 
 /**
  * Launcher class for the PowerGrid loader application.
+ * 
+ * The main method of this class accepts a set of command-line parameters, which
+ * are mentioned below:
+ * 
+ * <ul>
+ *   <li><strong>--debug (or -d):</strong> 
+ *              Enables debug mode.</li>
+ *   <li><strong>--quiet (or -q):</strong> 
+ *              Enables quiet mode (unless -d is specified).</li>
+ *   <li><strong>--verbose (or -v):</strong> 
+ *              Enables verbose mode (unless -d or -q is specified).</li>
+ *   <li><strong>--force-download (or -f):</strong> 
+ *              Forces re-downloading the client.</li>
+ * </ul>
+ * 
+ * The {@code -d}, {@code q} and {@code v} options change the verbosity of the 
+ * messages logged by PowerGrid. 
+ * 
+ * The {@code -f} flag forces re-downloading the client. Normal behavior is to
+ * re-use an already downloaded client when there is no newer version available.
+ * This option disables this behavior and downloads all client data (including
+ * the client itself and the updater data) regardless of any existing client 
+ * data.
+ * 
+ * Also important to note is, that this class arbitrates the {@code System.out} 
+ * and {@code System.err} PrintStreams and replaces them with a PrintStream 
+ * that writes to a file named {@code runescape.log}. This is done to prevent 
+ * any Exception stack traces and other messages printed from within RS to 
+ * clutter the real console output and error streams. The real versions are 
+ * kept in this class, making them available as {@code PGLoader.out} and 
+ * {@code PGLoader.err}, respectively.
+ * 
  * @author Patrick Kramer
  */
 public class PGLoader {
@@ -77,6 +109,13 @@ public class PGLoader {
      */
     public static final PGLoader INSTANCE;
     
+    /**
+     * Returns the RS Applet, if it's available.
+     * 
+     * Returns null otherwise.
+     * 
+     * @return the Applet instance, or null if the Applet is not loaded.
+     */
     public static Applet getRSApplet() {
         if (INSTANCE != null) {
             return INSTANCE.getFrame().getApplet();

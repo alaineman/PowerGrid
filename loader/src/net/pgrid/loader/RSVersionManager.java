@@ -80,9 +80,12 @@ public class RSVersionManager {
             appletParamStub.put("-1", oldKey_m1);
             return new RSVersionInfo(userFlow, 
                     new HashMap<String, String>(2), appletParamStub); 
-        } catch (FileNotFoundException | NoSuchElementException ex) {
+        } catch (FileNotFoundException ex) {
             // no previous keys were found or the KEYS_FILE is invalid
-            LOGGER.log("Could not find old keys", ex);
+            LOGGER.log("Could not find old keys at ", ex.getLocalizedMessage());
+            return null;
+        } catch (NoSuchElementException ex) {
+            LOGGER.log("The keys file \"", KEYS_FILE, "\" is invalid");
             return null;
         }
     }

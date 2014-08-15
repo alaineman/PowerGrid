@@ -97,8 +97,15 @@ public class UpdaterRunner implements Runnable {
                 long timeTaken = System.currentTimeMillis() - timeStarted;
                 LOGGER.log("Updater took " + (timeTaken/1000d) + "s to finish");
             }
+        } catch (FileNotFoundException e) {
+            // Indicating "useLocal" is true and the file "cache/updaterInfo.dat" 
+            // does not exist, or "useLocal" is false and no updater data file 
+            // exists at the expected URL.
+            LOGGER.log("Updater data not found: ", e.getLocalizedMessage());
         } catch (IOException e) {
-            LOGGER.log("Failed to save the updater data", e);
+            // Indicates any other kind of I/O error while reading or writing 
+            // the updater info file.
+            LOGGER.log("Failed to save the updater data: ", e.getLocalizedMessage());
         }
     }
     
@@ -145,7 +152,6 @@ public class UpdaterRunner implements Runnable {
      * 
      * This will parse and store the updater data.
      * 
-     * @param checksum the checksum of the client
      * @param data the bytes of the updater data.
      */
     private static native void signalUpdaterReady(byte[] data);

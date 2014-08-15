@@ -89,7 +89,7 @@ void MonitorWindow::updateMousePos() {
         ui->mousePos->setText(position);
     } catch(jace::JNIException& ex) {
         qCDebug(guiLogger) << "Exception in updateMousePos:" << ex.what();
-        ui->mousePos->setText(ex.what());
+        ui->mousePos->setText(QString("Cannot find data: ") % ex.what());
     }
 }
 

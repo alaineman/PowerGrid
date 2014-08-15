@@ -37,6 +37,7 @@ MonitorWindow::~MonitorWindow() {
 void MonitorWindow::on_evaluateButton_clicked() {
     QString expression = ui->expression->text();
 
+    // TODO: Convert the Expression here using the Mapper data
     QString realExpression = expression;
     QByteArray expressionBytes = realExpression.toLocal8Bit();
 

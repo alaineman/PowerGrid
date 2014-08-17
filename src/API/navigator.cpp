@@ -8,7 +8,7 @@
 using api::bridge::Client;
 using api::bridge::Player;
 
-Navigator::Navigator(World *world) :
+Navigator::Navigator() :
     _navigation(0) {
 }
 
@@ -24,6 +24,7 @@ Navigation* Navigator::findPath(Vec3D destination) {
 }
 
 Navigation* Navigator::findPath(Vec3D origin, Vec3D destination) {
+    Q_UNUSED(origin); // TODO implement path-finding algorithm
     return new Navigation(QList<Vec3D>() << destination);
 }
 

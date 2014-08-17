@@ -31,12 +31,18 @@ macx {
   warning("Mac OS X is not supported as of now, and things may not work as expected!")
 }
 
-SUBDIRS += Bridge UserInterface PluginFramework \   # DefaultPlugin
+SUBDIRS += \
+    Bridge \
+    UserInterface \
+    PluginFramework \
     TestPlugin \
-    UnitTests
+    UnitTests \
+    API \
+    # DefaultPlugin
 
-UserInterface.depends = Bridge
+API.depends             = Bridge
+UserInterface.depends   = Bridge
 PluginFramework.depends = Bridge
-#DefaultPlugin.depends = PluginFramework
-TestPlugin.depends = PluginFramework Bridge
+#DefaultPlugin.depends   = PluginFramework
+TestPlugin.depends      = API PluginFramework Bridge
 

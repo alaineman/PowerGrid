@@ -20,8 +20,8 @@
 #include "ui_mainwindow.h"
 #include "versionInfo.h"
 
-#include "api/bridge/client.h"
-#include "api/bridge/keylistener.h"
+#include "rs/client.h"
+#include "rs/keylistener.h"
 
 #include "java/awt/event/keyevent.h"
 using java::awt::event::KeyEvent;
@@ -93,7 +93,7 @@ void MainWindow::setJVMVersion(QString version) {
 void MainWindow::updateFPS() {
     static bool thrown = false;
     try {
-        JInt fpsValue = api::bridge::Client::getFPS();
+        JInt fpsValue = RS::Client::getFPS();
         ui->fps->setText(QString::number(fpsValue.getInt()));
     } catch (jace::JNIException& e) {
         if (!thrown) {
@@ -106,7 +106,7 @@ void MainWindow::updateFPS() {
 
 void MainWindow::sendText() {
     try {
-        api::bridge::KeyListener keyboard = api::bridge::Client::getKeyboard();
+        RS::KeyListener keyboard = RS::Client::getKeyboard();
         java::awt::Component source = net::pgrid::loader::PGLoader::getApplet();
         QString text = ui->textToSend->text();
         for(int i=0;i<text.length();i++) {

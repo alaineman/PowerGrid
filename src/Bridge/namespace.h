@@ -31,7 +31,7 @@
  */
 
 /**
- * \namespace api::bridge
+ * \namespace rs
  * \brief contains the standard RS classes
  *
  * This namespace contains all classes that are directly mapped to classes in the Runescape client.

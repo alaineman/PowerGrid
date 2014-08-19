@@ -1,12 +1,12 @@
 #include "navigator.h"
 
-#include "api/bridge/client.h"
-#include "api/bridge/player.h"
+#include "rs/client.h"
+#include "rs/player.h"
 
 #include "navigation.h"
 
-using api::bridge::Client;
-using api::bridge::Player;
+using bridge::Client;
+using bridge::Player;
 
 Navigator::Navigator() :
     _navigation(0) {

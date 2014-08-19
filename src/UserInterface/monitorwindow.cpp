@@ -6,10 +6,10 @@
 #include "jace/jnihelper.h"
 #include "jace/JNIException.h"
 
-#include "api/bridge/client.h"
-#include "api/bridge/mouselistener.h"
+#include "rs/client.h"
+#include "rs/mouselistener.h"
 #include "jace/javacast.h"
-using namespace api::bridge;
+using namespace RS;
 using jace::java_cast;
 using namespace std;
 

@@ -91,137 +91,137 @@ HEADERS += \
     jace/RSClass.h \
     jace/RSClassMapper.h \
     jace/UpdaterRunner.h \
-    api/bridge/client.h \
+    rs/client.h \
     java/lang/object.h \
     java/lang/string.h \
     MethodHelper.h \
-    api/bridge/abstractcamera.h \
-    api/bridge/abstractcameralocationdata.h \
-    api/bridge/abstractcentrallocationdata.h \
-    api/bridge/abstractmodel.h \
-    api/bridge/abstractserver.h \
-    api/bridge/abstractsocketstream.h \
-    api/bridge/animablenode.h \
-    api/bridge/animatedobject.h \
-    api/bridge/animation.h \
-    api/bridge/baseinfo.h \
-    api/bridge/canvas.h \
-    api/bridge/detailinfo.h \
-    api/bridge/entityposition.h \
-    api/bridge/fileworker.h \
-    api/bridge/friend.h \
-    api/bridge/grandexchangeoffer.h \
-    api/bridge/graphicstoolkit.h \
-    api/bridge/hintarrow.h \
-    api/bridge/animator.h \
-    api/bridge/cameramatrix.h \
-    api/bridge/chatline.h \
-    api/bridge/entitydata.h \
-    api/bridge/entitynode.h \
-    api/bridge/grounddata.h \
-    api/bridge/isaaccipher.h \
-    api/bridge/interactable.h \
-    api/bridge/node.h \
-    api/bridge/animable.h \
-    api/bridge/deque.h \
-    api/bridge/boundary.h \
-    api/bridge/hashtable.h \
-    api/bridge/hashtableiterator.h \
-    api/bridge/camera.h \
-    api/bridge/detailinfonode.h \
-    api/bridge/floordecoration.h \
-    api/bridge/groundentity.h \
-    api/bridge/groundobject.h \
-    api/bridge/animatedanimableobject.h \
-    api/bridge/animatedboundaryobject.h \
-    api/bridge/itemnode.h \
-    api/bridge/mlstring.h \
-    api/bridge/passiveanimator.h \
-    api/bridge/quaternion.h \
-    api/bridge/skillinfo.h \
-    api/bridge/sprite.h \
-    api/bridge/worldcontroller.h \
-    api/bridge/interface.h \
-    api/bridge/nodesub.h \
-    api/bridge/stream.h \
-    api/bridge/reference.h \
-    api/bridge/queue.h \
-    api/bridge/cache.h \
-    api/bridge/floatstream.h \
-    api/bridge/toolkitld.h \
-    api/bridge/varpbits.h \
-    api/bridge/facade.h \
-    api/bridge/linkedlistnode.h \
-    api/bridge/linkedlist.h \
-    api/bridge/modelld.h \
-    api/bridge/objectcomposite.h \
-    api/bridge/nodesubqueue.h \
-    api/bridge/objectdefloader.h \
-    api/bridge/objectdef.h \
-    api/bridge/itemdefloader.h \
-    api/bridge/itemdef.h \
-    api/bridge/overheadmessage.h \
-    api/bridge/lookuptable.h \
-    api/bridge/menugroupnode.h \
-    api/bridge/menuitemnode.h \
-    api/bridge/referencetable.h \
-    api/bridge/server.h \
-    api/bridge/npcdefloader.h \
-    api/bridge/npcdef.h \
-    api/bridge/walldecoration.h \
-    api/bridge/combatinfo.h \
-    api/bridge/animableobject.h \
-    api/bridge/animatedfloorobject.h \
-    api/bridge/animatedwallobject.h \
-    api/bridge/boundaryobject.h \
-    api/bridge/cameralocationdata.h \
-    api/bridge/wallobject.h \
-    api/bridge/landscape.h \
-    api/bridge/interfacechild.h \
-    api/bridge/interfacenode.h \
-    api/bridge/interactableanimator.h \
-    api/bridge/playerdef.h \
-    api/bridge/centrallocationdata.h \
-    api/bridge/character.h \
-    api/bridge/chatmessage.h \
-    api/bridge/chatchannel.h \
-    api/bridge/player.h \
-    api/bridge/spriteld.h \
-    api/bridge/projectile.h \
-    api/bridge/projectilenode.h \
-    api/bridge/npc.h \
-    api/bridge/npcnode.h \
-    api/bridge/modelopengl.h \
-    api/bridge/packetstream.h \
-    api/bridge/tile.h \
-    api/bridge/toolkitopengl.h \
-    api/bridge/modeldirectx.h \
-    api/bridge/filesystem.h \
-    api/bridge/combatinfonode.h \
-    api/bridge/dequenode.h \
-    api/bridge/floorobject.h \
-    api/bridge/hardreference.h \
+    rs/abstractcamera.h \
+    rs/abstractcameralocationdata.h \
+    rs/abstractcentrallocationdata.h \
+    rs/abstractmodel.h \
+    rs/abstractserver.h \
+    rs/abstractsocketstream.h \
+    rs/animablenode.h \
+    rs/animatedobject.h \
+    rs/animation.h \
+    rs/baseinfo.h \
+    rs/canvas.h \
+    rs/detailinfo.h \
+    rs/entityposition.h \
+    rs/fileworker.h \
+    rs/friend.h \
+    rs/grandexchangeoffer.h \
+    rs/graphicstoolkit.h \
+    rs/hintarrow.h \
+    rs/animator.h \
+    rs/cameramatrix.h \
+    rs/chatline.h \
+    rs/entitydata.h \
+    rs/entitynode.h \
+    rs/grounddata.h \
+    rs/isaaccipher.h \
+    rs/interactable.h \
+    rs/node.h \
+    rs/animable.h \
+    rs/deque.h \
+    rs/boundary.h \
+    rs/hashtable.h \
+    rs/hashtableiterator.h \
+    rs/camera.h \
+    rs/detailinfonode.h \
+    rs/floordecoration.h \
+    rs/groundentity.h \
+    rs/groundobject.h \
+    rs/animatedanimableobject.h \
+    rs/animatedboundaryobject.h \
+    rs/itemnode.h \
+    rs/mlstring.h \
+    rs/passiveanimator.h \
+    rs/quaternion.h \
+    rs/skillinfo.h \
+    rs/sprite.h \
+    rs/worldcontroller.h \
+    rs/interface.h \
+    rs/nodesub.h \
+    rs/stream.h \
+    rs/reference.h \
+    rs/queue.h \
+    rs/cache.h \
+    rs/floatstream.h \
+    rs/toolkitld.h \
+    rs/varpbits.h \
+    rs/facade.h \
+    rs/linkedlistnode.h \
+    rs/linkedlist.h \
+    rs/modelld.h \
+    rs/objectcomposite.h \
+    rs/nodesubqueue.h \
+    rs/objectdefloader.h \
+    rs/objectdef.h \
+    rs/itemdefloader.h \
+    rs/itemdef.h \
+    rs/overheadmessage.h \
+    rs/lookuptable.h \
+    rs/menugroupnode.h \
+    rs/menuitemnode.h \
+    rs/referencetable.h \
+    rs/server.h \
+    rs/npcdefloader.h \
+    rs/npcdef.h \
+    rs/walldecoration.h \
+    rs/combatinfo.h \
+    rs/animableobject.h \
+    rs/animatedfloorobject.h \
+    rs/animatedwallobject.h \
+    rs/boundaryobject.h \
+    rs/cameralocationdata.h \
+    rs/wallobject.h \
+    rs/landscape.h \
+    rs/interfacechild.h \
+    rs/interfacenode.h \
+    rs/interactableanimator.h \
+    rs/playerdef.h \
+    rs/centrallocationdata.h \
+    rs/character.h \
+    rs/chatmessage.h \
+    rs/chatchannel.h \
+    rs/player.h \
+    rs/spriteld.h \
+    rs/projectile.h \
+    rs/projectilenode.h \
+    rs/npc.h \
+    rs/npcnode.h \
+    rs/modelopengl.h \
+    rs/packetstream.h \
+    rs/tile.h \
+    rs/toolkitopengl.h \
+    rs/modeldirectx.h \
+    rs/filesystem.h \
+    rs/combatinfonode.h \
+    rs/dequenode.h \
+    rs/floorobject.h \
+    rs/hardreference.h \
     java/io/file.h \
-    api/bridge/landscapedetails.h \
-    api/bridge/landscapeinfo.h \
+    rs/landscapedetails.h \
+    rs/landscapeinfo.h \
     java/io/inputstream.h \
     java/io/outputstream.h \
-    api/bridge/groundbytes.h \
+    rs/groundbytes.h \
     java/lang/ref/softreference.h \
     java/util/map.h \
     java/awt/rectangle.h \
     java/util/zip/inflater.h \
-    api/bridge/fileondisk.h \
-    api/bridge/gzipdecompressor.h \
+    rs/fileondisk.h \
+    rs/gzipdecompressor.h \
     java/awt/graphicsdevice.h \
     java/awt/displaymode.h \
-    api/bridge/graphics.h \
+    rs/graphics.h \
     java/net/socket.h \
-    api/bridge/inputstream.h \
-    api/bridge/softreference.h \
-    api/bridge/outputstream.h \
-    api/bridge/socketstream.h \
-    api/bridge/grounditem.h \
+    rs/inputstream.h \
+    rs/softreference.h \
+    rs/outputstream.h \
+    rs/socketstream.h \
+    rs/grounditem.h \
     java/awt/event/mouseevent.h \
     java/awt/component.h \
     java/awt/event/keyevent.h \
@@ -241,149 +241,149 @@ HEADERS += \
     entity/mapper.h \
     net/pgrid/loader/pgloader.h \
     jace/macvmloader.h \
-    api/bridge/toolkitdirectx.h \
-    api/bridge/mouselistener.h \
+    rs/toolkitdirectx.h \
+    rs/mouselistener.h \
     entity/classifier.h \
-    api/bridge/keylistener.h \
-    api/bridge/keydata.h \
-    api/bridge/mousedata.h \
-    api/bridge/abstractmouselistener.h
+    rs/keylistener.h \
+    rs/keydata.h \
+    rs/mousedata.h \
+    rs/abstractmouselistener.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
     jace/RSClass.cpp \
     jace/RSClassMapper.cpp \
     jace/UpdaterRunner.cpp \
-    api/bridge/client.cpp \
+    rs/client.cpp \
     java/lang/object.cpp \
     java/lang/string.cpp \
-    api/bridge/abstractcamera.cpp \
-    api/bridge/abstractcameralocationdata.cpp \
-    api/bridge/abstractcentrallocationdata.cpp \
-    api/bridge/abstractmodel.cpp \
-    api/bridge/abstractserver.cpp \
-    api/bridge/abstractsocketstream.cpp \
-    api/bridge/animablenode.cpp \
-    api/bridge/animatedobject.cpp \
-    api/bridge/animation.cpp \
-    api/bridge/baseinfo.cpp \
-    api/bridge/canvas.cpp \
-    api/bridge/detailinfo.cpp \
-    api/bridge/entityposition.cpp \
-    api/bridge/fileworker.cpp \
-    api/bridge/friend.cpp \
-    api/bridge/grandexchangeoffer.cpp \
-    api/bridge/graphicstoolkit.cpp \
-    api/bridge/hintarrow.cpp \
-    api/bridge/animator.cpp \
-    api/bridge/cameramatrix.cpp \
-    api/bridge/chatline.cpp \
-    api/bridge/entitydata.cpp \
-    api/bridge/entitynode.cpp \
-    api/bridge/grounddata.cpp \
-    api/bridge/isaaccipher.cpp \
-    api/bridge/interactable.cpp \
-    api/bridge/node.cpp \
-    api/bridge/animable.cpp \
-    api/bridge/deque.cpp \
-    api/bridge/boundary.cpp \
-    api/bridge/hashtable.cpp \
-    api/bridge/hashtableiterator.cpp \
-    api/bridge/camera.cpp \
-    api/bridge/detailinfonode.cpp \
-    api/bridge/floordecoration.cpp \
-    api/bridge/groundentity.cpp \
-    api/bridge/groundobject.cpp \
-    api/bridge/animatedanimableobject.cpp \
-    api/bridge/animatedboundaryobject.cpp \
-    api/bridge/itemnode.cpp \
-    api/bridge/mlstring.cpp \
-    api/bridge/passiveanimator.cpp \
-    api/bridge/quaternion.cpp \
-    api/bridge/skillinfo.cpp \
-    api/bridge/sprite.cpp \
-    api/bridge/worldcontroller.cpp \
-    api/bridge/interface.cpp \
-    api/bridge/nodesub.cpp \
-    api/bridge/stream.cpp \
-    api/bridge/reference.cpp \
-    api/bridge/queue.cpp \
-    api/bridge/cache.cpp \
-    api/bridge/floatstream.cpp \
-    api/bridge/toolkitld.cpp \
-    api/bridge/varpbits.cpp \
-    api/bridge/facade.cpp \
-    api/bridge/linkedlistnode.cpp \
-    api/bridge/linkedlist.cpp \
-    api/bridge/modelld.cpp \
-    api/bridge/objectcomposite.cpp \
-    api/bridge/nodesubqueue.cpp \
-    api/bridge/objectdefloader.cpp \
-    api/bridge/objectdef.cpp \
-    api/bridge/itemdefloader.cpp \
-    api/bridge/itemdef.cpp \
-    api/bridge/overheadmessage.cpp \
-    api/bridge/lookuptable.cpp \
-    api/bridge/menugroupnode.cpp \
-    api/bridge/menuitemnode.cpp \
-    api/bridge/referencetable.cpp \
-    api/bridge/server.cpp \
-    api/bridge/npcdefloader.cpp \
-    api/bridge/npcdef.cpp \
-    api/bridge/walldecoration.cpp \
-    api/bridge/combatinfo.cpp \
-    api/bridge/animableobject.cpp \
-    api/bridge/animatedfloorobject.cpp \
-    api/bridge/animatedwallobject.cpp \
-    api/bridge/boundaryobject.cpp \
-    api/bridge/cameralocationdata.cpp \
-    api/bridge/wallobject.cpp \
-    api/bridge/landscape.cpp \
-    api/bridge/interfacechild.cpp \
-    api/bridge/interfacenode.cpp \
-    api/bridge/interactableanimator.cpp \
-    api/bridge/playerdef.cpp \
-    api/bridge/centrallocationdata.cpp \
-    api/bridge/character.cpp \
-    api/bridge/chatmessage.cpp \
-    api/bridge/chatchannel.cpp \
-    api/bridge/player.cpp \
-    api/bridge/spriteld.cpp \
-    api/bridge/projectile.cpp \
-    api/bridge/projectilenode.cpp \
-    api/bridge/npc.cpp \
-    api/bridge/npcnode.cpp \
-    api/bridge/modelopengl.cpp \
-    api/bridge/packetstream.cpp \
-    api/bridge/tile.cpp \
-    api/bridge/toolkitopengl.cpp \
-    api/bridge/modeldirectx.cpp \
-    api/bridge/filesystem.cpp \
-    api/bridge/combatinfonode.cpp \
-    api/bridge/dequenode.cpp \
-    api/bridge/floorobject.cpp \
-    api/bridge/hardreference.cpp \
+    rs/abstractcamera.cpp \
+    rs/abstractcameralocationdata.cpp \
+    rs/abstractcentrallocationdata.cpp \
+    rs/abstractmodel.cpp \
+    rs/abstractserver.cpp \
+    rs/abstractsocketstream.cpp \
+    rs/animablenode.cpp \
+    rs/animatedobject.cpp \
+    rs/animation.cpp \
+    rs/baseinfo.cpp \
+    rs/canvas.cpp \
+    rs/detailinfo.cpp \
+    rs/entityposition.cpp \
+    rs/fileworker.cpp \
+    rs/friend.cpp \
+    rs/grandexchangeoffer.cpp \
+    rs/graphicstoolkit.cpp \
+    rs/hintarrow.cpp \
+    rs/animator.cpp \
+    rs/cameramatrix.cpp \
+    rs/chatline.cpp \
+    rs/entitydata.cpp \
+    rs/entitynode.cpp \
+    rs/grounddata.cpp \
+    rs/isaaccipher.cpp \
+    rs/interactable.cpp \
+    rs/node.cpp \
+    rs/animable.cpp \
+    rs/deque.cpp \
+    rs/boundary.cpp \
+    rs/hashtable.cpp \
+    rs/hashtableiterator.cpp \
+    rs/camera.cpp \
+    rs/detailinfonode.cpp \
+    rs/floordecoration.cpp \
+    rs/groundentity.cpp \
+    rs/groundobject.cpp \
+    rs/animatedanimableobject.cpp \
+    rs/animatedboundaryobject.cpp \
+    rs/itemnode.cpp \
+    rs/mlstring.cpp \
+    rs/passiveanimator.cpp \
+    rs/quaternion.cpp \
+    rs/skillinfo.cpp \
+    rs/sprite.cpp \
+    rs/worldcontroller.cpp \
+    rs/interface.cpp \
+    rs/nodesub.cpp \
+    rs/stream.cpp \
+    rs/reference.cpp \
+    rs/queue.cpp \
+    rs/cache.cpp \
+    rs/floatstream.cpp \
+    rs/toolkitld.cpp \
+    rs/varpbits.cpp \
+    rs/facade.cpp \
+    rs/linkedlistnode.cpp \
+    rs/linkedlist.cpp \
+    rs/modelld.cpp \
+    rs/objectcomposite.cpp \
+    rs/nodesubqueue.cpp \
+    rs/objectdefloader.cpp \
+    rs/objectdef.cpp \
+    rs/itemdefloader.cpp \
+    rs/itemdef.cpp \
+    rs/overheadmessage.cpp \
+    rs/lookuptable.cpp \
+    rs/menugroupnode.cpp \
+    rs/menuitemnode.cpp \
+    rs/referencetable.cpp \
+    rs/server.cpp \
+    rs/npcdefloader.cpp \
+    rs/npcdef.cpp \
+    rs/walldecoration.cpp \
+    rs/combatinfo.cpp \
+    rs/animableobject.cpp \
+    rs/animatedfloorobject.cpp \
+    rs/animatedwallobject.cpp \
+    rs/boundaryobject.cpp \
+    rs/cameralocationdata.cpp \
+    rs/wallobject.cpp \
+    rs/landscape.cpp \
+    rs/interfacechild.cpp \
+    rs/interfacenode.cpp \
+    rs/interactableanimator.cpp \
+    rs/playerdef.cpp \
+    rs/centrallocationdata.cpp \
+    rs/character.cpp \
+    rs/chatmessage.cpp \
+    rs/chatchannel.cpp \
+    rs/player.cpp \
+    rs/spriteld.cpp \
+    rs/projectile.cpp \
+    rs/projectilenode.cpp \
+    rs/npc.cpp \
+    rs/npcnode.cpp \
+    rs/modelopengl.cpp \
+    rs/packetstream.cpp \
+    rs/tile.cpp \
+    rs/toolkitopengl.cpp \
+    rs/modeldirectx.cpp \
+    rs/filesystem.cpp \
+    rs/combatinfonode.cpp \
+    rs/dequenode.cpp \
+    rs/floorobject.cpp \
+    rs/hardreference.cpp \
     java/io/file.cpp \
-    api/bridge/landscapedetails.cpp \
-    api/bridge/landscapeinfo.cpp \
-    api/bridge/groundbytes.cpp \
+    rs/landscapedetails.cpp \
+    rs/landscapeinfo.cpp \
+    rs/groundbytes.cpp \
     java/util/map.cpp \
     java/awt/rectangle.cpp \
     java/util/zip/inflater.cpp \
-    api/bridge/fileondisk.cpp \
-    api/bridge/gzipdecompressor.cpp \
+    rs/fileondisk.cpp \
+    rs/gzipdecompressor.cpp \
     java/awt/graphicsdevice.cpp \
     java/awt/displaymode.cpp \
-    api/bridge/graphics.cpp \
+    rs/graphics.cpp \
     java/net/socket.cpp \
-    api/bridge/inputstream.cpp \
-    api/bridge/softreference.cpp \
-    api/bridge/outputstream.cpp \
-    api/bridge/socketstream.cpp \
+    rs/inputstream.cpp \
+    rs/softreference.cpp \
+    rs/outputstream.cpp \
+    rs/socketstream.cpp \
     java/io/java_io_inputstream.cpp \
     java/io/java_io_outputstream.cpp \
     java/lang/ref/java_lang_ref_softreference.cpp \
-    api/bridge/grounditem.cpp \
+    rs/grounditem.cpp \
     java/awt/event/mouseevent.cpp \
     java/awt/event/keyevent.cpp \
     entity/component.cpp \
@@ -402,13 +402,13 @@ SOURCES += \
     entity/mapper.cpp \
     net/pgrid/loader/pgloader.cpp \
     jace/macvmloader.cpp \
-    api/bridge/toolkitdirectx.cpp \
+    rs/toolkitdirectx.cpp \
     entity/classifier.cpp \
-    api/bridge/keylistener.cpp \
-    api/bridge/keydata.cpp \
-    api/bridge/mousedata.cpp \
-    api/bridge/mouselistener.cpp \
-    api/bridge/abstractmouselistener.cpp
+    rs/keylistener.cpp \
+    rs/keydata.cpp \
+    rs/mousedata.cpp \
+    rs/mouselistener.cpp \
+    rs/abstractmouselistener.cpp
 
 HEADERS    += \
     jni.h \

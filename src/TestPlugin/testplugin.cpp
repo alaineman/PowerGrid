@@ -5,6 +5,8 @@
 namespace plugins {
 namespace examples {
 
+using entity::Classifier;
+
 TestPlugin::TestPlugin() {}
 TestPlugin::~TestPlugin() {}
 

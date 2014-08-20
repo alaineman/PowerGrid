@@ -4,9 +4,12 @@
 #include "testplugin_global.h"
 #include <QObject>
 #include "pgplugin.h"
+#include "entity/classifier.h"
 
 namespace plugins {
 namespace examples {
+
+using entity::Classifier;
 
 class TESTPLUGINSHARED_EXPORT TestPlugin : public QObject, public PGPlugin {
     Q_OBJECT

@@ -37,12 +37,11 @@ SUBDIRS += \
     PluginFramework \
     TestPlugin \
     UnitTests \
-    API \
-    # DefaultPlugin
+    API
 
 API.depends             = Bridge
 UserInterface.depends   = Bridge
 PluginFramework.depends = Bridge
-#DefaultPlugin.depends   = PluginFramework
 TestPlugin.depends      = API PluginFramework Bridge
 
+UnitTests.depends       = API Bridge PluginFramework UserInterface

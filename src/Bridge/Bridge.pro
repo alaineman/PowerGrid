@@ -247,7 +247,8 @@ HEADERS += \
     rs/keylistener.h \
     rs/keydata.h \
     rs/mousedata.h \
-    rs/abstractmouselistener.h
+    rs/abstractmouselistener.h \
+    entity/task.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -408,7 +409,8 @@ SOURCES += \
     rs/keydata.cpp \
     rs/mousedata.cpp \
     rs/mouselistener.cpp \
-    rs/abstractmouselistener.cpp
+    rs/abstractmouselistener.cpp \
+    entity/task.cpp
 
 HEADERS    += \
     jni.h \

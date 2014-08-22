@@ -1,4 +1,5 @@
 #include "task.h"
+#include <QThread>
 
 namespace entity {
 
@@ -15,7 +16,7 @@ void Task::execute(TaskContext *context) {
     bool done;
     do {
         done = run();
-    } while (!done);
+    } while (!done && !QThread::currentThread()->isInterruptionRequested());
 }
 
 }

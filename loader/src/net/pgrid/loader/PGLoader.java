@@ -326,7 +326,7 @@ public class PGLoader {
             try {
                 Field outField = System.class.getDeclaredField("out");
                 Field errField = System.class.getDeclaredField("err");
-
+                
                 File destination = new File("runescape.log");
                 PrintStream replacement;
                 if (destination.isFile() || destination.createNewFile()) {

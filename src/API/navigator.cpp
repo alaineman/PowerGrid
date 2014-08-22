@@ -5,8 +5,8 @@
 
 #include "navigation.h"
 
-using bridge::Client;
-using bridge::Player;
+using RS::Client;
+using RS::Player;
 
 Navigator::Navigator() :
     _navigation(0) {

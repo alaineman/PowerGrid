@@ -8,12 +8,12 @@ TaskContext::TaskContext(QObject *parent) :
     QObject(parent) {
 }
 
-void TaskContext::waitUntil(ConditionFunc condition) {
+void TaskContext::waitUntil(Condition condition) {
     emit waitStarted();
     forever {
         _mutex.lock();
         _waiter->wait(&_mutex);
-        if (condition()) {
+        if (EVALUATE(condition)) {
             _mutex.unlock();
             emit waitStopped();
             return;

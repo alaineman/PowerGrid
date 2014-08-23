@@ -251,7 +251,8 @@ HEADERS += \
     entity/task.h \
     entity/taskmanager.h \
     entity/taskcontext.h \
-    entity/tasknotifier.h
+    entity/tasknotifier.h \
+    entity/taskfactory.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -416,7 +417,8 @@ SOURCES += \
     entity/task.cpp \
     entity/taskmanager.cpp \
     entity/taskcontext.cpp \
-    entity/tasknotifier.cpp
+    entity/tasknotifier.cpp \
+    entity/taskfactory.cpp
 
 HEADERS    += \
     jni.h \

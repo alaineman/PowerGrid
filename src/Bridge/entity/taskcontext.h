@@ -5,9 +5,25 @@
 #include <QMutex>
 #include <QWaitCondition>
 
-typedef bool ConditionFunc();
 
+#ifdef Q_COMPILER_LAMBDA
+// Wraps `cond` in a lambda expression, capturing the current scope by value.
+// The EVALUATE macro executes the lambda.
+typedef bool Condition();
 #define PG_COND(cond) [=](){ return (cond); }
+#define EVALUATE(cond) (cond())
+
+#else
+// Wraps `cond` in a anonymous class that has an `evaluate()` function.
+// The EVALUATE macro executes that function.
+class Condition {
+    virtual bool evaluate() = 0;
+}
+#define PG_COND(cond) (class : Condition {\
+                            virtual bool evaluate() { return (cond); }\
+                      })
+#define EVALUATE(cond) (cond.evaluate())
+#endif
 
 namespace entity {
 
@@ -65,7 +81,7 @@ public:
      *
      * @param condition - the condition to wait for.
      */
-    void waitUntil(ConditionFunc condition);
+    void waitUntil(Condition condition);
 
     /**
      * @brief Waits @c msecs milliseconds before returning.

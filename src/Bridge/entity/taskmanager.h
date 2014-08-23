@@ -33,6 +33,8 @@ private:
     TaskContext* _context;
     TaskNotifier* _notifier;
     QWaitCondition _waitCondition;
+
+    TaskFactory* _activeFactory;
 public:
     explicit TaskManager(TaskNotifier* notifier, QObject* parent = NULL);
     ~TaskManager();
@@ -55,6 +57,8 @@ public:
 
     QSet<TaskFactory*> factories() { return _factories; }
     TaskFactory* find(QString name);
+
+    Task* instantiate(TaskFactory* factory);
 
 protected:
     virtual void run();

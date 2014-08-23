@@ -62,8 +62,25 @@ void TaskManager::executeNextTask(QMutex* mutex) {
 
 void TaskManager::enqueue(Task *task) {
     if (!task) throw std::invalid_argument("NULL");
+    if (_activeFactory) {
+        disconnect(_activeFactory, SIGNAL(preparationDone(Task*)),
+                   this,           SLOT(enqueue(Task*)));
+        _activeFactory = NULL;
+    }
     _taskQueue.append(task);
     _waitCondition.wakeAll();
+}
+
+void TaskManager::enqueue(TaskFactory *factory) {
+    if (_activeFactory) {
+        throw std::logic_error("ERROR: Enqueuing TaskFactory while preparation still in progress");
+    }
+    if (factory) {
+        _activeFactory = factory;
+        connect(factory, SIGNAL(preparationDone(Task*)),
+                this,    SLOT(enqueue(Task*)));
+        factory->prepareTask();
+    }
 }
 
 void TaskManager::addFactory(TaskFactory *factory) {

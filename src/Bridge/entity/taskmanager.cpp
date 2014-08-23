@@ -66,4 +66,12 @@ void TaskManager::enqueue(Task *task) {
     _waitCondition.wakeAll();
 }
 
+void TaskManager::addFactory(TaskFactory *factory) {
+    _factories.insert(factory);
+}
+
+void TaskManager::removeFactory(TaskFactory *factory) {
+    _factories.remove(factory);
+}
+
 }

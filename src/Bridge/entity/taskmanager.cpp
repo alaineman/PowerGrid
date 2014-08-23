@@ -2,6 +2,7 @@
 #include "task.h"
 #include "taskcontext.h"
 #include "tasknotifier.h"
+#include "taskfactory.h"
 
 namespace entity {
 
@@ -16,6 +17,15 @@ TaskManager::TaskManager(TaskNotifier *notifier, QObject* parent) :
 
 TaskManager::~TaskManager() {
     delete _context;
+}
+
+TaskFactory* TaskManager::find(QString name) {
+    foreach(TaskFactory* factory, _factories) {
+        if (factory && factory->taskName() == name) {
+            return factory;
+        }
+    }
+    return NULL;
 }
 
 void TaskManager::run() {

@@ -4,12 +4,14 @@
 #include <QThread>
 #include <QLinkedList>
 #include <QWaitCondition>
+#include <QSet>
 
 namespace entity {
 
 class Task;
 class TaskContext;
 class TaskNotifier;
+class TaskFactory;
 
 /**
  * @brief Manager class for Task instances
@@ -26,6 +28,7 @@ class TaskManager : public QThread {
     Q_OBJECT
     Q_DISABLE_COPY(TaskManager)
 private:
+    QSet<TaskFactory*> _factories;
     QLinkedList<Task*> _taskQueue;
     TaskContext* _context;
     TaskNotifier* _notifier;
@@ -50,6 +53,9 @@ public:
      */
     bool isEmpty() const { return _taskQueue.isEmpty(); }
 
+    QSet<TaskFactory*> factories() { return _factories; }
+    TaskFactory* find(QString name);
+
 protected:
     virtual void run();
 
@@ -66,6 +72,10 @@ signals:
 
 public slots:
     void enqueue(Task* task);
+    void enqueue(TaskFactory* factory);
+
+    void addFactory(TaskFactory* factory);
+    void removeFactory(TaskFactory* factory);
 };
 
 }

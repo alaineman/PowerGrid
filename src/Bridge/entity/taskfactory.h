@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QObject>
+#include <QHash>
 
 namespace entity {
 
@@ -76,5 +77,19 @@ public slots:
 };
 
 } // namespace entity
+
+/**
+ * @brief Hashing function for TaskFactory instances
+ *
+ * This allows TaskFactory pointers to be saved in a hashed
+ * data structure (such as QHash or QSet).
+ *
+ * @param factory - the TaskFactory to compute a hash for
+ * @param seed    - a seed for the hashing algorithm
+ * @return the computed hash
+ */
+uint qHash(entity::TaskFactory* factory, uint seed = 0) {
+    return 23 ^ qHash(factory->taskName(), seed);
+}
 
 #endif // ENTITY_TASKFACTORY_H

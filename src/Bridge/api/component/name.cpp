@@ -8,16 +8,11 @@ using java::lang::Object;
 namespace api {
 namespace component {
 
-Name::Name(Object ref, JField<java::lang::String> name, entity::Entity* parent):
-    HashableComponent(ref, parent), value(name){}
-
-QString Name::getName() const {
-    Object o = getReference();
-    return value.get(o).toQString();
-}
+Name::Name(QString name, entity::Entity* parent):
+    HashableComponent(parent), value(name){}
 
 uint Name::hash(uint seed) const {
-    return 137 * qHash(getName(), seed);
+    return 137 * qHash(value, seed);
 }
 
 } // namespace component

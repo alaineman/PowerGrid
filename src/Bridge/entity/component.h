@@ -2,9 +2,6 @@
 #define COMPONENT_H
 
 #include <QObject>
-#include "java/lang/object.h"
-
-using java::lang::Object;
 
 namespace entity {
 
@@ -22,8 +19,6 @@ class Entity;
  */
 class Component : public QObject {
     Q_OBJECT
-private:
-    Object obj;
 public:
     /**
      * \brief Creates a new Component with the given parent
@@ -32,30 +27,16 @@ public:
      * assigned to that Entity.
      * \param parent the parent of this Component
      */
-    explicit Component(Object ref, Entity* parent = 0);
-
-    /**
-     * @brief Returns the reference of this Component
-     *
-     * Note that not all Components may make use of reference Objects, and
-     * they may return null-Objects (Objects for which @c Object::isNull()
-     * returns @c true).
-     */
-    Object getReference() const;
-
+    explicit Component(Entity* parent = 0);
 };
 
 class HashableComponent : public Component {
     Q_OBJECT
 public:
-    explicit HashableComponent(Object ref, Entity* parent = 0) :
-        Component(ref, parent) {}
+    explicit HashableComponent(Entity* parent = 0) :
+        Component(parent) {}
 
     virtual uint hash(uint seed) const = 0;
-
-    bool operator ==(const HashableComponent& other) const {
-        return getReference() == other.getReference();
-    }
 };
 
 }

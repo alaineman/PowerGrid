@@ -19,19 +19,18 @@ namespace component {
 class Name: public HashableComponent {
     Q_OBJECT
 private:
-    JField<java::lang::String> value;
+    QString value;
 public:
     /**
      * @brief Creates a new Name Component
-     * @param ref the reference Object
-     * @param name the JField containing the name
-     * @param parent the parent of this Component
+     * @param name   - the name
+     * @param parent - the parent of this Component
      */
-    Name(Object ref, JField<java::lang::String> name, entity::Entity *parent = 0);
+    Name(QString name, entity::Entity *parent = 0);
     /**
      * @brief Returns the name value of this Name Component
      */
-    QString getName() const;
+    QString getName() const { return value; }
 
     virtual uint hash(uint seed) const;
 };

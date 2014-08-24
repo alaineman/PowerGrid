@@ -3,11 +3,9 @@
 namespace api {
 namespace component {
 
-Action::Action(Object ref, Entity *parent) : Component(ref, parent) {
-}
+using entity::Entity;
 
-bool Action::operator ==(const Action& other) {
-    return getReference().equals(other.getReference());
+Action::Action(Entity *parent) : Component(parent) {
 }
 
 } // namespace component

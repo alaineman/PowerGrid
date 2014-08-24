@@ -2,15 +2,13 @@
 #define API_COMPONENT_INTERACTION_H
 
 #include "entity/component.h"
-#include "jace/JField.h"
+#include <QMap>
 
 using entity::Component;
-using jace::JField;
 
 namespace api {
 namespace component {
 
-using java::lang::Object;
 class Action;
 
 /**
@@ -31,7 +29,7 @@ public:
      * @param ref [optional] the reference Object
      * @param parent [optional] the parent of this Component
      */
-    explicit Interaction(QMap<QString, Action*> _actions, Object ref = Object(),
+    explicit Interaction(QMap<QString, Action*> _actions,
                          entity::Entity *parent = 0);
 
     /**

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QHash>
 #include "component.h"
 
 namespace entity {

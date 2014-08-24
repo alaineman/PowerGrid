@@ -9,7 +9,6 @@ namespace component {
 
 using entity::Component;
 using entity::Entity;
-using java::lang::Object;
 
 /**
     \brief Action that operates on Objects of a specific \c Type.
@@ -30,7 +29,7 @@ public:
         \param ref the referenced Java Object
         \param parent the parent QObject
      */
-    Action(Object ref, Entity *parent = Q_NULLPTR);
+    Action(Entity *parent = Q_NULLPTR);
 
     /**
         \brief Executes the action on the provided Entity
@@ -41,14 +40,6 @@ public:
         \param e the Entity* to execute the action on
      */
     virtual void execute(Entity* e) = 0;
-
-    /**
-        \brief Compares this Action to another for equality
-
-        \param other the Action to compare with
-        \return true if this Action is equal to the other, false otherwise
-     */
-    bool operator== (const Action& other);
 };
 
 } // namespace component

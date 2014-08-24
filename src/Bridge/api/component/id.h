@@ -2,10 +2,8 @@
 #define API_COMPONENT_ID_H
 
 #include "entity/component.h"
-#include "jace/JField.h"
 
 using entity::HashableComponent;
-using jace::JField;
 
 namespace api {
 namespace component {
@@ -19,19 +17,18 @@ namespace component {
 class ID : public HashableComponent {
     Q_OBJECT
 private:
-    JField<JInt> value;
+    int _value;
 public:
     /**
      * @brief Creates a new ID Component
-     * @param ref the reference Object
-     * @param id the JField containing the id value
-     * @param parent the parent of this Component
+     * @param id     - the id value
+     * @param parent - the parent of this Component
      */
-    explicit ID(Object ref, JField<JInt> id, entity::Entity* parent = 0);
+    explicit ID(int value, entity::Entity* parent = 0);
     /**
      * @brief Returns the id value of this ID Component
      */
-    int getID() const;
+    int getID() const { return _value; }
 
     virtual uint hash(uint seed) const;
 };

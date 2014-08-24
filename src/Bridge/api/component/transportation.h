@@ -3,7 +3,6 @@
 
 #include "entity/component.h"
 
-
 using entity::HashableComponent;
 
 namespace api {

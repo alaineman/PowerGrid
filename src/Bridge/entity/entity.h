@@ -2,7 +2,10 @@
 #define ENTITY_H
 
 #include <QObject>
+#include <QString>
+#include <QMap>
 #include "entity/component.h"
+
 
 /**
  * \brief Contains classes related to the Entity framework.

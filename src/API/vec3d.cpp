@@ -1,7 +1,7 @@
 #include "vec3d.h"
 #include <math.h>
 
-#include "api/component/position.h"
+#include "component/position.h"
 
 Vec3D::Vec3D(double x, double y, double z) :
     _x(x), _y(y), _z(z) {
@@ -11,7 +11,7 @@ Vec3D::Vec3D(int x, int y, int z) :
     _x(x), _y(y), _z(z) {
 }
 
-Vec3D::Vec3D(api::component::Position *pos) {
+Vec3D::Vec3D(component::Position *pos) {
     Q_ASSERT_X(pos, "Vec3D(Position*)", "parameter is NULL");
     _x = pos->getX();
     _y = pos->getY();

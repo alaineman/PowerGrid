@@ -5,7 +5,6 @@
 
 using entity::HashableComponent;
 
-namespace api {
 namespace component {
 
 /**
@@ -16,13 +15,14 @@ namespace component {
  */
 class ID : public HashableComponent {
     Q_OBJECT
+    Q_DISABLE_COPY(ID)
 private:
     int _value;
 public:
     /**
      * @brief Creates a new ID Component
-     * @param id     - the id value
-     * @param parent - the parent of this Component
+     * @param id                - the id value
+     * @param parent [optional] - the parent of this Component
      */
     explicit ID(int value, entity::Entity* parent = 0);
     /**
@@ -35,6 +35,5 @@ public:
 
 
 } // namespace component
-} // namespace api
 
 #endif // API_COMPONENT_ID_H

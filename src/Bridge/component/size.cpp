@@ -2,7 +2,6 @@
 
 using entity::Component;
 
-namespace api {
 namespace component {
 
 Size::Size(int x, int y, entity::Entity* parent):
@@ -13,4 +12,3 @@ uint Size::hash(uint seed) const {
 }
 
 } // namespace component
-} // namespace api

@@ -2,7 +2,6 @@
 
 using entity::Component;
 
-namespace api {
 namespace component {
 
 ID::ID(int value, entity::Entity* parent):
@@ -13,4 +12,3 @@ uint ID::hash(uint seed) const {
 }
 
 } // namespace component
-} // namespace api

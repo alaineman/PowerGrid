@@ -5,11 +5,11 @@
 
 using entity::HashableComponent;
 
-namespace api {
 namespace component {
 
 class Size : public HashableComponent {
     Q_OBJECT
+    Q_DISABLE_COPY(Size)
 private:
     int _x, _y;
 public:
@@ -21,6 +21,5 @@ public:
 };
 
 } // namespace component
-} // namespace api
 
 #endif // API_COMPONENT_SIZE_H

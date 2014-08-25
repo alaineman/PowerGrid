@@ -1,10 +1,8 @@
 #ifndef VEC3D_H
 #define VEC3D_H
 
-namespace api {
- namespace component {
-  class Position;
- }
+namespace component {
+ class Position;
 }
 
 /**
@@ -28,7 +26,7 @@ public:
      *
      * @param pos - the Position to take coordinates from
      */
-    Vec3D(api::component::Position* pos);
+    Vec3D(component::Position* pos);
 
     double x() const { return _x; }
     double y() const { return _y; }

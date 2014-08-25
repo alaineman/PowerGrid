@@ -4,7 +4,6 @@
 #include "entity/component.h"
 #include "entity/entity.h"
 
-namespace api {
 namespace component {
 
 using entity::Component;
@@ -13,21 +12,20 @@ using entity::Entity;
 /**
     \brief Action that operates on Objects of a specific \c Type.
 
-    This class models an Action that is performed on an Object in the
-    Runescape world. This class provides a way to include actions in
-    the Entities themselves as properties.
+    This class models an Action that is performed on an Entity.
+    This class provides a way to include actions in the Entities
+    themselves as properties.
  */
 class Action : public Component {
     Q_OBJECT
+    Q_DISABLE_COPY(Action)
 public:
     /**
         \brief Creates a new Action object
 
-        The reference may be referring to a Java null-pointer,
-        and the parent can also be NULL.
+        The parent may be NULL, in which case the Component is not (yet) assigned to any Entity.
 
-        \param ref the referenced Java Object
-        \param parent the parent QObject
+        \param parent [optional] - the parent QObject
      */
     Action(Entity *parent = Q_NULLPTR);
 
@@ -37,12 +35,11 @@ public:
         This operation is allowed to throw any kind of
         exception when the operation fails.
 
-        \param e the Entity* to execute the action on
+        \param e - the Entity* to execute the action on
      */
     virtual void execute(Entity* e) = 0;
 };
 
 } // namespace component
-} // namespace api
 
 #endif // API_COMPONENT_ACTION_H

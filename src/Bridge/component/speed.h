@@ -5,11 +5,11 @@
 
 using entity::Component;
 
-namespace api {
 namespace component {
 
 class Speed : public Component {
     Q_OBJECT
+    Q_DISABLE_COPY(Speed)
 private:
     double value;
 public:
@@ -18,6 +18,5 @@ public:
 };
 
 } // namespace component
-} // namespace api
 
 #endif // API_COMPONENT_SPEED_H

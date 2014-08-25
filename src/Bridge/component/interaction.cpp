@@ -2,7 +2,6 @@
 
 using entity::Component;
 
-namespace api {
 namespace component {
 
 Interaction::Interaction(QMap<QString, Action *> _actions, entity::Entity *parent) :
@@ -18,4 +17,3 @@ QMap<QString, Action*> Interaction::getActionMap() const {
 }
 
 } // namespace component
-} // namespace api

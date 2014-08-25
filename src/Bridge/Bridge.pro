@@ -229,15 +229,15 @@ HEADERS += \
     entity/component.h \
     entity/entity.h \
     entity/world.h \
-    api/component/position.h \
-    api/component/size.h \
-    api/component/id.h \
-    api/component/name.h \
-    api/component/speed.h \
-    api/component/interaction.h \
-    api/component/action.h \
+    component/position.h \
+    component/size.h \
+    component/id.h \
+    component/name.h \
+    component/speed.h \
+    component/interaction.h \
+    component/action.h \
     entity/matcher.h \
-    api/component/transportation.h \
+    component/transportation.h \
     entity/mapper.h \
     net/pgrid/loader/pgloader.h \
     jace/macvmloader.h \
@@ -394,16 +394,16 @@ SOURCES += \
     entity/component.cpp \
     entity/entity.cpp \
     entity/world.cpp \
-    api/component/position.cpp \
-    api/component/size.cpp \
+    component/position.cpp \
+    component/size.cpp \
     java/awt/java_awt_component.cpp \
-    api/component/id.cpp \
-    api/component/name.cpp \
-    api/component/speed.cpp \
-    api/component/interaction.cpp \
-    api/component/action.cpp \
+    component/id.cpp \
+    component/name.cpp \
+    component/speed.cpp \
+    component/interaction.cpp \
+    component/action.cpp \
     entity/matcher.cpp \
-    api/component/transportation.cpp \
+    component/transportation.cpp \
     entity/mapper.cpp \
     net/pgrid/loader/pgloader.cpp \
     jace/macvmloader.cpp \

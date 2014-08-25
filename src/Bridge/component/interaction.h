@@ -6,7 +6,6 @@
 
 using entity::Component;
 
-namespace api {
 namespace component {
 
 class Action;
@@ -14,20 +13,20 @@ class Action;
 /**
  * \brief Adds interactions to an Entity.
  *
- * This Component type can be used to assign actions to Entities in the
- * Runescape world. These actions can relate to actual actions available
- * in the Runescape client, or actions added by PowerGrid (or any of its Plugins).
+ * This Component type can be used to assign actions to Entities.
+ * These actions can relate to actual actions available in the
+ * Runescape client, or actions added by PowerGrid (or any of its Plugins).
  */
 class Interaction : public Component {
     Q_OBJECT
+    Q_DISABLE_COPY(Interaction)
 private:
     QMap<QString, Action*> actions;
 public:
     /**
      * @brief Creates a new Interaction Component
      * @param _actions the actions that can be performed
-     * @param ref [optional] the reference Object
-     * @param parent [optional] the parent of this Component
+     * @param parent [optional] - the parent of this Component
      */
     explicit Interaction(QMap<QString, Action*> _actions,
                          entity::Entity *parent = 0);
@@ -52,6 +51,5 @@ public:
 
 };
 } // namespace component
-} // namespace api
 
 #endif // API_COMPONENT_INTERACTION_H

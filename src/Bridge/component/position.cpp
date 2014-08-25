@@ -2,7 +2,6 @@
 
 using entity::Component;
 
-namespace api {
 namespace component {
 
 Position::Position(int x, int y, int z, entity::Entity* parent):
@@ -14,4 +13,3 @@ uint Position::hash(uint seed) const {
 
 
 } // namespace component
-} // namespace api

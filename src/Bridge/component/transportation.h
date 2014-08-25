@@ -5,14 +5,15 @@
 
 using entity::HashableComponent;
 
-namespace api {
 namespace component {
 
 class Position;
 class Action;
 
+
 class Transportation : public HashableComponent {
     Q_OBJECT
+    Q_DISABLE_COPY(Transportation)
 private:
     Position* from;
     Position* to;
@@ -30,6 +31,5 @@ public:
 };
 
 } // namespace component
-} // namespace api
 
 #endif // API_COMPONENT_TRANSPORTATION_H

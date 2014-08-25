@@ -8,7 +8,6 @@
 using entity::HashableComponent;
 using jace::JField;
 
-namespace api {
 namespace component {
 
 /**
@@ -18,13 +17,14 @@ namespace component {
  */
 class Name: public HashableComponent {
     Q_OBJECT
+    Q_DISABLE_COPY(Name)
 private:
     QString value;
 public:
     /**
      * @brief Creates a new Name Component
-     * @param name   - the name
-     * @param parent - the parent of this Component
+     * @param name              - the name
+     * @param parent [optional] - the parent of this Component
      */
     Name(QString name, entity::Entity *parent = 0);
     /**
@@ -36,6 +36,5 @@ public:
 };
 
 } // namespace component
-} // namespace api
 
 #endif // API_COMPONENT_NAME_H

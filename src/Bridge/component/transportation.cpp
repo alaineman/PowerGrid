@@ -2,7 +2,6 @@
 #include "position.h"
 #include "action.h"
 
-namespace api {
 namespace component {
 
 Transportation::Transportation(Position* _from, Position* _to, int _cost,
@@ -27,4 +26,3 @@ uint Transportation::hash(uint seed) const {
 }
 
 } // namespace component
-} // namespace api

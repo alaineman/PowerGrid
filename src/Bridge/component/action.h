@@ -1,5 +1,5 @@
-#ifndef API_COMPONENT_ACTION_H
-#define API_COMPONENT_ACTION_H
+#ifndef COMPONENT_ACTION_H
+#define COMPONENT_ACTION_H
 
 #include "entity/component.h"
 #include "entity/entity.h"
@@ -42,4 +42,4 @@ public:
 
 } // namespace component
 
-#endif // API_COMPONENT_ACTION_H
+#endif // COMPONENT_ACTION_H

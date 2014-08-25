@@ -1,5 +1,5 @@
-#ifndef API_COMPONENT_POSITION_H
-#define API_COMPONENT_POSITION_H
+#ifndef COMPONENT_POSITION_H
+#define COMPONENT_POSITION_H
 
 #include "entity/component.h"
 
@@ -53,4 +53,4 @@ public:
 
 } // namespace component
 
-#endif // API_COMPONENT_POSITION_H
+#endif // COMPONENT_POSITION_H

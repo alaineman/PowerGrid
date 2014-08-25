@@ -1,5 +1,5 @@
-#ifndef API_COMPONENT_TRANSPORTATION_H
-#define API_COMPONENT_TRANSPORTATION_H
+#ifndef COMPONENT_TRANSPORTATION_H
+#define COMPONENT_TRANSPORTATION_H
 
 #include "entity/component.h"
 
@@ -32,4 +32,4 @@ public:
 
 } // namespace component
 
-#endif // API_COMPONENT_TRANSPORTATION_H
+#endif // COMPONENT_TRANSPORTATION_H

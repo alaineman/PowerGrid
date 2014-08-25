@@ -38,11 +38,13 @@ CONFIG   += staticlib thread c++11
 SOURCES  += \
     navigation.cpp \
     vec3d.cpp \
-    navigator.cpp
+    navigator.cpp \
+    worldgenerator.cpp
 HEADERS  += \
     navigation.h \
     vec3d.h \
-    navigator.h
+    navigator.h \
+    worldgenerator.h
 
 # dependency for Bridge subproject
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Bridge/release/ -lBridge

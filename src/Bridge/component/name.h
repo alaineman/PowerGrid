@@ -1,5 +1,5 @@
-#ifndef API_COMPONENT_NAME_H
-#define API_COMPONENT_NAME_H
+#ifndef COMPONENT_NAME_H
+#define COMPONENT_NAME_H
 
 #include "entity/component.h"
 #include "jace/JField.h"
@@ -37,4 +37,4 @@ public:
 
 } // namespace component
 
-#endif // API_COMPONENT_NAME_H
+#endif // COMPONENT_NAME_H

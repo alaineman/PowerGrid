@@ -492,9 +492,8 @@ private: \
     bool operator==(const JArray& array) { Q_UNUSED(array); return false; }\
     mutable int length_;\
 public: \
-    JArray(int size); \
-    JArray(jvalue& val); \
-    JArray(jobject& obj); \
+    explicit JArray(jvalue val); \
+    explicit JArray(jobject obj); \
     Type operator[] (const int &index) const; \
     QList<Type> toQList() const;\
     jarray getJavaJniArray() const;\

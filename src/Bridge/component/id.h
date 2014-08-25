@@ -1,5 +1,5 @@
-#ifndef API_COMPONENT_ID_H
-#define API_COMPONENT_ID_H
+#ifndef COMPONENT_ID_H
+#define COMPONENT_ID_H
 
 #include "entity/component.h"
 
@@ -36,4 +36,4 @@ public:
 
 } // namespace component
 
-#endif // API_COMPONENT_ID_H
+#endif // COMPONENT_ID_H

@@ -1,5 +1,5 @@
-#ifndef API_COMPONENT_INTERACTION_H
-#define API_COMPONENT_INTERACTION_H
+#ifndef COMPONENT_INTERACTION_H
+#define COMPONENT_INTERACTION_H
 
 #include "entity/component.h"
 #include <QMap>
@@ -52,4 +52,4 @@ public:
 };
 } // namespace component
 
-#endif // API_COMPONENT_INTERACTION_H
+#endif // COMPONENT_INTERACTION_H

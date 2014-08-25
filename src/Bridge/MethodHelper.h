@@ -201,7 +201,7 @@ JACE_PROXY_API QList<componentType> className::name() {\
         jfieldID field = env->GetStaticFieldID(cls, fldName.toUtf8().constData(), retName.toUtf8().constData()); \
         if (field == 0) throw jace::MappingUnavailableException(QStringLiteral("Static Field ").append(#name)); \
         jarray arr = static_cast<jarray>(env->GetStaticObjectField(cls, field)); \
-        return jace::JArray<componentType>(arr).toQList(); \
+        return jace::JArray<componentType>(static_cast<jobject>(arr)).toQList(); \
     }
 
 #define IMPL_STATIC_OBJECT_FIELD(className, name, returnType) \
@@ -210,10 +210,7 @@ JACE_PROXY_API QList<componentType> className::name() {\
         jace::RSClassMapper* rscm = RSClassMapper::DefaultInstance(); \
         QString clsName = rscm->getStaticFieldClass(#name); \
         QString retName = "L" + rscm->getRealName(#returnType) + ";"; \
-        qDebug() << "Class Name:" << clsName; \
-        qDebug() << "Return typeName:" << retName; \
-        std::string fldName = rscm->getStaticFieldName(#name).toStdString(); \
-        qDebug() << "Field Name:" << fldName.c_str(); \
+        std::string fldName = rscm->getStaticFieldName(#name).toStdString();\
         jclass cls = rscm->getClass(clsName); \
         if (cls == NULL) throw jace::MappingUnavailableException(QStringLiteral("Class of Static Field ").append(#name)); \
         jfieldID field = env->GetStaticFieldID(cls, fldName.c_str(), retName.toUtf8().constData()); \

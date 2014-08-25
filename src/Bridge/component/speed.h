@@ -1,5 +1,5 @@
-#ifndef API_COMPONENT_SPEED_H
-#define API_COMPONENT_SPEED_H
+#ifndef COMPONENT_SPEED_H
+#define COMPONENT_SPEED_H
 
 #include "entity/component.h"
 
@@ -19,4 +19,4 @@ public:
 
 } // namespace component
 
-#endif // API_COMPONENT_SPEED_H
+#endif // COMPONENT_SPEED_H

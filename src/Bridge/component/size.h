@@ -1,5 +1,5 @@
-#ifndef API_COMPONENT_SIZE_H
-#define API_COMPONENT_SIZE_H
+#ifndef COMPONENT_SIZE_H
+#define COMPONENT_SIZE_H
 
 #include "entity/component.h"
 
@@ -22,4 +22,4 @@ public:
 
 } // namespace component
 
-#endif // API_COMPONENT_SIZE_H
+#endif // COMPONENT_SIZE_H

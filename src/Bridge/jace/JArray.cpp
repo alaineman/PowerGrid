@@ -7,18 +7,6 @@ namespace jace {
 // Template Specialization definitions for JArray
 // ------------------------------------------------
 
-JArray<JBoolean>::JArray(int size) : JObject( NO_OP ) {
-    JNIEnv* env = helper::attach();
-    jarray array = env->NewBooleanArray(size);
-    helper::catchAndThrow();
-    if (array == NULL) {
-        throw JNIException("Unable to construct a new array ");
-    }
-    setJavaJniObject(array);
-    env->DeleteLocalRef(array);
-    this->length_ = -1;
-}
-
 JBoolean JArray<JBoolean>::operator [](const int &index) const {
 #ifdef JACE_CHECK_NULLS
     if (! getJavaJniObject()) {
@@ -34,18 +22,6 @@ JBoolean JArray<JBoolean>::operator [](const int &index) const {
     jboolean val;
     helper::attach()->GetBooleanArrayRegion(thisArray, index, 1, &val);
     return JBoolean( val );
-}
-
-JArray<JByte>::JArray(int size) : JObject( NO_OP ) {
-    JNIEnv* env = helper::attach();
-    jarray array = env->NewByteArray(size);
-    helper::catchAndThrow();
-    if (array == NULL) {
-        throw JNIException("Unable to construct a new array ");
-    }
-    setJavaJniObject(array);
-    env->DeleteLocalRef(array);
-    this->length_ = -1;
 }
 
 JByte JArray<JByte>::operator [](const int &index) const {
@@ -65,18 +41,6 @@ JByte JArray<JByte>::operator [](const int &index) const {
     return JByte( val );
 }
 
-JArray<JChar>::JArray(int size) : JObject( NO_OP ) {
-    JNIEnv* env = helper::attach();
-    jarray array = env->NewCharArray(size);
-    helper::catchAndThrow();
-    if (array == NULL) {
-        throw JNIException("Unable to construct a new array ");
-    }
-    setJavaJniObject(array);
-    env->DeleteLocalRef(array);
-    this->length_ = -1;
-}
-
 JChar JArray<JChar>::operator [](const int &index) const {
 #ifdef JACE_CHECK_NULLS
     if (! getJavaJniObject()) {
@@ -92,18 +56,6 @@ JChar JArray<JChar>::operator [](const int &index) const {
     jchar val;
     helper::attach()->GetCharArrayRegion(thisArray, index, 1, &val);
     return JChar( val );
-}
-
-JArray<JDouble>::JArray(int size) : JObject( NO_OP ) {
-    JNIEnv* env = helper::attach();
-    jarray array = env->NewDoubleArray(size);
-    helper::catchAndThrow();
-    if (array == NULL) {
-        throw JNIException("Unable to construct a new array ");
-    }
-    setJavaJniObject(array);
-    env->DeleteLocalRef(array);
-    this->length_ = -1;
 }
 
 JDouble JArray<JDouble>::operator [](const int &index) const {
@@ -123,18 +75,6 @@ JDouble JArray<JDouble>::operator [](const int &index) const {
     return JDouble( val );
 }
 
-JArray<JFloat>::JArray(int size) : JObject( NO_OP ) {
-    JNIEnv* env = helper::attach();
-    jarray array = env->NewFloatArray(size);
-    helper::catchAndThrow();
-    if (array == NULL) {
-        throw JNIException("Unable to construct a new array ");
-    }
-    setJavaJniObject(array);
-    env->DeleteLocalRef(array);
-    this->length_ = -1;
-}
-
 JFloat JArray<JFloat>::operator [](const int &index) const {
 #ifdef JACE_CHECK_NULLS
     if (! getJavaJniObject()) {
@@ -150,18 +90,6 @@ JFloat JArray<JFloat>::operator [](const int &index) const {
     jfloat val;
     helper::attach()->GetFloatArrayRegion(thisArray, index, 1, &val);
     return JFloat( val );
-}
-
-JArray<JInt>::JArray(int size) : JObject( NO_OP ) {
-    JNIEnv* env = helper::attach();
-    jarray array = env->NewIntArray(size);
-    helper::catchAndThrow();
-    if (array == NULL) {
-        throw JNIException("Unable to construct a new array ");
-    }
-    setJavaJniObject(array);
-    env->DeleteLocalRef(array);
-    this->length_ = -1;
 }
 
 JInt JArray<JInt>::operator [](const int &index) const {
@@ -181,18 +109,6 @@ JInt JArray<JInt>::operator [](const int &index) const {
     return JInt( val );
 }
 
-JArray<JShort>::JArray(int size) : JObject( NO_OP ) {
-    JNIEnv* env = helper::attach();
-    jarray array = env->NewShortArray(size);
-    helper::catchAndThrow();
-    if (array == NULL) {
-        throw JNIException("Unable to construct a new array ");
-    }
-    setJavaJniObject(array);
-    env->DeleteLocalRef(array);
-    this->length_ = -1;
-}
-
 JShort JArray<JShort>::operator [](const int &index) const {
 #ifdef JACE_CHECK_NULLS
     if (! getJavaJniObject()) {
@@ -208,18 +124,6 @@ JShort JArray<JShort>::operator [](const int &index) const {
     jshort val;
     helper::attach()->GetShortArrayRegion(thisArray, index, 1, &val);
     return JShort( val );
-}
-
-JArray<JLong>::JArray(int size) : JObject( NO_OP ) {
-    JNIEnv* env = helper::attach();
-    jarray array = env->NewLongArray(size);
-    helper::catchAndThrow();
-    if (array == NULL) {
-        throw JNIException("Unable to construct a new array ");
-    }
-    setJavaJniObject(array);
-    env->DeleteLocalRef(array);
-    this->length_ = -1;
 }
 
 JLong JArray<JLong>::operator [](const int &index) const {
@@ -240,8 +144,8 @@ JLong JArray<JLong>::operator [](const int &index) const {
 }
 
 #define JArrayCommons(Type) \
-    JArray<Type>::JArray(jvalue& val) : JObject(val), length_(-1) {} \
-    JArray<Type>::JArray(jobject& obj) : JObject(obj), length_(-1) {} \
+    JArray<Type>::JArray(jvalue val) : JObject(val), length_(-1) {} \
+    JArray<Type>::JArray(jobject obj) : JObject(obj), length_(-1) {} \
     QList<Type> JArray<Type>::toQList() const {\
         QList<Type> list; \
         for (int i=0; i<length(); i++) { \

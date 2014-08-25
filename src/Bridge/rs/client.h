@@ -75,7 +75,7 @@ public:
     // Macro defining required framework methods and constructors
     RS_OBJECT(Client)
 
-    JACE_PROXY_API static Client getClient();
+    static JACE_PROXY_API Client getClient();
 
     static JACE_PROXY_API Camera getCamera();
     static JACE_PROXY_API JInt getCameraPitch();
@@ -93,10 +93,10 @@ public:
     static JACE_PROXY_API JInt getFPS();
     static JACE_PROXY_API Facade getFacade();
     static JACE_PROXY_API JInt getFrameTime();
-    JACE_PROXY_API QList<Friend> getFriendsList();
+    static JACE_PROXY_API QList<Friend> getFriendsList();
     static JACE_PROXY_API GraphicsToolkit getGraphicsToolkit();
-    JACE_PROXY_API QList<Interface> getInterfaceArray();
-    JACE_PROXY_API QList<java::awt::Rectangle> getInterfaceBoundsArray();
+    static JACE_PROXY_API QList<Interface> getInterfaceArray();
+    static JACE_PROXY_API QList<java::awt::Rectangle> getInterfaceBoundsArray();
     static JACE_PROXY_API JInt getInterfaceIndex();
     static JACE_PROXY_API HashTable getInterfaceNodeCache();
     static JACE_PROXY_API ItemDefLoader getItemDefLoader();
@@ -104,12 +104,12 @@ public:
     static JACE_PROXY_API KeyListener getKeyboard();
     static JACE_PROXY_API LandscapeInfo getLandscapeInfo();
     static JACE_PROXY_API String getLastSelectedItemName();
-    JACE_PROXY_API QList<HintArrow> getLoadedHintArrows();
+    static JACE_PROXY_API QList<HintArrow> getLoadedHintArrows();
     static JACE_PROXY_API HashTable getLoadedItems();
     static JACE_PROXY_API JInt getLoadedNPCCount();
-    JACE_PROXY_API QList<NPCNode> getLoadedNPCNodes();
-    JACE_PROXY_API QList<OverheadMessage> getLoadedOverheadMessages();
-    JACE_PROXY_API QList<Player> getLoadedPlayers();
+    static JACE_PROXY_API QList<NPCNode> getLoadedNPCNodes();
+    static JACE_PROXY_API QList<OverheadMessage> getLoadedOverheadMessages();
+    static JACE_PROXY_API QList<Player> getLoadedPlayers();
     static JACE_PROXY_API Deque getLoadedProjectiles();
     static JACE_PROXY_API Player getLocalPlayer();
     static JACE_PROXY_API JInt getLoopCycle();
@@ -117,7 +117,7 @@ public:
     static JACE_PROXY_API JInt getMenuHeight();
     static JACE_PROXY_API Deque getMenuItems();
     static JACE_PROXY_API JBoolean isMenuOpen();
-    JACE_PROXY_API QList<String> getMenuOptions();
+    static JACE_PROXY_API QList<String> getMenuOptions();
     static JACE_PROXY_API JInt getMenuOptionsCount();
     static JACE_PROXY_API JInt getMenuOptionsCountCollapsed();
     static JACE_PROXY_API JInt getMenuWidth();
@@ -130,25 +130,25 @@ public:
     static JACE_PROXY_API JInt getMinimapSetting();
     static JACE_PROXY_API AbstractMouseListener getMouse();
     static JACE_PROXY_API JInt getMouseCrosshairSpriteCycleIndex();
-    JACE_PROXY_API QList<Sprite> getMouseCrosshairSprites();
+    static JACE_PROXY_API QList<Sprite> getMouseCrosshairSprites();
     static JACE_PROXY_API JInt getMouseCrosshairState();
     static JACE_PROXY_API JInt getNPCCombatCount();
-    JACE_PROXY_API QList<JInt> getNPCCombatIndexArray();
-    JACE_PROXY_API QList<JInt> getNPCIndexArray();
+    static JACE_PROXY_API QList<JInt> getNPCCombatIndexArray();
+    static JACE_PROXY_API QList<JInt> getNPCIndexArray();
     static JACE_PROXY_API HashTable getNPCNodeCache();
     static JACE_PROXY_API ObjectDefLoader getObjectDefLoader();
     static JACE_PROXY_API JInt getPlane();
     static JACE_PROXY_API JInt getPlayerCount();
-    JACE_PROXY_API QList<JInt> getPlayerIndexArray();
+    static JACE_PROXY_API QList<JInt> getPlayerIndexArray();
     static JACE_PROXY_API Cache getPlayerModels();
-    JACE_PROXY_API QList<Server> getServers();
+    static JACE_PROXY_API QList<Server> getServers();
     static JACE_PROXY_API JBoolean isSpellSelected();
     static JACE_PROXY_API JInt getSubMenuHeight();
     static JACE_PROXY_API JInt getSubMenuWidth();
     static JACE_PROXY_API JInt getSubMenuX();
     static JACE_PROXY_API JInt getSubMenuY();
-    JACE_PROXY_API QList<JFloat> getTileData();
-    JACE_PROXY_API QList<JBoolean> getValidInterfaceArray();
+    static JACE_PROXY_API QList<JFloat> getTileData();
+    static JACE_PROXY_API QList<JBoolean> getValidInterfaceArray();
 
 private:
     DECLARE_FRIENDS

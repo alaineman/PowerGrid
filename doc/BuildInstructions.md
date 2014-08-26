@@ -5,20 +5,20 @@ Make sure to have installed Netbeans (with a JDK), Qt (5.1.0 or higher), and a C
 toolchain supported by Qt (You can use Qt for Windows bundled with MinGW for easy set up).
 
 If you also want to be able to generate documentation for PowerGrid, you also need Doxygen. 
-The Doxyfile for the project resides in the “doc” directory.
+The Doxyfile for the project resides in the 'doc' directory.
 
-The “loader” directory contains a Netbeans Java project with the Runescape client loader.
-The “src” directory contains the C++ source. You can open the file “src/PowerGrid.pro” in 
+The 'loader' directory contains a Netbeans Java project with the Runescape client loader.
+The 'src' directory contains the C++ source. You can open the file 'src/PowerGrid.pro' in 
 Qt Creator (bundled with Qt) to view/edit the PowerGrid source files. 
 
 When you open the project for the first time, you are given the option to choose a toolchain 
 and build directories for the Debug and Release targets. You are advised to leave all settings 
 on default, but if you do change the build directories, please make sure the paths to these 
-directories start with “build”. This way they are not accidentally added to the git repository.
+directories start with 'build'. This way they are not accidentally added to the git repository.
 
 After this, it is possible to configure Qt to build everything at once and place the resulting 
 executable including all Qt dependencies and the Java loader (which is also automatically 
-compiled if needed) in the “dist” directory. This ensures you are never running an outdated 
+compiled if needed) in the 'dist' directory. This ensures you are never running an outdated 
 client version and prevents switching between Netbeans and Qt Creator more than required.
 
 First we have to make sure Qt Creator has access to Apache Ant, which is the build tool 
@@ -35,7 +35,7 @@ on Windows, and "Applications/Netbeans/Netbeans <version>.app/Contents/Resources
 Mac OS X (right-click the Netbeans app and select "show package contents" to see it). On other 
 platforms it should be similar, although this hasn't been tested.
 
-Please note that Mac OS X is currently not officially supported, as there exists a bug in Oracle’s JVM 
+Please note that Mac OS X is currently not officially supported, as there exists a bug in Oracle's JVM 
 on Mac OS X that prevents us from creating a JVM to run the Runescape client in. 
 
 Once we found the path, we must then tell Qt Creator where it is. In Qt Creator, go to 
@@ -54,15 +54,15 @@ so that ant will place the resulting jar file in a directory called "dist" in th
 root directory. The QMake .pro file is also configured to place the resulting executable there, 
 meaning that everything is put together automatically so that everything can be run from Qt Creator.
 
-Still in the “Build Steps” section, add another step. This time, choose “Make” as the type of build step.
-In the field “Make arguments”, add “install”. This copies the dependencies for PowerGrid to the “dist” 
-directory. If you only run the project from Qt Creator, you don’t need to do this (Qt Creator adds the Qt 
+Still in the 'Build Steps' section, add another step. This time, choose 'Make' as the type of build step.
+In the field 'Make arguments'�, add 'install'�. This copies the dependencies for PowerGrid to the 'dist' 
+directory. If you only run the project from Qt Creator, you don'�t need to do this (Qt Creator adds the Qt 
 libraries to the PATH). However, by copying the dependencies, it is possible to run PowerGrid stand-alone.
 Please also consider the fact that the total size of the libraries can be over 200MB (depending on the 
-specific platform/version of Qt), mainly due to the size of Qt’s Debug libraries. If you don’t have a lot 
+specific platform/version of Qt), mainly due to the size of Qt'�s Debug libraries. If you don'�t have a lot 
 of disk space to spare, it may not be useful to copy the libraries.
 
-Now Qt Creator will call Apache Ant to build and create the loader jar file after ‘make’ finished building 
+Now Qt Creator will call Apache Ant to build and create the loader jar file after '�make'� finished building 
 the PowerGrid application, ensuring that you always run the latest version of both the C++ client and 
 the Java loader.
 
@@ -71,7 +71,7 @@ directory. However, for compiling (the most time-consuming task), MinGW's make w
 core by default. A waste of time if you have a multi-core processor! Therefore we are going to instruct 
 make to build multiple targets at the same time, making more efficient use of your multi-core processor.
 
-Beware that this only works for the GCC version of make (including MinGW’s make utility)! When you use the 
+Beware that this only works for the GCC version of make (including MinGW'�s make utility)! When you use the 
 Visual Studio compiler on Windows, Qt Creator already does this step for you using a tool called jom. In 
 other build configurations, please look up the documentation for your build tools to achieve similar 
 functionality.
@@ -82,8 +82,16 @@ you want to use for compiling. Setting this higher than the amount of cores in y
 most likely not speed up compilation. For example, when you have a dual-core processor, you would
 enter '-j 2', instead of '-j 4'. 
 
-One last remark: when you use all cores in your processor for compilation, your computer may respond slow or
-seem to lag during compilation (depending on your hardware). This is normal, since all cores are being fully 
-used. If you still want to do other things at the same time, you may wish to reserve one (or maybe even two) 
-cores for other things, so that you can continue to use your computer normally in the meantime.
+One remark about multi-threaded compiling: when you use all cores in your processor for compilation, your 
+computer may respond slow or seem to lag during compilation (depending on your hardware). This is normal, 
+since all cores are being fully used. If you still want to do other things at the same time, you may wish 
+to reserve one (or maybe even two) cores for other things, so that you can continue to use your computer 
+normally in the meantime.
+
+When you build PowerGrid, the Qt5XXX libraries are automatically copied along to the 'dist' directory. 
+However, the pre-built Qt5 version offered on qt-project.org has extra dependencies to the ICU libraries.
+These libraries provide internationalisation and Unicode support, and are only required for the Qt Webkit 
+module. Since PowerGrid does not use Qt Webkit, it is possible to build Qt from scratch without webkit 
+support, saving over 20MB of disk space in the final application. For a guide on how to build Qt for this 
+purpose, see the 'BuildInstructions-QT.md' file.
 

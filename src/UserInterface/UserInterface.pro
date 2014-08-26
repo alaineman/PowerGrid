@@ -34,7 +34,6 @@ QT          = core gui widgets
 CONFIG     += thread c++11
 TEMPLATE    = app
 
-
 win32: RC_FILE = powergrid.rc
 
 # Make sure the executable/library is named PowerGrid and is in
@@ -59,16 +58,6 @@ win32 {
         qtlibs.files += $$QTDIR/Qt5Gui.dll
         qtlibs.files += $$QTDIR/Qt5Widgets.dll
     }
-    qtlibs.files += $$QTDIR/icudt51.dll
-    qtlibs.files += $$QTDIR/icuin51.dll
-    qtlibs.files += $$QTDIR/icuuc51.dll
-    win32-g++ {
-        qtlibs.files += $$QTDIR/libgcc_s_dw2-1.dll
-        qtlibs.files += $$QTDIR/libstd~1.dll
-        qtlibs.files += $$QTDIR/libwinpthread-1.dll
-    }
-    # We may need to add specific files for other compilers
-    else: warning(possibly missing compiler dependant libraries)
     INSTALLS += qtlibs
 }
 else {
@@ -78,13 +67,20 @@ else {
 #------------------------------------------------
 # The files in this project
 #------------------------------------------------
-SOURCES       += main.cpp mainwindow.cpp \
+SOURCES += \
+    main.cpp \
+    mainwindow.cpp \
     monitorwindow.cpp
-HEADERS        = mainwindow.h versionInfo.h powergrid.rc \
+HEADERS += \
+    mainwindow.h \
+    versionInfo.h \
+    powergrid.rc \
     monitorwindow.h
-FORMS          = mainwindow.ui \
+FORMS += \
+    mainwindow.ui \
     monitorwindow.ui
-RESOURCES      = resources.qrc
+RESOURCES += \
+    resources.qrc
 
 # helper defines to detect build mode.
 CONFIG(debug, debug|release) {

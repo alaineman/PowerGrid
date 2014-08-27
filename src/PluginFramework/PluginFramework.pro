@@ -32,14 +32,12 @@ TEMPLATE = lib
 CONFIG += staticlib thread c++11
 
 SOURCES += \
-    task.cpp \
     taskdescriptor.cpp \
     pgpluginloader.cpp \
     pgplugin.cpp \
     skilltrainer.cpp
 
 HEADERS += \
-    task.h \
     taskdescriptor.h \
     pgpluginloader.h \
     pgplugin.h \

@@ -16,13 +16,16 @@ Navigator::Navigator() :
 
 Position *Navigator::currentPosition() const {
     Player player = Client::getLocalPlayer();
-    return Position* (player.getLocationX(),
-                  player.getLocationY(),
-                  player.getPlane().getByte());
+    return new Position(player.getLocationX(),
+                        player.getLocationY(),
+                        player.getPlane().getByte());
 }
 
 Navigation* Navigator::findPath(Position* destination) {
-    return findPath(currentPosition(), destination);
+    Position* current = currentPosition();
+    Navigation* path = findPath(currentPosition(), destination);
+    current->deleteLater();
+    return path;
 }
 
 Navigation* Navigator::findPath(Position* origin, Position* destination) {

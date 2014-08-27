@@ -2,7 +2,6 @@
 #define NAVIGATION_H
 
 #include <QObject>
-#include "vec3d.h"
 #include "component/position.h"
 
 class Navigator;

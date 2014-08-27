@@ -25,8 +25,8 @@ namespace lang {
 String::String() : Object() {
 }
 
-String::String(const String &obj) :
-    JObject(NoOp()), Object(obj) {
+String::String(const String &obj) : Object(obj),
+    localString(obj.localString) {
 }
 
 const jace::JClass* String::staticGetJavaJniClass() throw (jace::JNIException) {
@@ -38,38 +38,46 @@ const jace::JClass* String::getJavaJniClass() const throw (jace::JNIException) {
     return String::staticGetJavaJniClass();
 }
 
-String::String(jobject object) :
-    Object(object) {}
+String::String(jobject object) : Object(object) {}
 
-String::String(jvalue value) :
-    Object(value) {}
+String::String(jvalue value)   : Object(value) {}
 
-String::String(jstring string) :
-    Object(string) {}
+String::String(jstring string) : Object(string) {}
 
 String& String::operator =(const String &obj) {
     setJavaJniObject(obj.getJavaJniObject());
     return *this;
 }
-/*!
- * \brief Coverts this String into an \c std::string
- * \return an \c std::string with the contents of this java String
- */
+
+int String::length() const {
+    if (isNull()) {
+        return -1;
+    }
+    if (localString.isNull()) {
+        return jace::helper::attach()->GetStringLength(
+                    static_cast<jstring>(getJavaJniObject()));
+    } else {
+        return localString.length();
+    }
+}
+
 std::string String::toStdString() const throw (jace::JNIException){
     JNIEnv* env = jace::helper::attach();
     jstring string = static_cast<jstring>(getJavaJniObject());
     const char* chars = env->GetStringUTFChars(string, NULL);
     return chars;
 }
-/*!
- * \brief Coverts this String into an \c QString
- * \return an \c QString with the contents of this java String
- */
+
 QString String::toQString() const throw (jace::JNIException) {
-    JNIEnv* env = jace::helper::attach();
-    jstring string = static_cast<jstring>(getJavaJniObject());
-    const char* chars = env->GetStringUTFChars(string, NULL);
-    return QString::fromLocal8Bit(chars);
+    if (localString.isNull()) {
+        jstring string = static_cast<jstring>(getJavaJniObject());
+        if (string != NULL) {
+            JNIEnv* env = jace::helper::attach();
+            const jchar* chars = env->GetStringChars(string, NULL);
+            localString.setUtf16(chars, env->GetStringLength(string));
+        }
+    }
+    return localString;
 }
 
 }

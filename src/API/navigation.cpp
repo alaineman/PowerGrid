@@ -14,7 +14,7 @@ long Navigation::computeLength() const {
     long length (0);
     for (int i=1;i<_path.length();i++) {
         Position* next (_path.at(i));
-        length += p.dist(next);
+        length += p->distance(next);
         p = next;
     }
     return length;
@@ -34,7 +34,7 @@ bool Navigation::hasNext() const {
 Position* Navigation::next() {
     Q_ASSERT_X(hasNext(), "Navigation::next()", "No next element");
     _current++;
-    Position next (_path.at(_current));
+    Position* next = _path.at(_current);
     emit progress(next);
     return next;
 }

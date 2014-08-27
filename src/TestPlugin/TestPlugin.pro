@@ -17,18 +17,13 @@ SOURCES += testplugin.cpp \
     dummyclassifier.cpp
 
 HEADERS += testplugin.h\
-        testplugin_global.h \
+    testplugin_global.h \
     dummytaskdescriptor.h \
     dummyclassifier.h
 
 OTHER_FILES += testplugin.json
 
 DESTDIR = $PWD/../../dist/plugins
-
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
 
 # Link against the Plugin Framework
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../PluginFramework/release/ -lPluginFramework

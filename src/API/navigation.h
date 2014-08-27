@@ -3,8 +3,11 @@
 
 #include <QObject>
 #include "vec3d.h"
+#include "component/position.h"
 
 class Navigator;
+
+using component::Position;
 
 /**
  * @brief Represents a Navigation path between two points.
@@ -16,7 +19,7 @@ class Navigation : public QObject {
     Q_OBJECT
     Q_DISABLE_COPY(Navigation)
 private:
-    QList<Vec3D> _path;
+    QList<Position*> _path;
     int _current;
     mutable int _length;
 
@@ -28,13 +31,13 @@ public:
      * @brief Creates a new Navigation instance to navigate the specified path
      * @param path - the path to navigate, as a list of points.
      */
-    explicit Navigation(QList<Vec3D> path);
+    explicit Navigation(QList<Position*> path);
 
     /**
      * @brief Returns the path of this Navigation
      * @return the path of this Navigation
      */
-    QList<Vec3D> path() const { return _path; }
+    QList<Position*> path() const { return _path; }
     /**
      * @brief Returns the current position in this Navigation
      * @return the current position
@@ -78,12 +81,12 @@ protected:
      * @brief Returns the next element on this path
      * @return the next element
      */
-    Vec3D next();
+    Position* next();
     /**
      * @brief Returns the current element
      * @return the current element
      */
-    Vec3D current() const;
+    Position* current() const;
 
 signals:
     /**
@@ -91,7 +94,7 @@ signals:
      *
      * @param position - the next position in the sequence
      */
-    void progress(Vec3D position);
+    void progress(Position* position);
 public slots:
     /**
      * @brief Resets this Navigation

@@ -5,6 +5,8 @@
 
 #include "navigation.h"
 
+using component::Position;
+
 using RS::Client;
 using RS::Player;
 
@@ -12,30 +14,30 @@ Navigator::Navigator() :
     _navigation(0) {
 }
 
-Vec3D Navigator::currentPosition() const {
+Position *Navigator::currentPosition() const {
     Player player = Client::getLocalPlayer();
-    return Vec3D (player.getLocationX(),
+    return Position* (player.getLocationX(),
                   player.getLocationY(),
                   player.getPlane().getByte());
 }
 
-Navigation* Navigator::findPath(Vec3D destination) {
+Navigation* Navigator::findPath(Position* destination) {
     return findPath(currentPosition(), destination);
 }
 
-Navigation* Navigator::findPath(Vec3D origin, Vec3D destination) {
+Navigation* Navigator::findPath(Position* origin, Position* destination) {
     Q_UNUSED(origin); // TODO implement path-finding algorithm
-    return new Navigation(QList<Vec3D>() << destination);
+    return new Navigation(QList<Position*>() << destination);
 }
 
-void Navigator::move(Vec3D target) {
+void Navigator::move(Position* target) {
     // TODO implement move operation
     //      1. Translate target position to 2D based on camera coordinates
     //      2. Click the translated (2D) position
     Q_UNUSED(target)
 }
 
-void Navigator::navigate(Vec3D destination) {
+void Navigator::navigate(Position* destination) {
     navigate(findPath(destination));
 }
 

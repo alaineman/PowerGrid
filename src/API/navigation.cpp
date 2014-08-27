@@ -1,6 +1,8 @@
 #include "navigation.h"
 
-Navigation::Navigation(QList<Vec3D> path) :
+using component::Position;
+
+Navigation::Navigation(QList<Position*> path) :
     _path(path), _current(-1), _length(-1) {
 }
 
@@ -8,10 +10,10 @@ long Navigation::computeLength() const {
     if (_path.length() <= 1) {
         return 0;
     }
-    Vec3D p (_path.at(0));
+    Position* p (_path.at(0));
     long length (0);
     for (int i=1;i<_path.length();i++) {
-        Vec3D next (_path.at(i));
+        Position* next (_path.at(i));
         length += p.dist(next);
         p = next;
     }
@@ -29,17 +31,17 @@ bool Navigation::hasNext() const {
     return _current+1 < _path.length();
 }
 
-Vec3D Navigation::next() {
+Position* Navigation::next() {
     Q_ASSERT_X(hasNext(), "Navigation::next()", "No next element");
     _current++;
-    Vec3D next (_path.at(_current));
+    Position next (_path.at(_current));
     emit progress(next);
     return next;
 }
 
-Vec3D Navigation::current() const {
+Position* Navigation::current() const {
     if (_current < 0) {
-        return Vec3D();
+        return NULL;
     } else {
         return _path.at(_current);
     }

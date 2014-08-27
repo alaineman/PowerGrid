@@ -2,11 +2,12 @@
 #define NAVIGATOR_H
 
 #include <QObject>
-#include "entity/world.h"
 
-#include "vec3d.h"
+#include "entity/world.h"
+#include "component/position.h"
 
 using entity::World;
+using component::Position;
 
 class Navigation;
 
@@ -35,7 +36,7 @@ public:
      * @brief Returns the current position of the player.
      * @return the current position of the player
      */
-    Vec3D currentPosition() const;
+    Position* currentPosition() const;
 
     /**
      * @brief Returns the current Navigation path
@@ -61,7 +62,7 @@ public:
      * @param destination - the destination of the Navigation path
      * @return the computed path
      */
-    Navigation* findPath(Vec3D destination);
+    Navigation* findPath(Position* destination);
 
     /**
      * @brief Computes and returns a path to the destination
@@ -76,7 +77,7 @@ public:
      * @param destination - the destination of the Navigation path
      * @return the computed path
      */
-    Navigation* findPath(Vec3D origin, Vec3D destination);
+    Navigation* findPath(Position* origin, Position* destination);
 
 signals:
     /**
@@ -92,7 +93,7 @@ signals:
      *
      * @param position - the position that was reached
      */
-    void reached(Vec3D position);
+    void reached(Position* position);
 
 public slots:
     /**
@@ -101,11 +102,11 @@ public slots:
      * If the target is too far away, this method makes no attempt to
      * compute intermediate targets, causing in undefined behavior.
      * As such, for arbitrary targets, please use the
-     * @c navigate(Vec3D) function instead.
+     * @c navigate(Position*) function instead.
      *
      * @param target - the target to move towards
      */
-    void move(Vec3D target);
+    void move(Position* target);
 
     /**
      * @brief Navigates to the specified destination
@@ -115,7 +116,7 @@ public slots:
      *
      * @param destination - the destination to navigate towards
      */
-    void navigate(Vec3D destination);
+    void navigate(Position* destination);
 
     /**
      * @brief Navigates along the given path

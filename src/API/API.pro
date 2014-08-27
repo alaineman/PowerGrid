@@ -37,12 +37,10 @@ CONFIG   += staticlib thread c++11
 
 SOURCES  += \
     navigation.cpp \
-    vec3d.cpp \
     navigator.cpp \
     worldgenerator.cpp
 HEADERS  += \
     navigation.h \
-    vec3d.h \
     navigator.h \
     worldgenerator.h
 

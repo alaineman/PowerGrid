@@ -22,12 +22,17 @@
 #include "rs/landscapeinfo.h"
 #include "rs/landscapedetails.h"
 #include "rs/boundaryobject.h"
+#include "rs/floorobject.h"
+#include "rs/wallobject.h"
+#include "rs/groundobject.h"
 
 #include "jace/JNIException.h"
 #include "jace/MappingUnavailableException.h"
 #include "jace/RSClassMapper.h"
 #include "jace/RSClass.h"
 #include "jace/javacast.h"
+
+#include "entity/mapper.h"
 
 #include "component/id.h"
 #include "component/position.h"
@@ -36,6 +41,9 @@ using entity::World;
 using jace::RSClassMapper;
 using jace::RSClass;
 using jace::JArray;
+
+using component::ID;
+using component::Position;
 
 WorldGenerator::WorldGenerator(World *world)
     : QObject(world), _world(world) {
@@ -103,9 +111,78 @@ Entity* WorldGenerator::createEntity(RS::Boundary object) {
     try {
         RS::BoundaryObject b = jace::java_cast<RS::BoundaryObject>(object);
 
+        Position* pos = new Position(
+                    b.getLocationX(),
+                    b.getLocationY(),
+                    (int)b.getPlane().getByte());
+
+        Mapper posMapper = _world->getMapper<Position>();
+        Entity* original = posMapper->getEntity(pos); // TODO change to get all Entities at pos.
+        if (original->get<ID>()->getID() == b.getID()) {
+            return NULL;
+        }
+
         Entity* e = _world->createEntity();
-        e->addComponent(new component::ID(b.getID()));
-        e->addComponent(new component::Position(b.getLocationX(), b.getLocationY(), (int)b.getPlane().getByte()));
+        e->addComponent(new ID(b.getID()));
+        e->addComponent(pos);
+
+        return e;
+    } catch (jace::JNIException& ex) {
+        Q_UNUSED(ex);
+        return NULL;
+    }
+}
+
+Entity* WorldGenerator::createEntity(RS::WallDecoration object) {
+    if (object.isNull()) {
+        return NULL;
+    }
+    try {
+        RS::WallObject b = jace::java_cast<RS::WallObject>(object);
+
+        Position* pos = new Position(
+                    b.getLocationX(),
+                    b.getLocationY(),
+                    (int)b.getPlane().getByte());
+
+        Mapper posMapper = _world->getMapper<Position>();
+        Entity* original = posMapper->getEntity(pos); // TODO change to get all Entities at pos.
+        if (original->get<ID>()->getID() == b.getID()) {
+            return NULL;
+        }
+
+        Entity* e = _world->createEntity();
+        e->addComponent(new ID(b.getID()));
+        e->addComponent(pos);
+
+        return e;
+    } catch (jace::JNIException& ex) {
+        Q_UNUSED(ex);
+        return NULL;
+    }
+}
+
+Entity* WorldGenerator::createEntity(RS::FloorDecoration object) {
+    if (object.isNull()) {
+        return NULL;
+    }
+    try {
+        RS::FloorObject b = jace::java_cast<RS::FloorObject>(object);
+
+        Position* pos = new Position(
+                    b.getLocationX(),
+                    b.getLocationY(),
+                    (int)b.getPlane().getByte());
+
+        Mapper posMapper = _world->getMapper<Position>();
+        Entity* original = posMapper->getEntity(pos); // TODO change to get all Entities at pos.
+        if (original->get<ID>()->getID() == b.getID()) {
+            return NULL;
+        }
+
+        Entity* e = _world->createEntity();
+        e->addComponent(new ID(b.getID()));
+        e->addComponent(pos);
 
         return e;
     } catch (jace::JNIException& ex) {
@@ -133,12 +210,13 @@ QList<Entity*> WorldGenerator::createEntities(RS::Tile tile) {
     return list;
 }
 
-QList<Entity*> WorldGenerator::createEntities() {
+void WorldGenerator::createEntities() {
     QList<RS::Tile> data = getFlattenedRegionData();
-    QList<Entity*> list;
-    list.reserve(data.size() * 4); // Average 4 objects for each
     foreach(RS::Tile tile, data) {
-        list.append(createEntities(tile));
+        createEntities(tile);
     }
-    return list;
+}
+
+void WorldGenerator::processTick() {
+    createEntities();
 }

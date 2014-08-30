@@ -80,14 +80,23 @@ public:
     QList<RS::Tile> getFlattenedRegionData() throw(jace::JNIException);
 
     /**
-     * @brief Creates an Entity from the given data.
+     * @brief Creates an Entity from the given Boundary.
      * @param object - the object to create an Entity from
      * @return the created Entity
      */
     Entity* createEntity(RS::Boundary object);
+    /**
+     * @brief Creates an Entity from the given WallDecoration.
+     * @param object - the object to create an Entity from
+     * @return the created Entity
+     */
     Entity* createEntity(RS::WallDecoration object);
+    /**
+     * @brief Creates an Entity from the given FloorDecoration.
+     * @param object - the object to create an Entity from
+     * @return the created Entity
+     */
     Entity* createEntity(RS::FloorDecoration object);
-    Entity* createEntity(RS::GroundEntity object);
 
     /**
      * @brief Creates Entities for all objects on the provided Tile
@@ -101,10 +110,8 @@ public:
      *
      * This is a potentially time-consuming operation, as it tries to
      * create Entity objects for all accessible entities.
-     *
-     * @return a QList of the created Entities
      */
-    QList<Entity*> createEntities();
+    void createEntities();
 
 public slots:
     /**

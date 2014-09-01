@@ -24,8 +24,6 @@
 
 namespace plugins {
 
-  class Task;
-
   /**
    * @brief Describes a Task type
    * TaskDescriptors serve to describe task types.
@@ -89,16 +87,6 @@ namespace plugins {
        * @return the description of the Task type
        */
       QString description() const { return desc; }
-
-      /**
-       * @brief Creates a new Task instance.
-       *
-       * The caller is responsible for proper
-       * deletion of the returned Task*.
-       *
-       * @return a pointer to a Task instance
-       */
-      virtual Task* createTask();
   };
 }
 #endif // TASKDESCRIPTOR_H

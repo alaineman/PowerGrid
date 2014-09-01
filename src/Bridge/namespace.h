@@ -23,14 +23,6 @@
  */
 
 /**
- * \namespace api
- * \brief contains all API classes
- *
- * This namespace contains all classes that provide access to the Runescape data. It is divided into
- * various namespaces that contain different representations of the Runescape client data.
- */
-
-/**
  * \namespace rs
  * \brief contains the standard RS classes
  *
@@ -41,7 +33,7 @@
  */
 
 /**
- * \namespace api::component
+ * \namespace component
  * \brief contains the Components for the Entity framework
  *
  * This namespace contains all Component types for Entities. These types act as properties for the

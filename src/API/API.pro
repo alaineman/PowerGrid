@@ -46,7 +46,7 @@ HEADERS  += \
     worldgenerator.h \
     player.h
 
-# dependency for Bridge subproject
+# dependency for the Bridge subproject
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Bridge/release/ -lBridge
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Bridge/debug/ -lBridge
 else:unix: LIBS += -L$$OUT_PWD/../Bridge/ -lBridge
@@ -59,3 +59,18 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Brid
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Bridge/release/Bridge.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Bridge/debug/Bridge.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Bridge/libBridge.a
+
+
+# dependency for the EntityFramework subproject
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../EntityFramework/release/ -lEntityFramework
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../EntityFramework/debug/ -lEntityFramework
+else:unix: LIBS += -L$$OUT_PWD/../EntityFramework/ -lEntityFramework
+
+INCLUDEPATH += $$PWD/../EntityFramework
+DEPENDPATH += $$PWD/../EntityFramework
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../EntityFramework/release/libEntityFramework.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../EntityFramework/debug/libEntityFramework.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../EntityFramework/release/EntityFramework.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../EntityFramework/debug/EntityFramework.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../EntityFramework/libEntityFramework.a

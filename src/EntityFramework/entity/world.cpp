@@ -36,7 +36,7 @@ int World::count() {
 void World::addMatcher(Matcher *m) {
     if (m) {
         foreach(QString s, m->matchedTypes()) {
-            auto it = matchers.find(s);
+            QHash<QString, QList<Matcher*>>::Iterator it = matchers.find(s);
             if (it == matchers.end()) {
                 matchers.insert(s, QList<Matcher*>() << m);
             } else {
@@ -49,7 +49,7 @@ void World::addMatcher(Matcher *m) {
 void World::removeMatcher(Matcher *m) {
     if (m) {
         foreach(QString s, m->matchedTypes()) {
-            auto it = matchers.find(s);
+            QHash<QString, QList<Matcher*>>::Iterator it = matchers.find(s);
             if (it != matchers.end()) {
                 (*it).removeOne(m);
             }

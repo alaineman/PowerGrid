@@ -26,7 +26,7 @@ String::String() : Object() {
 }
 
 String::String(const String &obj) : Object(obj),
-    localString(obj.localString) {
+    JObject(NoOp()), localString(obj.localString) {
 }
 
 const jace::JClass* String::staticGetJavaJniClass() throw (jace::JNIException) {

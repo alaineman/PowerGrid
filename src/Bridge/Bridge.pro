@@ -226,33 +226,14 @@ HEADERS += \
     java/awt/component.h \
     java/awt/event/keyevent.h \
     namespace.h \
-    entity/component.h \
-    entity/entity.h \
-    entity/world.h \
-    component/position.h \
-    component/size.h \
-    component/id.h \
-    component/name.h \
-    component/speed.h \
-    component/interaction.h \
-    component/action.h \
-    entity/matcher.h \
-    component/transportation.h \
-    entity/mapper.h \
     net/pgrid/loader/pgloader.h \
     jace/macvmloader.h \
     rs/toolkitdirectx.h \
     rs/mouselistener.h \
-    entity/classifier.h \
     rs/keylistener.h \
     rs/keydata.h \
     rs/mousedata.h \
-    rs/abstractmouselistener.h \
-    entity/task.h \
-    entity/taskmanager.h \
-    entity/taskcontext.h \
-    entity/tasknotifier.h \
-    entity/taskfactory.h
+    rs/abstractmouselistener.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -391,34 +372,15 @@ SOURCES += \
     rs/grounditem.cpp \
     java/awt/event/mouseevent.cpp \
     java/awt/event/keyevent.cpp \
-    entity/component.cpp \
-    entity/entity.cpp \
-    entity/world.cpp \
-    component/position.cpp \
-    component/size.cpp \
     java/awt/java_awt_component.cpp \
-    component/id.cpp \
-    component/name.cpp \
-    component/speed.cpp \
-    component/interaction.cpp \
-    component/action.cpp \
-    entity/matcher.cpp \
-    component/transportation.cpp \
-    entity/mapper.cpp \
     net/pgrid/loader/pgloader.cpp \
     jace/macvmloader.cpp \
     rs/toolkitdirectx.cpp \
-    entity/classifier.cpp \
     rs/keylistener.cpp \
     rs/keydata.cpp \
     rs/mousedata.cpp \
     rs/mouselistener.cpp \
-    rs/abstractmouselistener.cpp \
-    entity/task.cpp \
-    entity/taskmanager.cpp \
-    entity/taskcontext.cpp \
-    entity/tasknotifier.cpp \
-    entity/taskfactory.cpp
+    rs/abstractmouselistener.cpp
 
 HEADERS    += \
     jni.h \

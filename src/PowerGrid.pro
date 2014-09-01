@@ -37,7 +37,8 @@ SUBDIRS += \
     PluginFramework \
     TestPlugin \
     UnitTests \
-    API
+    API \
+    EntityFramework
 
 API.depends             = Bridge
 UserInterface.depends   = Bridge

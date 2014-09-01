@@ -116,7 +116,7 @@ Entity* WorldGenerator::createEntity(RS::Boundary object) {
                     b.getLocationY(),
                     (int)b.getPlane().getByte());
 
-        Mapper posMapper = _world->getMapper<Position>();
+        Mapper* posMapper = _world->getMapper<Position>();
         Entity* original = posMapper->getEntity(pos); // TODO change to get all Entities at pos.
         if (original->get<ID>()->getID() == b.getID()) {
             return NULL;
@@ -145,7 +145,7 @@ Entity* WorldGenerator::createEntity(RS::WallDecoration object) {
                     b.getLocationY(),
                     (int)b.getPlane().getByte());
 
-        Mapper posMapper = _world->getMapper<Position>();
+        Mapper* posMapper = _world->getMapper<Position>();
         Entity* original = posMapper->getEntity(pos); // TODO change to get all Entities at pos.
         if (original->get<ID>()->getID() == b.getID()) {
             return NULL;
@@ -174,7 +174,7 @@ Entity* WorldGenerator::createEntity(RS::FloorDecoration object) {
                     b.getLocationY(),
                     (int)b.getPlane().getByte());
 
-        Mapper posMapper = _world->getMapper<Position>();
+        Mapper* posMapper = _world->getMapper<Position>();
         Entity* original = posMapper->getEntity(pos); // TODO change to get all Entities at pos.
         if (original->get<ID>()->getID() == b.getID()) {
             return NULL;
@@ -195,7 +195,6 @@ QList<Entity*> WorldGenerator::createEntities(RS::Tile tile) {
     Entity *boundary1 = createEntity(tile.getBoundary1()),
            *boundary2 = createEntity(tile.getBoundary2()),
            *floor     = createEntity(tile.getFloorDecoration()),
-           *ground    = createEntity(tile.getGroundEntity()),
            *wall1     = createEntity(tile.getWallDecoration1()),
            *wall2     = createEntity(tile.getWallDecoration2());
 
@@ -203,7 +202,6 @@ QList<Entity*> WorldGenerator::createEntities(RS::Tile tile) {
     if (boundary1)  list.append(boundary1);
     if (boundary2)  list.append(boundary2);
     if (floor)      list.append(floor);
-    if (ground)     list.append(ground);
     if (wall1)      list.append(wall1);
     if (wall2)      list.append(wall2);
 

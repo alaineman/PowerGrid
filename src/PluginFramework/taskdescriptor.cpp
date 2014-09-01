@@ -1,5 +1,4 @@
 #include "taskdescriptor.h"
-#include "task.h"
 
 #include <limits>
 
@@ -11,7 +10,4 @@ namespace plugins {
       return std::numeric_limits<quint64>::max();
   }
 
-  Task* TaskDescriptor::createTask() {
-    return new Task(nm, desc, this);
-  }
 }

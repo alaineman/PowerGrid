@@ -40,7 +40,6 @@ class Task : public QObject {
 private:
     QString      _name;
     TaskContext* _context;
-    Task*        _parent;
 public:
     /**
      * @brief Creates a new Task with the given name and parent.
@@ -70,13 +69,14 @@ public:
      * @brief  Returns the parent of this Task
      * @return the parent of this Task, or NULL if this Task has no parent.
      */
-    Task* parentTask() const { return _parent; }
+    Task* parentTask() const { return qobject_cast<Task*>(parent()); }
 
     /**
      * @brief Runs this Task once.
      *
      * This pure-virtual member function should be implemented in Task subclasses.
-     * To run this Task properly, please
+     * To run this Task properly, please call @c execute(TaskContext*) instead of
+     * this function.
      *
      * The return value indicates whether the Task should loop or not. A return
      * value of true indicates the Task is finished, while a return value of
@@ -85,6 +85,21 @@ public:
      * @return True if the Task is done, false if the Task should be repeated.
      */
     virtual bool run() = 0;
+
+signals:
+    /**
+     * @brief Signal emitted when the execution of this Task is started.
+     */
+    void executionStarted();
+    /**
+     * @brief Signal emitted when the execution of this Task is finished.
+     *
+     * If the run() function of this Task throws, this signal will not be
+     * emitted. It will only be emitted when the Task completes cleanly,
+     * or when the Task execution Thread is interrupted.
+     */
+    void executionFinished();
+public slots:
 
     /**
      * @brief Executes this Task properly

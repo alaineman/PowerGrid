@@ -84,11 +84,11 @@ public slots:
     /**
      * @brief Configures this Task and instantiates it.
      *
-     * This member function can set up a UI, and then return
-     * immediately.
+     * This member function can set up a UI, but should return
+     * as soon as possible.
      *
      * The result is communicated asynchronously using signals/slots.
-     * See the documentation for the preparationXXX signals for
+     * See the documentation for the signals of this class for
      * possible results.
      */
     virtual void prepareTask() = 0;
@@ -107,7 +107,7 @@ public slots:
  * @return the computed hash
  */
 uint qHash(entity::TaskFactory* factory, uint seed = 0) {
-    return 23 ^ qHash(factory->taskName(), seed);
+    return factory ? qHash(factory->taskName(), seed) : 0;
 }
 
 #endif // ENTITY_TASKFACTORY_H

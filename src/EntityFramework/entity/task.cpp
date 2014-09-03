@@ -4,7 +4,7 @@
 namespace entity {
 
 Task::Task(QString name, Task *parent) :
-    QObject(parent), _name(name), _parent(parent) {
+    QObject(parent), _name(name) {
 
 }
 
@@ -14,9 +14,11 @@ void Task::execute(TaskContext *context) {
     }
     _context = context;
     bool done;
+    emit executionStarted();
     do {
         done = run();
     } while (!done && !QThread::currentThread()->isInterruptionRequested());
+    emit executionFinished();
 }
 
 }

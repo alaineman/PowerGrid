@@ -115,7 +115,7 @@ public:
      */
     Mapper* getMapper(QString type);
 
-#if defined(Q_COMPILER_INITIALIZER_LISTS) || defined(PG_DOC)
+#if defined(Q_COMPILER_INITIALIZER_LISTS)
     /**
      * \brief Convenience function to create an Entity with Components in one go.
      *

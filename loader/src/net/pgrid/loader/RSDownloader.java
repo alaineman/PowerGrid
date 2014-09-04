@@ -18,8 +18,6 @@
  */
 package net.pgrid.loader;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -28,8 +26,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -56,6 +57,8 @@ public class RSDownloader {
      * It is used as the default link for the configuration data.
      */
     public static final String CONFIG_LINK = "http://www.runescape.com/k=3/l=0/jav_config.ws";
+    
+    public static final String JAV_CONFIG = "http://www.runescape.com/l=0/jav_config.ws?userFlow=";
     /**
      * URL of the Runescape config file. It is set in the constructor.
      */
@@ -100,7 +103,7 @@ public class RSDownloader {
             // Try to get the config to load.
             if (oldVersion != null) {
                 try {
-                    configURL = new URL(RSVersionManager.JAV_CONFIG + oldVersion.getUserFlowID());
+                    configURL = new URL(JAV_CONFIG + oldVersion.getUserFlowID());
                     LOGGER.log("Re-using old userflow id " + oldVersion.getUserFlowID());
                 } catch (MalformedURLException e) {
                     LOGGER.log("got invalid userFlow link from version manager");
@@ -120,7 +123,7 @@ public class RSDownloader {
             // (or the unlikely event in which the RS servers are down),
             // there is nothing left to do other then report this and terminate.
             if (redirectLink == null) {
-                PGLoader.report("Failed to connect to Runescape server");
+                PowerGrid.report("Failed to connect to Runescape server");
                 throw new IOException("Failed to get config information");
             }
             // fire a new request with the redirect link
@@ -136,8 +139,8 @@ public class RSDownloader {
                     versionInfo = parseConfig(assignedUserFlow, out.next());
                     conn.disconnect();
                 } else {
-                    // If there is not config information, we cannot start the client
-                    PGLoader.report("Failed to get config info from Runescape server");
+                    // If there is no config information, we cannot start the client
+                    PowerGrid.report("Failed to get config info from Runescape server");
                     throw new IOException("Empty response getting config file");
                 }
             }
@@ -149,29 +152,30 @@ public class RSDownloader {
     /**
      * Downloads the client using the previously downloaded config.
      *
+     * @param destination the destination to save the client.
      * @throws IOException if the download failed
      * @throws IllegalStateException when the client data is not available
      */
-    public synchronized void loadClient() throws IOException {
+    public synchronized void loadClient(Path destination) throws IOException {
+        assert destination != null;
+        if (!Files.exists(destination.getParent())) {
+            Files.createDirectories(destination.getParent());
+        }
+        if (!Files.exists(destination)) {
+            Files.createFile(destination);
+        }
         URL url = new URL(versionInfo.getClientParameter("codebase") + 
                           versionInfo.getClientParameter("initial_jar"));
         URLConnection conn = url.openConnection();
 
         // Using stream copy with Java NIO Channels. This is at least as fast
-        // as manual copy using a byte array as buffer.
-        File cacheDirectory = new File("cache");
-        if (!cacheDirectory.isDirectory() && cacheDirectory.mkdir()) {
-            LOGGER.log("Created cache directory");
-        }
-        try (InputStream in = conn.getInputStream();
-                FileOutputStream out = new FileOutputStream(
-                        new File(cacheDirectory, "client.jar"))) {
-
-            ReadableByteChannel reader = Channels.newChannel(in);               
-            FileChannel writer = out.getChannel();
-
+        // as manual copy using a byte array as buffer (but may be optimized
+        // by native code, as data never needs to pass into the JVM).
+        try (ReadableByteChannel reader = 
+                    Channels.newChannel(conn.getInputStream());
+             WritableByteChannel writer = 
+                    Files.newByteChannel(destination,StandardOpenOption.WRITE)) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
-
             while (reader.read(buffer) != -1) {
                 buffer.flip();
                 writer.write(buffer);
@@ -215,7 +219,7 @@ public class RSDownloader {
             } else {
                 int mid = line.indexOf('=');
                 if (mid < 0) {
-                    // invalid line; skip
+                    // invalid or empty line; skip
                     continue;
                 }
                 String key = line.substring(0, mid);

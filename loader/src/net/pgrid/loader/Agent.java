@@ -109,7 +109,7 @@ public class Agent {
                 return c;
             }
         }
-        PGLoader.out.println("AGENT        | Failed to find class: " + name);
+        PowerGrid.out.println("AGENT        | Failed to find class: " + name);
         return null;
     } 
 }

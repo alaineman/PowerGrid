@@ -19,6 +19,7 @@
 package net.pgrid.loader;
 
 import java.applet.Applet;
+import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -28,6 +29,7 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import net.pgrid.loader.bridge.Reflection;
@@ -67,12 +69,12 @@ import net.pgrid.loader.util.NullOutputStream;
  * that writes to a file named {@code runescape.log}. This is done to prevent 
  * any Exception stack traces and other messages printed from within RS to 
  * clutter the real console output and error streams. The real versions are 
- * kept in this class, making them available as {@code PGLoader.out} and 
- * {@code PGLoader.err}, respectively.
+ * kept in this class, making them available as {@code PowerGrid.out} and 
+ * {@code PowerGrid.err}, respectively.
  * 
  * @author Patrick Kramer
  */
-public class PGLoader {
+public class PowerGrid {
     /** The Logger instance of this class. */
     private static final Logger LOGGER;
     
@@ -85,44 +87,10 @@ public class PGLoader {
      */
     public static final PrintStream err;
     
-    // This piece of code replaces the standard System.out and System.err with
-    // different ones, to split the Runescape log information from PowerGrid 
-    // log information. This prevents stacktrace contents of obfuscated 
-    // classes from showing up in the console. It saves a lot of searching during
-    // debugging, as obfuscated stack traces are of little use to anyone.
-    static {
-        out = System.out;
-        err = System.err;
-        
-        boolean success = AccessController.doPrivileged(new OutputInterceptor());
-        
-        // Set our Loggers to use the original out PrintStream
-        if (success) {
-            Logger.setDefaultTarget(out);
-        }
-        LOGGER = Logger.get("CORE");
-        INSTANCE = new PGLoader();
-    }
-    
     /**
-     * The global PGLoader instance.
+     * The global PowerGrid instance.
      */
-    public static final PGLoader INSTANCE;
-    
-    /**
-     * Returns the RS Applet, if it's available.
-     * 
-     * Returns null otherwise.
-     * 
-     * @return the Applet instance, or null if the Applet is not loaded.
-     */
-    public static Applet getRSApplet() {
-        if (INSTANCE != null) {
-            return INSTANCE.getFrame().getApplet();
-        } else {
-            return null;
-        }
-    }
+    public static final PowerGrid INSTANCE;
     
     /**
      * Convenience method for displaying a message to the user prior to starting
@@ -185,11 +153,12 @@ public class PGLoader {
      * The AppletFrame instance containing the Runescape Applet.
      */
     private final AppletFrame frame;
+    private RSClassProvider classProvider = null;
     
     /**
      * Creates a new PGLoader instance.
      */
-    public PGLoader() {
+    public PowerGrid() {
         frame = new AppletFrame();
     }
     
@@ -198,6 +167,10 @@ public class PGLoader {
      */
     public AppletFrame getFrame() {
         return frame;
+    }
+
+    public RSClassProvider getClassProvider() {
+        return classProvider;
     }
     
     /**
@@ -216,48 +189,56 @@ public class PGLoader {
             startTime = 0;
         }
         
-        getFrame().init();
-        getFrame().showMessage("Loading config...");
+        showFrame();
         
-        RSVersionManager versionManager = new RSVersionManager();
-        RSVersionInfo currentVersion = (force ? null : versionManager.getCurrentVersion());
+        getFrame().showMessage("Loading config...");
+        RSVersionInfo newVersion = loadClient();
+        
+        UpdaterRunner updaterRunner = new UpdaterRunner(newVersion.isLocal(), false);
+        new Thread(updaterRunner, "PG_updater").start();
+        
+        getFrame().showMessage("Starting Applet...");
+        initApplet(newVersion);
+        initClassProvider();
+        
+        if (debugMode) {
+            long timePassed = System.currentTimeMillis() - startTime;
+            LOGGER.log("Total startup time: " + (timePassed/1000d) + 's');
+        }
+    }
+    
+    public RSVersionInfo loadClient() throws IOException {
+        RSVersionInfo currentVersion = 
+                RSVersionInfo.fromPath(Paths.get("cache/keys.dat"));
         
         RSDownloader downloader = new RSDownloader();
         RSVersionInfo newVersion = downloader.loadConfig(currentVersion);
         
-        boolean canUseLocal = !force && currentVersion != null && newVersion != null && 
-                versionManager.checkVersions(currentVersion, newVersion);
-        
-        UpdaterRunner updaterRunner = new UpdaterRunner(canUseLocal, debugMode);
+        boolean canUseLocal = currentVersion != null && 
+                currentVersion.equals(newVersion);
         
         if (canUseLocal) {
             // re-use the existing client
             LOGGER.log("Client version not changed; skipping client re-downloading");
         } else {
             // download the client
-            if (!force) {
-                LOGGER.log("New client version; downloading client");
-            } else {
-                LOGGER.log("Forcing client redownloading");
-            }
+            LOGGER.log("Downloading client");
             getFrame().showMessage("Downloading client...");
-            downloader.loadClient();
-            
+            downloader.loadClient(Paths.get("cache/client.jar"));
         }
-        new Thread(updaterRunner, "PG_updater").start();
-        
         try {
-            versionManager.writeCurrentVersion(newVersion);
+            newVersion.writeTo(Paths.get("cache/keys.dat"));
         } catch (IOException e) {
             LOGGER.log("Failed to write the current version info", e);
         }
-        
-        getFrame().showMessage("Starting Applet...");
-        
-        ClassLoader rsClassLoader = AccessController.doPrivileged(new PrivilegedClassLoaderAction());
-        
+        return newVersion;
+    }
+    
+    public void initApplet(RSVersionInfo newVersion) {
+        ClassLoader rsClassLoader = AccessController.doPrivileged(GET_CLIENT_LOADER);
         try {
-            Class<? extends Applet> rs2AppletClass = rsClassLoader.loadClass("Rs2Applet").asSubclass(Applet.class);
+            Class<? extends Applet> rs2AppletClass = 
+                    rsClassLoader.loadClass("Rs2Applet").asSubclass(Applet.class);
             Applet a = rs2AppletClass.getConstructor().newInstance();
             
             if (!getFrame().startApplet(newVersion, a)) {
@@ -270,49 +251,31 @@ public class PGLoader {
             getFrame().showMessage("Error in loader");
             LOGGER.log("Failed to create RS Applet", e);
         }
-        
-        if (debugMode) {
-            long timePassed = System.currentTimeMillis() - startTime;
-            LOGGER.log("Total startup time: " + (timePassed/1000d) + 's');
-        }
-        
+    }
+    
+    public void showFrame() {
+        EventQueue.invokeLater(() -> getFrame().initComponents());
+    }
+    
+    /**
+     * Waits for the client class to be loaded and then initializes the 
+     * RSClassProvider instance.
+     */
+    public void initClassProvider() {
+        assert classProvider == null : "initClassProvider() invoked twice";
         // This class is always named the same, so we can easily access that 
         // Class through our Agent.
         try {
-            Class<?> clientClass = null;
-            while (clientClass == null) {
+            Class<?> clientClass;
+            do {
                 clientClass = Agent.findClass("client");
-            }
-            ClassLoader clientClassLoader = clientClass.getClassLoader();
-            RSClassLoader.INSTANCE.provideClassLoader(clientClassLoader);
+            } while (clientClass == null);
+            classProvider = new RSClassProvider(clientClass.getClassLoader());
         } catch (IllegalStateException e) {
             LOGGER.log("Could not find ClassLoader, RS classes may not be available", e);
         }
     }
-    
-    /**
-     * Custom UncaughtExceptionHandler.
-     * 
-     * This class checks if the Exception was caused on a PG Thread or some 
-     * other Thread. In the last case, no stack trace is printed to prevent
-     * long obfuscated (and as such useless) Runescape stack traces.
-     */
-    public static class PGExceptionHandler 
-            implements Thread.UncaughtExceptionHandler {
-        private static final Logger LOGGER = Logger.get("UNCAUGHT");
-        @Override
-        public void uncaughtException(Thread thread, Throwable t) {
-            LOGGER.log("Exception on Thread \"" + thread.getName() + "\":", t);
-            if (!thread.getName().startsWith("PG_")) {
-                // do not print stack traces of (obfuscated) RS classes,
-                // but use the System.out PrintStream to send it to the 
-                // runescape.log file.
-                System.out.append("Uncaught Exception in Runescape or on AWT Thread \"").append(thread.getName()).println("\":");
-                System.out.append("  ").append(t.getClass().getSimpleName()).append(": ").println(t.getMessage());
-            }
-        }
-    }
-    
+     
     /**
      * PriviledgedAction class that replaces the default System.out and System.err
      * with a PrintStream that prints to a File. 
@@ -320,50 +283,73 @@ public class PGLoader {
      * This prevents Runescape classes from printing their stack traces to the 
      * console, keeping the console output clean.
      */
-    private static class OutputInterceptor implements PrivilegedAction<Boolean> {
-        @Override
-        public Boolean run() {
-            try {
-                Field outField = System.class.getDeclaredField("out");
-                Field errField = System.class.getDeclaredField("err");
-                
-                File destination = new File("runescape.log");
-                PrintStream replacement;
-                if (destination.isFile() || destination.createNewFile()) {
-                    replacement = new PrintStream(destination, "UTF-8");
-                } else {
-                    replacement = new PrintStream(new NullOutputStream(), false, "UTF-8");
-                }
-                Field modifiersField = Field.class.getDeclaredField("modifiers");
-                modifiersField.setAccessible(true);
-                
-                outField.setAccessible(true);
-                errField.setAccessible(true);
-                
-                // required to change a both static AND final Field: remove the final modifier from the Field
-                modifiersField.setInt(outField, outField.getModifiers() & ~Modifier.FINAL);
-                modifiersField.setInt(errField, errField.getModifiers() & ~Modifier.FINAL);
-                
-                outField.set(null, replacement);
-                errField.set(null, replacement);
-                
-                return true;
-            } catch (NoSuchFieldException | IOException | IllegalAccessException e) {
-                System.err.println("Failed to intercept System.out / err: " + 
-                        e.getClass().getSimpleName() + ": " + e.getMessage());
-                return false;
+    public static final Privileged<Boolean> INTERCEPT_OUTPUT = () -> {
+        try {
+            Field outField = System.class.getDeclaredField("out");
+            Field errField = System.class.getDeclaredField("err");
+
+            File destination = new File("runescape.log");
+            PrintStream replacement;
+            if (destination.isFile() || destination.createNewFile()) {
+                replacement = new PrintStream(destination, "UTF-8");
+            } else {
+                replacement = new PrintStream(new NullOutputStream(), false, "UTF-8");
             }
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+
+            outField.setAccessible(true);
+            errField.setAccessible(true);
+
+            // required to change a both static AND final Field: remove the final modifier from the Field
+            modifiersField.setInt(outField, outField.getModifiers() & ~Modifier.FINAL);
+            modifiersField.setInt(errField, errField.getModifiers() & ~Modifier.FINAL);
+
+            outField.set(null, replacement);
+            errField.set(null, replacement);
+
+            return true;
+        } catch (NoSuchFieldException | IOException | IllegalAccessException e) {
+            System.err.println("Failed to intercept System.out / err: " + 
+                    e.getClass().getSimpleName() + ": " + e.getMessage());
+            return false;
         }
+    };
+    
+    public static final Privileged<ClassLoader> GET_CLIENT_LOADER = () -> {
+        try {
+            return new URLClassLoader(new URL[]{new URL("jar:file:cache/client.jar!/")});
+        } catch (MalformedURLException ex) {
+            throw new AssertionError("Local Client URL invalid: " + ex.getMessage());
+        }
+    };
+    
+    // This piece of code replaces the standard System.out and System.err with
+    // different ones, to split the Runescape log information from PowerGrid 
+    // log information. This prevents stacktrace contents of obfuscated 
+    // classes from showing up in the console. It saves a lot of searching during
+    // debugging, as obfuscated stack traces are of little use to anyone.
+    static {
+        out = System.out;
+        err = System.err;
+        
+        boolean success = AccessController.doPrivileged(INTERCEPT_OUTPUT);
+        
+        // Set our Loggers to use the original out PrintStream
+        if (success) {
+            Logger.setDefaultTarget(out);
+        }
+        LOGGER = Logger.get("CORE");
+        INSTANCE = new PowerGrid();
     }
     
-    private static class PrivilegedClassLoaderAction implements PrivilegedAction<ClassLoader> {
-        @Override
-        public ClassLoader run() {
-            try {
-                return new URLClassLoader(new URL[]{new URL("jar:file:cache/client.jar!/")});
-            } catch (MalformedURLException e) {
-                return null;
-            }
-        }
-    }
+    /**
+     * Functional Interface wrapper for PrivilegedAction, allowing 
+     * PrivilegedActions to be defined as lambdas.
+     * 
+     * @param <T> the return type of this PrivilegedAction
+     */
+    @FunctionalInterface
+    @SuppressWarnings("MarkerInterface")
+    public static interface Privileged<T> extends PrivilegedAction<T> {}
 }

@@ -24,30 +24,21 @@ package net.pgrid.loader;
  * 
  * @author Patrick Kramer
  */
-public class RSClassLoader {
-    /**
-     * The global RSClassLoader instance.
-     */
-    public static final RSClassLoader INSTANCE = new RSClassLoader();
+public class RSClassProvider {
     
     private ClassLoader classLoader = null;
     
-    /**
-     * Private constructor prevents external instantiation of this singleton.
-     */
-    private RSClassLoader() {
+    public RSClassProvider(ClassLoader loader) {
+        assert loader != null;
+        this.classLoader = loader;
     }
-    
+
     /**
-     * Sets the ClassLoader to use for this RSClassLoader.
-     * @param loader the ClassLoader of the RS Classes.
+     * Returns the ClassLoader this RSClassProvider loads from
+     * @return the ClassLoader
      */
-    public synchronized void provideClassLoader(ClassLoader loader) {
-        if (classLoader == null) {
-            classLoader = loader;
-        } else {
-            throw new IllegalStateException("ClassLoader already set");
-        }
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
     
     /**

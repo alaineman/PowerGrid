@@ -19,7 +19,6 @@
 package net.pgrid.loader.bridge;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -28,7 +27,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
-import net.pgrid.loader.GamepackIdentifier;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.jar.JarInputStream;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -49,22 +51,10 @@ public class Updater {
     
     private static final Logger LOGGER = Logger.get("UPDATER");
     
-    private final String server;
-    private final GamepackIdentifier identifier;
-    private final File target;
+    public static final String URL_TEMPLATE = 
+            "http://pgrid.com/marneus/newupdater/reflection_cache_{hash}.xml";
     
-    /**
-     * Creates a new Updater instance that connects to the provided server.
-     * @param updaterServer the updater server
-     */
-    public Updater(String updaterServer) {
-        if (updaterServer == null || updaterServer.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        server = updaterServer;
-        target = new File("cache/client.jar");
-        identifier = new GamepackIdentifier(target);
-    }
+    public static final String CLIENT_PATH = "cache/client.jar";
     
     /**
      * Connects to the server of this Updater and tries to load the data 
@@ -74,8 +64,7 @@ public class Updater {
      * @throws IOException when an I/O error occurred
      */
     public byte[] getData() throws IOException {
-        String template = server + "reflection_cache_{hash}.xml";
-        URL u = identifier.createUrl(template);
+        URL u = createURL(Paths.get(CLIENT_PATH));
         
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         WritableByteChannel out = Channels.newChannel(bout);
@@ -94,5 +83,21 @@ public class Updater {
         }
         LOGGER.log("Updater data acquired");
         return bout.toByteArray();
+    }
+    
+    /**
+     * Creates a URL based on the client located at the provided Path.
+     * 
+     * @param clientPath the Path to the client file
+     * @return the URL with updater data for the client
+     * @throws IOException when an I/O error occurs reading the client
+     */
+    public URL createURL(Path clientPath) throws IOException {
+        assert clientPath != null;
+        try (JarInputStream in = new JarInputStream(
+                    Files.newInputStream(clientPath))) {
+            return new URL(URL_TEMPLATE.replace("{hash}",
+                    String.valueOf(in.getManifest().hashCode())));
+        }
     }
 }

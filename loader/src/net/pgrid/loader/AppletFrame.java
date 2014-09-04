@@ -51,7 +51,7 @@ public class AppletFrame extends JFrame implements AppletStub {
     /**
      * The JLabel that shows the logging message.
      */
-    protected JLabel label;
+    private JLabel label;
     private Applet applet = null;
     private RSVersionInfo info = null;
 
@@ -60,17 +60,7 @@ public class AppletFrame extends JFrame implements AppletStub {
      */
     public AppletFrame() {
         super("PowerGrid (Runescape client)");
-    }
-    
-    /**
-     * Initializes the AppletFrame.
-     * <p/>
-     * When this method returns the AppletFrame has been correctly set up and
-     * made visible.
-     */
-    public synchronized void init() {
         label = new JLabel();
-        createAndShowFrame();
     }
 
     /**
@@ -79,31 +69,17 @@ public class AppletFrame extends JFrame implements AppletStub {
     public Applet getApplet() {
         return applet;
     }
-    
-    /**
-     * @return the width of the internal Applet, or -1 if the Applet does not exist.
-     */
-    public int getAppletWidth() {
-        return (applet != null ? applet.getWidth() : -1);
-    }
-    
-    /**
-     * @return the height of the internal Applet, or -1 if the Applet does not exist.
-     */
-    public int getAppletHeight() {
-        return (applet != null ? applet.getHeight() : -1);
-    }
 
     /**
      * Sets up the AppletFrame and shows it.
      */
-    private void createAndShowFrame() {
+    public synchronized void initComponents() {
         try {
             setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream("net/pgrid/loader/icon.png")));
         } catch (IOException e) {
             LOGGER.log("Unexpected Exception", e);
             // Since the icon is embedded in the jar file, this should never happen
-            throw new InternalError("Cannot find jar resource");
+            throw new AssertionError("Cannot find jar resource");
         }
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
@@ -164,12 +140,7 @@ public class AppletFrame extends JFrame implements AppletStub {
      */
     public synchronized void showMessage(final String text) {
         if (applet == null) {
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    label.setText(text);
-                }
-            });
+            EventQueue.invokeLater(() -> label.setText(text));
         }
     }
 

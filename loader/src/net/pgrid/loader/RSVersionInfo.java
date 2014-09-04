@@ -18,8 +18,16 @@
  */
 package net.pgrid.loader;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import net.pgrid.loader.logging.Logger;
 
 /**
  * This class represents information that describes the Runescape client and 
@@ -35,29 +43,49 @@ import java.util.Map;
  * @author Patrick Kramer
  */
 public class RSVersionInfo {
+    private static final Logger LOGGER = Logger.get("VERSIONING");
     
     private final String userFlowID;
     
     private final Map<String, String> clientParameters;
     private final Map<String, String> appletParameters;
 
+    private final boolean local;
+    
     /**
-     * Creates a new RSVersionInfo object with the specified information
+     * Creates a new RSVersionInfo object with the specified information.
+     * 
+     * Neither parameter should be null, and the {@code clientParameters} Map
+     * should contain non-null values for the keys "0" and "-1".
+     * 
      * @param userFlowID the userFlow ID assigned to the java config file 
      *                   received from the Runescape servers
      * @param clientParameters a Map with the client parameters
      * @param appletParameters a Map with the Applet parameters
-     * @throws IllegalArgumentException when any of the arguments is {@code null}
+     * @throws IllegalArgumentException when any of the arguments is invalid
      */
-    public RSVersionInfo(String userFlowID, Map<String, String> clientParameters, Map<String, String> appletParameters) {
-        if (userFlowID == null || clientParameters == null || appletParameters == null) {
+    public RSVersionInfo(String userFlowID, Map<String, String> clientParameters, 
+                         Map<String, String> appletParameters) {
+        this(userFlowID, clientParameters, appletParameters, false);
+    }
+    
+    private RSVersionInfo(String userFlowID, Map<String, String> client,
+                          Map<String, String> applet, boolean local) {
+        if (userFlowID == null || client == null 
+         || applet == null || !applet.containsKey("0")
+         || !applet.containsKey("-1")) {
             throw new IllegalArgumentException("Null value");
         }
         this.userFlowID = userFlowID;
-        this.clientParameters = new HashMap<>(clientParameters);
-        this.appletParameters = new HashMap<>(appletParameters);
+        this.clientParameters = new HashMap<>(client);
+        this.appletParameters = new HashMap<>(applet);
+        this.local = local;
     }
 
+    public boolean isLocal() {
+        return local;
+    }
+    
     /**
      * @return the userFlow ID
      */
@@ -98,6 +126,18 @@ public class RSVersionInfo {
     public String getAppletParameter(String key) {
         return appletParameters.get(key);
     }
+    
+    public void writeTo(Path destination) throws IOException {
+        if (!Files.exists(destination.getParent())) {
+            Files.createDirectories(destination);
+        }
+        try (PrintStream out = new PrintStream(
+                Files.newOutputStream(destination), false, "UTF-8")) {
+            out.println(getUserFlowID());
+            out.println(getEncryptionKey0());
+            out.println(getEncryptionKeyM1());
+        }
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -111,11 +151,45 @@ public class RSVersionInfo {
 
     @Override
     public int hashCode() {
-        return 173 + 3 * userFlowID.hashCode();
+        return 173 + 3 * getEncryptionKey0().hashCode()
+                   + 5 * getEncryptionKeyM1().hashCode();
     }
 
     @Override
     public String toString() {
         return "RSVersionInfo(" + userFlowID + ")";
+    }
+    
+    /**
+     * Constructs an RSVersionInfo instance based on the version file at the 
+     * provided Path.
+     * @param origin the Path to read from
+     * @return a RSVersionInfo instance with the information from the origin
+     *         Path, or null if constructing the instance failed (for any reason)
+     */
+    public static RSVersionInfo fromPath(Path origin) {
+        assert origin != null;
+        try {
+            Scanner sc = new Scanner(Files.newByteChannel(origin), "UTF-8");
+            sc.useDelimiter("\r?\n"); // matches both LF and CR/LF line endings
+            String userFlow = sc.next();
+            String oldKey_0 = sc.next();
+            String oldKey_m1 = sc.next();
+            
+            Map<String, String> appletParamStub = new HashMap<>(4);
+            appletParamStub.put("0",  oldKey_0);
+            appletParamStub.put("-1", oldKey_m1);
+            return new RSVersionInfo(userFlow,new HashMap<>(2),appletParamStub,true); 
+        } catch (FileNotFoundException ex) {
+            // no previous keys were found or the KEYS_FILE is invalid
+            LOGGER.log("Could not find old keys at ", ex.getLocalizedMessage());
+            return null;
+        } catch (NoSuchElementException ex) {
+            LOGGER.log("The keys file \"", origin.toString(), "\" is invalid");
+            return null;
+        } catch (IOException iox) {
+            LOGGER.log("I/O error while readin keys file");
+            return null;
+        }
     }
 }

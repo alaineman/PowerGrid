@@ -136,7 +136,7 @@ public class UpdaterRunner implements Runnable {
      *                     or if {@code DESTINATION} is not writable.
      */
     protected byte[] getRemoteData(String server) throws IOException {
-        byte[] data = new Updater(server).getData();
+        byte[] data = new Updater().getData();
         if (!DESTINATION.isFile() && !DESTINATION.createNewFile()) {
             throw new IOException("Could not write to File: " + DESTINATION.getPath());
         }

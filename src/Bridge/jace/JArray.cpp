@@ -144,8 +144,8 @@ JLong JArray<JLong>::operator [](const int &index) const {
 }
 
 #define JArrayCommons(Type) \
-    JArray<Type>::JArray(jvalue val) : JObject(val), length_(-1) {} \
-    JArray<Type>::JArray(jobject obj) : JObject(obj), length_(-1) {} \
+    JArray<Type>::JArray(jvalue val) : JObject(val) {} \
+    JArray<Type>::JArray(jobject obj) : JObject(obj) {} \
     QList<Type> JArray<Type>::toQList() const {\
         QList<Type> list; \
         for (int i=0; i<length(); i++) { \

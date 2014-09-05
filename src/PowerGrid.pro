@@ -40,9 +40,9 @@ SUBDIRS += \
     API \
     EntityFramework
 
-API.depends             = Bridge
-UserInterface.depends   = Bridge
-PluginFramework.depends = Bridge
+API.depends             = Bridge EntityFramework
+UserInterface.depends   = Bridge EntityFramework
+PluginFramework.depends = Bridge EntityFramework
 TestPlugin.depends      = API PluginFramework Bridge
 
 UnitTests.depends       = API Bridge PluginFramework UserInterface

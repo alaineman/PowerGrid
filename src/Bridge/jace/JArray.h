@@ -490,7 +490,6 @@ template <> class JArray<Type> : public jace::proxy::JObject { \
 private: \
     bool operator=(const JArray& array) { Q_UNUSED(array); return false; }\
     bool operator==(const JArray& array) { Q_UNUSED(array); return false; }\
-    mutable int length_;\
 public: \
     explicit JArray(jvalue val); \
     explicit JArray(jobject obj); \

@@ -25,8 +25,9 @@ namespace lang {
 String::String() : Object() {
 }
 
-String::String(const String &obj) : Object(obj),
-    JObject(NoOp()), localString(obj.localString) {
+String::String(const String &obj) :
+    JObject(NoOp()), Object(obj),
+     localString(obj.localString) {
 }
 
 const jace::JClass* String::staticGetJavaJniClass() throw (jace::JNIException) {

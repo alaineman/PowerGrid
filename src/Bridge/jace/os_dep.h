@@ -14,36 +14,24 @@
 #endif
 
 #ifdef JACE_STATIC
-/**
- * JACE is built statically, so no __declspec is required.
- */
-  #define JACE_API
-  #define JACE_PROXY_API
+    /**
+     * JACE is built statically, so no __declspec is required.
+     */
+    #define JACE_API
+    #define JACE_PROXY_API
 #else
-
-  #ifdef Q_OS_WIN32
-	/**
-	 * Macros used for importing and exporting DLL symbols.
-	 *
-	 */
     #ifdef JACE_EXPORTS
-      #define JACE_API __declspec(dllexport)
+        #define JACE_API Q_DECL_EXPORT
     #else
-      #define JACE_API __declspec(dllimport)
+        #define JACE_API Q_DECL_IMPORT
     #endif
-
-	/**
-	 * Macros used for importing and exporting proxy DLL symbols.
-	 *
-	 */
     #ifdef JACE_PROXY_EXPORTS
-      #define JACE_PROXY_API __declspec(dllexport)
+        #define JACE_PROXY_API Q_DECL_EXPORT
     #else
-      #define JACE_PROXY_API __declspec(dllimport)
+        #define JACE_PROXY_API Q_DECL_IMPORT
     #endif
-  #endif
-
 #endif
+
 /**
  * Deal with Visual C++'isms.
  *
@@ -171,9 +159,14 @@
    *
    */
   #define SUPPORTS_SSTREAM
-
   #define NO_IMPLICIT_TYPENAME
 
+  #ifdef Q_OS_UNIX
+    /**
+     * We assume generic Unixes to support pthreads
+     */
+    #define SUPPORTS_PTHREADS
+  #endif
 #else // We assume a generic compiler on a generic Unix box.
 
 #ifdef Q_CC_CLANG

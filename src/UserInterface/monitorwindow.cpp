@@ -3,7 +3,7 @@
 
 #include "jace/RSClassMapper.h"
 #include "jace/RSClass.h"
-#include "jace/jnihelper.h"
+#include "jace/JNIHelper.h"
 #include "jace/JNIException.h"
 
 #include "rs/client.h"

@@ -42,7 +42,7 @@
 #endif
 
 // Native methods that need to be registered
-#include "jace/updaterrunner.h"
+#include "jace/UpdaterRunner.h"
 
 // Our own additional headers
 #include "mainwindow.h"

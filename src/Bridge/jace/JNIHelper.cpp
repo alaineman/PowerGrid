@@ -21,8 +21,8 @@ using std::endl;
 #error Platform does not support pthreads or win32 thread-local storage
 #endif
 
-// Maybe something to think about: Qt ships with a winpthread library.
-// Can't we simplify this class to use pthreads on Windows as well?
+// Maybe something to think about: Qt has platform-independent Threads (QThreads)
+// Can't we simplify this class to use QThreads?
 
 #include <algorithm>
 using std::copy;

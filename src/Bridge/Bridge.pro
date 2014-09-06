@@ -73,7 +73,7 @@ TARGET      = Bridge
 CONFIG     += staticlib thread c++11
 
 # Tell JACE we're exporting symbols, and want to load the JVM dynamically.
-DEFINES += JACE_WANT_DYNAMIC_LOAD JACE_EXPORTS JACE_PROXY_EXPORTS
+DEFINES += JACE_WANT_DYNAMIC_LOAD JACE_STATIC
 
 # In debug mode, have JACE check for null values
 # and out-of-bounds array indices

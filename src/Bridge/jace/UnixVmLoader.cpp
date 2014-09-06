@@ -13,8 +13,7 @@ QString UnixVmLoader::getJVMPath() throw(JNIException) {
     if (path.isEmpty()) {
         QByteArray javaHomeBytes = qgetenv("JAVA_HOME");
         QString javaHome = QString::fromLocal8Bit(javaHomeBytes.constData());
-        QDir dir (javaHome);
-        QDirIterator it (dir, QDir::NoSymLinks | QDir::Files,
+        QDirIterator it (javaHome, QDir::NoSymLinks | QDir::Files,
                          QDirIterator::Subdirectories);
         while (it.hasNext()) {
             QString entry = it.next();

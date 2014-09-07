@@ -39,12 +39,14 @@ SOURCES  += \
     navigation.cpp \
     navigator.cpp \
     worldgenerator.cpp \
-    player.cpp
+    player.cpp \
+    expressionparser.cpp
 HEADERS  += \
     navigation.h \
     navigator.h \
     worldgenerator.h \
-    player.h
+    player.h \
+    expressionparser.h
 
 # dependency for the Bridge subproject
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Bridge/release/ -lBridge

@@ -163,177 +163,40 @@ class SystemProperty : public Option {
   JACE_API virtual std::string stringValue();
   JACE_API virtual void* extraInfo();
   JACE_API virtual Option* clone() const;
-
-
 };
 
 
-  //-------------------------------------------------------------------------
-  // Predefined SystemProperty instances
-  //-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+// Predefined Option instances
+//-------------------------------------------------------------------------
 
-  class Version : public SystemProperty {
-    public: JACE_API Version( const std::string& value ) : SystemProperty( "java.version", value ) {}
-  };
-
-  class Vendor : public SystemProperty {
-    public: JACE_API Vendor( std::string value ) : SystemProperty( "java.vendor", value ) {}
-  };
-
-  class VendorUrl : public SystemProperty {
-    public: JACE_API VendorUrl( const std::string& value ) : SystemProperty( "java.vendor.url", value ) {}
-  };
-
-  class Home : public SystemProperty {
-    public: JACE_API Home( const std::string& value ) : SystemProperty( "java.home", value ) {}
-  };
-
-  class VmSpecificationVersion : public SystemProperty {
-    public: JACE_API VmSpecificationVersion( const std::string& value ) : SystemProperty( "java.vm.specification.version", value ) {}
-  };
-
-  class VmSpecificationVendor : public SystemProperty {
-    public: JACE_API VmSpecificationVendor( const std::string& value ) : SystemProperty( "java.vm.specification.vendor", value ) {}
-  };
-
-  class VmSpecificationName : public SystemProperty {
-    public: JACE_API VmSpecificationName( const std::string& value ) : SystemProperty( "java.vm.specification.name", value ) {}
-  };
-
-  class VmVersion : public SystemProperty {
-    public: JACE_API VmVersion( const std::string& value ) : SystemProperty( "java.vm.version", value ) {}
-  };
-
-  class VmVendor : public SystemProperty {
-    public: JACE_API VmVendor( const std::string& value ) : SystemProperty( "java.vm.vendor", value ) {}
-  };
-
-  class VmName : public SystemProperty {
-    public: JACE_API VmName( const std::string& value ) : SystemProperty( "java.vm.name", value ) {}
-  };
-
-  class SpecificationVersion : public SystemProperty {
-    public: JACE_API SpecificationVersion( const std::string& value ) : SystemProperty( "java.specification.version", value ) {}
-  };
-
-  class SpecificationVendor : public SystemProperty {
-    public: JACE_API SpecificationVendor( const std::string& value ) : SystemProperty( "java.specification.vendor", value ) {}
-  };
-
-  class SpecificationName : public SystemProperty {
-    public: JACE_API SpecificationName( const std::string& value ) : SystemProperty( "java.specification.name", value ) {}
-  };
-
-  class ClassVersion : public SystemProperty {
-    public: JACE_API ClassVersion( const std::string& value ) : SystemProperty( "java.class.version", value ) {}
-  };
-
-  class ClassPath : public SystemProperty {
-    public: JACE_API ClassPath( const std::string& value ) : SystemProperty( "java.class.path", value ) {}
-  };
-
-  class LibraryPath : public SystemProperty {
-    public: JACE_API LibraryPath( const std::string& value ) : SystemProperty( "java.library.path", value ) {}
-  };
-
-  class IoTmpDir : public SystemProperty {
-    public: JACE_API IoTmpDir( const std::string& value ) : SystemProperty( "java.io.tmpdir", value ) {}
-  };
-
-  class Compiler : public SystemProperty {
-    public: JACE_API Compiler( const std::string& value ) : SystemProperty( "java.compiler", value ) {}
-  };
-
-  class ExtDirs : public SystemProperty {
-    public: JACE_API ExtDirs( const std::string& value ) : SystemProperty( "java.ext.dirs", value ) {}
-  };
-
-  class OsName : public SystemProperty {
-    public: JACE_API OsName( const std::string& value ) : SystemProperty( "java.os.name", value ) {}
-  };
-
-  class OsArch : public SystemProperty {
-    public: JACE_API OsArch( const std::string& value ) : SystemProperty( "java.os.arch", value ) {}
-  };
-
-  class OsVersion : public SystemProperty {
-    public: JACE_API OsVersion( const std::string& value ) : SystemProperty( "java.os.version", value ) {}
-  };
-
-  class FileSeparator : public SystemProperty {
-    public: JACE_API FileSeparator( const std::string& value ) : SystemProperty( "file.separator", value ) {}
-  };
-
-  class PathSeparator : public SystemProperty {
-    public: JACE_API PathSeparator( const std::string& value ) : SystemProperty( "path.separator", value ) {}
-  };
-
-  class LineSeparator : public SystemProperty {
-    public: JACE_API LineSeparator( const std::string& value ) : SystemProperty( "line.separator", value ) {}
-  };
-
-  class UserName : public SystemProperty {
-    public: JACE_API UserName( const std::string& value ) : SystemProperty( "user.name", value ) {}
-  };
-
-  class UserHome : public SystemProperty {
-    public: JACE_API UserHome( const std::string& value ) : SystemProperty( "user.home", value ) {}
-  };
-
-  class UserDir : public SystemProperty {
-    public: JACE_API UserDir( const std::string& value ) : SystemProperty( "user.dir", value ) {}
-  };
-
-
-/**
- * A specific type of Option that tells the virtual machine to produce
- * verbose output of a specified type.
- *
- * Nonstandard verbose types must begin with a leading "X" character.
- *
- */
-class Verbose : public Option {
-
-  public:
-
-  /**
-   * Output for garbage collection
-   */
-  JACE_API static std::string Gc;
-
-  /**
-   * Output for JNI
-   */
-  JACE_API static std::string Jni;
-
-  /**
-   * Output for class loading
-   */
-  JACE_API static std::string Class;
-  
-  JACE_API Verbose( const std::string& option );
-
-  JACE_API Verbose( const std::string& o1, const std::string& o2 );
-
-  JACE_API Verbose( const std::string& o1, const std::string& o2, const std::string& o3 );
-
-  JACE_API Verbose( std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end );
-
-  JACE_API std::string stringValue();
-  JACE_API virtual void* extraInfo();
-  JACE_API virtual Option* clone() const;
-
-  private:
- 
-  mutable std::vector<std::string> options;
+class ClassPath : public SystemProperty {
+public:
+    JACE_API ClassPath( const std::string& value )
+        : SystemProperty( "java.class.path", value ) {}
 };
 
+class LibraryPath : public SystemProperty {
+public:
+    JACE_API LibraryPath( const std::string& value )
+        : SystemProperty( "java.library.path", value ) {}
+};
+
+class JavaAgent : public Option {
+private:
+    std::string value;
+public:
+    JACE_API JavaAgent( const std::string& path ) : value(path) {}
+    JACE_API virtual std::string stringValue() { return "-javaagent:"+value; }
+    JACE_API virtual void* extraInfo() { return 0; }
+    JACE_API virtual Option* clone() const { return new JavaAgent(value); }
+};
 
 /**
  * A virtual machine specific, custom option.
  *
  * You may specify any virtual machine specific option, for example,
- * "-Xmx=128M". All custom options must begin with a leading 
+ * "-Xmx=128M". All custom options must begin with a leading
  * "-X" or "_" string.
  *
  */
@@ -347,80 +210,8 @@ class CustomOption : public Option {
   JACE_API virtual void* extraInfo();
   JACE_API virtual Option* clone() const;
 
-  private: 
+  private:
   std::string value;
-};
-
-
-/**
- * A virtual machine option that lets you hook into a specific function.
- *
- */
-class Hook : public Option {
-};
-
-
-/**
- * Lets you hook into the vfprintf() function.
- *
- */
-class VfprintfHook : public Hook {
-
-  public:
-
-  typedef int ( *vfprintf_t )( FILE* fp, const char* format, va_list arg );
-
-  JACE_API VfprintfHook( vfprintf_t hook_ );
-
-  JACE_API virtual std::string stringValue();
-  JACE_API virtual void* extraInfo();
-  JACE_API virtual Option* clone() const;
-
-  private:
-  vfprintf_t hook;
-};
-
-/**
- * Lets you hook into the exit() function.
- *
- */
-class ExitHook : public Hook {
-
-  public:
-
-  typedef void ( *exit_t )( int status ); 
-
-  JACE_API ExitHook( exit_t hook_ );
-
-  JACE_API virtual std::string stringValue();
-  JACE_API virtual void* extraInfo();
-  JACE_API virtual Option* clone() const;
-
-  private:
-
-  exit_t hook;
-};
-
-
-/**
- * Lets you hook into the abort() function.
- *
- */
-class AbortHook : public Hook {
-
-  public:
-
-  typedef void ( *abort_t ) ( void ); 
-
-  JACE_API AbortHook( abort_t hook_ );
-
-  JACE_API virtual std::string stringValue();
-  JACE_API virtual void* extraInfo();
-  JACE_API virtual Option* clone() const;
-
-  private:
-
-  abort_t hook;
 };
 
 }

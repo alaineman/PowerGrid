@@ -52,7 +52,7 @@ public class Updater {
     private static final Logger LOGGER = Logger.get("UPDATER");
     
     public static final String URL_TEMPLATE = 
-            "http://pgrid.com/marneus/newupdater/reflection_cache_{hash}.xml";
+            "http://pgrid.net/marneus/reflection_cache_{hash}.xml";
     
     public static final String CLIENT_PATH = "cache/client.jar";
     

@@ -43,6 +43,19 @@ extern "C" {
 JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
   (JNIEnv *, jclass, jbyteArray);
 
+/**
+ * @brief native method void net.pgrid.loader.UpdaterRunner.signalUpdaterReady()
+ *
+ * JNI information:
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Class:     net.pgrid.loader.bridge.UpdaterRunner
+ * Method:    signalUpdaterFailed
+ * Signature: ()V
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterFailed
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

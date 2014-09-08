@@ -3,12 +3,7 @@
 using ::jace::OptionList;
 using ::jace::Option;
 using ::jace::SystemProperty;
-using ::jace::Verbose;
 using ::jace::CustomOption;
-using ::jace::Hook;
-using ::jace::VfprintfHook;
-using ::jace::AbortHook;
-using ::jace::ExitHook;
 
 #include <string>
 using std::string;
@@ -31,9 +26,6 @@ using std::copy;
 using std::back_inserter;
 
 namespace jace {
-std::string Verbose::Gc( "gc" );
-std::string Verbose::Jni( "jni" );
-std::string Verbose::Class( "class" );
 
 OptionList::OptionList() : options() {
 }
@@ -121,50 +113,6 @@ Option* SystemProperty::clone() const {
   return new SystemProperty( mName, mValue ); 
 }
 
-Verbose::Verbose( const std::string& option ) : options() {
-  options.push_back( option );
-}
-
-Verbose::Verbose( const std::string& o1, const std::string& o2 ) : options() {
-  options.push_back( o1 );
-  options.push_back( o2 );
-}
-
-Verbose::Verbose( const std::string& o1, const std::string& o2, const std::string& o3 ) : options() {
-  options.push_back( o1 );
-  options.push_back( o2 );
-  options.push_back( o3 );
-}
-
-Verbose::Verbose( std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end ) {
-  std::copy( begin, end, back_inserter( options ) );
-}
-
-std::string Verbose::stringValue() {
-
-  std::string buffer( "-verbose:" );
-
-  vector<string>::iterator it = options.begin();
-  vector<string>::iterator end = options.end();
-
-  for ( ; it != end; ++it ) {
-    buffer += *it;
-    if ( it + 1 != end ) {
-      buffer += ",";
-    }
-  }
-
-  return buffer;
-}
-
-void* Verbose::extraInfo() {
-  return 0;
-}
-
-Option* Verbose::clone() const {
-  return new Verbose( options.begin(), options.end() );
-}
-
 CustomOption::CustomOption( const std::string& value_ ) : value( value_ ) {
 }
 
@@ -178,58 +126,6 @@ void* CustomOption::extraInfo() {
 
 jace::Option* CustomOption::clone() const {
   return new CustomOption( value );
-}
-
-
-VfprintfHook::VfprintfHook( vfprintf_t hook_ ) : hook( hook_ ) {
-}
-
-std::string VfprintfHook::stringValue() {
-  return "vfprintf";
-}
-
-void* VfprintfHook::extraInfo() {
-  // Casting from a function pointer to an object pointer isn't valid C++
-  // but JNI makes us do this.
-  return ( void* ) hook;
-}
-
-Option* VfprintfHook::clone() const {
-  return new VfprintfHook( hook );
-}
-
-ExitHook::ExitHook( exit_t hook_ ) : hook( hook_ ) {
-}
-
-std::string ExitHook::stringValue() {
-  return "exit";
-}
-
-void* ExitHook::extraInfo() {
-  // Casting from a function pointer to an object pointer isn't valid C++
-  // but JNI makes us do this.
-  return ( void* ) hook;
-}
-
-Option* ExitHook::clone() const {
-  return new ExitHook( hook );
-}
-
-AbortHook::AbortHook( abort_t hook_ ) : hook( hook_ ) {
-}
-
-std::string AbortHook::stringValue() {
-  return "abort";
-}
-
-void* AbortHook::extraInfo() {
-  // Casting from a function pointer to an object pointer isn't valid C++
-  // but JNI makes us do this.
-  return ( void* ) hook;
-}
-
-Option* AbortHook::clone() const {
-  return new AbortHook( hook );
 }
 
 }

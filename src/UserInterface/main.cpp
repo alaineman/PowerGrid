@@ -99,9 +99,28 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
 #endif
 }
 
+/**
+ * @brief Tries to locate the directory in which Runescape stores its libraries.
+ *
+ * This allows the client to load the native OpenGL and DirectX backends.
+ *
+ * @return the jagexcache/runescape/LIVE/ directory in the user's home directory.
+ */
+const char* findJagexCacheDir() {
+#ifdef Q_OS_WIN32
+    // On Windows, take the value of the USERPROFILE environment variable.
+    QByteArray userprofileBytes = qgetenv("USERPROFILE");
+    return userprofileBytes.constData();
+#else
+    // Unixes have a standard way of getting the home directory (~)
+    return "~/jagexcache/runescape/LIVE/";
+#endif
+}
+
 int main(int argc, char** argv) {
-    // Enable debug output for all categories by default
+    // Enable debug output for all categories by default, but disable Qt Debug output
     QLoggingCategory::setFilterRules(QStringLiteral("*.debug=true"));
+    QLoggingCategory::setFilterRules(QStringLiteral("qt.*.debug=false"));
     qInstallMessageHandler(PGMessageHandler);
     qCDebug(logLauncher) << "Attempting to load JVM...";
 
@@ -125,17 +144,17 @@ int main(int argc, char** argv) {
         // Add the PowerGrid jar file to the classpath
 #ifdef Q_OS_MACX
         // Temporary fix for issue caused by Mac OS X application bundle layout.
-        options.push_back( CustomOption("-Djava.class.path=../../../PowerGridLoader.jar") );
-        options.push_back( CustomOption("-javaagent:../../../PowerGridLoader.jar") );
+        // Ideally we want the PowerGridLoader inside the app bundle.
+        options.push_back( ClassPath("../../../PowerGridLoader.jar") );
+        options.push_back( JavaAgent("-javaagent:../../../PowerGridLoader.jar") );
 #else
-        options.push_back( CustomOption("-Djava.class.path=PowerGridLoader.jar") );
-        options.push_back( CustomOption("-javaagent:PowerGridLoader.jar") );
+        options.push_back( ClassPath("PowerGridLoader.jar") );
+        options.push_back( JavaAgent("PowerGridLoader.jar") );
 #endif
-
 #ifdef PG_DEBUG
         options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
 #endif
-
+        options.push_back( LibraryPath(findJagexCacheDir()) );
         options.push_back( CustomOption("-Xss2M") );
 
         // create the JVM
@@ -160,13 +179,13 @@ int main(int argc, char** argv) {
         //      loading the PGLoader class, when the JVM is started from native
         //      code. No known workaround exists as of now.
 
-        jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PGLoader");
+        jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PowerGrid");
         if (!pgLoaderClass) {
-            throw JNIException("PGLoader class not found");
+            throw JNIException("PowerGrid class not found");
         }
         jmethodID mainMethod = env->GetStaticMethodID(pgLoaderClass, "main", "([Ljava/lang/String;)V");
         if (!mainMethod) {
-            throw JNIException("PGLoader.main method not found");
+            throw JNIException("PowerGrid.main method not found");
         }
         env->CallStaticVoidMethod(pgLoaderClass, mainMethod, NULL);
 

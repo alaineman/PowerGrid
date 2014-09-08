@@ -18,12 +18,12 @@
  */
 package net.pgrid.loader.bridge;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import net.pgrid.loader.logging.Logger;
 
 /**
@@ -38,11 +38,10 @@ public class UpdaterRunner implements Runnable {
     /**
      * The default destination File.
      */
-    public static final File DESTINATION = new File("cache", "updaterInfo.dat");
+    public static final Path DESTINATION = Paths.get("cache", "updaterInfo.dat");
     
     public static final String DEFAULT_SERVER = "http://pgrid.net/marneus/";
     
-    private final String updaterServer;
     private final boolean useLocal;
     private final boolean profile;
 
@@ -53,22 +52,6 @@ public class UpdaterRunner implements Runnable {
      * @param profile true to profile the updater and print the results, false to disable
      */
     public UpdaterRunner(boolean useLocal, boolean profile) {
-        this(DEFAULT_SERVER, useLocal, profile);
-    }
-    
-    /**
-     * Creates a new UpdaterRunner object.
-     * 
-     * 
-     * @param server the Updater server address
-     * @param useLocal true to use local updater data, false to call the Updater server
-     * @param profile true to profile the updater and print the results, false to disable
-     */
-    public UpdaterRunner(String server, boolean useLocal, boolean profile) {
-        if (!useLocal && server == null) {
-            throw new IllegalArgumentException("Null server not allowed when not running locally");
-        }
-        this.updaterServer = server;
         this.useLocal = useLocal;
         this.profile = profile;
     }
@@ -81,69 +64,71 @@ public class UpdaterRunner implements Runnable {
      */
     @Override
     public synchronized void run() {
+        long timeStarted = profile ? System.currentTimeMillis() : 0;
         try {
-            long timeStarted = profile ? System.currentTimeMillis() : 0;
-            
             byte[] data;
             if (useLocal) {
                 data = getLocalData();
             } else {
-                data = getRemoteData(updaterServer);
+                data = getRemoteData();
             }
-            // Tell the native code the updater is done
             signalUpdaterReady(data);
-            
-            if (profile) {
-                long timeTaken = System.currentTimeMillis() - timeStarted;
-                LOGGER.log("Updater took " + (timeTaken/1000d) + "s to finish");
-            }
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | UnknownHostException e) {
             // Indicating "useLocal" is true and the file "cache/updaterInfo.dat" 
             // does not exist, or "useLocal" is false and no updater data file 
-            // exists at the expected URL.
-            LOGGER.log("Updater data not found: ", e.getLocalizedMessage());
+            // exists at the expected URL (or the updater server is offline).
+            // The message contains the URL that could not been found in these 
+            // cases.
+            LOGGER.log("[CRITICAL] Updater data not found at: ", e.getMessage());
+            signalUpdaterFailed();
         } catch (IOException e) {
             // Indicates any other kind of I/O error while reading or writing 
             // the updater info file.
-            LOGGER.log("Failed to save the updater data: ", e.getLocalizedMessage());
+            LOGGER.log("[CRITICAL] Failed to save the updater data", e);
+            signalUpdaterFailed();
+        }
+        if (profile) {
+            long timeTaken = System.currentTimeMillis() - timeStarted;
+            LOGGER.log("Updater took " + (timeTaken/1000d) + "s to finish");
         }
     }
     
     /**
      * Tries to load the local updater data (stored at {@code DESTINATION}).
+     * 
+     * If no local data exists, or the data is invalid, this method connects to 
+     * the updater server to download the missing updater data.
+     * 
      * @return the loaded data.
      * 
-     * @throws IOException when reading the data failed.
-     * @throws FileNotFoundException when the File does not exist.
+     * @throws IOException when reading the data failed, or .
      */
     protected byte[] getLocalData() throws IOException {
-        Path dest = DESTINATION.toPath();
-        if (Files.exists(dest)) {
-            byte[] data = Files.readAllBytes(dest);
+        if (Files.exists(DESTINATION)) {
+            byte[] data = Files.readAllBytes(DESTINATION);
             LOGGER.log("Re-used local updater data");
             return data;
         } else {
-            LOGGER.log("[WARNING] Local client re-used but no updater data available!");
-            throw new FileNotFoundException(DESTINATION.getPath());
+            LOGGER.log("[WARNING] Local client re-used but no updater data available!" 
+                    +  "          Trying to download updater data from server...");
+            return getRemoteData();
         }
     }
     
     /**
-     * Tries to load the remote updater data from the specified server.
-     * @param server the server to connect to
+     * Tries to load the remote updater data.
+     * 
      * @return the loaded data
      * @throws IOException if reading from the server failed for some reason, 
      *                     or if {@code DESTINATION} is not writable.
      */
-    protected byte[] getRemoteData(String server) throws IOException {
+    protected byte[] getRemoteData() throws IOException {
         byte[] data = new Updater().getData();
-        if (!DESTINATION.isFile() && !DESTINATION.createNewFile()) {
-            throw new IOException("Could not write to File: " + DESTINATION.getPath());
+        if (!Files.isRegularFile(DESTINATION)) {
+            Files.createFile(DESTINATION);
         }
-        try (FileOutputStream out = new FileOutputStream(DESTINATION)) {
-            out.write(data);
-        }
-        LOGGER.log("Updater data acquired (" + data.length + " bytes)");
+        Files.write(DESTINATION, data);
+        LOGGER.log("Remote updater data downloaded (" + data.length + " bytes)");
         return data;
     }
     
@@ -155,4 +140,14 @@ public class UpdaterRunner implements Runnable {
      * @param data the bytes of the updater data.
      */
     private static native void signalUpdaterReady(byte[] data);
+    
+    /**
+     * Notifies the C++ client the updater failed to retrieve 
+     * the required data. 
+     * 
+     * This will cause the C++ client to disable most bot-related functionality,
+     * as it cannot be used without the updater data (the client can only be
+     * used as a 'normal' standalone RS client).
+     */
+    private static native void signalUpdaterFailed();
 }

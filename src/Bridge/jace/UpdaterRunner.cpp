@@ -45,6 +45,10 @@ JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterR
     }
 }
 
+JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterFailed(JNIEnv*, jclass) {
+    qCWarning(logMapper) << "Failed to load updater data, bot features are not available";
+}
+
 namespace bridge {
 namespace updater {
 
@@ -64,13 +68,17 @@ void UpdaterRunner_registerNatives(JNIEnv* env)
     if (! updaterRunner) {
         throw JNIException("Cannot find net.pgrid.loader.bridge.UpdaterRunner class");
     }
-    // The JNINativeMethod struct we need to register
-    JNINativeMethod nativeMethod;
-    nativeMethod.name = const_cast<char*> ("signalUpdaterReady");
-    nativeMethod.signature = const_cast<char*> ("([B)V");
-    nativeMethod.fnPtr = reinterpret_cast<void*>(&Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady);
+    // The JNINativeMethod structs we need to register
+    JNINativeMethod nativeMethod[2];
+    nativeMethod[0].name = const_cast<char*> ("signalUpdaterReady");
+    nativeMethod[0].signature = const_cast<char*> ("([B)V");
+    nativeMethod[0].fnPtr = reinterpret_cast<void*>(&Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady);
 
-    jint result = env->RegisterNatives(updaterRunner, &nativeMethod, 1);
+    nativeMethod[1].name = const_cast<char*> ("signalUpdaterFailed");
+    nativeMethod[1].signature = const_cast<char*> ("()V");
+    nativeMethod[1].fnPtr = reinterpret_cast<void*>(&Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterFailed);
+
+    jint result = env->RegisterNatives(updaterRunner, nativeMethod, 2);
     env->DeleteLocalRef(updaterRunner);
     if (result != JNI_OK) {
         throw JNIException("RegisterNatives failed for UpdaterRunner: "

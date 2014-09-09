@@ -8,8 +8,7 @@ Mapper::Mode Mapper::getMode(Component *c) {
     if (!c) {
         return Undefined;
     }
-    HashableComponent* hc = qobject_cast<HashableComponent*>(c);
-    if (hc) {
+    if (qobject_cast<HashableComponent*>(c)) {
         return HashMode;
     } else {
         return TreeMode;
@@ -44,12 +43,9 @@ bool Mapper::contains(Entity* e) const{
     Component* cmp = e->get(type);
     if (cmp) {
         switch(getMode(cmp)) {
-        case TreeMode:
-            return map.contains(cmp, e);
-        case HashMode:
-            return hashMap.contains(qobject_cast<HashableComponent*>(cmp), e);
-        default:
-            return false;
+        case TreeMode:  return map.contains(cmp, e);
+        case HashMode:  return hashMap.contains(qobject_cast<HashableComponent*>(cmp), e);
+        case Undefined: return false;
         }
     } else {
         // if the entity doesn't have the expected Component type,
@@ -60,23 +56,23 @@ bool Mapper::contains(Entity* e) const{
 
 Entity* Mapper::getEntity(Component* key) const {
     if (key->metaObject()->className() != type) {
-        throw std::invalid_argument;
+        throw std::invalid_argument("Invalid type");
     }
     switch (getMode(key)) {
-    case TreeMode: return map.value(key, NULL);
-    case HashMode: return hashMap.value(qobject_cast<HashableComponent*>(key), NULL);
-    default:       throw std::invalid_argument;
+    case TreeMode:  return map.value(key, NULL);
+    case HashMode:  return hashMap.value(qobject_cast<HashableComponent*>(key), NULL);
+    case Undefined: throw std::invalid_argument("NULL");
     }
 }
 
 QList<Entity*> Mapper::getEntities(Component* key) const {
     if (key->metaObject()->className() != type) {
-        throw std::invalid_argument;
+        throw std::invalid_argument("Invalid type");
     }
     switch (getMode(key)) {
-    case TreeMode: return map.values(key);
-    case HashMode: return hashMap.values(key);
-    default:       throw std::invalid_argument;
+    case TreeMode:  return map.values(key);
+    case HashMode:  return hashMap.values(qobject_cast<HashableComponent*>(key));
+    case Undefined: throw std::invalid_argument("NULL");
     }
 }
 

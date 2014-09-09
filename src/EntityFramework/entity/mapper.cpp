@@ -16,8 +16,20 @@ Mapper::Mode Mapper::getMode(Component *c) {
     }
 }
 
-Mapper::Mapper(QString type, bool init, World* parent, Mode m) :
-        QObject(parent), mode(m), type(type) {
+Mapper::Mapper(QString type, bool init, World* parent) :
+        QObject(parent), type(type) {
+    if (parent == NULL) {
+        parent = World::instance();
+        setParent(parent);
+    }
+    // Connect to the specified World.
+    if (init) {
+        parent->initMapper(this);
+    }
+}
+
+Mapper::Mapper(QMetaObject mObject, bool init, World* parent) :
+        QObject(parent), type(mObject.className()) {
     if (parent == NULL) {
         parent = World::instance();
         setParent(parent);
@@ -33,9 +45,9 @@ bool Mapper::contains(Entity* e) const{
     if (cmp) {
         switch(getMode(cmp)) {
         case TreeMode:
-            return *(map.find(cmp)) == e;
+            return map.contains(cmp, e);
         case HashMode:
-            return *(hashMap.find(qobject_cast<HashableComponent*>(cmp))) == e;
+            return hashMap.contains(qobject_cast<HashableComponent*>(cmp), e);
         default:
             return false;
         }
@@ -48,15 +60,23 @@ bool Mapper::contains(Entity* e) const{
 
 Entity* Mapper::getEntity(Component* key) const {
     if (key->metaObject()->className() != type) {
-        return NULL;
+        throw std::invalid_argument;
     }
     switch (getMode(key)) {
-    case TreeMode:
-        return map.value(key, NULL);
-    case HashMode:
-        return hashMap.value(qobject_cast<HashableComponent*>(key), NULL);
-    default:
-        return NULL;
+    case TreeMode: return map.value(key, NULL);
+    case HashMode: return hashMap.value(qobject_cast<HashableComponent*>(key), NULL);
+    default:       throw std::invalid_argument;
+    }
+}
+
+QList<Entity*> Mapper::getEntities(Component* key) const {
+    if (key->metaObject()->className() != type) {
+        throw std::invalid_argument;
+    }
+    switch (getMode(key)) {
+    case TreeMode: return map.values(key);
+    case HashMode: return hashMap.values(key);
+    default:       throw std::invalid_argument;
     }
 }
 
@@ -68,10 +88,10 @@ void Mapper::remove(Entity* e, Component* cmp){
     if (e != NULL && getEntity(cmp) == e) {
         switch(getMode(cmp)) {
         case TreeMode:
-            map.remove(cmp);
+            map.remove(cmp, e);
             break;
         case HashMode:
-            hashMap.remove(qobject_cast<HashableComponent*>(cmp));
+            hashMap.remove(qobject_cast<HashableComponent*>(cmp), e);
             break;
         case Undefined:
             return;
@@ -83,10 +103,10 @@ void Mapper::add(Entity* e, Component* cmp){
     if (cmp->metaObject()->className() == type) {
         switch(getMode(cmp)) {
         case TreeMode:
-            map.insert(cmp, e);
+            map.insertMulti(cmp, e);
             break;
         case HashMode:
-            hashMap.insert(qobject_cast<HashableComponent*>(cmp), e);
+            hashMap.insertMulti(qobject_cast<HashableComponent*>(cmp), e);
             break;
         case Undefined:
             return;

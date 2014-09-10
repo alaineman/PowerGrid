@@ -43,9 +43,9 @@ bool Mapper::contains(Entity* e) const{
     Component* cmp = e->get(type);
     if (cmp) {
         switch(getMode(cmp)) {
-        case TreeMode:  return map.contains(cmp, e);
-        case HashMode:  return hashMap.contains(qobject_cast<HashableComponent*>(cmp), e);
-        case Undefined: return false;
+        case TreeMode: return map.contains(cmp, e);
+        case HashMode: return hashMap.contains(qobject_cast<HashableComponent*>(cmp), e);
+        default:       return false;
         }
     } else {
         // if the entity doesn't have the expected Component type,
@@ -59,9 +59,9 @@ Entity* Mapper::getEntity(Component* key) const {
         throw std::invalid_argument("Invalid type");
     }
     switch (getMode(key)) {
-    case TreeMode:  return map.value(key, NULL);
-    case HashMode:  return hashMap.value(qobject_cast<HashableComponent*>(key), NULL);
-    case Undefined: throw std::invalid_argument("NULL");
+    case TreeMode: return map.value(key, NULL);
+    case HashMode: return hashMap.value(qobject_cast<HashableComponent*>(key), NULL);
+    default:       throw std::invalid_argument("NULL");
     }
 }
 
@@ -70,9 +70,9 @@ QList<Entity*> Mapper::getEntities(Component* key) const {
         throw std::invalid_argument("Invalid type");
     }
     switch (getMode(key)) {
-    case TreeMode:  return map.values(key);
-    case HashMode:  return hashMap.values(qobject_cast<HashableComponent*>(key));
-    case Undefined: throw std::invalid_argument("NULL");
+    case TreeMode: return map.values(key);
+    case HashMode: return hashMap.values(qobject_cast<HashableComponent*>(key));
+    default:       throw std::invalid_argument("NULL");
     }
 }
 

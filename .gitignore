@@ -17,6 +17,7 @@ dist/
 # autosave and workstation-dependant files of Qt Creator
 *.autosave
 *.pro.user
+*.pro.user.*
 
 # compiled files
 *.class

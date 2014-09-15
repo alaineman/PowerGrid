@@ -104,7 +104,7 @@ JACE_API virtual jclass getClass() const throw ( jace::JNIException );
  * Creates a duplicate instance of this JClass.
  *
  */
-JACE_API virtual std::auto_ptr<JClass> clone() const;
+JACE_API virtual std::unique_ptr<JClass> clone() const;
 
 
 private:

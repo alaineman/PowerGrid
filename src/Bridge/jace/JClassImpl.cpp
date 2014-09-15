@@ -4,7 +4,6 @@
 #include "qglobal.h"
 
 using std::string;
-using std::auto_ptr;
 
 namespace jace {
 
@@ -115,8 +114,8 @@ jclass JClassImpl::getClass() const throw ( JNIException ) {
   return mClass;
 }
 
-auto_ptr<JClass> JClassImpl::clone() const {
-  return auto_ptr<JClass>( new JClassImpl( *this ) );
+std::unique_ptr<JClass> JClassImpl::clone() const {
+  return std::unique_ptr<JClass>( new JClassImpl( *this ) );
 }
 
 }

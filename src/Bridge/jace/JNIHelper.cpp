@@ -73,7 +73,7 @@ namespace {
     //
     JavaVM* javaVM = 0;
 
-    std::auto_ptr<VmLoader> globalLoader( 0 );
+    std::unique_ptr<VmLoader> globalLoader( Q_NULLPTR );
 
     // The map of all of the java class factories.
     //
@@ -110,7 +110,7 @@ std::string asString( JNIEnv* env, jstring str ) {
 
 
 void setVmLoader( const ::jace::VmLoader& loader ) {
-    globalLoader = std::auto_ptr<VmLoader>( loader.clone() );
+    globalLoader = std::unique_ptr<VmLoader>( loader.clone() );
 }
 
 /**
@@ -125,7 +125,7 @@ void createVm( const VmLoader& loader,
                const OptionList& options,
                bool ignoreUnrecognized ) {
 
-    globalLoader = std::auto_ptr<VmLoader>( loader.clone() );
+    globalLoader = std::unique_ptr<VmLoader>( loader.clone() );
     globalLoader->loadVm();
 
     JavaVM* vm;

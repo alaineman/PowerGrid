@@ -85,7 +85,7 @@ String String::valueOf(JObject value) throw(jace::JNIException) {
     JNIEnv* env = jace::helper::attach();
     jclass stringClass = staticGetJavaJniClass()->getClass();
     jmethodID valueOf = env->GetStaticMethodID(stringClass, "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
-    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value);
+    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value.getJavaJniObject());
     return String(result);
 }
 
@@ -94,7 +94,7 @@ String String::valueOf(JByte value) throw(jace::JNIException) {
     jclass stringClass = staticGetJavaJniClass()->getClass();
     jmethodID valueOf = env->GetStaticMethodID(stringClass, "valueOf", "(B)Ljava/lang/String;");
     if (!valueOf) throw jace::JNIException("Cannot find String.valueOf method");
-    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value);
+    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value.getByte());
     return String(result);
 }
 
@@ -103,7 +103,7 @@ String String::valueOf(JBoolean value) throw(jace::JNIException) {
     jclass stringClass = staticGetJavaJniClass()->getClass();
     jmethodID valueOf = env->GetStaticMethodID(stringClass, "valueOf", "(Z)Ljava/lang/String;");
     if (!valueOf) throw jace::JNIException("Cannot find String.valueOf method");
-    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value);
+    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value.getBoolean());
     return String(result);
 }
 
@@ -112,7 +112,7 @@ String String::valueOf(JShort value) throw(jace::JNIException) {
     jclass stringClass = staticGetJavaJniClass()->getClass();
     jmethodID valueOf = env->GetStaticMethodID(stringClass, "valueOf", "(S)Ljava/lang/String;");
     if (!valueOf) throw jace::JNIException("Cannot find String.valueOf method");
-    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value);
+    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value.getShort());
     return String(result);
 }
 
@@ -121,7 +121,7 @@ String String::valueOf(JChar value) throw(jace::JNIException) {
     jclass stringClass = staticGetJavaJniClass()->getClass();
     jmethodID valueOf = env->GetStaticMethodID(stringClass, "valueOf", "(C)Ljava/lang/String;");
     if (!valueOf) throw jace::JNIException("Cannot find String.valueOf method");
-    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value);
+    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value.getChar());
     return String(result);
 }
 
@@ -130,7 +130,7 @@ String String::valueOf(JInt value) throw(jace::JNIException) {
     jclass stringClass = staticGetJavaJniClass()->getClass();
     jmethodID valueOf = env->GetStaticMethodID(stringClass, "valueOf", "(I)Ljava/lang/String;");
     if (!valueOf) throw jace::JNIException("Cannot find String.valueOf method");
-    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value);
+    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value.getInt());
     return String(result);
 }
 
@@ -139,7 +139,7 @@ String String::valueOf(JLong value) throw(jace::JNIException) {
     jclass stringClass = staticGetJavaJniClass()->getClass();
     jmethodID valueOf = env->GetStaticMethodID(stringClass, "valueOf", "(J)Ljava/lang/String;");
     if (!valueOf) throw jace::JNIException("Cannot find String.valueOf method");
-    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value);
+    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value.getLong());
     return String(result);
 }
 
@@ -148,7 +148,7 @@ String String::valueOf(JDouble value) throw(jace::JNIException) {
     jclass stringClass = staticGetJavaJniClass()->getClass();
     jmethodID valueOf = env->GetStaticMethodID(stringClass, "valueOf", "(D)Ljava/lang/String;");
     if (!valueOf) throw jace::JNIException("Cannot find String.valueOf method");
-    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value);
+    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value.getDouble());
     return String(result);
 }
 
@@ -157,7 +157,7 @@ String String::valueOf(JFloat value) throw(jace::JNIException) {
     jclass stringClass = staticGetJavaJniClass()->getClass();
     jmethodID valueOf = env->GetStaticMethodID(stringClass, "valueOf", "(F)Ljava/lang/String;");
     if (!valueOf) throw jace::JNIException("Cannot find String.valueOf method");
-    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value);
+    jobject result = env->CallStaticObjectMethod(stringClass, valueOf, value.getFloat());
     return String(result);
 }
 

@@ -35,6 +35,13 @@ JValue* ExpressionParser::getField(Object obj, QString fieldName) {
     return new JObject(result);
 }
 
+std::string ExpressionParser::convertFieldName(Object obj, QString fieldName) const {
+    jace::JClass* cls = obj.getJavaJniClass();
+    if (rsc) {
+
+    }
+}
+
 jobject ExpressionParser::getReflectedField(jclass type, const char *name) const throw(JNIException) {
     JNIEnv* env = jace::helper::attach();
     jclass classClass = env->FindClass("java/lang/Class");

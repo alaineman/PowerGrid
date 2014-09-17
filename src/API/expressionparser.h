@@ -60,6 +60,7 @@ public:
      */
     JValue* getField(Object obj, QString fieldName);
 
+    std::string convertFieldName(Object obj, QString fieldName) const;
 protected:
     /**
      * @brief Retrieves a Reflected Field Object.

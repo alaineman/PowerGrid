@@ -72,6 +72,11 @@
 /**
  * \namespace java
  * \brief replica of the \c java package in Java
+ *
+ * Most of the classes and methods in this namespace deliberately have no documentation.
+ * This is done to avoid any confusion, the behavior of each of the member functions
+ * (apart from the standard JACE functions) is equal to their Java counterparts, unless
+ * otherwise mentioned.
  */
 
 /**

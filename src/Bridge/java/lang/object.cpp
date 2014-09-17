@@ -79,6 +79,11 @@ jstring Object::toString() const {
 } // end namespace java
 
 std::ostream& operator<<(std::ostream& out, java::lang::Object& object) {
-    return out << jace::helper::toString(object.getJavaJniObject());
+    if (object.isNull()) {
+        return out << "null";
+    } else {
+        java::lang::String string (object.toString());
+        return out << string.toStdString();
+    }
 }
 

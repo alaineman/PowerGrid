@@ -21,7 +21,7 @@ using jace::RSClassMapper;
 using jace::RSClass;
 
 MonitorWindow::MonitorWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MonitorWindow), timer(new QTimer) {
+    QMainWindow(parent), ui(new Ui::MonitorWindow), timer(new QTimer(this)) {
     ui->setupUi(this);
 
     timer->setInterval(200); // 5 times per second
@@ -85,12 +85,17 @@ void MonitorWindow::updateMousePos() {
             throw jace::JNIException("MouseListener is null");
         }
         QString position = QString("(")
-                .append(to_string(listener.getX().getInt()).c_str()).append(",")
-                .append(to_string(listener.getY().getInt()).c_str()).append(")");
+                .append(to_string(int(listener.getX())).c_str()).append(",")
+                .append(to_string(int(listener.getY())).c_str()).append(")");
         ui->mousePos->setText(position);
+    } catch(jace::MappingUnavailableException& ex) {
+        qCDebug(guiLogger) << "updateMousePos: Cannot find required field: " << ex.what();
+        ui->mousePos->setText("Cannot find mouse coordinates (missing hook)");
+        timer->stop(); // Prevent this same Exception from occurring again.
     } catch(jace::JNIException& ex) {
-        qCDebug(guiLogger) << "Exception in updateMousePos:" << ex.what();
-        ui->mousePos->setText(QString("Cannot find data: ") % ex.what());
+        qCDebug(guiLogger) << "updateMousePos: Error in JNI layer: " << ex.what();
+        ui->mousePos->setText("Error retrieving mouse coordinates");
+        timer->stop();
     }
 }
 

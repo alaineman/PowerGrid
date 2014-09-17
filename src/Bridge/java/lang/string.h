@@ -100,10 +100,10 @@ public:
      *
      * This function is generally faster than @c toQString(), and provides
      * the string in a wider character range than the @c toStdString() function.
-     * However, for comparison with
+     * However, for comparison with standard strings, it is generally a better
+     * choice to use toStdString() instead.
      *
-     *
-     * @return
+     * @return an std::wstring with the same contents as this Java String.
      */
     std::wstring toStdWString() const throw(jace::JNIException);
 
@@ -134,6 +134,19 @@ public:
      * @return a QString with the same contents as this Java String.
      */
     QString toQString() const throw(jace::JNIException);
+
+    // Each of these functions converts its parameter to a String representation.
+    // This is done through the JVM, by calling the appropriate String.valueOf(...)
+    // method and returning a String object with the result.
+    static String valueOf(JObject  value) throw(jace::JNIException);
+    static String valueOf(JByte    value) throw(jace::JNIException);
+    static String valueOf(JBoolean value) throw(jace::JNIException);
+    static String valueOf(JShort   value) throw(jace::JNIException);
+    static String valueOf(JChar    value) throw(jace::JNIException);
+    static String valueOf(JInt     value) throw(jace::JNIException);
+    static String valueOf(JLong    value) throw(jace::JNIException);
+    static String valueOf(JDouble  value) throw(jace::JNIException);
+    static String valueOf(JFloat   value) throw(jace::JNIException);
 
 private:
     template <typename T>

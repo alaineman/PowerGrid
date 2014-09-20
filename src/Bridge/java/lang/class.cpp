@@ -1,4 +1,4 @@
-#include "java_class.h"
+#include "java/lang/class.h"
 #include "java/lang/string.h"
 
 namespace {
@@ -34,8 +34,8 @@ const jace::JClass* Class::getJavaJniClass() const throw(jace::JNIException) {
     return Class::staticGetJavaJniClass();
 }
 
-const jace::JClass* Class::staticGetJavaJniClass() const throw(jace::JNIException) {
-    static jace::JClass cls("java/lang/Class");
+const jace::JClass* Class::staticGetJavaJniClass() throw(jace::JNIException) {
+    static jace::JClassImpl cls("java/lang/Class");
     return &cls;
 }
 
@@ -44,7 +44,7 @@ String Class::getName() const throw(jace::JNIException) {
     jmethodID getName = env->GetMethodID(
                 getJavaJniClass()->getClass(),
                 "getName", "()Ljava/lang/String;");
-    if (!getName) throw JNIException("Cannot find Class.getName()");
+    if (!getName) throw jace::JNIException("Cannot find Class.getName()");
     jobject name = env->CallObjectMethod(getJavaJniObject(), getName);
     return String(name);
 }
@@ -74,7 +74,7 @@ Object Class::getDeclaredMethod(String name, std::initializer_list<Class> paramT
                 getJavaJniClass()->getClass(),
                 "getDeclaredMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;");
     if (!getDeclaredMethod) throw jace::JNIException("Cannot find Class.getDeclaredField(String)");
-    jobjectArray arr = convertToJavaArray(paramTypes);
+    jobjectArray arr = convertToClassArray(paramTypes);
     jobject result = env->CallObjectMethod(getJavaJniObject(), getDeclaredMethod, name.getJavaJniObject(), arr);
     return Object(result);
 }
@@ -86,6 +86,15 @@ Object Class::getDeclaredMethod(QString name, std::initializer_list<Class> param
         throw jace::JNIException("Could not allocate a new Java String");
     }
     return getDeclaredMethod(String(string), paramTypes);
+}
+
+Class Class::forName(String name) throw(jace::JNIException) {
+    JNIEnv* env = jace::helper::attach();
+    jclass classClass = staticGetJavaJniClass()->getClass();
+    jmethodID forName = env->GetStaticMethodID(classClass, "forName", "(Ljava/lang/String;)Ljava/lang/Class;");
+    if (!forName) throw jace::JNIException("Cannot find static Class.forName(String)");
+    jclass result = static_cast<jclass>(env->CallStaticObjectMethod(classClass, forName, name.getJavaJniObject()));
+    return Class(result);
 }
 
 }

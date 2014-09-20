@@ -19,6 +19,7 @@
 
 #include "object.h"
 #include "java/lang/string.h"
+#include "java/lang/class.h"
 
 namespace java {
 namespace lang {
@@ -67,12 +68,22 @@ bool Object::equals(const Object &other) const {
     return env->CallBooleanMethod(getJavaJniObject(), equals_id, other.getJavaJniObject()) == JNI_TRUE;
 }
 
-jstring Object::toString() const {
+String Object::toString() const {
     JNIEnv* env = jace::helper::attach();
     jmethodID toString_id = env->GetMethodID(
                 Object::staticGetJavaJniClass()->getClass(), "toString", "()Ljava/lang/String;");
     jstring result = static_cast<jstring>(env->CallObjectMethod(getJavaJniObject(), toString_id));
     return result;
+}
+
+Class Object::getClass() const {
+    // We don't bother calling Object.getClass() in the JVM, since we can
+    // get it directly from the JNIEnv instance.
+    JNIEnv* env = jace::helper::attach();
+    jclass cls = env->GetObjectClass(getJavaJniObject());
+    Class javaClass (cls);
+    env->DeleteLocalRef(cls);
+    return javaClass;
 }
 
 } // end namespace lang

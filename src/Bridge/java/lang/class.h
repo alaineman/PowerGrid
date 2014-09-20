@@ -21,14 +21,14 @@ class String;
  *
  *      Class strClass = Class::forName("java.lang.String");
  *      Class intClass = Class::forName("java.lang.Integer");
- *      Object method  = objClass.getDeclaredMethod("substring", {intClass,intClass} );
+ *      Object method  = strClass.getDeclaredMethod("substring", {intClass,intClass} );
  *
  * This will look for the method: "String.substring(int, int)". Note that the Reflection API
  * makes no distinction between the primitive type "int" and the (boxed) object type "Integer".
  *
  * @author Patrick Kramer
  */
-class Class : public Object, virtual JObject {
+class Class : public Object {
 public:
     Class();
     Class(const Class& obj);
@@ -47,6 +47,16 @@ public:
     Object getDeclaredMethod(String name,  std::initializer_list<Class> paramTypes) const throw(jace::JNIException);
     Object getDeclaredMethod(QString name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException);
 
+    /**
+     * @brief Finds a Java Class object by name.
+     *
+     * The Class should be loaded by the system ClassLoader for this method to be able to find
+     * the class, as such some classes can not be found using this method (in particular RS classes).
+     *
+     * @param name - the name of the desired Class
+     * @return the Class proxy instance with a reference to the desired class, or a null Class proxy
+     *         instance if no class with the specified name has been found.
+     */
     static Class forName(String name) throw(jace::JNIException);
 };
 

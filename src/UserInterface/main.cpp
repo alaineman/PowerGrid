@@ -104,17 +104,18 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
  *
  * This allows the client to load the native OpenGL and DirectX backends.
  *
- * @return the jagexcache/runescape/LIVE/ directory in the user's home directory.
+ * @return the path to "jagexcache/runescape/LIVE/" in the user's home directory.
  */
 const char* findJagexCacheDir() {
-#ifdef Q_OS_WIN32
+//#ifdef Q_OS_WIN32
     // On Windows, take the value of the USERPROFILE environment variable.
     QByteArray userprofileBytes = qgetenv("USERPROFILE");
-    return userprofileBytes.constData();
-#else
-    // Unixes have a standard way of getting the home directory (~)
-    return "~/jagexcache/runescape/LIVE/";
-#endif
+    return std::string(userprofileBytes.constData())
+            .append(R"(\jagexcache\runescape\LIVE\)").c_str();
+//#else
+//    // Unixes have a standard way of getting the home directory (~)
+//    return "~/jagexcache/runescape/LIVE/";
+//#endif
 }
 
 int main(int argc, char** argv) {

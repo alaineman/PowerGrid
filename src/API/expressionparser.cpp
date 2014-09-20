@@ -36,10 +36,9 @@ JValue* ExpressionParser::getField(Object obj, QString fieldName) {
 }
 
 std::string ExpressionParser::convertFieldName(Object obj, QString fieldName) const {
-    jace::JClass* cls = obj.getJavaJniClass();
-    if (rsc) {
-
-    }
+    const jace::JClass* cls = obj.getJavaJniClass();
+    //TODO Implement ExpressionParser::convertFieldName(Object,QString)
+    return std::string();
 }
 
 jobject ExpressionParser::getReflectedField(jclass type, const char *name) const throw(JNIException) {

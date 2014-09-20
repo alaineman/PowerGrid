@@ -29,7 +29,12 @@
  * This namespace contains all classes that are directly mapped to classes in the Runescape client.
  * These classes are the same as the classes usually found in the api of any injection/reflection
  * bot client. Please note that many of these classes may not be very useful, and other namespaces
- * in the \c api namespace may be able to provide more suitable classes.
+ * (like the \c api namespace) may be able to provide more suitable classes.
+ *
+ * Any of the functions defined in this namespace may throw a jace::MappingUnavailableException upon
+ * being invoked. This indicates the required field mapping is not available. This way, plugins can recover
+ * from encountering missing bindings, and it allows PowerGrid to remain functional even if not all
+ * field hooks can be found by the remote updater.
  */
 
 /**
@@ -73,10 +78,17 @@
  * \namespace java
  * \brief replica of the \c java package in Java
  *
- * Most of the classes and methods in this namespace deliberately have no documentation.
- * This is done to avoid any confusion, the behavior of each of the member functions
- * (apart from the standard JACE functions) is equal to their Java counterparts, unless
- * otherwise mentioned.
+ * Most of the classes and methods in this namespace (and namespaces inside the ::java namespace) deliberately
+ * have no documentation. This is done to avoid any confusion, the behavior of each of the member functions
+ * (apart from the standard JACE functions) is equal to their Java counterparts, unless otherwise mentioned.
+ *
+ * In particular, due to the nature of JACE proxy classes, if a Java method were to return null,
+ * the proxy member function returns a proxy instance for which @c isNull() returns true. Also,
+ * in some cases where exceptions are thrown by Java methods, null is returned instead, or different
+ * exceptions may be thrown (this is mentioned in the documentation of the method for which it applies).
+ *
+ * Additionally, almost all proxy methods may throw a @c jace::JNIException when an error occurs in the JNI layer.
+ * This could mean that required classes, methods or fields do not exist in the JVM.
  */
 
 /**

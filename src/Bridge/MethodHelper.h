@@ -21,7 +21,7 @@
  * \file MethodHelper.h
  * \brief helper for RS proxies.
  *
- * This file defines generalized version of RS proxy implementations.
+ * This file defines generalized versions of RS proxy implementations.
  * It can be used to quickly implement RS proxies, and to be able to
  * quickly repair issues within these methods should such issues arise.
  */

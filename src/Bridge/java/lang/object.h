@@ -32,6 +32,9 @@
 namespace java {
 namespace lang {
 
+class Class;
+class String;
+
 /*!
  * \brief Proxy for \c java.lang.Object
  *
@@ -132,7 +135,13 @@ public:
      * This invokes the \c toString method on the java object in the Java VM.
      * \return the String value of the java Object, as a JNI jstring.
      */
-    jstring toString() const;
+    String toString() const;
+
+    /**
+     * @brief Returns the Java Class instance of this Object.
+     * @return the Java Class instance of this Object.
+     */
+    Class getClass() const;
 
     /**
      * @brief Writes the String value of an Object to \c out.

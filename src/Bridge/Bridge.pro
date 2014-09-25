@@ -234,7 +234,9 @@ HEADERS += \
     rs/keydata.h \
     rs/mousedata.h \
     rs/abstractmouselistener.h \
-    java/lang/class.h
+    java/lang/class.h \
+    java/lang/integer.h \
+    java/lang/number.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -382,7 +384,9 @@ SOURCES += \
     rs/mousedata.cpp \
     rs/mouselistener.cpp \
     rs/abstractmouselistener.cpp \
-    java/lang/class.cpp
+    java/lang/class.cpp \
+    java/lang/integer.cpp \
+    java/lang/number.cpp
 
 HEADERS    += \
     jni.h \

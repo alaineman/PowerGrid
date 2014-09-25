@@ -4,10 +4,10 @@
 namespace {
     //TODO move to utility class / namespace
     template<typename T>
-    jobjectArray convertToClassArray(std::initializer_list<T> list) {
+    jobjectArray convertToJavaArray(const char* type, std::initializer_list<T> list) {
         int size = list.size();
         JNIEnv* env = jace::helper::attach();
-        jclass javatype = env->FindClass("java/lang/Class");
+        jclass javatype = env->FindClass(type);
         jobjectArray arr = env->NewObjectArray(size, javatype, NULL);
         int index = 0;
         for (const T* it = list.begin(); it != list.end(); it++) {
@@ -74,7 +74,7 @@ Object Class::getDeclaredMethod(String name, std::initializer_list<Class> paramT
                 getJavaJniClass()->getClass(),
                 "getDeclaredMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;");
     if (!getDeclaredMethod) throw jace::JNIException("Cannot find Class.getDeclaredField(String)");
-    jobjectArray arr = convertToClassArray(paramTypes);
+    jobjectArray arr = convertToJavaArray("java/lang/Class", paramTypes);
     jobject result = env->CallObjectMethod(getJavaJniObject(), getDeclaredMethod, name.getJavaJniObject(), arr);
     return Object(result);
 }
@@ -86,6 +86,23 @@ Object Class::getDeclaredMethod(QString name, std::initializer_list<Class> param
         throw jace::JNIException("Could not allocate a new Java String");
     }
     return getDeclaredMethod(String(string), paramTypes);
+}
+
+jmethodID Class::getMethodID(QString name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException) {
+    Object reflectedMethod = getDeclaredMethod(name, paramTypes);
+    if (reflectedMethod.isNull()) {
+        throw jace::JNIException("No such method");
+    }
+    JNIEnv* env = jace::helper::attach();
+    return env->FromReflectedMethod(reflectedMethod.getJavaJniObject());
+}
+jmethodID Class::getMethodID(String name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException) {
+    Object reflectedMethod = getDeclaredMethod(name, paramTypes);
+    if (reflectedMethod.isNull()) {
+        throw jace::JNIException("No such method");
+    }
+    JNIEnv* env = jace::helper::attach();
+    return env->FromReflectedMethod(reflectedMethod.getJavaJniObject());
 }
 
 Class Class::forName(String name) throw(jace::JNIException) {

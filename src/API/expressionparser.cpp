@@ -9,12 +9,11 @@ ExpressionParser::ExpressionParser(RSClassMapper *mapper)
     }
 }
 
-template <typename T>
-T ExpressionParser::evaluate(QString expression) {
+Object ExpressionParser::evaluate(QString expression) {
     Q_UNUSED(expression);
     //TODO loop over expression parts and evaluate piece by piece
 
-    return NULL;
+    return Object();
 }
 
 QString ExpressionParser::evaluateToString(QString expression) {

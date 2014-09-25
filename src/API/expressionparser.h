@@ -29,15 +29,21 @@ public:
     ExpressionParser(RSClassMapper* mapper);
 
     /**
-     * @brief Evaluates the expression and returns the result
+     * @brief Evaluates the expression and returns the result.
+     *
+     * If the result of the expression is a primitive, the primitive will be boxed
+     * (by the JVM). It is possible to cast the Object to the boxed primitive type
+     * to retrieve it. This is not required to create a String representation, as the
+     * toString() method of the Java class provides this without needing to unbox the
+     * primitive first.
+     *
      * @param expression - the expression to evaluate
      * @return the result of the expression
      * @throws jace::JNIException - when an error occurs in the JNI, or when
      *         the field could not be found (the message of the JNIException
      *         will contain the missing field).
      */
-    template <typename T>
-    T evaluate(QString expression);
+    Object evaluate(QString expression);
 
     /**
      * @brief Evaluates the expression and converts the result into a QString.

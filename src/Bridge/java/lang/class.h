@@ -50,6 +50,8 @@ public:
     jmethodID getMethodID(QString name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException);
     jmethodID getMethodID(String name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException);
 
+    jfieldID getFieldID(QString name) const throw(jace::JNIException);
+    jfieldID getFieldID(String name)  const throw(jace::JNIException);
     /**
      * @brief Finds a Java Class object by name.
      *
@@ -61,6 +63,7 @@ public:
      *         instance if no class with the specified name has been found.
      */
     static Class forName(String name) throw(jace::JNIException);
+    static Class forName(QString name) throw(jace::JNIException);
 };
 
 }

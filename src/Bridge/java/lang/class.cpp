@@ -104,6 +104,22 @@ jmethodID Class::getMethodID(String name, std::initializer_list<Class> paramType
     JNIEnv* env = jace::helper::attach();
     return env->FromReflectedMethod(reflectedMethod.getJavaJniObject());
 }
+jfieldID Class::getFieldID(QString name) const throw(jace::JNIException) {
+    Object reflectedField = getDeclaredField(name);
+    if (reflectedField.isNull()) {
+        throw jace::JNIException("No such field");
+    }
+    JNIEnv* env = jace::helper::attach();
+    return env->FromReflectedField(reflectedField.getJavaJniObject());
+}
+jfieldID Class::getFieldID(String name) const throw(jace::JNIException) {
+    Object reflectedField = getDeclaredField(name);
+    if (reflectedField.isNull()) {
+        throw jace::JNIException("No such field");
+    }
+    JNIEnv* env = jace::helper::attach();
+    return env->FromReflectedField(reflectedField.getJavaJniObject());
+}
 
 Class Class::forName(String name) throw(jace::JNIException) {
     JNIEnv* env = jace::helper::attach();
@@ -112,6 +128,11 @@ Class Class::forName(String name) throw(jace::JNIException) {
     if (!forName) throw jace::JNIException("Cannot find static Class.forName(String)");
     jclass result = static_cast<jclass>(env->CallStaticObjectMethod(classClass, forName, name.getJavaJniObject()));
     return Class(result);
+}
+Class Class::forName(QString name) throw(jace::JNIException) {
+    JNIEnv* env = jace::helper::attach();
+    jstring string = env->NewStringUTF(name.toUtf8().constData());
+    return forName(string);
 }
 
 }

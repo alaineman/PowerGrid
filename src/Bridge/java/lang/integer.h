@@ -26,8 +26,14 @@ public:
     static jint parseInt(String string);
     static String toString(jint value);
 
+    virtual jint intValue() const { return _val; }
+
     /**
      * @brief The runtime Class object representing the type 'int'.
+     *
+     * The result of this function is equivalent to the contents of the field named
+     * "TYPE" in the Integer class.
+     *
      * @return the Class for the primitive type 'int'.
      */
     static Class getType();

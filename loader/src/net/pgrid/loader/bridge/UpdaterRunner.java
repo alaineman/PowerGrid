@@ -24,7 +24,7 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import net.pgrid.loader.logging.Logger;
+import net.pgrid.loader.util.Logger;
 
 /**
  * Runnable class that combines and executes all updater-related actions.

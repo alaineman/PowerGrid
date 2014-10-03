@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import net.pgrid.loader.logging.Logger;
+import net.pgrid.loader.util.Logger;
 
 /**
  * This class represents information that describes the Runescape client and 

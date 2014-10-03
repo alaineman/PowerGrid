@@ -31,7 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.jar.JarInputStream;
-import net.pgrid.loader.logging.Logger;
+import net.pgrid.loader.util.Logger;
 
 /**
  * Downloads the updater data from the updater server.

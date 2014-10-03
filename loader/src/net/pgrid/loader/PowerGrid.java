@@ -34,7 +34,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import net.pgrid.loader.bridge.Reflection;
 import net.pgrid.loader.bridge.UpdaterRunner;
-import net.pgrid.loader.logging.Logger;
+import net.pgrid.loader.util.Logger;
 import net.pgrid.loader.util.ArgumentParser;
 import net.pgrid.loader.util.NullOutputStream;
 

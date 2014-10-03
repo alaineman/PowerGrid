@@ -16,7 +16,7 @@
  */
 package net.pgrid.loader;
 
-import net.pgrid.loader.logging.Logger;
+import net.pgrid.loader.util.Logger;
 
 /**
  * Custom UncaughtExceptionHandler.

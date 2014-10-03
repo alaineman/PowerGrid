@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import net.pgrid.loader.logging.Logger;
 
 /**
  * Parses command line arguments and provides easy checking if certain flags 

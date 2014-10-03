@@ -33,7 +33,7 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import net.pgrid.loader.logging.Logger;
+import net.pgrid.loader.util.Logger;
 
 /**
  * This class functions as the window in which the Applet can run.

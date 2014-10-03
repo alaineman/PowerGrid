@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import net.pgrid.loader.bridge.Updater;
-import net.pgrid.loader.logging.Logger;
+import net.pgrid.loader.util.Logger;
 
 /**
  * Downloads required files from the Runescape servers.

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.pgrid.loader.logging;
+package net.pgrid.loader.util;
 
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -24,9 +24,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static net.pgrid.loader.logging.Logger.Verbosity.DEBUG;
-import static net.pgrid.loader.logging.Logger.Verbosity.NORMAL;
-import static net.pgrid.loader.logging.Logger.Verbosity.QUIET;
+import static net.pgrid.loader.util.Logger.Verbosity.DEBUG;
+import static net.pgrid.loader.util.Logger.Verbosity.NORMAL;
+import static net.pgrid.loader.util.Logger.Verbosity.QUIET;
 
 /**
  * Custom Logging facility allowing for faster logging and more

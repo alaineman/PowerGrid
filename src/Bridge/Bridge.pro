@@ -236,7 +236,8 @@ HEADERS += \
     rs/abstractmouselistener.h \
     java/lang/class.h \
     java/lang/integer.h \
-    java/lang/number.h
+    java/lang/number.h \
+    java/lang/double.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -386,7 +387,8 @@ SOURCES += \
     rs/abstractmouselistener.cpp \
     java/lang/class.cpp \
     java/lang/integer.cpp \
-    java/lang/number.cpp
+    java/lang/number.cpp \
+    java/lang/double.cpp
 
 HEADERS    += \
     jni.h \

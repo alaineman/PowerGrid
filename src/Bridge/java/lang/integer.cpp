@@ -6,8 +6,6 @@
 namespace java {
 namespace lang {
 
-// TODO implement java.lang.Integer proxy
-
 Integer::Integer() : Number(), _val(0) {}
 Integer::Integer(jint value) : Number(), _val(value) {
     JNIEnv* env = jace::helper::attach();

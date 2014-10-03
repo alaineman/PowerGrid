@@ -64,6 +64,30 @@ public:
      */
     static Class forName(String name) throw(jace::JNIException);
     static Class forName(QString name) throw(jace::JNIException);
+
+
+    /**
+     * @brief Returns a Class object that references the provided JNI class.
+     * @param cls - the JNI jclass representing the class.
+     * @return a Class object for the provided jclass.
+     */
+    static Class fromJNIClass(jclass cls) throw(jace::JNIException);
+    /**
+     * @brief Returns a Class object that references the provided JACE class.
+     * @param cls - the JACE JClass representing the class.
+     * @return a Class object for the provided jclass.
+     */
+    static Class fromJNIClass(const jace::JClass* cls) throw(jace::JNIException);
+
+    /**
+     * @brief Returns the class object for the given proxy type.
+     *
+     * @return the Class object for the specified type.
+     */
+    template <class ProxyType>
+    static Class get() throw (jace::JNIException) {
+        return fromJNIClass(ProxyType::staticGetJavaJniClass());
+    }
 };
 
 }

@@ -135,5 +135,12 @@ Class Class::forName(QString name) throw(jace::JNIException) {
     return forName(string);
 }
 
+Class Class::fromJNIClass(jclass cls) throw(jace::JNIException) {
+    return Class(cls);
+}
+Class Class::fromJNIClass(const jace::JClass *cls) throw(jace::JNIException) {
+    return Class(cls->getClass());
+}
+
 }
 }

@@ -121,6 +121,15 @@ public:
      * @return true if these Objects are not equal, false if they are
      */
     bool operator!= (const Object& obj);
+
+    /**
+     * @brief Calls this Java Object's \c hashCode method.
+     * This invokes the hashCode method on the java object in the Java VM.
+     *
+     * @return the hashCode of the object.
+     */
+    int hashCode() const;
+
     /*!
      * \brief Calls this Java Object's \c equals method.
      * This invokes the equals method on the two java objects in the Java VM.

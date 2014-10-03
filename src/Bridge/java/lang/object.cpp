@@ -21,6 +21,8 @@
 #include "java/lang/string.h"
 #include "java/lang/class.h"
 
+#include "QHash"
+
 namespace java {
 namespace lang {
 
@@ -61,6 +63,11 @@ bool Object::operator !=(const Object& obj) {
     return !(*this == obj);
 }
 
+int Object::hashCode() const {
+    jmethodID mid = Class::get<Object>().getMethodID("hashCode", {});
+    return jace::helper::attach()->CallIntMethod(getJavaJniObject(), mid);
+}
+
 bool Object::equals(const Object &other) const {
     JNIEnv* env = jace::helper::attach();
     jmethodID equals_id = env->GetMethodID(
@@ -96,5 +103,9 @@ std::ostream& operator<<(std::ostream& out, java::lang::Object& object) {
         java::lang::String string (object.toString());
         return out << string.toStdString();
     }
+}
+
+uint qHash(const java::lang::Object& object, uint seed = 0) {
+    return static_cast<uint>(object.hashCode()) ^ seed;
 }
 

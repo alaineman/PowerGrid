@@ -1,74 +1,107 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- You may freely edit this file. See commented blocks below for -->
-<!-- some examples of how to customize the build. -->
-<!-- (If you delete it and reopen the project it will be recreated.) -->
-<!-- By default, only the Clean and Build commands use this build script. -->
-<!-- Commands such as Run, Debug, and Test only use this build script if -->
-<!-- the Compile on Save feature is turned off for the project. -->
-<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
-<!-- in the project's Project Properties dialog box.-->
-<project name="PowerGridLoader" default="default" basedir=".">
-    <description>Builds, tests, and runs the project PowerGridLoader.</description>
-    <import file="nbproject/build-impl.xml"/>
-    <!--
+<?xml version="1.0"?>
+<project name="PowerGridLoader" default="jar" basedir=".">
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
-
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
-
-    (Targets beginning with '-' are not intended to be called on their own.)
-
-    Example of inserting an obfuscator after compilation could look like this:
-
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
-
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
-
-
-    Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
-
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar:                  JAR building
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
-
-    An example of overriding the target for project execution could look like this:
-
-        <target name="run" depends="PowerGridLoader-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
-
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
-
+    <!-- 
+      Ant build script for the PowerGrid client loader.
+      
+      This build script builds the Java client loader, which
+      is responsible for downloading and starting the RS client.
+      
+      The following Ant targets are available:
+        - clean:   Cleans the project's build files.
+        - makedir: Creates the directory structure.
+        - compile: Compiles all Java files
+        - docs:    Compiles all Javadoc
+        - jar:     Packages the compiled files into a jar (default)
+        - run:     Runs the PowerGridLoader
+      
+      
     -->
-</project>
+  
+    <!-- version checks (just to make sure there are no unexplainable errors during build) -->
+    <fail message="This project requires at least Ant version 1.8.0">
+        <condition>
+            <not>
+                <antversion atleast="1.8.0" /> 
+            </not>
+        </condition>
+    </fail>
+    <fail message="This project requires at Java 8.">
+        <condition>
+            <not>
+                <equals arg1="${ant.java.version}" arg2="1.8" />
+            </not>
+        </condition>
+    </fail>
 
+    <property name="src.dir"     location="src" />
+    <property name="build.dir"   location="bin" />
+    <property name="dist.dir"    location="../dist" />
+    <property name="docs.dir"    location="../doc/loader" />
+
+    <!-- Removes the existing build files. -->
+    <!-- Note: The dist directory is shared with the C++ project, so we don't delete it -->
+    <!--       (Otherwise the C++ project may be missing files in the dist directory).  -->
+    <target name="clean">
+        <delete dir="${build.dir}" />
+        <delete dir="${docs.dir}" />
+    </target>
+
+    <!-- Creates the directory structure -->
+    <target name="makedir">
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${docs.dir}" />
+    </target>
+
+    <!-- Builds the project -->
+    <target name="compile" depends="makedir">
+        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false" />
+    </target>
+
+    <!-- Generates Javadoc documentation -->
+    <target name="docs" depends="compile">
+        <javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*.java" />
+            </fileset>
+        </javadoc>
+    </target>
+
+    <!-- Generates the jar file from the compiled files (default target) -->
+    <target name="jar" depends="compile">
+        <jar destfile="${dist.dir}/PowerGridLoader.jar">
+            <!-- Include all compiled files, and include all non-java source files.-->
+            <!-- This ensures that resources included in ${src.dir} end up in the jar.-->
+            <fileset dir="${build.dir}">
+                <include name="**" />
+            </fileset>
+            <fileset dir="${src.dir}">
+                <exclude name="**/*.java" />
+            </fileset>
+            <manifest>
+                <attribute name="Main-Class"    value="net.pgrid.loader.PowerGrid" />
+                <attribute name="Agent-Class"   value="net.pgrid.loader.Agent" />
+                <attribute name="Premain-Class" value="net.pgrid.loader.Agent" />
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- Runs the PowerGrid loader -->
+    <target name="run" depends="jar">
+        <java dir="${dist.dir}" jar="${dist.dir}/PowerGridLoader.jar" fork="true">
+            <classpath>
+                <pathelement location="${dist.dir}/PowerGridLoader.jar" />
+                <pathelement path="${java.class.path}" />
+            </classpath>
+            <jvmarg value="-javaagent:${dist.dir}/PowerGridLoader.jar" />
+        </java>
+    </target>
+    
+    <!-- Runs the native client. -->
+    <!-- Caution: This task depends on a working, compatible native client build. -->
+    <target name="run-native" depends="jar">
+        <exec dir="${dist.dir}" executable="${dist.dir}/PowerGrid" />
+    </target>
+  
+</project>

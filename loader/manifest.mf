@@ -1,2 +1,0 @@
-Premain-Class: net.pgrid.loader.Agent
-Agent-Class: net.pgrid.loader.Agent

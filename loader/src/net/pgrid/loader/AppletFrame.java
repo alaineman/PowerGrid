@@ -37,10 +37,10 @@ import net.pgrid.loader.util.Logger;
 
 /**
  * This class functions as the window in which the Applet can run.
- * <p/>
+ * 
  * It implements AppletStub to provide the Applet with a valid environment and
  * sets up the itself as a JFrame in which the Applet can draw.
- * <p/>
+ * 
  * @author Patrick Kramer
  */
 public class AppletFrame extends JFrame implements AppletStub {
@@ -105,7 +105,7 @@ public class AppletFrame extends JFrame implements AppletStub {
 
     /**
      * Takes the provided Applet instance and starts it in this Window.
-     * <p/>
+     * 
      * @param info the RSVersionInfo object to use for getting parameters for the client
      * @param a the Applet to start (should not be null)
      * @return true if the Applet started without Exceptions, false if an Exception occurred.
@@ -133,7 +133,7 @@ public class AppletFrame extends JFrame implements AppletStub {
     
     /**
      * Shows the given log message in the AppletFrame.
-     * <p/>
+     * 
      * If the client is already started, this method does nothing (as the 
      * message will never be visible anyway).
      * @param text the message to display
@@ -176,7 +176,7 @@ public class AppletFrame extends JFrame implements AppletStub {
 
     /**
      * Returns the AppletContext. 
-     * <p/>
+     * 
      * Since the Runescape Applet does not care about this, this method will 
      * always return {@code null}.
      * @return {@code null}

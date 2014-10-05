@@ -32,10 +32,10 @@ import net.pgrid.loader.util.Logger;
 /**
  * This class represents information that describes the Runescape client and 
  * its parameters. 
- * <p/>
+ * 
  * This class is used for looking up parameters required for the client to start 
  * and to provide version information based on the client's encryption keys.
- * <p/>
+ * 
  * In general, it can be assumed that the same encryption keys for different 
  * clients means that they're actually the same client. Similarly, if two 
  * RSVersionInfo objects are equal according to their {@code equals(Object)} method,

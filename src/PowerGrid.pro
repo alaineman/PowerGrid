@@ -36,7 +36,6 @@ SUBDIRS += \
     UserInterface \
     PluginFramework \
     TestPlugin \
-    UnitTests \
     API \
     EntityFramework
 
@@ -45,5 +44,3 @@ UserInterface.depends   = Bridge EntityFramework
 PluginFramework.depends = Bridge EntityFramework
 TestPlugin.depends      = API PluginFramework Bridge
 EntityFramework.depends = Bridge
-
-UnitTests.depends       = API Bridge PluginFramework UserInterface

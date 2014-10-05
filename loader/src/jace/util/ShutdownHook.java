@@ -28,18 +28,18 @@ package jace.util;
 
 /**
  * Replica of the ShutdownHook class used by JACE.
- * <p/>
+ * 
  * It is included in the PowerGrid client to allow JACE
  * to load the PowerGrid client on the ClassPath without needing 
  * the JACE runtime additional to the PowerGrid client itself.
- * <p/>
+ * 
  * Minor modifications have been made to this class to ensure Thread-safety of
  * this singleton class.
- * <p/>
+ * 
  * This class should never be used in actual code, the JVM runs this Thread 
  * automatically just before shutting down. Using this class on its own may 
  * result in undefined behavior.
- * <p/>
+ * 
  * @author Patrick Kramer (modifications), Toby Reyelts (original)
  */
 public class ShutdownHook extends Thread {

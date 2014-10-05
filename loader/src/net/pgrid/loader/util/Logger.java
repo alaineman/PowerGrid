@@ -31,7 +31,7 @@ import static net.pgrid.loader.util.Logger.Verbosity.QUIET;
 /**
  * Custom Logging facility allowing for faster logging and more
  * application-specific control options.
- * <p/>
+ * 
  * @author Patrick Kramer
  */
 public class Logger {
@@ -71,12 +71,12 @@ public class Logger {
 
     /**
      * Returns a Logger with the given name.
-     * <p/>
+     * 
      * If no Logger yet exists with that name, a new Logger is created. If
      * {@code name == null}, {@code name.isEmpty()} or
      * {@code name.length() > MAX_NAME_LENGTH}, the name is invalid and this
      * method returns null.
-     * <p/>
+     * 
      * @param name the name of the requested Logger
      * @return a Logger with the specified name, or null if the name is invalid.
      */
@@ -97,11 +97,11 @@ public class Logger {
     /**
      * Sets the logger with the given name to use the provided PrintStream for
      * output.
-     * <p/>
+     * 
      * If the name is invalid or the target PrintStream is null, this method
      * does nothing and returns null. Else, the Logger is created if it did not
      * yet exist, and its target is set to the specified PrintStream.
-     * <p/>
+     * 
      * @param name the name of the Logger
      * @param target the new PrintStream the Logger should print to.
      * @return the configured Logger, or null if the Logger name was invalid.
@@ -123,7 +123,7 @@ public class Logger {
 
     /**
      * returns a Set containing all created Logger instances.
-     * <p/>
+     * 
      * Note that a new Set is created for each invocation. The Set can be
      * modified without affecting the Collection of Loggers maintained within
      * this Class.
@@ -136,7 +136,7 @@ public class Logger {
 
     /**
      * Enum representing various Logging levels.
-     * <p/>
+     * 
      * These are used to decide whether to print additional info alongside log messages,
      * and how much info is added.
      */
@@ -154,9 +154,9 @@ public class Logger {
 
     /** 
      * Sets the verbosity of the Loggers.
-     * <p/>
+     * 
      * This setting affects all Loggers.
-     * <p/>
+     * 
      * @param newMode the new Verbosity level
      */
     public static void setVerbosity(Verbosity newMode) {
@@ -177,7 +177,7 @@ public class Logger {
 
     /**
      * Creates a Logger with the given name.
-     * <p/>
+     * 
      * The Logger prints to {@code System.out}.
      * @param name the Logger name
      * @throws     IllegalArgumentException when the name is invalid.
@@ -192,9 +192,9 @@ public class Logger {
 
     /**
      * Creates a Logger with the given name.
-     * <p/>
+     * 
      * The Logger prints to the given PrintStream.
-     * <p/>
+     * 
      * @param name   the Logger name
      * @param target the target PrintStream.
      * @throws       IllegalArgumentException when the name is invalid, or the 
@@ -225,7 +225,7 @@ public class Logger {
 
     /**
      * Sets the target PrintStream of this Logger.
-     * <p/>
+     * 
      * If {@code target == null}, this method does nothing.
      * @param target the new target PrintStream
      */
@@ -237,7 +237,7 @@ public class Logger {
 
     /**
      * Returns the line prefix for log messages.
-     * <p/>
+     * 
      * Subclasses can use this method to prefix each line when overriding the 
      * {@code log(String)} and / or {@code describe(Throwable)} methods.
      * @return the prefix used to prepend each line with.
@@ -308,7 +308,7 @@ public class Logger {
 
     /**
      * Prints info about the given Throwable to this Logger.
-     * <p/>
+     * 
      * It prints the type of Throwable, the Throwable's message and its stack trace.
      * @param t the Throwable to describe
      */
@@ -326,7 +326,7 @@ public class Logger {
     
     /**
      * Logs the message to the Logger, together with the given Throwable.
-     * <p/>
+     * 
      * This method effectively combines the {@code log(String)} and 
      * {@code describe(Throwable)} methods.
      * @param message the message to print

@@ -102,20 +102,26 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
 /**
  * @brief Tries to locate the directory in which Runescape stores its libraries.
  *
- * This allows the client to load the native OpenGL and DirectX backends.
+ * This allows the client to load the native OpenGL (and DirectX on Windows) backends.
+ * The contents of the default library path (PATH on Windows and LD_LIBRARY_PATH on Unix)
+ * are prepended to the found directory.
  *
  * @return the path to "jagexcache/runescape/LIVE/" in the user's home directory.
  */
 const char* findJagexCacheDir() {
-//#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN32
     // On Windows, take the value of the USERPROFILE environment variable.
     QByteArray userprofileBytes = qgetenv("USERPROFILE");
-    return std::string(userprofileBytes.constData())
-            .append(R"(\jagexcache\runescape\LIVE\)").c_str();
-//#else
-//    // Unixes have a standard way of getting the home directory (~)
-//    return "~/jagexcache/runescape/LIVE/";
-//#endif
+    QByteArray lib_path = qgetenv("PATH");
+    return std::string(lib_path.constData())
+            .append(";")
+            .append(userprofileBytes.constData())
+            .append("\\jagexcache\\runescape\\LIVE\\").c_str();
+#else
+    QByteArray lib_path = qgetenv("LD_LIBRARY_PATH");
+    // Unixes have a standard way of getting the home directory (~)
+    return std::string(lib_path.constData()).append(":~/jagexcache/runescape/LIVE/";
+#endif
 }
 
 int main(int argc, char** argv) {
@@ -143,27 +149,28 @@ int main(int argc, char** argv) {
 #endif
 
         // Add the PowerGrid jar file to the classpath
-#ifdef Q_OS_MACX
-        // Temporary fix for issue caused by Mac OS X application bundle layout.
-        // Ideally we want the PowerGridLoader inside the app bundle.
-        options.push_back( ClassPath("../../../PowerGridLoader.jar") );
-        options.push_back( JavaAgent("-javaagent:../../../PowerGridLoader.jar") );
-#else
         options.push_back( ClassPath("PowerGridLoader.jar") );
         options.push_back( JavaAgent("PowerGridLoader.jar") );
-#endif
-#ifdef PG_DEBUG
-        options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
-#endif
         options.push_back( LibraryPath(findJagexCacheDir()) );
         options.push_back( CustomOption("-Xss2M") );
 
+#ifdef PG_DEBUG
+        options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
+#endif
         // create the JVM
         try {
             helper::createVm(loader, options);
             qCDebug(logLauncher) << "JVM created";
         } catch (JNIException& e) {
             qCWarning(logLauncher) << "[FAILURE] Creating VM failed:" << e.what();
+            return EXIT_FAILURE;
+        }
+
+        // The PowerGrid loader requires Java 8, so we print an error if the version does not match.
+        // Afterwards we exit, because the loader won't run anyway.
+        QString javaVersion = helper::getJavaProperty("java.version");
+        if (!javaVersion.startsWith("1.8")) {
+            qCWarning(logLauncher) << "[FAILURE] PowerGrid requires Java 8 to run. Please update your Java version";
             return EXIT_FAILURE;
         }
 
@@ -174,12 +181,7 @@ int main(int argc, char** argv) {
 
         // Start the PowerGridLoader
         // Actual command (in java): net.pgrid.loader.PGLoader.main(null);
-
-        qCDebug(logLauncher) << "Calling PGLoader.main";
-        //FIXME It appears that on Mac OS X, a bug in the JVM causes problems with
-        //      loading the PGLoader class, when the JVM is started from native
-        //      code. No known workaround exists as of now.
-
+        qCDebug(logLauncher) << "Starting Java client loader";
         jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PowerGrid");
         if (!pgLoaderClass) {
             throw JNIException("PowerGrid class not found");
@@ -189,20 +191,16 @@ int main(int argc, char** argv) {
             throw JNIException("PowerGrid.main method not found");
         }
         env->CallStaticVoidMethod(pgLoaderClass, mainMethod, NULL);
+        env->DeleteLocalRef(pgLoaderClass);
 
         if (env->ExceptionCheck()) {
             env->ExceptionDescribe();
             throw JNIException("Exception in main method invocation");
         }
-
-        // Clean up JNI references
-        env->DeleteLocalRef(pgLoaderClass);
-
     } catch (JNIException& e) {
         qCWarning(logLauncher) << "Error creating JVM loader: " << e.what();
         return EXIT_FAILURE;
     }
-
 
     // The JVM is started and is running, now create our
     // PowerGrid Qt Application and frame.
@@ -213,7 +211,7 @@ int main(int argc, char** argv) {
 
     MainWindow window;
     window.show();
-    window.setJVMVersion(jace::helper::getJavaProperty("java.version"));
+    window.setJVMVersion(helper::getJavaProperty("java.version"));
     qCDebug(logLauncher) << "Done.";
     return app.exec();
 }

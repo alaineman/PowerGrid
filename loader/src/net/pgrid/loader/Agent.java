@@ -60,11 +60,6 @@ public class Agent {
      * 
      * @param agentArgs the arguments for the Agent (ignored)
      * @param inst the Instrumentation instance for the Agent
-     * 
-     * @internal Note that you cannot use the agent from within an IDE. In fact,
-     *           the agent needs to be set when the JVM is started. The native
-     *           client does this automatically, making this construction work 
-     *           when running PowerGrid normally (through the native C++ client).
      */
     public static synchronized void premain(String agentArgs, Instrumentation inst) {
         System.out.println("AGENT        | Agent started");

@@ -39,7 +39,7 @@ import net.pgrid.loader.util.Logger;
 
 /**
  * Downloads required files from the Runescape servers.
- * <p/>
+ * 
  * This class contains all functionality required to download the client and all
  * required parameters for launching it.
  *
@@ -53,7 +53,7 @@ public class RSDownloader {
     private static final Logger LOGGER = Logger.get("LOADER");
     /**
      * Link to the Runescape config file.
-     * <p/>
+     * 
      * It is used as the default link for the configuration data.
      */
     public static final String CONFIG_LINK = "http://www.runescape.com/k=3/l=0/jav_config.ws";

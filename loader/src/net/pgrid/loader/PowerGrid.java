@@ -34,8 +34,8 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import net.pgrid.loader.bridge.Reflection;
 import net.pgrid.loader.bridge.UpdaterRunner;
-import net.pgrid.loader.util.Logger;
 import net.pgrid.loader.util.ArgumentParser;
+import net.pgrid.loader.util.Logger;
 import net.pgrid.loader.util.NullOutputStream;
 
 /**
@@ -95,11 +95,11 @@ public class PowerGrid {
     /**
      * Convenience method for displaying a message to the user prior to starting
      * the client. 
-     * <p/>
+     * 
      * Calling this method is equivalent to calling 
      * {@code INSTANCE.getFrame().showMessage}, but this method additionally 
      * performs some safety checks.
-     * <p/>
+     * 
      * If the frame does not (yet) exist, this method does nothing.
      * @param message the message to report
      */
@@ -200,6 +200,9 @@ public class PowerGrid {
         getFrame().showMessage("Starting Applet...");
         initApplet(newVersion);
         initClassProvider();
+        
+        
+        LOGGER.log("Java Library Path: ", System.getProperty("java.library.path"));
         
         if (debugMode) {
             long timePassed = System.currentTimeMillis() - startTime;

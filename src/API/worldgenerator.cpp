@@ -117,9 +117,11 @@ Entity* WorldGenerator::createEntity(RS::Boundary object) {
                     (int)b.getPlane().getByte());
 
         Mapper* posMapper = _world->getMapper<Position>();
-        Entity* original = posMapper->getEntity(pos); // TODO change to get all Entities at pos.
-        if (original->get<ID>()->getID() == b.getID()) {
-            return NULL;
+        QList<Entity*> entities = posMapper->getEntities(pos);
+        foreach(Entity* e, entities) {
+            if (e->get<ID>()->getID() == b.getID()) {
+                return e;
+            }
         }
 
         Entity* e = _world->createEntity();
@@ -146,11 +148,12 @@ Entity* WorldGenerator::createEntity(RS::WallDecoration object) {
                     (int)b.getPlane().getByte());
 
         Mapper* posMapper = _world->getMapper<Position>();
-        Entity* original = posMapper->getEntity(pos); // TODO change to get all Entities at pos.
-        if (original->get<ID>()->getID() == b.getID()) {
-            return NULL;
+        QList<Entity*> entities = posMapper->getEntities(pos);
+        foreach(Entity* e, entities) {
+            if (e->get<ID>()->getID() == b.getID()) {
+                return e;
+            }
         }
-
         Entity* e = _world->createEntity();
         e->addComponent(new ID(b.getID()));
         e->addComponent(pos);
@@ -175,9 +178,11 @@ Entity* WorldGenerator::createEntity(RS::FloorDecoration object) {
                     (int)b.getPlane().getByte());
 
         Mapper* posMapper = _world->getMapper<Position>();
-        Entity* original = posMapper->getEntity(pos); // TODO change to get all Entities at pos.
-        if (original->get<ID>()->getID() == b.getID()) {
-            return NULL;
+        QList<Entity*> entities = posMapper->getEntities(pos);
+        foreach(Entity* e, entities) {
+            if (e->get<ID>()->getID() == b.getID()) {
+                return e;
+            }
         }
 
         Entity* e = _world->createEntity();

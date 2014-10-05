@@ -18,6 +18,8 @@
  */
 #include "navigation.h"
 
+namespace API {
+
 using component::Position;
 
 Navigation::Navigation(QList<Position*> path) :
@@ -67,4 +69,6 @@ Position* Navigation::current() const {
 
 void Navigation::reset() {
     _current = -1;
+}
+
 }

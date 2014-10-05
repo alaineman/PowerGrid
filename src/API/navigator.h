@@ -24,6 +24,8 @@
 #include "entity/world.h"
 #include "component/position.h"
 
+namespace API {
+
 using entity::World;
 using component::Position;
 
@@ -159,5 +161,7 @@ public slots:
      */
     void updateState();
 };
+
+}
 
 #endif // NAVIGATOR_H

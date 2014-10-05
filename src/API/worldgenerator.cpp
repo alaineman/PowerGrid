@@ -37,6 +37,8 @@
 #include "component/id.h"
 #include "component/position.h"
 
+namespace API {
+
 using entity::World;
 using jace::RSClassMapper;
 using jace::RSClass;
@@ -222,4 +224,6 @@ void WorldGenerator::createEntities() {
 
 void WorldGenerator::processTick() {
     createEntities();
+}
+
 }

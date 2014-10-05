@@ -22,6 +22,8 @@
 #include <QObject>
 #include "component/position.h"
 
+namespace API {
+
 class Navigator;
 
 using component::Position;
@@ -124,5 +126,7 @@ public slots:
      */
     void reset();
 };
+
+}
 
 #endif // NAVIGATION_H

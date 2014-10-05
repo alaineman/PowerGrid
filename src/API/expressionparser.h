@@ -13,6 +13,8 @@ using namespace jace::proxy;
 #include "java/lang/object.h"
 using namespace java::lang;
 
+namespace API {
+
 /**
  * @brief The ExpressionParser class
  */
@@ -61,82 +63,18 @@ public:
     QString evaluateToString(QString expression);
 
     /**
-     * @brief Returns the contents of the given field.
+     * @brief Translates the field name to the real (obfuscated) name.
      *
-     * This function can only be used for object types.
-     * Use the
-     * @param obj - the object to retrieve the field for
-     * @param fieldName - the name of the field to retrieve
-     * @return the contents of the field.
+     * If no mapping exists, the original field name is returned. This ensures
+     * this function also returns the expected value for non-obfuscated classes.
+     *
+     * @param obj       - the Object for which to translate the field
+     * @param fieldName - the name of the field.
+     * @return            the real name of the field.
      */
-    Object* getField(Object obj, QString fieldName);
-
-    /**
-     * @brief Returns the contents of the given field.
-     *
-     * This function can only be used for primitive types.
-     * Use the @c getField function for object types instead.
-     *
-     * @param obj - the object to retrieve the field for.
-     * @param fieldName - the name of the field to retrieve.
-     * @return the contents of the field.
-     */
-    template <typename P>
-    P getPrimitive(Object obj, QString fieldName);
-
-    std::string convertFieldName(Object obj, QString fieldName) const;
-protected:
-    /**
-     * @brief Retrieves a Reflected Field Object.
-     * @param type - the class to get the Field from
-     * @param name - the name of the Field to retrieve the Reflection Object for.
-     * @return the reflected Field Object for the provided data, or NULL if the Field
-     *         does not exist.
-     * @throws jace::JNIException - when an error occurs in the JNI, or when either of the
-     *         parameters is invalid.
-     */
-    jobject getReflectedField(jclass type, const char* name) const throw(JNIException);
-
-    /**
-     * @brief Retrieves a Reflected Field ID.
-     *
-     * This function differs from JNIEnv::GetFieldID in the fact that this method uses the
-     * Java Reflection API to find the field, eliminating the requirement to provide the
-     * signature of the field.
-     *
-     * @param type - the class to get the Field from
-     * @param name - the name of the Field to retrieve the Reflection Object for.
-     * @return the reflected Field Object for the provided data, or NULL if the Field
-     *         does not exist.
-     * @throws jace::JNIException - when an error occurs in the JNI, or when either of the
-     *         parameters is invalid.
-     */
-    jfieldID getReflectedFieldID(jclass type, const char* name) const throw(JNIException);
-
-    /**
-     * @brief Retrieves a primitive value from a field.
-     *
-     * This function allows templated retrieval of primitive type fields. This way, we can
-     * prevent switching between all different JNIEnv::GetXXXField(...) functions, and address
-     * the correct function for each type.
-     *
-     * @param env - the JNI environment.
-     * @param obj - the Object to get the field for.
-     * @param fid - the ID of the field to retrieve.
-     */
-    template <typename P> P getFieldValue(JNIEnv* env, jobject obj, jfieldID fid) const throw(JNIException);
-
-
+    QString convertFieldName(Object obj, QString fieldName) const;
 };
 
-// Template specification functions for getFieldValue(...)
-template <> jboolean ExpressionParser::getFieldValue(JNIEnv* env, jobject obj, jfieldID fid) const throw(JNIException);
-template <> jbyte    ExpressionParser::getFieldValue(JNIEnv* env, jobject obj, jfieldID fid) const throw(JNIException);
-template <> jshort   ExpressionParser::getFieldValue(JNIEnv* env, jobject obj, jfieldID fid) const throw(JNIException);
-template <> jchar    ExpressionParser::getFieldValue(JNIEnv* env, jobject obj, jfieldID fid) const throw(JNIException);
-template <> jint     ExpressionParser::getFieldValue(JNIEnv* env, jobject obj, jfieldID fid) const throw(JNIException);
-template <> jlong    ExpressionParser::getFieldValue(JNIEnv* env, jobject obj, jfieldID fid) const throw(JNIException);
-template <> jdouble  ExpressionParser::getFieldValue(JNIEnv* env, jobject obj, jfieldID fid) const throw(JNIException);
-template <> jfloat   ExpressionParser::getFieldValue(JNIEnv* env, jobject obj, jfieldID fid) const throw(JNIException);
+}
 
 #endif // EXPRESSIONPARSER_H

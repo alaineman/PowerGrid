@@ -2,89 +2,49 @@
 #include "java/lang/class.h"
 #include "java/lang/string.h"
 
+#include "jace/MappingUnavailableException.h"
+
+namespace API {
+
 ExpressionParser::ExpressionParser(RSClassMapper *mapper)
         : QObject(), rscm(mapper) {
-    if (!mapper) {
-        throw std::invalid_argument("NULL RSClassMapper");
-    }
+    Q_ASSERT(mapper != NULL);
 }
 
 Object ExpressionParser::evaluate(QString expression) {
-    Q_UNUSED(expression);
-    //TODO loop over expression parts and evaluate piece by piece
-
-    return Object();
+    QStringList parts = expression.split(".");
+    QString str(parts.at(0));
+    str.replace('/', '.');
+    Class cls = Class::forName(str);
+    if (parts.size() == 1) {
+        return cls;
+    }
+    Object obj = cls.getStaticFieldContent(parts.at(1));
+    for (int nextField = 2; nextField < parts.size(); nextField++) {
+        if (obj.isNull()) {
+            return String::fromQString("Dereferenced NULL at position: " % QString().setNum(nextField));
+        }
+        Class objClass = obj.getClass();
+        QString fieldName = convertFieldName(obj, parts.at(nextField));
+        obj = objClass.getFieldContent(fieldName, obj);
+    }
+    return obj;
 }
 
 QString ExpressionParser::evaluateToString(QString expression) {
-    Q_UNUSED(expression);
-    //TODO convert arbitrary JValue type to String
-    return QString();
+    return evaluate(expression).toString().toQString();
 }
 
-Object *ExpressionParser::getField(Object obj, QString fieldName) {
-    if (obj.isNull()) throw JNIException("Dereferencing NULL while getting Field named: " % fieldName);
-    JNIEnv* env = jace::helper::attach();
-    jobject jobj = obj.getJavaJniObject();
-    jclass type = env->GetObjectClass(jobj);
-    if (!type) throw JNIException("Cannot get type of object");
-    jfieldID fieldID = getReflectedFieldID(type, qPrintable(fieldName));
-    jobject jresult = env->GetObjectField(jobj, fieldID);
-    Object* result = new Object(jresult);
-    if (jresult) {
-        env->DeleteLocalRef(jresult);
-    }
-    env->DeleteLocalRef(type);
-    return result;
-}
-
-template <typename P>
-P ExpressionParser::getPrimitive(Object obj, QString fieldName) {
-    if (obj.isNull()) throw JNIException("Dereferencing NULL while getting Field named " % fieldName);
-    JNIEnv* env  = jace::helper::attach();
-    jobject jobj = obj.getJavaJniObject();
-    jclass type  = env->GetObjectClass(jobj);
-    if (!type) throw JNIException("Cannot get type of object");
-    jfieldID field = getReflectedFieldID(type, qPrintable(fieldName));
-    if (!field) throw JNIException("Cannot find Field named" % fieldName);
-    P value = getFieldValue<P>(env, jobj, field);
-    env->DeleteLocalRef(type);
-    return value;
-}
-
-std::string ExpressionParser::convertFieldName(Object obj, QString fieldName) const {
+QString ExpressionParser::convertFieldName(Object obj, QString fieldName) const {
     String className = obj.getClass().getName();
-    RSClass* rsc = rscm->getRSClass(className.toQString());
-    return rsc->getFieldName(fieldName);
-}
-
-jobject ExpressionParser::getReflectedField(jclass type, const char *name) const throw(JNIException) {
-    JNIEnv* env = jace::helper::attach();
-    jclass classClass = env->FindClass("java/lang/Class");
-    if (!classClass) throw JNIException("Cannot find java.lang.Class");
-    jmethodID getField = env->GetMethodID(classClass,
-          "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;");
-    if (!getField) throw JNIException("Cannot find Class.getDeclaredField(String)");
-    jstring fieldName = env->NewStringUTF(name);
-    if (!fieldName) throw JNIException("Cannot create Java String");
-    jobject fieldObject = env->CallObjectMethod(type, getField, fieldName);
-
-    env->DeleteLocalRef(fieldName);
-    env->DeleteLocalRef(classClass);
-
-    if (env->ExceptionCheck()) {
-        env->ExceptionClear();
-        throw JNIException("Exception retrieving Field object");
+    try {
+        RSClass* rsc = rscm->getRSClass(className.toQString());
+        return QString::fromStdString(rsc->getFieldName(fieldName));
+    } catch (jace::MappingUnavailableException& ex) {
+        // No mapping exists, so we assume the class is not obfuscated.
+        // In that case we can just return the argument field name.
+        return fieldName;
     }
-    return fieldObject;
 }
 
-jfieldID ExpressionParser::getReflectedFieldID(jclass type, const char *name) const throw(JNIException) {
-    JNIEnv* env = jace::helper::attach();
-    jobject fieldObject = getReflectedField(type, name);
-    if (!fieldObject) throw JNIException("Field not found");
-    jfieldID fieldID = env->FromReflectedField(fieldObject);
-    if (!fieldID) throw JNIException("Error converting Java Field to JNI FieldID");
-    env->DeleteLocalRef(fieldObject);
-    return fieldID;
 }

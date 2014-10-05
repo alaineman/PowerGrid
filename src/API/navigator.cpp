@@ -23,6 +23,8 @@
 
 #include "navigation.h"
 
+namespace API {
+
 using component::Position;
 
 using RS::Client;
@@ -77,3 +79,4 @@ void Navigator::updateState() {
     move(_navigation->next());
 }
 
+}

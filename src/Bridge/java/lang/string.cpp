@@ -81,6 +81,12 @@ QString String::toQString() const throw (jace::JNIException) {
     return localString;
 }
 
+String String::fromQString(QString string) throw(jace::JNIException) {
+    QByteArray data = string.toUtf8();
+    jstring jstr = jace::helper::attach()->NewStringUTF(data.constData());
+    return jstr;
+}
+
 String String::valueOf(JObject value) throw(jace::JNIException) {
     JNIEnv* env = jace::helper::attach();
     jclass stringClass = staticGetJavaJniClass()->getClass();

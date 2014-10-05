@@ -135,6 +135,13 @@ public:
      */
     QString toQString() const throw(jace::JNIException);
 
+    /**
+     * @brief Creates a Java String from the provided QString.
+     * @param string - the QString to convert
+     * @return a Java String with the same contents as the QString.
+     */
+    static String fromQString(QString string) throw(jace::JNIException);
+
     // Each of these functions converts its parameter to a String representation.
     // This is done through the JVM, by calling the appropriate String.valueOf(...)
     // method and returning a String object with the result.

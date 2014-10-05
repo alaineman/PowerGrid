@@ -52,6 +52,19 @@ public:
 
     jfieldID getFieldID(QString name) const throw(jace::JNIException);
     jfieldID getFieldID(String name)  const throw(jace::JNIException);
+
+    Object getStaticFieldContent(String name) const throw(jace::JNIException);
+    Object getStaticFieldContent(QString name) const throw(jace::JNIException);
+
+    Object getFieldContent(String name, Object o) const throw(jace::JNIException);
+    Object getFieldContent(QString name, Object o) const throw(jace::JNIException);
+
+    /**
+     * @brief Disables accessibility checking for the provided Method or Field.
+     * @param obj the Method or Field to disable access checks for.
+     */
+    static void setAccessible(Object obj) throw(jace::JNIException);
+
     /**
      * @brief Finds a Java Class object by name.
      *
@@ -63,7 +76,7 @@ public:
      *         instance if no class with the specified name has been found.
      */
     static Class forName(String name) throw(jace::JNIException);
-    static Class forName(QString name) throw(jace::JNIException);
+    static Class forName(const QString name) throw(jace::JNIException);
 
 
     /**

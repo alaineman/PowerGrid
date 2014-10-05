@@ -21,6 +21,8 @@
 
 #include <QMainWindow>
 
+#include "expressionparser.h"
+
 namespace Ui {
 class MonitorWindow;
 }
@@ -42,6 +44,7 @@ public slots:
 private:
     Ui::MonitorWindow *ui;
     QTimer* timer;
+    API::ExpressionParser* parser;
 };
 
 #endif // MONITORWINDOW_H

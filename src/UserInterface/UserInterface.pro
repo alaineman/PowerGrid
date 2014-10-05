@@ -43,25 +43,25 @@ TARGET = PowerGrid
 DESTDIR = $$PWD/../../dist
 
 # Add instruction to copy dependant Qt libraries to DESTDIR
-win32 {
-    # On Windows, Qt libraries are in the 'bin' folder
-    QTDIR = $$[QT_INSTALL_PREFIX]/bin
-    qtlibs.path = $$DESTDIR
-    qtlibs.CONFIG = no_check_exist
-    CONFIG(debug, debug|release) {
-        qtlibs.files += $$QTDIR/Qt5Cored.dll
-        qtlibs.files += $$QTDIR/Qt5Guid.dll
-        qtlibs.files += $$QTDIR/Qt5Widgetsd.dll
+# and set the project to call Ant to build the Java loader.
+QTDIR = $[QT_INSTALL_PREFIX]/bin
+CONFIG(release, debug|release) {
+    win32 {
+        QMAKE_POST_LINK += \
+            copy $$QTDIR/Qt5Core.dll    $$DESTDIR & \
+            copy $$QTDIR/Qt5Gui.dll     $$DESTDIR & \
+            copy $$QTDIR/Qt5Widgets.dll $$DESTDIR &
+        QMAKE_POST_LINK += \
+            ant.bat jar &
     }
-    CONFIG(release, debug|release) {
-        qtlibs.files += $$QTDIR/Qt5Core.dll
-        qtlibs.files += $$QTDIR/Qt5Gui.dll
-        qtlibs.files += $$QTDIR/Qt5Widgets.dll
+    else {
+        QMAKE_POST_LINK += \
+            cp $$QTDIR/libQt5Core.so    $$DESTDIR; \
+            cp $$QTDIR/libQt5Gui.so     $$DESTDIR; \
+            cp $$QTDIR/libQt5Widgets.so $$DESTDIR;
+        QMAKE_POST_LINK += \
+            ant jar;
     }
-    INSTALLS += qtlibs
-}
-else {
-    warning(missing dependency specs; Qt libraries are not copied)
 }
 
 #------------------------------------------------
@@ -104,3 +104,17 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Brid
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Bridge/release/Bridge.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Bridge/debug/Bridge.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Bridge/libBridge.a
+
+# Depends for API
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../API/release/ -lAPI
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../API/debug/ -lAPI
+else:unix: LIBS += -L$$OUT_PWD/../API/ -lAPI
+
+INCLUDEPATH += $$PWD/../API
+DEPENDPATH += $$PWD/../API
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../API/release/libAPI.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../API/debug/libAPI.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../API/release/API.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../API/debug/API.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../API/libAPI.a

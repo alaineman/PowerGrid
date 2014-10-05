@@ -33,14 +33,14 @@ macx {
 
 SUBDIRS += \
     Bridge \
+    API \
     UserInterface \
     PluginFramework \
     TestPlugin \
-    API \
     EntityFramework
 
 API.depends             = Bridge EntityFramework
-UserInterface.depends   = Bridge EntityFramework
+UserInterface.depends   = API Bridge EntityFramework
 PluginFramework.depends = Bridge EntityFramework
 TestPlugin.depends      = API PluginFramework Bridge
 EntityFramework.depends = Bridge

@@ -30,6 +30,8 @@
 
 #include "rs/tile.h"
 
+namespace API {
+
 using namespace entity;
 
 /**
@@ -120,5 +122,7 @@ public slots:
      */
     void processTick();
 };
+
+}
 
 #endif // WORLDGENERATOR_H

@@ -69,6 +69,16 @@ QString getName();
  */
 int getLevel();
 
+/**
+ * @brief Returns the x coordinate of the local player
+ */
+int getX();
+
+/**
+ * @brief Returns the y coordinate of the local player
+ */
+int getY();
+
 } // namespace player
 } // namespace API
 

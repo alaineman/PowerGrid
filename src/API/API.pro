@@ -16,10 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Note that the files contained in this project do NOT fall under the
-# terms of the GNU General Public License, but instead fall under a
-# different license as mentioned below. This .pro file does fall under the
-# GNU General Public License.
+# Note that the files related to the D* Lite implementation (Dstar.cpp
+# and DStar.h) are owned by James Neufeld, and are licensed under
+# the LGPL (see http://dstarlite.googlecode.com/ for the official
+# source).
 #------------------------------------------------------------------------
 
 #------------------------------------------------------------------------
@@ -40,13 +40,15 @@ SOURCES  += \
     navigator.cpp \
     worldgenerator.cpp \
     player.cpp \
-    expressionparser.cpp
+    expressionparser.cpp \
+    Dstar.cpp
 HEADERS  += \
     navigation.h \
     navigator.h \
     worldgenerator.h \
     player.h \
-    expressionparser.h
+    expressionparser.h \
+    Dstar.h
 
 # dependency for the Bridge subproject
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Bridge/release/ -lBridge

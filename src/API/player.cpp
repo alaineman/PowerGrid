@@ -47,5 +47,13 @@ int getLevel() {
     return local().getLevel().getInt();
 }
 
+int getX() {
+    return local().getLocationX();
+}
+
+int getY() {
+    return local().getLocationY();
+}
+
 } // namespace player
 } // namespace API

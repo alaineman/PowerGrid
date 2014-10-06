@@ -24,90 +24,122 @@
 #include "entity/world.h"
 #include "component/position.h"
 
+#include "Dstar.h"
+
 namespace API {
 
-using entity::World;
 using component::Position;
+using entity::World;
 
-class Navigation;
+/**
+ * @brief Mode to use for the Navigator.
+ *
+ * This enum specifies different ways in which the Navigator can
+ * navigate to the destination.
+ *
+ * While OnTile is most precise, the other values allow for
+ * more variance in the path that is followed, giving a more human-like impression.
+ * Also note that the OnTile mode may fail if the target tile is not walkable
+ * (for obvious reasons).
+ *
+ * The default mode is OnWindow, which stops if the target is visible in the game
+ * window (which is usually what you want anyway).
+ */
+enum NavigationMode {
+    OnMinimap, ///< Indicates the target should be visible on the minimap.
+    OnWindow,  ///< Indicates the target should be visible in the window.
+    OnTile     ///< Indicates the player should end up on the target tile.
+};
 
 /**
  * @brief Utility class responsible for movement across the World
  *
- * This class provides functions to move across the RS world. It makes
- * use of Navigation instances to represent paths it follows.
+ * This class provides functions to move across the RS world. It uses the
+ * data from the RS client to try and find a shortest path across the world.
  *
- * The state of the Navigator can be asynchronously monitored by
- * connecting to one of its signals.
+ * The Navigator class makes use of a D* Lite algorithm to determine its paths.
+ * This allows navigation across the entire world, even though not all world data
+ * may be available all the time. If there exists no path, the Navigator may try
+ * to navigate towards the goal, possibly using large detours, and may never report
+ * a failure (and may take a long time trying to find valid paths). However, seeing
+ * as how almost every location in the Runescape world is reachable, this should not
+ * cause major problems in practise.
  *
+ * The algorithm will always work on a best-effort basis: If a path possibly exists,
+ * it tries to navigate along the shortest path (even if some of the world data is
+ * missing). If, at a certain point in time, the path turns out to be invalid, the
+ * algorithm changes the path automatically to include the new knowledge.
+ *
+ * Instances of this class are not thread-safe, and not re-entrant. Navigator
+ * instances are intended to be used within a single component only, and should
+ * not be shared to prevent the Navigator from entering an inconsistent state.
+ *
+ * Navigator instances are single-use objects. If they are used once, they cannot be
+ * used again (even when the previous operation failed or was cancelled). Trying to use
+ * a Navigator that has already been used causes an exception to be raised.
  */
 class Navigator : public QObject {
     Q_OBJECT
     Q_DISABLE_COPY(Navigator)
 private:
-    Navigation* _navigation;
+    /// Enum specifying the internal state of the Navigator.
+    enum State {
+        NotStarted, InProgress, Finished
+    };
+
+    Dstar* dstar;           ///< The Dstar instance doing the algorithm
+    State navState;         ///< The internal state of this Navigator
+    NavigationMode navMode; ///< The Navigation Mode
+    int curX, curY;         ///< The current target (x,y)
+    int targetX, targetY;   ///< The final target (x,y)
+
+    /**
+     * @brief Loads the world data into the DStar instance.
+     */
+    void loadWorldData();
+
+    /**
+     * @brief Marks this Navigator as done.
+     */
+    void finishUp();
+
+    /**
+     * @brief Checks if the goal has been reached.
+     *
+     * @return true if the finish was reached, false otherwise
+     */
+    bool checkFinish();
+
+    /**
+     * @brief Moves to the specified target.
+     *
+     * It may be possible the target tile is never reached,
+     * but this function makes best attempt to target the
+     * specified coordinates. Especially when the target is
+     * beyond the reach of the player, this function only moves
+     * in the direction of the target, but the actual distance
+     * travelled is undefined.
+     *
+     * @param x - the x coordinate of the target
+     * @param y - the y coordinate of the target
+     */
+    void move(int x, int y);
 public:
     /**
      * @brief Creates a new Navigator instance.
      */
     Navigator();
-
-    /**
-     * @brief Returns the current position of the player.
-     * @return the current position of the player
-     */
-    Position* currentPosition() const;
-
-    /**
-     * @brief Returns the current Navigation path
-     * @return the current Navigation, or NULL if no Navigation is currently active.
-     */
-    Navigation* currentPath() const { return _navigation; }
-
-    /**
-     * @brief Computes and returns a path to the destination
-     *
-     * This function computes the (almost) shortest path between
-     * @c origin and @c destination. In computing the path, this
-     * function may deliberately choose to insert small detours,
-     * or make small mistakes. This behavior causes paths computed
-     * with this function to appear more human-like.
-     *
-     * The starting point of the Navigation path is taken to
-     * be the current position, as given by @c currentPosition().
-     *
-     * This function is effectively the same as calling
-     * @c findPath(currentPosition(), destination)
-     *
-     * @param destination - the destination of the Navigation path
-     * @return the computed path
-     */
-    Navigation* findPath(Position* destination);
-
-    /**
-     * @brief Computes and returns a path to the destination
-     *
-     * This function computes the (almost) shortest path between
-     * @c origin and @c destination. In computing the path, this
-     * function may deliberately choose to insert small detours,
-     * or make small mistakes. This behavior causes paths computed
-     * with this function to appear more human-like.
-     *
-     * @param origin      - the starting point of the Navigation path
-     * @param destination - the destination of the Navigation path
-     * @return the computed path
-     */
-    Navigation* findPath(Position* origin, Position* destination);
+    virtual ~Navigator();
 
 signals:
     /**
      * @brief Signal emitted whenever a Navigation is started
      */
-    void started(Navigation*);
+    void started(Position* origin, Position* destination);
     /**
      * @brief Signal emitted whenever a Navigation is finished
      */
-    void finished(Navigation*);
+    void finished(Position* origin, Position* destination);
     /**
      * @brief Signal emitted periodically to indicate progress
      *
@@ -115,51 +147,29 @@ signals:
      */
     void reached(Position* position);
 
-public slots:
     /**
-     * @brief Moves to the specified target
+     * @brief Signal emitted when the Navigation could not be completed.
      *
-     * If the target is too far away, this method makes no attempt to
-     * compute intermediate targets, causing in undefined behavior.
-     * As such, for arbitrary targets, please use the
-     * @c navigate(Position*) function instead.
-     *
-     * @param target - the target to move towards
+     * @param message - the reason for the failure.
      */
-    void move(Position* target);
+    void errorOccurred(QString message);
+
+public slots:
+
+    /**
+     * @brief Executes a step in the Navigation path.
+     *
+     * This function recomputes the path as required and moves to the
+     * next position.
+     */
+    void step();
 
     /**
      * @brief Navigates to the specified destination
      *
-     * This function behaves effectively the same as calling
-     * @c navigate(findPath(destination))
-     *
      * @param destination - the destination to navigate towards
      */
-    void navigate(Position* destination);
-
-    /**
-     * @brief Navigates along the given path
-     *
-     * If the first position of the Navigation path is out of range,
-     * the behavior of this function is undefined. Otherwise, this function
-     * starts navigating along the given path.
-     *
-     * @param navigation - the Navigation path to follow.
-     */
-    void navigate(Navigation* navigation);
-
-    /**
-     * @brief Updates the state of the Navigator
-     *
-     * This function should be called periodically to advance to the next
-     * point along the Navigation.
-     *
-     * This function is (under normal circumstances) automatically
-     * called periodically, so there is usually no need to call this
-     * manually.
-     */
-    void updateState();
+    void navigate(Position* destination, NavigationMode mode = OnWindow);
 };
 
 }

@@ -23,22 +23,26 @@ import net.pgrid.loader.util.Logger;
  *
  * This class checks if the Exception was caused on a PG Thread or some
  * other Thread. In the last case, no stack trace is printed to prevent
- * long obfuscated (and as such useless) Runescape stack traces.
+ * long obfuscated (and as such useless) stack traces.
  */
 public class PGExceptionHandler implements Thread.UncaughtExceptionHandler {
+    /** The Logger instance for this class. */
     private static final Logger LOGGER = Logger.get("UNCAUGHT");
 
     @Override
     public void uncaughtException(Thread thread, Throwable t) {
-        LOGGER.log("Exception on Thread \"" + thread.getName() + "\":", t);
         if (!thread.getName().startsWith("PG_")) {
             // do not print stack traces of (obfuscated) RS classes,
             // but use the System.out PrintStream to send it to the
             // runescape.log file.
+            LOGGER.log("Exception on Thread \"" + thread.getName() + "\": " + 
+                        t.getClass().getSimpleName());
             System.out.append("Uncaught Exception in Runescape or on AWT Thread \"")
                     .append(thread.getName()).println("\":");
             System.out.append("  ").append(t.getClass().getSimpleName())
                     .append(": ").println(t.getMessage());
+        } else {
+            LOGGER.log("Exception on Thread \"" + thread.getName() + "\".", t);
         }
     }
     

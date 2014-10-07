@@ -56,8 +56,14 @@ public class RSDownloader {
      * 
      * It is used as the default link for the configuration data.
      */
-    public static final String CONFIG_LINK = "http://www.runescape.com/k=3/l=0/jav_config.ws";
+    public static final String CONFIG_LINK = "http://www.runescape.com/l=0/jav_config.ws";
     
+    /**
+     * The link prefix for the Runescape config file.
+     * 
+     * It is used together with a userflow ID to request specific configuration
+     * data.
+     */
     public static final String JAV_CONFIG = "http://www.runescape.com/l=0/jav_config.ws?userFlow=";
     /**
      * URL of the Runescape config file. It is set in the constructor.
@@ -123,8 +129,7 @@ public class RSDownloader {
             // (or the unlikely event in which the RS servers are down),
             // there is nothing left to do other then report this and terminate.
             if (redirectLink == null) {
-                PowerGrid.report("Failed to connect to Runescape server");
-                throw new IOException("Failed to get config information");
+                throw new IOException("Failed to connect to Runescape server");
             }
             // fire a new request with the redirect link
             conn = (HttpURLConnection) new URL(redirectLink).openConnection();
@@ -139,9 +144,7 @@ public class RSDownloader {
                     versionInfo = parseConfig(assignedUserFlow, out.next());
                     conn.disconnect();
                 } else {
-                    // If there is no config information, we cannot start the client
-                    PowerGrid.report("Failed to get config info from Runescape server");
-                    throw new IOException("Empty response getting config file");
+                    throw new IOException("Failed to get config info from Runescape server");
                 }
             }
             LOGGER.log("Got assigned new userFlow id " + assignedUserFlow);

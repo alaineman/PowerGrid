@@ -51,9 +51,15 @@ public class Updater {
     
     private static final Logger LOGGER = Logger.get("UPDATER");
     
+    /**
+     * Template URL for retrieving the updater data.
+     */
     public static final String URL_TEMPLATE = 
             "http://pgrid.net/marneus/reflection_cache_{hash}.xml";
     
+    /**
+     * Path to the local Runescape client.
+     */
     public static final String CLIENT_PATH = "cache/client.jar";
     
     /**

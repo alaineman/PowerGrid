@@ -21,6 +21,7 @@ package net.pgrid.loader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -42,7 +43,9 @@ import net.pgrid.loader.util.Logger;
  * they represent the same Runescape client.
  * @author Patrick Kramer
  */
-public class RSVersionInfo {
+public class RSVersionInfo implements Serializable {
+    private static final long serialVersionUID = 9846575965385L;
+    
     private static final Logger LOGGER = Logger.get("VERSIONING");
     
     private final String userFlowID;
@@ -81,7 +84,10 @@ public class RSVersionInfo {
         this.appletParameters = new HashMap<>(applet);
         this.local = local;
     }
-
+    
+    /**
+     * @return true if this RSVersionInfo represents a local client, false otherwise.
+     */
     public boolean isLocal() {
         return local;
     }
@@ -127,6 +133,11 @@ public class RSVersionInfo {
         return appletParameters.get(key);
     }
     
+    /**
+     * Writes the RSVersionInfo to the provided path.
+     * @param destination the Path to write to.
+     * @throws IOException if an I/O error occurs.
+     */
     public void writeTo(Path destination) throws IOException {
         if (!Files.exists(destination.getParent())) {
             Files.createDirectories(destination);

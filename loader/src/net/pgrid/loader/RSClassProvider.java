@@ -26,8 +26,12 @@ package net.pgrid.loader;
  */
 public class RSClassProvider {
     
-    private ClassLoader classLoader = null;
+    private final ClassLoader classLoader;
     
+    /**
+     * Creates a new RSClassProvider using the provided ClassLoader.
+     * @param loader the ClassLoader to use.
+     */
     public RSClassProvider(ClassLoader loader) {
         assert loader != null;
         this.classLoader = loader;
@@ -55,9 +59,6 @@ public class RSClassProvider {
      *         not be found
      */
     public synchronized Class<?> findClass(String name) {
-        if (classLoader == null) {
-            return findClassFromAgent(name);
-        }
         try {
             // First try to get the Class from the RS class loader.
             return classLoader.loadClass(name);

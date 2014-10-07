@@ -85,5 +85,9 @@ auxiliary.show.customizer.message=<message>
                 <source-level>1.8</source-level>
             </compilation-unit>
         </java-data>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>Applet</word>
+            <word>Runescape</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>

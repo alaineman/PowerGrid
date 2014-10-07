@@ -144,6 +144,7 @@ public class PowerGrid {
         try {
             INSTANCE.start(parser);
         } catch (IOException e) {
+            report(e.getMessage());
             LOGGER.log("Exception during PowerGrid startup", e);
         }
     }
@@ -168,6 +169,9 @@ public class PowerGrid {
         return frame;
     }
 
+    /**
+     * @return The RSClassProvider.
+     */
     public RSClassProvider getClassProvider() {
         return classProvider;
     }
@@ -206,6 +210,11 @@ public class PowerGrid {
         }
     }
     
+    /**
+     * Loads the Runescape client and returns the version info.
+     * @return the version info of the loaded client.
+     * @throws IOException if an I/O error occurs.
+     */
     public RSVersionInfo loadClient() throws IOException {
         RSVersionInfo currentVersion = 
                 RSVersionInfo.fromPath(Paths.get("cache/keys.dat"));
@@ -233,14 +242,18 @@ public class PowerGrid {
         return newVersion;
     }
     
-    public void initApplet(RSVersionInfo newVersion) {
+    /**
+     * Creates and initializes the Runescape Applet.
+     * @param version the RSVersionInfo belonging to the current version.
+     */
+    public void initApplet(RSVersionInfo version) {
         ClassLoader rsClassLoader = AccessController.doPrivileged(GET_CLIENT_LOADER);
         try {
             Class<? extends Applet> rs2AppletClass = 
                     rsClassLoader.loadClass("Rs2Applet").asSubclass(Applet.class);
             Applet a = rs2AppletClass.getConstructor().newInstance();
             
-            if (!getFrame().startApplet(newVersion, a)) {
+            if (!getFrame().startApplet(version, a)) {
                 getFrame().showMessage("Exception in Applet");
                 LOGGER.log("Failed to start Applet");
             }
@@ -252,6 +265,9 @@ public class PowerGrid {
         }
     }
     
+    /**
+     * Shows the AppletFrame instance.
+     */
     public void showFrame() {
         EventQueue.invokeLater(() -> getFrame().initComponents());
     }
@@ -318,11 +334,15 @@ public class PowerGrid {
         }
     };
     
+    /**
+     * A PrivilegedAction that returns an URLClassLoader for the Runescape 
+     * client.
+     */
     public static final Privileged<ClassLoader> GET_CLIENT_LOADER = () -> {
         try {
             return new URLClassLoader(new URL[]{new URL("jar:file:cache/client.jar!/")});
         } catch (MalformedURLException ex) {
-            throw new AssertionError("Local Client URL invalid: " + ex.getMessage());
+            throw new AssertionError(ex);
         }
     };
     

@@ -19,6 +19,9 @@
 package net.pgrid.loader.bridge;
 
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import net.pgrid.loader.Agent;
 
 /**
@@ -120,17 +123,23 @@ public class Reflection {
             do {
                 try {
                     Field f = cls.getDeclaredField(field);
-                    f.setAccessible(true);
-                    return f.get(target);
+                    return AccessController.doPrivileged(getFieldContents(f,target));
                 } catch (NoSuchFieldException e) {
                     current = current.getSuperclass();
                 }
             } while (cls != Object.class);
             throw new NoSuchFieldException(field + " in class " + cls.getName());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (PrivilegedActionException | NoSuchFieldException e) {
             throw new RuntimeException("Could not access field: " + 
                     e.getClass().getSimpleName() + ": " + e.getMessage());
         }
+    }
+    
+    private static PrivilegedExceptionAction<Object> getFieldContents(Field field, Object target) {
+        return () -> {
+            field.setAccessible(true);
+            return field.get(target);
+        };
     }
     
     /**

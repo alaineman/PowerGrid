@@ -66,7 +66,7 @@ public class AppletFrame extends JFrame implements AppletStub {
     /**
      * @return the loaded Applet, or null if no Applet is loaded.
      */
-    public Applet getApplet() {
+    public synchronized Applet getApplet() {
         return applet;
     }
 
@@ -138,10 +138,14 @@ public class AppletFrame extends JFrame implements AppletStub {
      * message will never be visible anyway).
      * @param text the message to display
      */
-    public synchronized void showMessage(final String text) {
-        if (applet == null) {
-            EventQueue.invokeLater(() -> label.setText(text));
-        }
+    public void showMessage(final String text) {
+        EventQueue.invokeLater(() -> {
+            synchronized(AppletFrame.this) {
+                if (label != null) {
+                    label.setText(text);
+                }
+            }
+        });
     }
 
     @Override

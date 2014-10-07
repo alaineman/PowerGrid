@@ -26,6 +26,9 @@ auxiliary.show.customizer.message=<message>
                     <location>src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <build-file>
+                    <location>C:\cygwin64\home\Patrick\PowerGrid\dist\PowerGridLoader.jar</location>
+                </build-file>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -45,6 +48,11 @@ auxiliary.show.customizer.message=<message>
                     <target>compile</target>
                 </action>
             </ide-actions>
+            <export>
+                <type>jar</type>
+                <location>C:\cygwin64\home\Patrick\PowerGrid\dist\PowerGridLoader.jar</location>
+                <build-target>compile</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -61,6 +69,10 @@ auxiliary.show.customizer.message=<message>
                     <ide-action name="clean"/>
                     <ide-action name="javadoc"/>
                     <ide-action name="run"/>
+                    <action>
+                        <label>Run Native Client</label>
+                        <target>run-native</target>
+                    </action>
                 </context-menu>
             </view>
             <subprojects/>
@@ -68,6 +80,8 @@ auxiliary.show.customizer.message=<message>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/4">
             <compilation-unit>
                 <package-root>src</package-root>
+                <built-to>C:\cygwin64\home\Patrick\PowerGrid\dist\PowerGridLoader.jar</built-to>
+                <javadoc-built-to>C:\cygwin64\home\Patrick\PowerGrid\doc\loader</javadoc-built-to>
                 <source-level>1.8</source-level>
             </compilation-unit>
         </java-data>

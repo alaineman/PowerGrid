@@ -1,5 +1,5 @@
 #OS junk files
-[Tt]humbs.db
+Thumbs.db
 desktop.ini
 *.DS_Store
 
@@ -29,8 +29,7 @@ dist/
 *.lnk
 
 # compiled or private loader project data
-loader/build/
-loader/dist/
+loader/bin/
 loader/nbproject/private/
 
 # data grabbed by the loader
@@ -38,12 +37,13 @@ loader/cache/
 cache/
 
 # log files
-*.log
+*.log*
 
-# Generated Doxygen documentation
+# Generated documentation
 doc/output/
+doc/loader/
 
-# LaTeX temporary files
+# temporary LaTeX files
 *.aux
 *.synctex.gz
-*.pdf # May cause problems, but whatever...
+*.pdf

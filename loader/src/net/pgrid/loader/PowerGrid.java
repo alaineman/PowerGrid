@@ -22,6 +22,7 @@ import java.applet.Applet;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -36,7 +37,6 @@ import net.pgrid.loader.bridge.Reflection;
 import net.pgrid.loader.bridge.UpdaterRunner;
 import net.pgrid.loader.util.ArgumentParser;
 import net.pgrid.loader.util.Logger;
-import net.pgrid.loader.util.NullOutputStream;
 
 /**
  * Launcher class for the PowerGrid loader application.
@@ -292,7 +292,10 @@ public class PowerGrid {
             if (destination.isFile() || destination.createNewFile()) {
                 replacement = new PrintStream(destination, "UTF-8");
             } else {
-                replacement = new PrintStream(new NullOutputStream(), false, "UTF-8");
+                OutputStream dummy = new OutputStream() {
+                    @Override public void write(int b) {}
+                };
+                replacement = new PrintStream(dummy, false, "UTF-8");
             }
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);

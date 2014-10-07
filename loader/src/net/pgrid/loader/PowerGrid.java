@@ -142,8 +142,7 @@ public class PowerGrid {
         }
         
         try {
-            INSTANCE.start(parser.hasFlag("debug"),
-                           parser.hasFlag("force-download"));
+            INSTANCE.start(parser);
         } catch (IOException e) {
             LOGGER.log("Exception during PowerGrid startup", e);
         }
@@ -175,13 +174,12 @@ public class PowerGrid {
     
     /**
      * Starts the client with the specified settings.
-     * @param debugMode true to enable debugging features, false to disable
-     * @param force true to force re-downloading the client, even when no new version is found
+     * @param parser - the ArgumentParser instance with the command line arguments.
      * @throws java.io.IOException if collecting the data failed.
      */
-    public synchronized void start(boolean debugMode, boolean force) throws IOException {
+    public synchronized void start(ArgumentParser parser) throws IOException {
         long startTime;
-        if (debugMode) {
+        if (parser.hasFlag("debug")) {
             LOGGER.log("Debug mode enabled");
             // Record the start time for profiling purposes
             startTime = System.currentTimeMillis();
@@ -193,18 +191,16 @@ public class PowerGrid {
         
         getFrame().showMessage("Loading config...");
         RSVersionInfo newVersion = loadClient();
+        boolean useLocal = newVersion.isLocal() && !parser.hasFlag("force-download");
         
-        UpdaterRunner updaterRunner = new UpdaterRunner(newVersion.isLocal(), false);
+        UpdaterRunner updaterRunner = new UpdaterRunner(useLocal, false);
         new Thread(updaterRunner, "PG_updater").start();
         
         getFrame().showMessage("Starting Applet...");
         initApplet(newVersion);
         initClassProvider();
         
-        
-        LOGGER.log("Java Library Path: ", System.getProperty("java.library.path"));
-        
-        if (debugMode) {
+        if (parser.hasFlag("debug")) {
             long timePassed = System.currentTimeMillis() - startTime;
             LOGGER.log("Total startup time: " + (timePassed/1000d) + 's');
         }

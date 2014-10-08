@@ -15,19 +15,16 @@
 #include <stack>
 #include <queue>
 #include <list>
-#include <ext/hash_map>
+#include <unordered_map>
 
 #define eps (10e-10)
 
-// M_SQRT2 may no longer be defined (if _ANSI_STRICT_ is defined).
+// M_SQRT2 may no longer be defined (if __STRICT_ANSI__ is defined).
 #ifndef M_SQRT2
 #define M_SQRT2	1.41421356237309504880
 #endif
 
 using namespace std;
-using namespace __gnu_cxx;
-
-
 
 class state {
 
@@ -93,8 +90,8 @@ class state_hash {
 };
 
 
-typedef hash_map<state, cellInfo, state_hash, equal_to<state> > ds_ch;
-typedef hash_map<state, ivec2, state_hash, equal_to<state> > ds_oh;
+typedef std::unordered_map<state, cellInfo, state_hash, equal_to<state> > ds_ch;
+typedef std::unordered_map<state, ivec2, state_hash, equal_to<state> > ds_oh;
 typedef priority_queue<state, vector<state>, greater<state> > ds_pq;
 
 typedef struct{

@@ -776,7 +776,13 @@ void Dstar::queryCell(int x, int y) {
 }
 
 #else
-void Dstar::queryCell(int x, int y) const {}
+void Dstar::queryCell(int x, int y) const {
+    (void)x;
+    (void)y; // prevent 'unused parameter' warnings
+}
 void Dstar::draw() const {}
-void Dstar::drawCell(const state &s, float z) const {}
+void Dstar::drawCell(const state &s, float z) const {
+    (void)s;
+    (void)z; // prevent 'unused parameter' warnings
+}
 #endif

@@ -44,24 +44,14 @@ DESTDIR = $$PWD/../../dist
 
 # Add instruction to copy dependant Qt libraries to DESTDIR
 # and set the project to call Ant to build the Java loader.
-QTDIR = $[QT_INSTALL_PREFIX]/bin
 CONFIG(release, debug|release) {
-    win32 {
-        QMAKE_POST_LINK += \
-            copy $$QTDIR/Qt5Core.dll    $$DESTDIR & \
-            copy $$QTDIR/Qt5Gui.dll     $$DESTDIR & \
-            copy $$QTDIR/Qt5Widgets.dll $$DESTDIR &
-        QMAKE_POST_LINK += \
-            ant.bat jar &
-    }
-    else {
-        QMAKE_POST_LINK += \
-            cp $$QTDIR/libQt5Core.so    $$DESTDIR; \
-            cp $$QTDIR/libQt5Gui.so     $$DESTDIR; \
-            cp $$QTDIR/libQt5Widgets.so $$DESTDIR;
-        QMAKE_POST_LINK += \
-            ant jar;
-    }
+    win32: QMAKE_POST_LINK += windeployqt $$shell_quote($$shell_path($${DESTDIR}/$${TARGET}.exe)) &
+}
+win32 {
+    QMAKE_POST_LINK += cd $$PWD/../../loader & ant.bat jar &
+}
+else {
+    QMAKE_POST_LINK += cd $$PWD/../../loader; ant jar;
 }
 
 #------------------------------------------------

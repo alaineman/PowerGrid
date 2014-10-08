@@ -23,7 +23,7 @@ HEADERS += testplugin.h\
 
 OTHER_FILES += testplugin.json
 
-DESTDIR = $PWD/../../dist/plugins
+DESTDIR = $PWD/../../../dist/plugins
 
 # Link against the Plugin Framework
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../PluginFramework/release/ -lPluginFramework

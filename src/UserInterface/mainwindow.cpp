@@ -115,10 +115,10 @@ void MainWindow::sendText() {
             keyboard.dispatch(KeyEvent::createEvent(source,
                               KeyEvent::Typed, msec, 0, -1,
                               JChar(text.at(i).toLatin1())));
-            qDebug() << "Char" << text.at(i) << "sent.";
+            qCDebug(guiLogger) << "Char" << text.at(i) << "sent.";
         }
     } catch (jace::JNIException& e) {
-        qDebug() << "Exception in sendText():" << e.what();
+        qCDebug(guiLogger) << "Exception in sendText():" << e.what();
     }
 }
 

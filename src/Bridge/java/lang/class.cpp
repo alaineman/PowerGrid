@@ -152,7 +152,8 @@ Object Class::getFieldContent(String name, Object o) const throw(jace::JNIExcept
 }
 Object Class::getFieldContent(QString name, Object o) const throw(jace::JNIException) {
     JNIEnv* env = jace::helper::attach();
-    String str (env->NewStringUTF(name.toLocal8Bit().constData()));
+    const char* cString = name.toLocal8Bit().constData();
+    String str (env->NewStringUTF(cString));
     if (str.isNull()) {
         throw jace::JNIException("Cannot create String");
     }

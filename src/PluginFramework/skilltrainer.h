@@ -71,13 +71,14 @@ public:
      * to indicate the SkillTrainer provides 20 Mining experience, override this member
      * function using template specialization as follows:
      *
-     *     template<> uint getXP<Mining>() { return 20; }
+     *     template<> virtual uint getXP<Mining>() { return 20; }
      *
      * @param s the Skill for which to get the amount of experience.
      * @return The amount of experience
      *
      */
-    template <Skill s> uint getXP() const { return 0; }
+    template <Skill s>
+    virtual uint getXP() const { return 0; }
 };
 
 #endif // SKILLTRAINER_H

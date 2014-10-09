@@ -36,7 +36,7 @@ typedef bool Condition();
 // The EVALUATE macro executes that function.
 class Condition {
     virtual bool evaluate() = 0;
-}
+};
 #define PG_COND(cond) (class : Condition {\
                             virtual bool evaluate() { return (cond); }\
                       })
@@ -100,6 +100,14 @@ public:
      * @param condition - the condition to wait for.
      */
     void waitUntil(Condition condition);
+
+    /**
+     * context()->run<MyTask>();
+     */
+    template <typename T>
+    void run() {
+        T().execute(this);
+    }
 
     /**
      * @brief Waits @c msecs milliseconds before returning.

@@ -120,7 +120,7 @@ const char* findJagexCacheDir() {
 #else
     QByteArray lib_path = qgetenv("LD_LIBRARY_PATH");
     // Unixes have a standard way of getting the home directory (~)
-    return std::string(lib_path.constData()).append(":~/jagexcache/runescape/LIVE/");
+    return std::string(lib_path.constData()).append(":~/jagexcache/runescape/LIVE/").c_str();
 #endif
 }
 

@@ -19,7 +19,8 @@
 #ifndef SKILLTRAINER_H
 #define SKILLTRAINER_H
 
-#include <QtGlobal>
+#include <QMap>
+#include "entity/task.h"
 
 /**
  * @brief enum representation of all Runescape Skills.
@@ -59,26 +60,31 @@ enum Skill {
  * @brief the SkillTrainer class
  *
  * Instances of this class can be used to train skills.
- * The single member function of this class can be overridden to provide the correct amount of experience rewarded.
+ * The protected @c setXPGain(Skill,uint) member function should be
+ * called once in the constructor of any subclass, for each Skill
+ * it trains.
  */
-class SkillTrainer {
+class SkillTrainer : public entity::Task {
+    Q_OBJECT
+private:
+    QMap<Skill,uint> xpMap;
+protected:
+    /**
+     * @brief Sets the amount of XP this Task yields for the specified Skill.
+     *
+     * @param s          - The Skill this Task trains
+     * @param expectedXP - The amount of XP earned for the Skill.
+     */
+    void setXPGain(Skill s, uint expectedXP) { xpMap.insert(s, expectedXP); }
 public:
+    SkillTrainer(QString name, entity::Task *parent) : Task(name, parent) {}
     /**
      * @brief The amount of experience this SkillTrainer yields when executed.
      *
-     * The default implementation returns 0 for all skills. This should be overridden for
-     * relevant Skills to return the correct amount of experience for a task. For example,
-     * to indicate the SkillTrainer provides 20 Mining experience, override this member
-     * function using template specialization as follows:
-     *
-     *     template<> virtual uint getXP<Mining>() { return 20; }
-     *
      * @param s the Skill for which to get the amount of experience.
      * @return The amount of experience
-     *
      */
-    template <Skill s>
-    virtual uint getXP() const { return 0; }
+    uint getXP(Skill s) const { return xpMap.value(s, 0); }
 };
 
 #endif // SKILLTRAINER_H

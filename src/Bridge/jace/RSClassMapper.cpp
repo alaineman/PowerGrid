@@ -281,7 +281,7 @@ void RSClassMapper::parseField(QXmlStreamReader *reader, QString className, bool
                 throw JNIException("[field] Undetermined Error parsing XML");
             }
         case QXmlStreamReader::StartElement:
-            if (reader->name() == "multiplier") {
+            if (reader->name() == "multiplier" || reader->name() == "longmultiplier") {
                 parseModifier(reader, className, fieldName, isStatic);
             }
             break;
@@ -330,12 +330,12 @@ void RSClassMapper::parseModifier(QXmlStreamReader *reader, QString className, Q
                 throw JNIException("[mod] Undetermined Error parsing XML");
             }
         case QXmlStreamReader::StartElement:
-            if (reader->name() != "multiplier") {
+            if (reader->name() != "multiplier" || reader->name() == "longmultiplier") {
                 throw JNIException("[mod] Unexpected start element: " + reader->name().toString());
             }
             break;
         case QXmlStreamReader::EndElement:
-            if (reader->name() == "multiplier") {
+            if (reader->name() == "multiplier" || reader->name() == "longmultiplier") {
                 return;
             } else {
                 throw JNIException("[mod] Unexpected end element: " + reader->name().toString());

@@ -176,9 +176,6 @@ int main(int argc, char** argv) {
 
         JNIEnv* env = helper::attach();
 
-        // Register all natives
-        bridge::updater::UpdaterRunner_registerNatives(env);
-
         // Start the PowerGridLoader
         // Actual command (in java): net.pgrid.loader.PGLoader.main(null);
         qCDebug(logLauncher) << "Starting Java client loader";

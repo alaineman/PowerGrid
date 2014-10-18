@@ -17,75 +17,43 @@
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <jni.h>
 #include "UpdaterRunner.h"
-#include "RSClassMapper.h"
-#include <QtCore>
-#include <string>
 
-using jace::JNIException;
-using jace::RSClassMapper;
+namespace jace {
 
-/**
- * This method parses the updater data downloaded by the Java client.
- * It is normally invoked from the JVM by the
- * net.pgrid.loader.bridge.UpdaterRunner class once it's ready.
- */
-JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady
-  (JNIEnv*, jclass, jbyteArray bytes) {
-    RSClassMapper* mapper = RSClassMapper::DefaultInstance();
-    if (mapper) {
-        try {
-            mapper->parseData(bytes);
-        } catch (const JNIException& ex) {
-            qCWarning(logMapper) << "Cannot parse Updater data:" << ex.what();
-        }
+UpdaterRunner::UpdaterRunner(const QString gamepackHash, const QString updaterServer)
+    : QObject(), server(updaterServer), hash(gamepackHash) {
+    connect(this, SIGNAL(started()),
+            this, SLOT(downloadData()));
+}
+
+QString UpdaterRunner::getURL() const {
+    QString url (server);
+    return url.replace("{hash}", hash);
+}
+
+QByteArray UpdaterRunner::getData() {
+    QMutexLocker locker (&dataMutex);
+    return data;
+}
+
+void UpdaterRunner::start() {
+    QMutexLocker locker (&dataMutex);
+
+    if (data.isEmpty()) {
+        // This signal is connected to the `downloadData()` slot,
+        // So it will be called later.
+        emit started();
     } else {
-        qCWarning(logMapper) << "Cannot parse Updater data: mapper does not exist";
+        // Else we emit the finished signal immediately.
+        emit finished(hash, data);
     }
-}
-
-JNIEXPORT void JNICALL Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterFailed(JNIEnv*, jclass) {
-    qCWarning(logMapper) << "Failed to load updater data, bot features are not available";
-}
-
-namespace bridge {
-namespace updater {
-
-Q_LOGGING_CATEGORY(logNatives, "NATIVES")
-
-/**
- * @brief Registers native methods for the net.pgrid.loader.bridge.UpdaterRunner class
- *
- * Note that calling this function more than once will result in undefined behavior in
- * the JNI.
- * @param env the JNIEnv* to register with
- */
-void UpdaterRunner_registerNatives(JNIEnv* env)
-        throw (JNIException) {
-    // Find the Java class "net.pgrid.loader.bridge.UpdaterRunner"
-    jclass updaterRunner = env->FindClass("net/pgrid/loader/bridge/UpdaterRunner");
-    if (! updaterRunner) {
-        throw JNIException("Cannot find net.pgrid.loader.bridge.UpdaterRunner class");
-    }
-    // The JNINativeMethod structs we need to register
-    JNINativeMethod nativeMethod[2];
-    nativeMethod[0].name = const_cast<char*> ("signalUpdaterReady");
-    nativeMethod[0].signature = const_cast<char*> ("([B)V");
-    nativeMethod[0].fnPtr = reinterpret_cast<void*>(&Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterReady);
-
-    nativeMethod[1].name = const_cast<char*> ("signalUpdaterFailed");
-    nativeMethod[1].signature = const_cast<char*> ("()V");
-    nativeMethod[1].fnPtr = reinterpret_cast<void*>(&Java_net_pgrid_loader_bridge_UpdaterRunner_signalUpdaterFailed);
-
-    jint result = env->RegisterNatives(updaterRunner, nativeMethod, 2);
-    env->DeleteLocalRef(updaterRunner);
-    if (result != JNI_OK) {
-        throw JNIException("RegisterNatives failed for UpdaterRunner: "
-                           + jace::JNIError_toString(result));
-    }
-    qCDebug(logNatives) << "Natives registered successfully for UpdaterRunner class";
-}
 
 }
+
+void UpdaterRunner::downloadData() {
+    QMutexLocker locker (&dataMutex);
+    emit error(hash, "UpdaterRunner::downloadData() - This function is not yet implemented");
 }
+
+} // namespace jace

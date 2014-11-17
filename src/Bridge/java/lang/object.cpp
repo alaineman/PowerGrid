@@ -65,14 +65,18 @@ bool Object::operator !=(const Object& obj) {
 
 int Object::hashCode() const {
     jmethodID mid = Class::get<Object>().getMethodID("hashCode", {});
-    return jace::helper::attach()->CallIntMethod(getJavaJniObject(), mid);
+    int result = jace::helper::attach()->CallIntMethod(getJavaJniObject(), mid);
+    JNI_CHECK_AND_THROW("Object.hashCode() failed with an Exception");
+    return result;
 }
 
 bool Object::equals(const Object &other) const {
     JNIEnv* env = jace::helper::attach();
     jmethodID equals_id = env->GetMethodID(
                 Object::staticGetJavaJniClass()->getClass(), "equals", "(Ljava/lang/Object;)Z");
-    return env->CallBooleanMethod(getJavaJniObject(), equals_id, other.getJavaJniObject()) == JNI_TRUE;
+    bool result = env->CallBooleanMethod(getJavaJniObject(), equals_id, other.getJavaJniObject()) == JNI_TRUE;
+    JNI_CHECK_AND_THROW("Object.equals() failed with an Exception");
+    return result;
 }
 
 String Object::toString() const {
@@ -80,6 +84,7 @@ String Object::toString() const {
     jmethodID toString_id = env->GetMethodID(
                 Object::staticGetJavaJniClass()->getClass(), "toString", "()Ljava/lang/String;");
     jstring result = static_cast<jstring>(env->CallObjectMethod(getJavaJniObject(), toString_id));
+    JNI_CHECK_AND_THROW("Object.toString() failed with an Exception");
     return result;
 }
 
@@ -105,7 +110,7 @@ std::ostream& operator<<(std::ostream& out, java::lang::Object& object) {
     }
 }
 
-uint qHash(const java::lang::Object& object, uint seed = 0) {
+uint qHash(const java::lang::Object& object, uint seed) {
     return static_cast<uint>(object.hashCode()) ^ seed;
 }
 

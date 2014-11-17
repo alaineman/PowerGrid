@@ -23,10 +23,12 @@ namespace java {
 namespace lang {
 
 Class::Class() : Object() {}
-Class::Class(const Class &obj) :
-    JObject(NoOp()), Object(obj) {}
-Class::Class(jclass obj) :
-    Object(obj) {}
+Class::Class(const Class &obj) : JObject(NoOp()), Object() {
+    setJavaJniObject(obj.getJavaJniObject());
+}
+Class::Class(jclass obj) : JObject(NoOp()), Object() {
+    setJavaJniObject(obj);
+}
 Class::Class(jvalue val) :
     Object(val) {}
 
@@ -46,7 +48,8 @@ String Class::getName() const throw(jace::JNIException) {
                 "getName", "()Ljava/lang/String;");
     if (!getName) throw jace::JNIException("Cannot find Class.getName()");
     jobject name = env->CallObjectMethod(getJavaJniObject(), getName);
-    jace::helper::catchAndThrow();
+    JNI_CHECK_AND_THROW("Failed to call Class.getName()");
+
     if (!name) throw jace::JNIException("Class::getName() - JNI returned NULL for class name");
     return String(name);
 }
@@ -75,6 +78,7 @@ Object Class::getDeclaredMethod(String name, std::initializer_list<Class> paramT
     jobjectArray arr = convertToJavaArray("java/lang/Class", paramTypes);
     jobject result = env->CallObjectMethod(getJavaJniObject(), getDeclaredMethod, name.getJavaJniObject(), arr);
     env->DeleteLocalRef(arr);
+    JNI_CHECK_AND_THROW("Failed to get method: " % name.toQString());
     if(!result) throw jace::JNIException("No such method: " % name.toQString());
     return Object(result);
 }
@@ -184,7 +188,11 @@ Class Class::forName(String name) throw(jace::JNIException) {
     jmethodID forName = env->GetStaticMethodID(classClass, "forName", "(Ljava/lang/String;)Ljava/lang/Class;");
     if (!forName) throw jace::JNIException("Cannot find static Class.forName(String)");
     jclass result = static_cast<jclass>(env->CallStaticObjectMethod(classClass, forName, name.getJavaJniObject()));
-    return Class(result);
+    JNI_CHECK_AND_THROW("Failed to get Class named " % name.toQString());
+    if (!result) throw jace::JNIException("result == NULL but no Exception thrown from JVM");
+    Class ret (result);
+    if (ret.isNull()) throw jace::JNIException("Class constructor failed");
+    return ret;
 }
 Class Class::forName(const QString name) throw(jace::JNIException) {
     JNIEnv* env = jace::helper::attach();

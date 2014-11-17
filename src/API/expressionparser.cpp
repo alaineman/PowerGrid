@@ -15,6 +15,8 @@ Object ExpressionParser::evaluate(QString expression) {
     QStringList parts = expression.split(".");
     QString str(parts.at(0));
     str.replace('/', '.');
+    str.replace(" ", "");
+    str.replace("()", "");
     Class cls = Class::forName(str);
     if (parts.size() == 1) {
         return cls;
@@ -22,7 +24,7 @@ Object ExpressionParser::evaluate(QString expression) {
     Object obj = cls.getStaticFieldContent(parts.at(1));
     for (int nextField = 2; nextField < parts.size(); nextField++) {
         if (obj.isNull()) {
-            return String::fromQString("Dereferenced NULL at position: " % QString().setNum(nextField));
+            throw JNIException("Dereferenced NULL at position: " % QString::number(nextField));
         }
         Class objClass = obj.getClass();
         QString fieldName = convertFieldName(obj, parts.at(nextField));

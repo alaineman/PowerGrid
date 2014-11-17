@@ -51,15 +51,9 @@ void PGLoader::start() throw(jace::JNIException) {
     Class pgClass = Class::get<PGLoader>();
     Class stringArray = Class::get<String>().asArray();
     Object method = pgClass.getDeclaredMethod("main", {stringArray} );
-    if (method.isNull()) {
-        throw JNIException("Method 'main' not found");
-    }
     jmethodID mID = env->FromReflectedMethod(method);
     env->CallStaticVoidMethod(static_cast<jclass>(pgClass.getJavaJniObject()), mID, NULL);
-    if (env->ExceptionCheck()) {
-        env->ExceptionDescribe();
-        throw JNIException("Java Exception in PGLoader::main()");
-    }
+    JNI_CHECK_AND_THROW("Failed to invoke PowerGrid.main(String[])");
 }
 
 } // namespace loader

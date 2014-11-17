@@ -64,8 +64,8 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
     // We prefer to label the message with its category. However, if no category is defined,
     // we use a prefix based on the message type (debug, warning, critical, or fatal).
     const char* prefix = context.category;
-    int len = strlen(prefix);
-    if (len == 0) {
+
+    if (!strcmp(prefix, "default")) {
         switch (type) {
         case QtDebugMsg:
             cout << "INFORMATION  | ";
@@ -82,6 +82,7 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
     } else {
         // Print the prefix and pad it to a length of (at least) 13.
         cout << prefix;
+        int len = strlen(prefix);
         while (len < 13) {
             cout << ' ';
             len++;
@@ -166,6 +167,14 @@ int main(int argc, char** argv) {
             return EXIT_FAILURE;
         }
 
+        // Sanity check: ensure the String class exists.
+        jclass objectClass = helper::attach()->FindClass("java/lang/String");
+        JNI_CHECK_AND_THROW("String class not found in JVM");
+        if ( !objectClass ) {
+            // No exception according to JNI, but also no valid class object. Hmmm...
+            throw JNIException ("Sanity check failed: Object.class is NULL, but JVM reports no exception.");
+        }
+
         // The PowerGrid loader requires Java 8, so we print an error if the version does not match.
         // Afterwards we exit, because the loader won't run anyway.
         QString javaVersion = helper::getJavaProperty("java.version");
@@ -179,8 +188,9 @@ int main(int argc, char** argv) {
         qCDebug(logLauncher) << "Started JVM with version" << version;
 
         PGLoader::start();
+
     } catch (JNIException& e) {
-        qCWarning(logLauncher) << "Error creating JVM loader: " << e.what();
+        qCWarning(logLauncher) << "Error starting Java client:" << e.what();
         return EXIT_FAILURE;
     }
 

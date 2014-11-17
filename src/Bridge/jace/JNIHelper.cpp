@@ -370,6 +370,44 @@ void deleteGlobalRef( JNIEnv* env, jobject globalRef ) {
     env->DeleteGlobalRef( globalRef );
 }
 
+void checkAndThrow(QString context, const char* file, int line) throw(JNIException) {
+    JNIEnv* env = attach();
+    if (!env->ExceptionCheck()) {
+        return;
+    }
+    jthrowable thrown = env->ExceptionOccurred();
+    jclass throwable  = env->FindClass("java/lang/Throwable");
+    if ( !throwable ) throw JNIException("Assert failed: Could not find Throwable class");
+
+    jmethodID getMessage = env->GetMethodID(throwable, "getMessage", "()Ljava/lang/String;");
+    if ( !getMessage ) throw JNIException("Assert failed: Could not find Throwable.getMessage() method");
+
+    jmethodID getClass = env->GetMethodID(throwable, "getClass", "()Ljava/lang/Class;");
+    if ( !getClass ) throw JNIException("Assert failed: Could not find Throwable.getClass() method");
+
+    jclass classClass = env->FindClass("java/lang/Class");
+    if ( !classClass ) throw JNIException("Assert failed: Could not find Class class");
+
+    jmethodID classGetName = env->GetMethodID(classClass, "getName", "()Ljava/lang/String;");
+    if ( !classGetName ) throw JNIException("Assert failed: Could not find Class.getName() method");
+
+    jobject type     = env->CallObjectMethod(thrown, getClass);
+    jstring jmessage = static_cast<jstring>(env->CallObjectMethod(thrown, getMessage));
+    jstring jname    = static_cast<jstring>(env->CallObjectMethod(type, classGetName));
+
+    string  message  = jmessage == NULL ? "No Message"   : asString(env, jmessage);
+    string  name     = jname    == NULL ? "Unknown Type" : asString(env, jname);
+
+    env->DeleteLocalRef(throwable);
+    env->DeleteLocalRef(thrown);
+    env->DeleteLocalRef(classClass);
+    env->DeleteLocalRef(jmessage);
+    env->DeleteLocalRef(jname);
+
+    throw JNIException(context % " (in " % file % ":" % QString::number(line) %
+                       ")\nCaused by " % name.c_str() % ": " % message.c_str());
+}
+
 void catchAndThrow() {
 
     JNIEnv* env = attach();

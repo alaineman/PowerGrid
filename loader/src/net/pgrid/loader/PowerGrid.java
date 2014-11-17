@@ -34,7 +34,6 @@ import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import net.pgrid.loader.bridge.Reflection;
-import net.pgrid.loader.bridge.UpdaterRunner;
 import net.pgrid.loader.util.ArgumentParser;
 import net.pgrid.loader.util.Logger;
 
@@ -179,7 +178,7 @@ public class PowerGrid {
     /**
      * Starts the client with the specified settings.
      * @param parser - the ArgumentParser instance with the command line arguments.
-     * @throws java.io.IOException if collecting the data failed.
+     * @throws IOException if collecting the data failed.
      */
     public synchronized void start(ArgumentParser parser) throws IOException {
         long startTime;
@@ -195,10 +194,6 @@ public class PowerGrid {
         
         getFrame().showMessage("Loading config...");
         RSVersionInfo newVersion = loadClient();
-        boolean useLocal = newVersion.isLocal() && !parser.hasFlag("force-download");
-        
-        UpdaterRunner updaterRunner = new UpdaterRunner(useLocal, false);
-        new Thread(updaterRunner, "PG_updater").start();
         
         getFrame().showMessage("Starting Applet...");
         initApplet(newVersion);

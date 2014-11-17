@@ -39,11 +39,15 @@ const jace::JClass* String::getJavaJniClass() const throw (jace::JNIException) {
     return String::staticGetJavaJniClass();
 }
 
-String::String(jobject object) : Object(object) {}
+String::String(jobject object) : JObject(NoOp()), Object() {
+    setJavaJniObject(object);
+}
 
 String::String(jvalue value)   : Object(value) {}
 
-String::String(jstring string) : Object(string) {}
+String::String(jstring string) : JObject(NoOp()), Object() {
+    setJavaJniObject(string);
+}
 
 String& String::operator =(const String &obj) {
     setJavaJniObject(obj.getJavaJniObject());

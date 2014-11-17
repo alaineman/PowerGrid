@@ -28,13 +28,14 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import net.pgrid.loader.bridge.Updater;
 import net.pgrid.loader.util.Logger;
 
 /**
@@ -65,6 +66,8 @@ public class RSDownloader {
      * data.
      */
     public static final String JAV_CONFIG = "http://www.runescape.com/l=0/jav_config.ws?userFlow=";
+    
+    public static final Charset CHARSET = StandardCharsets.ISO_8859_1;
     /**
      * URL of the Runescape config file. It is set in the constructor.
      */
@@ -139,7 +142,7 @@ public class RSDownloader {
                 // content of the stream at once in only a few lines.
 
                 Scanner out = new Scanner(Channels.newChannel(in),
-                        Updater.CHARSET.name()).useDelimiter("\\A");
+                        CHARSET.name()).useDelimiter("\\A");
                 if (out.hasNext()) {
                     versionInfo = parseConfig(assignedUserFlow, out.next());
                     conn.disconnect();

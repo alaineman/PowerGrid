@@ -45,33 +45,21 @@ const string& JClassImpl::getNameAsType() const {
 }
 
 jclass JClassImpl::getClass() const throw ( JNIException ) {
+    if ( mClass ) {
+        return mClass;
+    }
 
-  if ( mClass ) {
-    return mClass;
-  }
-
-  JNIEnv* env = helper::attach();
+    JNIEnv* env = helper::attach();
 
 	jobject classLoader = jace::helper::getClassLoader();
 	jclass localClass;
 
-	if ( classLoader != 0 )
-	{
-		std::string binaryName( getName() );
-		size_t i = 0;
+    if ( classLoader != 0 ) {
+        std::string binaryName( getName() );
 		
 		// Replace '/' by '.' in the name
-		while (true) {
+        std::replace(binaryName.begin(), binaryName.end(), '/', '.');
 
-			i = binaryName.find( '/', i );
-			if ( i != std::string::npos )
-			{
-				binaryName[i] = '.';
-				++i;
-			}
-			else
-				break;
-		}
 		jclass classLoaderClass = env->GetObjectClass( classLoader );
 		jmethodID loadClass = env->GetMethodID( classLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;" );
 		if ( loadClass == 0 ) {
@@ -90,12 +78,12 @@ jclass JClassImpl::getClass() const throw ( JNIException ) {
 		jstring javaString = env->NewStringUTF( binaryName.c_str() );
 		localClass = static_cast<jclass>( env->CallObjectMethod( classLoader, loadClass, javaString ) );
 		env->DeleteLocalRef( javaString );
-	}
-	else
-		localClass = env->FindClass( getName().c_str() );
+    } else {
+        localClass = env->FindClass( getName().c_str() );
+    }
 
-  if ( ! localClass ) {
-    string msg = "JClass::getClass - Unable to find the class <" + getName() + ">";
+    if ( ! localClass ) {
+        string msg = "JClass::getClass - Unable to find the class <" + getName() + ">";
 		try
 		{
 			helper::catchAndThrow();
@@ -105,13 +93,12 @@ jclass JClassImpl::getClass() const throw ( JNIException ) {
 			msg.append("\ncaused by:\n");
 			msg.append(e.what());
 		}
-    throw JNIException( msg );
-  }
+        throw JNIException( msg );
+    }
 
-  mClass = static_cast<jclass>( helper::newGlobalRef( env, localClass ) );
-  helper::deleteLocalRef( env, localClass );
-
-  return mClass;
+    mClass = static_cast<jclass>( helper::newGlobalRef( env, localClass ) );
+    helper::deleteLocalRef( env, localClass );
+    return mClass;
 }
 
 std::unique_ptr<JClass> JClassImpl::clone() const {

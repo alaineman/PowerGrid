@@ -181,29 +181,24 @@ void JObject::setJavaJniValue( jvalue value ) throw ( JNIException ) {
   jobject oldRef = getJavaJniValue().l;
 
   if ( oldRef ) {
-    // helper::printClass( oldRef );
-    // helper::print( oldRef );
     helper::deleteGlobalRef( env, oldRef );
   }
-
   // If this is a null ref, we save a little time by not creating
   // a new global ref.
   if ( ! value.l ) {
-    // cout << "JObject::setJavaJniValue - Creating a NULL object." << endl;
     JValue::setJavaJniValue( value );
     return;
   }
 
-  // cout << "JObject::setJavaJniValue - Creating a new reference to " << object << endl;
   jobject object = helper::newGlobalRef( env, value.l );
-  // cout << "JObject::setJavaJniValue - Created the reference." << endl;
+  if (!object) {
+      throw JNIException("Failed to create a new global reference");
+  }
 
   jvalue newValue;
   newValue.l = object;
 
-  // cout << "JObject::setJavaJniValue - Calling JValue::setJavaJniValue..." << endl;
   JValue::setJavaJniValue( newValue );
-  // cout << "JObject::setJavaJniValue - Called JValue::setJavaJniValue." << endl;
 }
 
 

@@ -126,25 +126,40 @@ public:
      * @brief Calls this Java Object's \c hashCode method.
      * This invokes the hashCode method on the java object in the Java VM.
      *
+     * RS classes should override this function if (and only if) they also override
+     * the @c equals method (in order to comply to the contract of Object.equals).
+     *
      * @return the hashCode of the object.
      */
-    int hashCode() const;
+    virtual int hashCode() const;
 
     /*!
      * \brief Calls this Java Object's \c equals method.
      * This invokes the equals method on the two java objects in the Java VM.
      *
+     * RS classes may override this function for more control over when objects
+     * are considered equal (also some, if not most, RS classes do not provide
+     * a correct equals method).
+     *
+     * RS classes should override this function if (and only if) they also override
+     * the @c hashCode method (in order to comply to the contract of Object.hashCode).
+     *
      * \param other the object to call equals with
      * \return true if the two objects are equal according to this
      *         object's equals method, false otherwise
      */
-    bool equals(const Object& other) const;
+    virtual bool equals(const Object& other) const;
+
     /*!
      * \brief Calls this Java Object's \c toString method.
      * This invokes the \c toString method on the java object in the Java VM.
+     *
+     * RS classes may override this function for easier debugging (since their
+     * toString() method usually does not return anything useful).
+     *
      * \return the String value of the java Object, as a JNI jstring.
      */
-    String toString() const;
+    virtual String toString() const;
 
     /**
      * @brief Returns the Java Class instance of this Object.
@@ -165,5 +180,9 @@ private:
 
 }
 }
+
+std::ostream& operator<<(std::ostream& out, java::lang::Object& object);
+
+uint qHash(const java::lang::Object& object, uint seed = 0);
 
 #endif // OBJECT_H

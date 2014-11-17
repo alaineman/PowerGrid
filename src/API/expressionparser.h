@@ -16,7 +16,25 @@ using namespace java::lang;
 namespace API {
 
 /**
- * @brief The ExpressionParser class
+ * @brief Simple Java Expression Parser.
+ *
+ * This class can parse Java expressions consisting of a series of field getters.
+ *
+ * For example, the following would retrieve the name of the local player according
+ * to the client:
+ *
+ *     evaluate("Client.getLocalPlayer().getName()");
+ *
+ * The braces are optional, but the name has to be the same as the getter method name
+ * (so "Client.localPlayer.name" will not work, but "Client.getLocalPlayer.getName" will).
+ * In fact, the braces are ignored completely, so "Client().getLocalPlayer()" will still return
+ * the local player, even though "Client" is a class name and not a field.
+ *
+ * Calls to evaluate are first converted to their obfuscated equivalents if such a mapping
+ * exists, and otherwise are interpreted as-is. This means it is possible to mix obfuscated
+ * and non-obfuscated code and everything will still work as expected. However, it also means
+ * the evaluate function will automatically fail if a required binding is not available, so
+ * callers should always catch errors thrown by functions in this class.
  */
 class ExpressionParser : public QObject {
     Q_OBJECT

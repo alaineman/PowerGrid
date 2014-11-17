@@ -10,6 +10,15 @@
 
 #include "jni.h"
 
+/**
+ * Checks and throws an Exception if one occurred in the JVM.
+ *
+ * The file and line number is included in the thrown exception, if any.
+ *
+ * @param context - a QString describing the context of this check.
+ */
+#define JNI_CHECK_AND_THROW(context) jace::helper::checkAndThrow(context, __FILE__, __LINE__)
+
 namespace jace {
 
 /**
@@ -170,6 +179,12 @@ JACE_API void deleteGlobalRef( JNIEnv* env, jobject globalRef );
  */
 JACE_API void enlist( ::jace::JFactory* factory );
 
+/**
+ * @brief Checks to see if a java exception has been thrown.
+ *
+ * If an exception is thrown, a JNIException with an appropriate message is thrown.
+ */
+JACE_API void checkAndThrow(QString context, const char* file, int line) throw(JNIException);
 
 /**
  * Checks to see if a java exception has been thrown.

@@ -19,12 +19,13 @@
 
 #include "UpdaterRunner.h"
 
+#include <QUrl>
+#include <QNetworkRequest>
+
 namespace jace {
 
 UpdaterRunner::UpdaterRunner(const QString gamepackHash, const QString updaterServer)
-    : QObject(), server(updaterServer), hash(gamepackHash) {
-    connect(this, SIGNAL(started()),
-            this, SLOT(downloadData()));
+    : QObject(), server(updaterServer), hash(gamepackHash), manager(NULL) {
 }
 
 QString UpdaterRunner::getURL() const {
@@ -41,9 +42,16 @@ void UpdaterRunner::start() {
     QMutexLocker locker (&dataMutex);
 
     if (data.isEmpty()) {
-        // This signal is connected to the `downloadData()` slot,
-        // So it will be called later.
-        emit started();
+        // The manager is connected to the `downloadData()` slot,
+        // So it will be called later. Giving it 'this' as parent ensures
+        // it's cleaned up when this UpdaterRunner is deleted.
+        manager = new QNetworkAccessManager(this);
+        connect(manager, SIGNAL(finished(QNetworkReply*)),
+                this,    SLOT(processData(QNetworkReply*)));
+        connect(manager, SIGNAL(error(QNetworkReply::NetworkError)),
+                this,    SLOT(reportError(QNetworkReply::NetworkError)));
+        // Let the manager retrieve the URL contents asynchronously.
+        manager->get(QNetworkRequest(QUrl(getURL())));
     } else {
         // Else we emit the finished signal immediately.
         emit finished(hash, data);
@@ -51,9 +59,28 @@ void UpdaterRunner::start() {
 
 }
 
-void UpdaterRunner::downloadData() {
+void UpdaterRunner::processData(QNetworkReply *reply) {
     QMutexLocker locker (&dataMutex);
-    emit error(hash, "UpdaterRunner::downloadData() - This function is not yet implemented");
+
+    if (reply->error() != QNetworkReply::NoError) {
+        // Something went wrong, report error and stop.
+        emit error(hash, reply->errorString());
+    }
+
+    data = reply->readAll();
+    manager->deleteLater();
+    manager = NULL;
+    emit finished(hash, data);
+}
+
+void UpdaterRunner::reportError(const QNetworkReply *reply) {
+    QMutexLocker locker (&dataMutex);
+
+    QString msg = reply->errorString();
+    manager->deleteLater();
+    manager = NULL;
+    emit error(hash, msg);
+
 }
 
 } // namespace jace

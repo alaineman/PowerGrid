@@ -30,7 +30,7 @@
 #------------------------------------------------
 # Basic properties of the project itself
 #------------------------------------------------
-QT          = core gui widgets
+QT          = core gui widgets network
 CONFIG     += thread c++11
 TEMPLATE    = app
 

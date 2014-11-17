@@ -31,7 +31,7 @@ String::String(const String &obj) :
 }
 
 const jace::JClass* String::staticGetJavaJniClass() throw (jace::JNIException) {
-    static jace::JClassImpl cls ("java.lang.String");
+    static jace::JClassImpl cls ("java/lang/String");
     return &cls;
 }
 
@@ -76,15 +76,22 @@ QString String::toQString() const throw (jace::JNIException) {
             JNIEnv* env = jace::helper::attach();
             const jchar* chars = env->GetStringChars(string, NULL);
             localString.setUtf16(chars, env->GetStringLength(string));
+        } else {
+            throw jace::JNIException("String::toQString() - String is null");
         }
     }
     return localString;
 }
 
 String String::fromQString(QString string) throw(jace::JNIException) {
-    QByteArray data = string.toUtf8();
-    jstring jstr = jace::helper::attach()->NewStringUTF(data.constData());
-    return jstr;
+    QByteArray data = string.toLocal8Bit();
+    JNIEnv* env = jace::helper::attach();
+    const char* chars = data.constData();
+    if (chars == NULL) throw jace::JNIException("String::fromQString() - NULL String passed into fromQString()");
+    jstring jstr = env->NewStringUTF(chars);
+    if (jstr == NULL) throw jace::JNIException("String::fromQString() - Could not allocate String");
+    jace::helper::catchAndThrow();
+    return String(jstr);
 }
 
 String String::valueOf(JObject value) throw(jace::JNIException) {

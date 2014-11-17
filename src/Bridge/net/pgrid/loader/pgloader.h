@@ -42,6 +42,17 @@ public:
     explicit PGLoader(jvalue value);
     explicit PGLoader(jobject object);
     PGLoader& operator = (const PGLoader& obj);
+
+    /**
+     * @brief Calls the main method of the Java Loader.
+     *
+     * This method is deliberately not called @c main, to avoid confusion with
+     * the main method of the native client.
+     *
+     * @throws jace::JNIException - When an Exception occurs in the JVM.
+     */
+    static void start() throw (jace::JNIException);
+
 private:
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 };

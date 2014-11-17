@@ -128,6 +128,16 @@ JACE_API bool isNull() const;
  */
 JACE_API JObject& operator=( const JObject& object );
 
+/**
+ * @brief Operator overload to automatically cast to jobject
+ *
+ * This allows JObject instances (and as such all Java Objects) to
+ * be automatically cast to a JNI jobject value.
+ *
+ * @return the jobject of this Java Object proxy.
+ */
+JACE_API operator jobject () { return getJavaJniObject(); }
+
 
 /**
  * Returns the JClass* that represents the static type of this class.

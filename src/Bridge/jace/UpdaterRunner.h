@@ -23,6 +23,9 @@
 #include <QObject>
 #include <QMutex>
 
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+
 #define PG_DEFAULT_UPDATER_SERVER \
     QStringLiteral("http://pgrid.net/marneus/reflection_cache_{hash}.xml")
 
@@ -48,14 +51,16 @@ private:
     const QString server;
     const QString hash;
     QMutex dataMutex;
+    QNetworkAccessManager *manager;
 public:
     /**
      * @brief Creates a new UpdaterRunner instance.
      *
-     * The default updater server will be used (which is equal to
-     * PG_DEFAULT_UPDATER_SERVER)
+     * If the updaterServer is not specified, the default updater server
+     * will be used (which is equal to @c PG_DEFAULT_UPDATER_SERVER).
      *
-     * @param gamepackHash - the hash of the gamepack to retrieve
+     * @param gamepackHash  - The hash of the gamepack to retrieve
+     * @param updaterServer - The updater server to use.
      */
     explicit UpdaterRunner(const QString gamepackHash,
                            const QString updaterServer = PG_DEFAULT_UPDATER_SERVER);
@@ -106,12 +111,24 @@ public slots:
 
 private slots:
     /**
-     * @brief Downloads the updater data.
+     * @brief Processes the updater data.
      *
-     * This slot is called by @c start() on the Thread to which this
-     * UpdaterRunner belongs.
+     * This slot is called automatically when the network request succeeded.
+     *
+     * @param reply - The QNetworkReply with the updater data.
      */
-    void downloadData();
+    void processData(QNetworkReply *reply);
+
+    /**
+     * @brief Reports the given error.
+     *
+     * This slot is called automatically when the network request failed.
+     * This slot translates the NetworkError to an error message and reports
+     * it by emitting the @c error(QString, QString) signal.
+     *
+     * @param err - The error that caused the request to fail.
+     */
+    void reportError(const QNetworkReply *reply);
 
 signals:
     /**
@@ -143,6 +160,8 @@ signals:
      * @param message      - a QString describing the error.
      */
     void error(QString gamepackHash, QString message);
+
 };
+
 }
 #endif

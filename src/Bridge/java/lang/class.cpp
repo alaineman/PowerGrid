@@ -46,6 +46,8 @@ String Class::getName() const throw(jace::JNIException) {
                 "getName", "()Ljava/lang/String;");
     if (!getName) throw jace::JNIException("Cannot find Class.getName()");
     jobject name = env->CallObjectMethod(getJavaJniObject(), getName);
+    jace::helper::catchAndThrow();
+    if (!name) throw jace::JNIException("Class::getName() - JNI returned NULL for class name");
     return String(name);
 }
 
@@ -61,12 +63,7 @@ Object Class::getDeclaredField(String name) const throw(jace::JNIException) {
 }
 
 Object Class::getDeclaredField(QString name) const throw(jace::JNIException) {
-    JNIEnv *env = jace::helper::attach();
-    jstring string = env->NewStringUTF(name.toLocal8Bit().constData());
-    if (!string) {
-        throw jace::JNIException("Could not allocate a new Java String");
-    }
-    return getDeclaredField(String(string));
+    return getDeclaredField(String::fromQString(name));
 }
 
 Object Class::getDeclaredMethod(String name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException) {
@@ -83,12 +80,7 @@ Object Class::getDeclaredMethod(String name, std::initializer_list<Class> paramT
 }
 
 Object Class::getDeclaredMethod(QString name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException) {
-    JNIEnv *env = jace::helper::attach();
-    jstring string = env->NewStringUTF(name.toLocal8Bit().constData());
-    if (!string) {
-        throw jace::JNIException("Could not allocate a new Java String");
-    }
-    return getDeclaredMethod(String(string), paramTypes);
+    return getDeclaredMethod(String::fromQString(name), paramTypes);
 }
 
 jmethodID Class::getMethodID(QString name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException) {
@@ -158,6 +150,20 @@ Object Class::getFieldContent(QString name, Object o) const throw(jace::JNIExcep
         throw jace::JNIException("Cannot create String");
     }
     return getFieldContent(str, o);
+}
+
+Class Class::asArray() const throw(jace::JNIException) {
+    // Convert the name to a qualified java type name with '[' in front
+    // indicating an array.
+    QString name = getName().toQString();
+    if (name.startsWith('[')) {
+        // It is already an array type, so just append another '['
+        name.prepend('[');
+    } else {
+        // Put L...; around the class name, and prepend '['
+        name = "[L" % name % ";";
+    }
+    return Class::forName(name);
 }
 
 void Class::setAccessible(Object obj) throw(jace::JNIException) {

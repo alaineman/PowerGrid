@@ -21,9 +21,6 @@ using std::endl;
 #error Platform does not support pthreads or win32 thread-local storage
 #endif
 
-// Maybe something to think about: Qt has platform-independent Threads (QThreads)
-// Can't we simplify this class to use QThreads?
-
 #include <algorithm>
 using std::copy;
 using std::replace;
@@ -323,7 +320,6 @@ void enlist( JFactory* factory ) {
     string name = factory->getClass()->getName();
     replace( name.begin(), name.end(), '/', '.' );
     getFactoryMap()->insert( FactoryMap::value_type( name, factory ) );
-    //  cout << "helper::enlist - Enlisted " << name << endl;
 }
 
 
@@ -383,19 +379,14 @@ void catchAndThrow() {
     }
 
     jthrowable jexception = env->ExceptionOccurred();
-
-    // cout << "helper::catchAndThrow() - Discovered an exception: " << endl;
-    // print( jexception );
-
     env->ExceptionClear();
 
     /* Find the fully qualified name for the exception type, so
-   * we can find a matching C++ proxy exception.
-   *
-   * In java, this looks like:
-   *   String typeName = exception.getClass().getName();
-   */
-    //  cout << "helper::catchAndThrow() - Retrieving the exception class type..." << endl;
+     * we can find a matching C++ proxy exception.
+     *
+     * In java, this looks like:
+     *   String typeName = exception.getClass().getName();
+     */
     jclass throwableClass = env->FindClass( "java/lang/Throwable" );
 
     if ( ! throwableClass ) {
@@ -404,39 +395,32 @@ void catchAndThrow() {
     }
 
     jclass classClass = env->FindClass( "java/lang/Class" );
-
     if ( ! classClass ) {
         string msg = "Assert failed: Unable to find the class, java.lang.Class.";
         throw JNIException( msg );
     }
 
     jmethodID throwableGetClass = env->GetMethodID( throwableClass, "getClass", "()Ljava/lang/Class;" );
-
     if ( ! throwableGetClass ) {
         string msg = "Assert failed: Unable to find the method, Throwable.getClass().";
         throw JNIException( msg );
     }
-
     deleteLocalRef( env, throwableClass );
 
     jmethodID classGetName = env->GetMethodID( classClass, "getName", "()Ljava/lang/String;" );
-
     if ( ! classGetName ) {
         string msg = "Assert failed: Unable to find the method, Class.getName().";
         throw JNIException( msg );
     }
 
     jmethodID classGetSuperclass = env->GetMethodID( classClass, "getSuperclass", "()Ljava/lang/Class;" );
-
     if ( ! classGetSuperclass ) {
         string msg = "Assert failed: Unable to find the method, Class.getSuperclass().";
         throw JNIException( msg );
     }
-
     deleteLocalRef( env, classClass );
 
     jobject exceptionClass = env->CallObjectMethod( jexception, throwableGetClass );
-
     if ( env->ExceptionOccurred() ) {
         env->ExceptionDescribe();
         string msg = "helper::catchAndThrow()\n" \
@@ -445,7 +429,6 @@ void catchAndThrow() {
     }
 
     jstring exceptionType = static_cast<jstring>( env->CallObjectMethod( exceptionClass, classGetName ) );
-
     if ( env->ExceptionOccurred() ) {
         env->ExceptionDescribe();
         string msg = "helper::catchAndThrow()\n" \
@@ -456,17 +439,14 @@ void catchAndThrow() {
     string exceptionTypeString = asString( env, exceptionType );
 
     /* Now, find the matching factory for this exception type.
-   */
+     */
     while ( true ) {
 
         FactoryMap::iterator it = getFactoryMap()->find( exceptionTypeString );
 
         /* If we couldn't find a match, try to find the parent exception type.
-     */
+         */
         if ( it == getFactoryMap()->end() ) {
-
-            // cout << "Finding super class for " << endl;
-            // print( exceptionClass );
 
             jobject superClass = env->CallObjectMethod( exceptionClass, classGetSuperclass );
 
@@ -478,8 +458,8 @@ void catchAndThrow() {
             }
 
             /* We get NULL if we've already reached java.lang.Object, in which case,
-       * we couldn't find any match at all.
-       */
+             * we couldn't find any match at all.
+             */
             if ( ! superClass ) {
                 break;
             }
@@ -509,10 +489,7 @@ void catchAndThrow() {
         }
 
         /* Ask the factory to throw the exception.
-     */
-        // cout << "helper::catchAndThrow() - Throwing the exception " << endl;
-        // print( jexception );
-
+         */
         jvalue value;
         value.l = jexception;
         it->second->throwInstance( value );
@@ -536,11 +513,21 @@ void catchAndThrow() {
         throw JNIException( msg );
     }
 
+    // Fallback: throw a JNIException with the type name and message of the Throwable.
+
     exceptionTypeString = asString( env, exceptionType );
-    //    cout << "Unable to find an enlisted class factory matching the type <" + exceptionTypeString + ">" << endl;
-    //    cout << "Throwing Exception instead." << endl;
-    string msg = string( "Can't find any linked in parent exception for " ) + exceptionTypeString + "\n";
-    throw JNIException( msg );
+    jmethodID getMessage = env->GetMethodID(static_cast<jclass>(exceptionClass), "getMessage", "()Ljava/lang/String;");
+    if ( !getMessage) {
+        throw JNIException("Could not find Throwable.getMessage() method");
+    }
+
+    jstring jmessage = static_cast<jstring>( env->CallObjectMethod(jexception, getMessage));
+    if ( !jmessage) {
+        // No message specified (or some error in the JVM), so just print the Exception type.
+        throw JNIException(string("Exception occurred in JVM: ") + exceptionTypeString);
+    }
+    const char *msg = env->GetStringUTFChars(jmessage, NULL);
+    throw JNIException( exceptionTypeString + ": " + msg );
 }
 
 namespace {

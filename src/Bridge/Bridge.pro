@@ -67,7 +67,7 @@
 # JACE has been optimized for use with PowerGrid.
 #------------------------------------------------------------------------
 
-QT          = core concurrent
+QT          = core concurrent network
 TEMPLATE    = lib
 TARGET      = Bridge
 CONFIG     += staticlib thread c++11

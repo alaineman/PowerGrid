@@ -169,31 +169,16 @@ int main(int argc, char** argv) {
         // The PowerGrid loader requires Java 8, so we print an error if the version does not match.
         // Afterwards we exit, because the loader won't run anyway.
         QString javaVersion = helper::getJavaProperty("java.version");
-        if (!javaVersion.startsWith("1.8")) {
-            qCWarning(logLauncher) << "[FAILURE] PowerGrid requires Java 8 to run. Please update your Java version";
+        int secondPeriod = javaVersion.indexOf('.', javaVersion.indexOf('.') + 1);
+        double version = javaVersion.left(secondPeriod).toDouble();
+        if (version < 1.8) {
+            qCWarning(logLauncher) << "[FAILURE] PowerGrid requires at least Java 8 to run. Please update your Java version";
+            qCWarning(logLauncher) << "          Found java version" << version << "instead";
             return EXIT_FAILURE;
         }
+        qCDebug(logLauncher) << "Started JVM with version" << version;
 
-        JNIEnv* env = helper::attach();
-
-        // Start the PowerGridLoader
-        // Actual command (in java): net.pgrid.loader.PGLoader.main(null);
-        qCDebug(logLauncher) << "Starting Java client loader";
-        jclass pgLoaderClass = env->FindClass("net/pgrid/loader/PowerGrid");
-        if (!pgLoaderClass) {
-            throw JNIException("PowerGrid class not found");
-        }
-        jmethodID mainMethod = env->GetStaticMethodID(pgLoaderClass, "main", "([Ljava/lang/String;)V");
-        if (!mainMethod) {
-            throw JNIException("PowerGrid.main method not found");
-        }
-        env->CallStaticVoidMethod(pgLoaderClass, mainMethod, NULL);
-        env->DeleteLocalRef(pgLoaderClass);
-
-        if (env->ExceptionCheck()) {
-            env->ExceptionDescribe();
-            throw JNIException("Exception in main method invocation");
-        }
+        PGLoader::start();
     } catch (JNIException& e) {
         qCWarning(logLauncher) << "Error creating JVM loader: " << e.what();
         return EXIT_FAILURE;
@@ -209,6 +194,9 @@ int main(int argc, char** argv) {
     MainWindow window;
     window.show();
     window.setJVMVersion(helper::getJavaProperty("java.version"));
+
+    // Contact the updater server to collect the updater data.
+
     qCDebug(logLauncher) << "Done.";
     return app.exec();
 }

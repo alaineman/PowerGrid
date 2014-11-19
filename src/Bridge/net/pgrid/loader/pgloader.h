@@ -19,11 +19,17 @@
 #ifndef NET_PGRID_LOADER_PGLOADER_H
 #define NET_PGRID_LOADER_PGLOADER_H
 
+#include "jace/JNIException.h"
+using jace::JNIException;
+
 #include "java/lang/object.h"
 using namespace java::lang;
 
 #include "java/awt/component.h"
 using java::awt::Component;
+
+#include <initializer_list>
+using std::initializer_list;
 
 namespace net {
 namespace pgrid {
@@ -36,8 +42,8 @@ public:
     PGLoader();
     PGLoader(const PGLoader& obj);
 
-    virtual const jace::JClass* getJavaJniClass() const throw (jace::JNIException);
-    static const jace::JClass* staticGetJavaJniClass() throw (jace::JNIException);
+    virtual const jace::JClass* getJavaJniClass() const throw (JNIException);
+    static const jace::JClass* staticGetJavaJniClass() throw (JNIException);
 
     explicit PGLoader(jvalue value);
     explicit PGLoader(jobject object);
@@ -49,10 +55,27 @@ public:
      * This method is deliberately not called @c main, to avoid confusion with
      * the main method of the native client.
      *
+     * @param args - The command-line arguments to provide to the Java loader.
      * @throws jace::JNIException - When an Exception occurs in the JVM.
      */
-    static void start() throw (jace::JNIException);
+    static void start(const std::initializer_list<QString> args) throw (JNIException);
 
+    /**
+     * @brief Computes the hash of the Runescape Java client.
+     *
+     * @return the computed hash
+     * @throws jace::JNIException - When an I/O error occurs, or an unexpected
+     *                              Exception occurs in the JVM.
+     */
+    static jint computeClientHash() throw (JNIException);
+
+    /**
+     * @brief Tries to find a Class in the JVM with the given name.
+     *
+     * @param name - The (obfuscated) name of the desired Class.
+     * @return A Class object with the given name.
+     */
+    static Class findClass(QString name) throw (JNIException);
 private:
     template <typename T> friend T (jace::java_cast)(const jace::proxy::JObject&);
 };

@@ -27,6 +27,12 @@
 #include "jace/JNIException.h"
 #include "jace/JNIHelper.h"
 
+#include "java/lang/class.h"
+using namespace java::lang;
+
+#include "net/pgrid/loader/pgloader.h"
+using net::pgrid::loader::PGLoader;
+
 Q_LOGGING_CATEGORY(logMapper, "MAPPER")
 
 namespace jace {
@@ -155,28 +161,24 @@ QString RSClassMapper::getType(QString className, QString fieldName) {
     return data;
 }
 
-void RSClassMapper::parseData(jbyteArray data) throw(JNIException) {
-    if (data == NULL) {
-        throw JNIException("Received NULL jbyteArray as map data");
+void RSClassMapper::dataFailed(QString clientHash, QString message) {
+    qCWarning(logMapper) << "Failed to get updater data for client with hash" << clientHash
+                         << "\nReason:" << message;
+    hash = clientHash;
+}
+
+void RSClassMapper::parseData(QString clientHash, QByteArray data) {
+    if (data.isEmpty()) {
+        throw JNIException("Received empty byte array as map data");
     }
     if (classMap.isEmpty()) {
-        JNIEnv* env = jace::helper::attach();
-
-        // Transfer the jbyte array to a char buffer
-        jint length = env->GetArrayLength(data);
-        char buffer [length];
-        char* chars = buffer;
-        env->GetByteArrayRegion(data, 0, length, reinterpret_cast<jbyte*>(chars));
-        qCDebug(logMapper) << "Received" << length << "bytes of updater data";
-
-        // Parse the data using QXmlStreamReader
-        QByteArray byteArray (const_cast<const char*>(buffer), length);
-        QXmlStreamReader* reader = new QXmlStreamReader(byteArray);
+        hash = clientHash;
+        QXmlStreamReader* reader = new QXmlStreamReader(data);
         reader->setNamespaceProcessing(false);
         while (reader->tokenType() != QXmlStreamReader::StartElement) {
             reader->readNext();
         }
-        qCDebug(logMapper) << "Parsing updater data for client with hash " << reader->attributes().value("crc");
+        qCDebug(logMapper) << "Parsing updater data for client with hash " << clientHash;
 
         int nFields = 0;
         while (!reader->atEnd()) {
@@ -197,7 +199,7 @@ void RSClassMapper::parseData(jbyteArray data) throw(JNIException) {
             }
         }
 
-        // One workaround (hopefully temporary): the Client class is named "Client" in C++ (naming conventions),
+        // One workaround: the Client class is named "Client" in C++ (naming conventions),
         // but the updater (as well as the RS client jar file) names it "client" (lower case). Therefore the
         // Client class cannot be properly mapped. This can be circumvented by renaming "client" with "Client"
         // in the data right here.
@@ -231,7 +233,6 @@ int RSClassMapper::parseClass(QXmlStreamReader* reader) throw(JNIException) {
     }
     // prepare all map entries for this RS class
     QString cName = className.toString();
-    //qCDebug(logMapper) << cName;
     if (!isStatic) {
         classMap.insert(cName, mappedClassName.toString());
         fieldMap.insert(cName, QMap<QString, QString>());
@@ -268,7 +269,6 @@ int RSClassMapper::parseClass(QXmlStreamReader* reader) throw(JNIException) {
 
 void RSClassMapper::parseField(QXmlStreamReader *reader, QString className, bool isStatic) throw(JNIException) {
     QString fieldName = reader->name().toString();
-    //qCDebug(logMapper) << " ->" << fieldName;
 
     while (!reader->atEnd()) {
         reader->readNext();
@@ -301,11 +301,6 @@ void RSClassMapper::parseField(QXmlStreamReader *reader, QString className, bool
                 if (isStatic) {
                     staticClassMap.insert(fieldName, className);
                     staticFieldMap.insert(fieldName, realFieldName);
-                    // DEBUG
-                    if (fieldName == "getMouse") {
-                        qCDebug(logMapper) << fieldName << "found in" << className << "as" << realFieldName;
-                    }
-                    // END DEBUG
                 } else {
                     QMap<QString, QString> map = fieldMap.value(className);
                     map.insert(fieldName, realFieldName);
@@ -362,27 +357,8 @@ void RSClassMapper::parseModifier(QXmlStreamReader *reader, QString className, Q
 }
 
 jclass RSClassMapper::getClass(QString name) {
-    JNIEnv* env = jace::helper::attach();
-    const char* cName = name.toUtf8().constData();
-    jclass classLoaderClass = env->FindClass("net/pgrid/loader/RSClassLoader");
-    if (! classLoaderClass) throw JNIException("RSClassLoader not found");
-    jstring cNameStr = env->NewStringUTF(cName);
-    if (! cNameStr) throw JNIException("Cannot create java String");
-    jfieldID instance = env->GetStaticFieldID(classLoaderClass, "INSTANCE", "Lnet/pgrid/loader/RSClassLoader;");
-    if (! instance) throw JNIException("Cannot find INSTANCE in RSClassLoader");
-    jmethodID getClass = env->GetMethodID(classLoaderClass, "findClass", "(Ljava/lang/String;)Ljava/lang/Class;");
-    if (! getClass) throw JNIException("Cannot find getClass(String) in RSClassLoader");
-
-    jobject classLoader = env->GetStaticObjectField(classLoaderClass, instance);
-    if (! classLoader) throw JNIException("Cannot get ClassLoader");
-    jobject rsClass = env->CallObjectMethod(classLoader, getClass, cNameStr);
-    if (! rsClass) throw JNIException("Cannot find RS Class named " + name);
-
-    env->DeleteLocalRef(cNameStr);
-    env->DeleteLocalRef(classLoader);
-    env->DeleteLocalRef(classLoaderClass);
-
-    return static_cast<jclass>(rsClass);
+    Class cls = PGLoader::findClass(name);
+    return static_cast<jclass>(cls.getJavaJniObject());
 }
 
 }

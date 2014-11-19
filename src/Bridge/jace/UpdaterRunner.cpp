@@ -34,13 +34,10 @@ QString UpdaterRunner::getURL() const {
 }
 
 QByteArray UpdaterRunner::getData() {
-    QMutexLocker locker (&dataMutex);
     return data;
 }
 
 void UpdaterRunner::start() {
-    QMutexLocker locker (&dataMutex);
-
     if (data.isEmpty()) {
         // The manager is connected to the `downloadData()` slot,
         // So it will be called later. Giving it 'this' as parent ensures
@@ -48,8 +45,6 @@ void UpdaterRunner::start() {
         manager = new QNetworkAccessManager(this);
         connect(manager, SIGNAL(finished(QNetworkReply*)),
                 this,    SLOT(processData(QNetworkReply*)));
-        connect(manager, SIGNAL(error(QNetworkReply::NetworkError)),
-                this,    SLOT(reportError(QNetworkReply::NetworkError)));
         // Let the manager retrieve the URL contents asynchronously.
         manager->get(QNetworkRequest(QUrl(getURL())));
     } else {
@@ -60,27 +55,25 @@ void UpdaterRunner::start() {
 }
 
 void UpdaterRunner::processData(QNetworkReply *reply) {
-    QMutexLocker locker (&dataMutex);
-
     if (reply->error() != QNetworkReply::NoError) {
         // Something went wrong, report error and stop.
-        emit error(hash, reply->errorString());
+        reportError(reply);
+        return;
     }
 
     data = reply->readAll();
     manager->deleteLater();
     manager = NULL;
+    reply->deleteLater();
     emit finished(hash, data);
 }
 
-void UpdaterRunner::reportError(const QNetworkReply *reply) {
-    QMutexLocker locker (&dataMutex);
-
+void UpdaterRunner::reportError(QNetworkReply *reply) {
     QString msg = reply->errorString();
     manager->deleteLater();
     manager = NULL;
+    reply->deleteLater();
     emit error(hash, msg);
-
 }
 
 } // namespace jace

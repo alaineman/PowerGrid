@@ -23,7 +23,6 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -36,6 +35,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.jar.JarInputStream;
 import net.pgrid.loader.bridge.Reflection;
 import net.pgrid.loader.util.ArgumentParser;
@@ -59,6 +60,10 @@ import net.pgrid.loader.util.Logger;
  *   <li><strong>--intercept-output (or -i)</strong>
  *              Intercepts output from the client and redirects it to a file
  *              named "runescape.log" in the working directory."</li>
+ *   <li><strong>--enable-exceptions (or -e)</strong>
+ *              Enables throwing of Exceptions from {@code main(String[])}. 
+ *              Useful for external applications that start this loader, but
+ *              it should not be used when using this loader stand-alone.</li>
  * </ul>
  * 
  * The {@code -d}, {@code q} and {@code v} options change the verbosity of the 
@@ -79,6 +84,12 @@ import net.pgrid.loader.util.Logger;
  * {@code PowerGrid.err}, respectively. All logging output by PowerGrid is still
  * output to the console.
  * 
+ * If the {@code -e} flag is provided, any Exceptions that occur during startup
+ * will be propagated through the main method. If this flag is not present, they
+ * will be caught and logged within application code. Providing this flag when 
+ * running the client stand-alone will cause the application to crash upon any
+ * Exception on the main Thread.
+ * 
  * @author Patrick Kramer
  */
 public class PowerGrid {
@@ -98,6 +109,11 @@ public class PowerGrid {
      * The Path to the local client.
      */
     public static final Path CLIENT_PATH = Paths.get("cache/client.jar");
+    
+    /**
+     * The Path to the keys file.
+     */
+    public static final Path KEYS_PATH   = Paths.get("cache/keys.dat");
     
     /**
      * The global PowerGrid instance.
@@ -125,12 +141,30 @@ public class PowerGrid {
     /**
      * Enables intercepting of output to {@code System.out} and {@code System.err},
      * allowing Runescape log output to be split off to a separate file.
+     * 
+     * @param parser The ArgumentParser with the command-line arguments.
+     * @throws Exception if an Exception occurred while intercepting the output,
+     *                   and the parser has the "enable-exceptions" flag.
      */
-    public static void enableOutputIntercepting() {
-        boolean success = AccessController.doPrivileged(
-                (PrivilegedAction<Boolean>) PowerGrid::interceptOutput);
-        if (success) {
-            Logger.setDefaultTarget(PowerGrid.out, true);
+    public static void enableOutputIntercepting(ArgumentParser parser) throws Exception {
+        if (!parser.hasFlag("intercept-output")) {
+            return;
+        }
+        try {
+            boolean success = AccessController.doPrivileged(
+                (PrivilegedExceptionAction<Boolean>) PowerGrid::interceptOutput);
+            if (success) {
+                Logger.setDefaultTarget(PowerGrid.out, true);
+            } else if (parser.hasFlag("enable-exceptions")) {
+                throw new Exception("Failed to intercept output");
+            }
+        } catch (PrivilegedActionException ex) {
+            Exception cause = ex.getException();
+            if (parser.hasFlag("enable-exceptions")) {
+                throw cause;
+            } else {
+                LOGGER.log("Exception while intercepting output", ex);
+            }
         }
     }
     
@@ -158,10 +192,20 @@ public class PowerGrid {
      * @return the hash of the local client.
      * @throws IOException when an I/O error occurs.
      */
-    public int computeClientHash() throws IOException {
+    public static int computeClientHash() throws IOException {
         try (JarInputStream in = new JarInputStream(Files.newInputStream(CLIENT_PATH))) {
             return in.getManifest().hashCode();
         }
+    }
+    
+    /**
+     * Tries to find a Class in the RS client.
+     * 
+     * @param name The real (obfuscated) name of the class.
+     * @return The Class with the given name, or null if no such class exists.
+     */
+    public static Class<?> findClass(String name) {
+        return INSTANCE.getClassProvider().findClass(name);
     }
     
     /**
@@ -182,6 +226,8 @@ public class PowerGrid {
         parser.merge("quiet", "q");
         parser.merge("verbose", "v");
         parser.merge("force-download", "f");
+        parser.merge("intercept-output", "i");
+        parser.merge("enable-exceptions", "e");
         
         return parser;
     }
@@ -189,17 +235,17 @@ public class PowerGrid {
     /**
      * Main method of the application.
      * @param args the command-line arguments
+     * @throws Exception if {@code -e} is provided as one of the arguments 
+     *                   and an Exception occurs during startup.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Thread.currentThread().setName("PG_Main");
         Thread.setDefaultUncaughtExceptionHandler(new PGExceptionHandler());
         
         ArgumentParser parser = parseArguments(args);
         setLoggerVerbosity(parser);
         
-        if (parser.hasFlag("intercept-output")) {
-            enableOutputIntercepting();
-        }
+        enableOutputIntercepting(parser);
         
         // Touch the Reflection class so that it's loaded when the native client
         // needs it. At the same time, checks if the Agent is loaded.
@@ -211,6 +257,9 @@ public class PowerGrid {
         try {
             INSTANCE.start(parser);
         } catch (IOException e) {
+            if (parser.hasFlag("enable-exceptions")) {
+                throw e;
+            }
             report(e.getMessage());
             LOGGER.log("Exception during PowerGrid startup", e);
         }
@@ -279,7 +328,7 @@ public class PowerGrid {
      * @throws IOException if an I/O error occurs.
      */
     public RSVersionInfo loadClient() throws IOException {
-        RSVersionInfo currentVersion = RSVersionInfo.fromPath(CLIENT_PATH);
+        RSVersionInfo currentVersion = RSVersionInfo.fromPath(KEYS_PATH);
         
         RSDownloader downloader = new RSDownloader();
         RSVersionInfo newVersion = downloader.loadConfig(currentVersion);
@@ -362,43 +411,32 @@ public class PowerGrid {
      * console, keeping the console output clean.
      * 
      * @return True if the operation succeeded, false otherwise
+     * @throws Exception if an error occurs at any point during the intercept 
+     *                   operation.
      */
-    public static Boolean interceptOutput() {
-        try {
-            Field outField = System.class.getDeclaredField("out");
-            Field errField = System.class.getDeclaredField("err");
-            
-            PrintStream replacement = createRedirectedPrintStream();
-            updateStaticFieldContents(outField, replacement);
-            updateStaticFieldContents(errField, replacement);
-            
-            return true;
-        } catch (NoSuchFieldException ex) {
-            throw new AssertionError("Assertion failed: No field named System.out or System.err", ex);
-        }
+    public static Boolean interceptOutput() throws Exception {
+        Field outField = System.class.getDeclaredField("out");
+        Field errField = System.class.getDeclaredField("err");
+
+        PrintStream replacement = createRedirectedPrintStream();
+        updateStaticFieldContents(outField, replacement);
+        updateStaticFieldContents(errField, replacement);
+
+        return true;
     };
     
     /**
      * Creates a new PrintStream that directs to a log file.
      * @return the created PrintStream.
+     * @throws IOException When the file to redirect to could not be created, 
+     *                     or the JVM does not support UTF-8 encoding.
      */
-    public static PrintStream createRedirectedPrintStream() {
-        OutputStream redirectStream;
-        try {
-            Path destination = Paths.get("runescape.log");
-            redirectStream = Files.newOutputStream(destination,
-                    StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-        } catch (IOException iox) {
-            LOGGER.log("Could not create/open runescape.log file for writing", iox);
-            redirectStream = new OutputStream() {
-                @Override public void write(int b) {}
-            };
-        }
-        try {
-            return new PrintStream(redirectStream, true, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            throw new AssertionError("Assertion failed: UTF-8 encoding not supported", ex);
-        }
+    public static PrintStream createRedirectedPrintStream() throws IOException {
+        Path destination = Paths.get("runescape.log");
+        OutputStream redirectStream = Files.newOutputStream(destination,
+                StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+        return new PrintStream(redirectStream, true, "UTF-8");
+        
     }
     
     /**

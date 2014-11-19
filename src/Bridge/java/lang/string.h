@@ -96,6 +96,14 @@ public:
     int length() const;
 
     /**
+     * @brief Functionally casts this String to a jstring.
+     *
+     * This allows Strings to be inserted in functions that take a jstring argument
+     * without any further casting.
+     */
+    operator jstring() const { return static_cast<jstring>(getJavaJniObject()); }
+
+    /**
      * @brief Copies the contents of this Java String to an std::wstring.
      *
      * This function is generally faster than @c toQString(), and provides
@@ -140,7 +148,7 @@ public:
      * @param string - the QString to convert
      * @return a Java String with the same contents as the QString.
      */
-    static String fromQString(QString string) throw(jace::JNIException);
+    static jstring fromQString(QString string) throw(jace::JNIException);
 
     // Each of these functions converts its parameter to a String representation.
     // This is done through the JVM, by calling the appropriate String.valueOf(...)

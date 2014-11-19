@@ -39,13 +39,13 @@ const jace::JClass* String::getJavaJniClass() const throw (jace::JNIException) {
     return String::staticGetJavaJniClass();
 }
 
-String::String(jobject object) : JObject(NoOp()), Object() {
+String::String(jobject object) : Object() {
     setJavaJniObject(object);
 }
 
 String::String(jvalue value)   : Object(value) {}
 
-String::String(jstring string) : JObject(NoOp()), Object() {
+String::String(jstring string) : Object() {
     setJavaJniObject(string);
 }
 
@@ -87,15 +87,14 @@ QString String::toQString() const throw (jace::JNIException) {
     return localString;
 }
 
-String String::fromQString(QString string) throw(jace::JNIException) {
+jstring String::fromQString(QString string) throw(jace::JNIException) {
     QByteArray data = string.toLocal8Bit();
     JNIEnv* env = jace::helper::attach();
     const char* chars = data.constData();
     if (chars == NULL) throw jace::JNIException("String::fromQString() - NULL String passed into fromQString()");
     jstring jstr = env->NewStringUTF(chars);
-    if (jstr == NULL) throw jace::JNIException("String::fromQString() - Could not allocate String");
-    jace::helper::catchAndThrow();
-    return String(jstr);
+    JNI_CHECK_AND_THROW("String::fromQString() - Could not allocate String");
+    return jstr;
 }
 
 String String::valueOf(JObject value) throw(jace::JNIException) {

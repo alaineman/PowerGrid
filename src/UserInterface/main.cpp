@@ -17,50 +17,41 @@
  * along with PowerGrid.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Required Qt headers
-#include <QtCore>
-#include <QApplication>
+#include "main.h"
+using namespace std;
 
-// Required standard headers
-#include <stdexcept>
-#include <string>
-#include <cstdlib>
-#include <iostream>
-
-// Required JACE headers
-#include "jni.h"
-#include "jace/JNIHelper.h"
-#include "jace/OptionList.h"
-
-// OS-dependant headers
-#ifdef Q_OS_MACX
-#  include "jace/macvmloader.h"
-#elif defined(Q_OS_UNIX)
-#  include "jace/UnixVmLoader.h"
-#else //Q_OS_WIN32
-#  include "jace/Win32VmLoader.h"
-#endif
-
-// Native methods that need to be registered
 #include "jace/UpdaterRunner.h"
+#include "jace/RSClassMapper.h"
+using namespace jace;
 
-// Our own additional headers
-#include "mainwindow.h"
-#include "versionInfo.h"
 #include "net/pgrid/loader/pgloader.h"
 using net::pgrid::loader::PGLoader;
 
-Q_DECLARE_LOGGING_CATEGORY(logLauncher)
-Q_LOGGING_CATEGORY(logLauncher, "LAUNCHER")
+int main(int argc, char** argv) {
+    initializeLoggers();
 
-using namespace jace;
-using namespace std;
+    try {
+        startJavaClient();
+    } catch (JNIException& e) {
+        qCWarning(logLauncher) << "Error starting Java client:" << e.what();
+        return EXIT_FAILURE;
+    }
 
-// We use our own custom message handler for qDebug, qWarning, etc... messages to match the format
-// used by the Java client.
+    qCDebug(logLauncher) << "JVM started, creating control panel";
+    QApplication app (argc, argv);
+    app.setApplicationName(PG_NAME_STR);
+    app.setApplicationVersion(PG_VERSION_STR);
+
+    MainWindow window;
+    window.show();
+    window.setJVMVersion(helper::getJavaProperty("java.version"));
+
+    runUpdater();
+    qCDebug(logLauncher) << "Startup completed";
+    return app.exec();
+}
+
 void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg) {
-    Q_UNUSED(type)
-
     // We prefer to label the message with its category. However, if no category is defined,
     // we use a prefix based on the message type (debug, warning, critical, or fatal).
     const char* prefix = context.category;
@@ -89,124 +80,63 @@ void PGMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
         }
         cout << "| ";
     }
-    // After the label we print the message.
-    cout << qPrintable(msg) << endl;
+    // After the label we print the message, split into lines.
+    QStringList lines = msg.split(QRegExp("\r?\n"));
+    cout << qPrintable(lines.first()) << endl;
+    int pos = 1;
+    while (pos < lines.size()) {
+        // Don't repeat the label for consecutive lines
+        cout << "             | " << qPrintable(lines.at(pos)) << endl;
+    }
 #if defined(PG_DEBUG) && !defined(PG_DEBUG_NO_TRACE)
     // We print the origin of the message in debug builds
     // (unless this was specifically disabled with PG_DEBUG_NO_TRACE)
-    cout << "             | at " << context.file << ": " << context.line << endl;
+    cout << "             | (logged from " << context.file << ": " << context.line << ")" << endl;
 #else
     Q_UNUSED(context)
 #endif
 }
 
-/**
- * @brief Tries to locate the directory in which Runescape stores its libraries.
- *
- * This allows the client to load the native OpenGL (and DirectX on Windows) backends.
- * The contents of the default library path (PATH on Windows and LD_LIBRARY_PATH on Unix)
- * are prepended to the found directory.
- *
- * @return the path to "jagexcache/runescape/LIVE/" in the user's home directory.
- */
-const char* findJagexCacheDir() {
-#ifdef Q_OS_WIN32
-    // On Windows, take the value of the USERPROFILE environment variable.
-    QByteArray userprofileBytes = qgetenv("USERPROFILE");
-    QByteArray lib_path = qgetenv("PATH");
-    return std::string(lib_path.constData())
-            .append(";")
-            .append(userprofileBytes.constData())
-            .append("\\jagexcache\\runescape\\LIVE\\").c_str();
-#else
-    QByteArray lib_path = qgetenv("LD_LIBRARY_PATH");
-    // Unixes have a standard way of getting the home directory (~)
-    return std::string(lib_path.constData()).append(":~/jagexcache/runescape/LIVE/").c_str();
-#endif
-}
-
-int main(int argc, char** argv) {
-    // Enable debug output for all categories by default, but disable Qt Debug output
+void initializeLoggers() {
+#ifdef PG_DEBUG
     QLoggingCategory::setFilterRules(QStringLiteral("*.debug=true"));
     QLoggingCategory::setFilterRules(QStringLiteral("qt.*.debug=false"));
+#endif
     qInstallMessageHandler(PGMessageHandler);
+}
+
+void startJavaClient() throw (JNIException) {
     qCDebug(logLauncher) << "Attempting to load JVM...";
 
-    // Create the loader instance with the appropriate configuration options.
-    try {
-        OptionList options;
-#if defined(Q_OS_WIN32)
-        // Windows installations have a key in registry indicating the Java installation.
-        // The special Win32VmLoader makes use of this key to find a JVM.
-        Win32VmLoader loader;
-#elif defined(Q_OS_MACX)
-        // Mac OS X has a tool named java_home that indicates the path to the Java
-        // installation. We use the MacVmLoader to dynamically load the JVM library in this way.
-        MacVmLoader loader;
-#else
-        // Not Mac OS X, but generic Unix. We use the UnixVmLoader to load the JVM.
-        // We expect the JAVA_HOME environment variable to be set for this.
-        UnixVmLoader loader;
-#endif
+    JavaLoader loader;
+    loader.setLibraryPath("jagexcache/runescape/LIVE");
 
-        // Add the PowerGrid jar file to the classpath
-        options.push_back( ClassPath("PowerGridLoader.jar") );
-        options.push_back( JavaAgent("PowerGridLoader.jar") );
-        options.push_back( LibraryPath(findJagexCacheDir()) );
-        options.push_back( CustomOption("-Xss2M") );
-
+    loader.addOption( ClassPath("PowerGridLoader.jar") );
+    loader.addOption( JavaAgent("PowerGridLoader.jar") );
+    loader.addOption( CustomOption("-Xss2M") );
 #ifdef PG_DEBUG
-        options.push_back( CustomOption("-Xcheck:jni") ); // check JNI calls when in debug mode
+    // check JNI calls in debug mode
+    loader.addOption( CustomOption("-Xcheck:jni") );
 #endif
-        // create the JVM
-        try {
-            helper::createVm(loader, options);
-            qCDebug(logLauncher) << "JVM created";
-        } catch (JNIException& e) {
-            qCWarning(logLauncher) << "[FAILURE] Creating VM failed:" << e.what();
-            return EXIT_FAILURE;
-        }
+    loader.startJVM();
 
-        // Sanity check: ensure the String class exists.
-        jclass objectClass = helper::attach()->FindClass("java/lang/String");
-        JNI_CHECK_AND_THROW("String class not found in JVM");
-        if ( !objectClass ) {
-            // No exception according to JNI, but also no valid class object. Hmmm...
-            throw JNIException ("Sanity check failed: Object.class is NULL, but JVM reports no exception.");
-        }
-
-        // The PowerGrid loader requires Java 8, so we print an error if the version does not match.
-        // Afterwards we exit, because the loader won't run anyway.
-        QString javaVersion = helper::getJavaProperty("java.version");
-        int secondPeriod = javaVersion.indexOf('.', javaVersion.indexOf('.') + 1);
-        double version = javaVersion.left(secondPeriod).toDouble();
-        if (version < 1.8) {
-            qCWarning(logLauncher) << "[FAILURE] PowerGrid requires at least Java 8 to run. Please update your Java version";
-            qCWarning(logLauncher) << "          Found java version" << version << "instead";
-            return EXIT_FAILURE;
-        }
-        qCDebug(logLauncher) << "Started JVM with version" << version;
-
-        PGLoader::start();
-
-    } catch (JNIException& e) {
-        qCWarning(logLauncher) << "Error starting Java client:" << e.what();
-        return EXIT_FAILURE;
-    }
-
-    // The JVM is started and is running, now create our
-    // PowerGrid Qt Application and frame.
-    qCDebug(logLauncher) << "JVM started, creating control panel";
-    QApplication app (argc, argv);
-    app.setApplicationName(PG_NAME_STR);
-    app.setApplicationVersion(PG_VERSION_STR);
-
-    MainWindow window;
-    window.show();
-    window.setJVMVersion(helper::getJavaProperty("java.version"));
-
-    // Contact the updater server to collect the updater data.
-
-    qCDebug(logLauncher) << "Done.";
-    return app.exec();
+    // "-i": Intercept output from System.out / System.err
+    // "-e": Allow Exceptions to propagate into the native client (so we can catch them here and exit gracefully).
+    PGLoader::start({"-i", "-e"});
 }
+
+void runUpdater() {
+    qCDebug(logLauncher) << "Retrieving updater data";
+    // Contact the updater server to collect the updater data.
+    jint hash = PGLoader::computeClientHash();
+    UpdaterRunner runner (QString::number(hash));
+    RSClassMapper* mapper = RSClassMapper::DefaultInstance();
+    runner.connect(&runner, SIGNAL(finished(QString, QByteArray)),
+                   mapper,  SLOT  (parseData(QString, QByteArray)));
+    runner.connect(&runner, SIGNAL(error(QString, QString)),
+                   mapper,  SLOT  (dataFailed(QString, QString)));
+    runner.start();
+}
+
+Q_LOGGING_CATEGORY(logLauncher, "LAUNCHER")
+

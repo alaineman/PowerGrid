@@ -38,9 +38,6 @@ namespace jace {
  * The updater data can then be passed into an RSClassMapper
  * instance to provide a class/field mapping.
  *
- * Functions in this class are Thread-safe (all functions that
- * deal with mutable fields are synchronized on a single QMutex).
- *
  * @author Patrick Kramer
  */
 class UpdaterRunner : public QObject {
@@ -50,7 +47,6 @@ private:
     QByteArray data;
     const QString server;
     const QString hash;
-    QMutex dataMutex;
     QNetworkAccessManager *manager;
 public:
     /**
@@ -128,7 +124,7 @@ private slots:
      *
      * @param err - The error that caused the request to fail.
      */
-    void reportError(const QNetworkReply *reply);
+    void reportError(QNetworkReply *reply);
 
 signals:
     /**

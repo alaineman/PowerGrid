@@ -112,6 +112,7 @@ public:
     template<typename T>
     static Class get() throw(jace::JNIException) {
         jclass cls = T::staticGetJavaJniClass()->getClass();
+        JNI_CHECK_AND_THROW("Failed to get Java class object");
         return Class(cls);
     }
 

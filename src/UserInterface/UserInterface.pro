@@ -48,10 +48,10 @@ CONFIG(release, debug|release) {
     win32: QMAKE_POST_LINK += windeployqt $$shell_quote($$shell_path($${DESTDIR}/$${TARGET}.exe)) &
 }
 win32 {
-    QMAKE_POST_LINK += cd $$PWD/../../loader & ant.bat jar &
+    QMAKE_POST_LINK += cd $$PWD/../../loader & ant.bat clean jar &
 }
 else {
-    QMAKE_POST_LINK += cd $$PWD/../../loader; ant jar;
+    QMAKE_POST_LINK += cd $$PWD/../../loader; ant clean jar;
 }
 
 #------------------------------------------------
@@ -60,12 +60,15 @@ else {
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    monitorwindow.cpp
+    monitorwindow.cpp \
+    javaloader.cpp
 HEADERS += \
     mainwindow.h \
     versionInfo.h \
     powergrid.rc \
-    monitorwindow.h
+    monitorwindow.h \
+    javaloader.h \
+    main.h
 FORMS += \
     mainwindow.ui \
     monitorwindow.ui

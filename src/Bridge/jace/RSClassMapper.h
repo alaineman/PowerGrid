@@ -56,6 +56,9 @@ private:
     QMap<QString, QString> staticClassMap;          // [static] semanticFieldName => realClassName
     QMap<QString, QString> staticFieldMap;          // [static] semanticFieldName => realFieldName
     QMap<QString, jlong> staticModifierMap;         // [static] semanticFieldName => modifier value
+
+    QString hash;                                   // hash code of the loaded game client.
+
 public:
     /**
      * @brief Returns the global RSClassMapper instance.
@@ -69,6 +72,16 @@ public:
     JACE_API explicit RSClassMapper();
 
     JACE_API virtual ~RSClassMapper();
+
+    /**
+     * @brief Returns the hash of the loaded game client.
+     *
+     * If no client is loaded, or no updater data is available, this
+     * returns an empty QString.
+     *
+     * @return the hash of the local client.
+     */
+    JACE_API QString getClientHash() const { return hash; }
 
     /**
      * @brief Returns the RSClass belonging to the given name.
@@ -121,15 +134,27 @@ public:
      */
     JACE_API QString getType(QString className, QString fieldName);
 
+public slots:
     /**
-     * @brief Parses the provided data
+     * @brief Parses the provided data.
      *
-     * The provided @c jbytearray is parsed as XML to
+     * The provided @c QByteArray is parsed as XML to
      * read the mapping data. The parsed data is stored in this
      * RSClassMapper for later retrieval using @c getRSClass(QString name).
-     * @param data the java byte array containing the data
+     *
+     * @param clientHash - The hash of the client.
+     * @param data       - The QByteArray with the updater data
      */
-    JACE_API void parseData(jbyteArray data) throw(JNIException);
+    JACE_API void parseData(QString clientHash, QByteArray data);
+
+    /**
+     * @brief Notifies the RSClassMapper that no Updater data is available.
+     *
+     * @param clientHash - The hash of the client.
+     * @param message    - A message describing what went wrong.
+     */
+    JACE_API void dataFailed(QString clientHash, QString message);
+
 private:
     QMap<QString, QString> getFieldMap(QString className) const;
     QMap<QString, jlong> getModifierMap(QString className) const;

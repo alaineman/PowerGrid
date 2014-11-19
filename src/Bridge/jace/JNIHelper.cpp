@@ -376,6 +376,8 @@ void checkAndThrow(QString context, const char* file, int line) throw(JNIExcepti
         return;
     }
     jthrowable thrown = env->ExceptionOccurred();
+    env->ExceptionClear();
+
     jclass throwable  = env->FindClass("java/lang/Throwable");
     if ( !throwable ) throw JNIException("Assert failed: Could not find Throwable class");
 

@@ -2,6 +2,7 @@
 
 using jace::JNIException;
 using java::awt::Component;
+using std::initializer_list;
 
 #include "java/lang/class.h"
 using namespace java::lang;
@@ -46,14 +47,44 @@ PGLoader& PGLoader::operator = (const PGLoader& obj) {
     return *this;
 }
 
-void PGLoader::start() throw(jace::JNIException) {
+void PGLoader::start(const std::initializer_list<QString> args) throw(jace::JNIException) {
+    JNIEnv* env = jace::helper::attach();
+    Class stringCls = Class::get<String>();
+    jobjectArray arr = env->NewObjectArray(args.size(), static_cast<jclass>(stringCls.getJavaJniObject()), NULL);
+    JNI_CHECK_AND_THROW("Failed to create new String array");
+
+    initializer_list<QString>::iterator it = args.begin();
+    for (jsize i=0; it != args.end(); i++, it++) {
+        jstring obj = String::fromQString(*it);
+        env->SetObjectArrayElement(arr, i, obj);
+        JNI_CHECK_AND_THROW("Failed to put argument " % *it % " into array at position " % QString::number(i));
+    }
+
+    Class pgClass = Class::get<PGLoader>();
+
+    Class stringArray = Class::get<String>().asArray();
+    jmethodID mID = pgClass.getMethodID("main", {stringArray} );
+    env->CallStaticVoidMethod(static_cast<jclass>(pgClass.getJavaJniObject()), mID, arr);
+    JNI_CHECK_AND_THROW("Exception in Java client");
+}
+
+jint PGLoader::computeClientHash() throw(jace::JNIException) {
     JNIEnv* env = jace::helper::attach();
     Class pgClass = Class::get<PGLoader>();
-    Class stringArray = Class::get<String>().asArray();
-    Object method = pgClass.getDeclaredMethod("main", {stringArray} );
-    jmethodID mID = env->FromReflectedMethod(method);
-    env->CallStaticVoidMethod(static_cast<jclass>(pgClass.getJavaJniObject()), mID, NULL);
-    JNI_CHECK_AND_THROW("Failed to invoke PowerGrid.main(String[])");
+    jmethodID mID = pgClass.getMethodID("computeClientHash", {});
+    jint result = env->CallStaticIntMethod(static_cast<jclass>(pgClass.getJavaJniObject()), mID);
+    JNI_CHECK_AND_THROW("Failed to invoke PowerGrid.computeClientHash()");
+    return result;
+}
+
+Class PGLoader::findClass(QString name) throw(jace::JNIException) {
+    JNIEnv* env    = jace::helper::attach();
+    String jName   = String::fromQString(name);
+    Class pgLoader = Class::get<PGLoader>();
+    jmethodID mID  = pgLoader.getMethodID("findClass", {Class::get<String>()});
+    jobject result = env->CallStaticObjectMethod(static_cast<jclass>(pgLoader.getJavaJniObject()), mID, jName.getJavaJniObject());
+    JNI_CHECK_AND_THROW("Failed to invoke PowerGrid.findClass(String)");
+    return Class(static_cast<jclass>(result));
 }
 
 } // namespace loader

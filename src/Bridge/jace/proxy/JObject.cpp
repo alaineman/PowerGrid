@@ -182,6 +182,7 @@ void JObject::setJavaJniValue( jvalue value ) throw ( JNIException ) {
 
   if ( oldRef ) {
     helper::deleteGlobalRef( env, oldRef );
+    JNI_CHECK_AND_THROW("Failed to clear old global reference");
   }
   // If this is a null ref, we save a little time by not creating
   // a new global ref.
@@ -191,9 +192,7 @@ void JObject::setJavaJniValue( jvalue value ) throw ( JNIException ) {
   }
 
   jobject object = helper::newGlobalRef( env, value.l );
-  if (!object) {
-      throw JNIException("Failed to create a new global reference");
-  }
+  JNI_CHECK_AND_THROW("Failed to create a new global reference");
 
   jvalue newValue;
   newValue.l = object;

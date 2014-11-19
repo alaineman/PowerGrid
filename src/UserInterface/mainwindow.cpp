@@ -95,6 +95,12 @@ void MainWindow::updateFPS() {
     try {
         JInt fpsValue = RS::Client::getFPS();
         ui->fps->setText(QString::number(fpsValue.getInt()));
+    } catch (jace::MappingUnavailableException& e) {
+        if (!thrown) {
+            thrown = true;
+            qCDebug(guiLogger) << "Error fetching FPS: Missing Field:" << e.what();
+        }
+        ui->fps->setText(tr("Missing binding for FPS field"));
     } catch (jace::JNIException& e) {
         if (!thrown) {
             thrown = true;

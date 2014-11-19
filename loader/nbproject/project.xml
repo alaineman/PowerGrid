@@ -32,7 +32,7 @@ auxiliary.show.customizer.message=<message>
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>compile</target>
+                    <target>jar</target>
                 </action>
                 <action name="clean">
                     <target>clean</target>
@@ -45,7 +45,7 @@ auxiliary.show.customizer.message=<message>
                 </action>
                 <action name="rebuild">
                     <target>clean</target>
-                    <target>compile</target>
+                    <target>jar</target>
                 </action>
             </ide-actions>
             <export>

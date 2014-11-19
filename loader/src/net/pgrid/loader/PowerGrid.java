@@ -20,19 +20,23 @@ package net.pgrid.loader;
 
 import java.applet.Applet;
 import java.awt.EventQueue;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.jar.JarInputStream;
 import net.pgrid.loader.bridge.Reflection;
 import net.pgrid.loader.util.ArgumentParser;
 import net.pgrid.loader.util.Logger;
@@ -52,6 +56,9 @@ import net.pgrid.loader.util.Logger;
  *              Enables verbose mode (unless -d or -q is specified).</li>
  *   <li><strong>--force-download (or -f):</strong> 
  *              Forces re-downloading the client.</li>
+ *   <li><strong>--intercept-output (or -i)</strong>
+ *              Intercepts output from the client and redirects it to a file
+ *              named "runescape.log" in the working directory."</li>
  * </ul>
  * 
  * The {@code -d}, {@code q} and {@code v} options change the verbosity of the 
@@ -63,33 +70,39 @@ import net.pgrid.loader.util.Logger;
  * the client itself and the updater data) regardless of any existing client 
  * data.
  * 
- * Also important to note is, that this class arbitrates the {@code System.out} 
+ * If the {@code -i} flag is present, this class arbitrates the {@code System.out} 
  * and {@code System.err} PrintStreams and replaces them with a PrintStream 
  * that writes to a file named {@code runescape.log}. This is done to prevent 
  * any Exception stack traces and other messages printed from within RS to 
  * clutter the real console output and error streams. The real versions are 
  * kept in this class, making them available as {@code PowerGrid.out} and 
- * {@code PowerGrid.err}, respectively.
+ * {@code PowerGrid.err}, respectively. All logging output by PowerGrid is still
+ * output to the console.
  * 
  * @author Patrick Kramer
  */
 public class PowerGrid {
     /** The Logger instance of this class. */
-    private static final Logger LOGGER;
+    private static final Logger LOGGER = Logger.get("LAUNCHER");
     
     /**
      * The standard output stream (use this over System.out).
      */
-    public static final PrintStream out;
+    public static final PrintStream out = System.out;
     /**
      * The standard error stream (use this over System.err).
      */
-    public static final PrintStream err;
+    public static final PrintStream err = System.err;
+    
+    /**
+     * The Path to the local client.
+     */
+    public static final Path CLIENT_PATH = Paths.get("cache/client.jar");
     
     /**
      * The global PowerGrid instance.
      */
-    public static final PowerGrid INSTANCE;
+    public static final PowerGrid INSTANCE = new PowerGrid();
     
     /**
      * Convenience method for displaying a message to the user prior to starting
@@ -110,21 +123,23 @@ public class PowerGrid {
     }
     
     /**
-     * Main method of the application.
-     * @param args the command line arguments
+     * Enables intercepting of output to {@code System.out} and {@code System.err},
+     * allowing Runescape log output to be split off to a separate file.
      */
-    public static void main(String[] args) {
-        Thread.currentThread().setName("PG_Main");
-        Thread.setDefaultUncaughtExceptionHandler(new PGExceptionHandler());
-        
-        ArgumentParser parser = new ArgumentParser();
-        parser.analyse(args);
-        // Add more parameters and flags here as needed
-        parser.merge("debug", "d");   // debug mode enabled
-        parser.merge("quiet", "q");   // quiet mode enabled (ignored when "debug" is specified)
-        parser.merge("verbose", "v"); // verbose mode (ignored when "debug" or "quiet" is specified)
-        parser.merge("force-download", "f"); // force redownloading client
-        
+    public static void enableOutputIntercepting() {
+        boolean success = AccessController.doPrivileged(
+                (PrivilegedAction<Boolean>) PowerGrid::interceptOutput);
+        if (success) {
+            Logger.setDefaultTarget(PowerGrid.out, true);
+        }
+    }
+    
+    /**
+     * Sets the Logger Verbosity based on the provided arguments.
+     * 
+     * @param parser The ArgumentParser.
+     */
+    public static void setLoggerVerbosity(ArgumentParser parser) {
         if (parser.hasFlag("debug")) {
             Logger.setVerbosity(Logger.Verbosity.DEBUG);
         } else if (parser.hasFlag("quiet")) {
@@ -132,6 +147,59 @@ public class PowerGrid {
         } else if (parser.hasFlag("verbose")) {
             Logger.setVerbosity(Logger.Verbosity.VERBOSE);
         } // else we leave it on NORMAL
+    }
+    
+    /**
+     * Returns the hash of the local client.
+     * 
+     * The hash is computed by computing an hashCode from the Manifest of the 
+     * client jar file.
+     * 
+     * @return the hash of the local client.
+     * @throws IOException when an I/O error occurs.
+     */
+    public int computeClientHash() throws IOException {
+        try (JarInputStream in = new JarInputStream(Files.newInputStream(CLIENT_PATH))) {
+            return in.getManifest().hashCode();
+        }
+    }
+    
+    /**
+     * Parses the arguments and returns an ArgumentParser instance with the 
+     * provided arguments.
+     * 
+     * {@code args} can be null, and in that case this method behaves the same 
+     * as if {@code args} were an array of length 0.
+     * 
+     * @param args The command-line arguments.
+     * @return The parsed arguments as an ArgumentParser instance.
+     */
+    public static ArgumentParser parseArguments(String[] args) {
+        ArgumentParser parser = new ArgumentParser();
+        parser.analyse(args);
+        // Merge the shortcuts into their respective full flag names.
+        parser.merge("debug", "d");
+        parser.merge("quiet", "q");
+        parser.merge("verbose", "v");
+        parser.merge("force-download", "f");
+        
+        return parser;
+    }
+    
+    /**
+     * Main method of the application.
+     * @param args the command-line arguments
+     */
+    public static void main(String[] args) {
+        Thread.currentThread().setName("PG_Main");
+        Thread.setDefaultUncaughtExceptionHandler(new PGExceptionHandler());
+        
+        ArgumentParser parser = parseArguments(args);
+        setLoggerVerbosity(parser);
+        
+        if (parser.hasFlag("intercept-output")) {
+            enableOutputIntercepting();
+        }
         
         // Touch the Reflection class so that it's loaded when the native client
         // needs it. At the same time, checks if the Agent is loaded.
@@ -211,8 +279,7 @@ public class PowerGrid {
      * @throws IOException if an I/O error occurs.
      */
     public RSVersionInfo loadClient() throws IOException {
-        RSVersionInfo currentVersion = 
-                RSVersionInfo.fromPath(Paths.get("cache/keys.dat"));
+        RSVersionInfo currentVersion = RSVersionInfo.fromPath(CLIENT_PATH);
         
         RSDownloader downloader = new RSDownloader();
         RSVersionInfo newVersion = downloader.loadConfig(currentVersion);
@@ -242,7 +309,8 @@ public class PowerGrid {
      * @param version the RSVersionInfo belonging to the current version.
      */
     public void initApplet(RSVersionInfo version) {
-        ClassLoader rsClassLoader = AccessController.doPrivileged(GET_CLIENT_LOADER);
+        ClassLoader rsClassLoader = AccessController.doPrivileged(
+                (PrivilegedAction<ClassLoader>) PowerGrid::getClientClassLoader);
         try {
             Class<? extends Applet> rs2AppletClass = 
                     rsClassLoader.loadClass("Rs2Applet").asSubclass(Applet.class);
@@ -287,86 +355,84 @@ public class PowerGrid {
     }
      
     /**
-     * PriviledgedAction class that replaces the default System.out and System.err
-     * with a PrintStream that prints to a File. 
+     * Replaces the default System.out and System.err with a PrintStream that 
+     * prints to a File.
      * 
      * This prevents Runescape classes from printing their stack traces to the 
      * console, keeping the console output clean.
+     * 
+     * @return True if the operation succeeded, false otherwise
      */
-    public static final Privileged<Boolean> INTERCEPT_OUTPUT = () -> {
+    public static Boolean interceptOutput() {
         try {
             Field outField = System.class.getDeclaredField("out");
             Field errField = System.class.getDeclaredField("err");
-
-            File destination = new File("runescape.log");
-            PrintStream replacement;
-            if (destination.isFile() || destination.createNewFile()) {
-                replacement = new PrintStream(destination, "UTF-8");
-            } else {
-                OutputStream dummy = new OutputStream() {
-                    @Override public void write(int b) {}
-                };
-                replacement = new PrintStream(dummy, false, "UTF-8");
-            }
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-
-            outField.setAccessible(true);
-            errField.setAccessible(true);
-
-            // required to change a both static AND final Field: remove the final modifier from the Field
-            modifiersField.setInt(outField, outField.getModifiers() & ~Modifier.FINAL);
-            modifiersField.setInt(errField, errField.getModifiers() & ~Modifier.FINAL);
-
-            outField.set(null, replacement);
-            errField.set(null, replacement);
-
+            
+            PrintStream replacement = createRedirectedPrintStream();
+            updateStaticFieldContents(outField, replacement);
+            updateStaticFieldContents(errField, replacement);
+            
             return true;
-        } catch (NoSuchFieldException | IOException | IllegalAccessException e) {
-            System.err.println("Failed to intercept System.out / err: " + 
-                    e.getClass().getSimpleName() + ": " + e.getMessage());
-            return false;
+        } catch (NoSuchFieldException ex) {
+            throw new AssertionError("Assertion failed: No field named System.out or System.err", ex);
         }
     };
     
     /**
-     * A PrivilegedAction that returns an URLClassLoader for the Runescape 
-     * client.
+     * Creates a new PrintStream that directs to a log file.
+     * @return the created PrintStream.
      */
-    public static final Privileged<ClassLoader> GET_CLIENT_LOADER = () -> {
+    public static PrintStream createRedirectedPrintStream() {
+        OutputStream redirectStream;
+        try {
+            Path destination = Paths.get("runescape.log");
+            redirectStream = Files.newOutputStream(destination,
+                    StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+        } catch (IOException iox) {
+            LOGGER.log("Could not create/open runescape.log file for writing", iox);
+            redirectStream = new OutputStream() {
+                @Override public void write(int b) {}
+            };
+        }
+        try {
+            return new PrintStream(redirectStream, true, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            throw new AssertionError("Assertion failed: UTF-8 encoding not supported", ex);
+        }
+    }
+    
+    /**
+     * Updates the contents of the given static field.
+     * 
+     * The {@code FINAL} modifier is removed from the field if it exists.
+     * 
+     * @param f           The Field to update
+     * @param replacement The new value for the Field.
+     */
+    public static void updateStaticFieldContents(Field f, Object replacement) {
+        try {
+            f.setAccessible(true);
+            Field modField = Field.class.getDeclaredField("modifiers");
+            modField.setAccessible(true);
+            modField.set(f, f.getModifiers() & ~Modifier.FINAL);
+            f.set(null, replacement);
+        } catch (NoSuchFieldException ex) {
+            throw new AssertionError("Assertion failed: No field named 'modifiers' in Field.class", ex);
+        } catch (IllegalAccessException ex) {
+            throw new AssertionError("Assertion failed: No access to Field after enabling access", ex);
+        }
+    }
+    
+    /**
+     * Creates and returns a ClassLoader for the Runescape client.
+     * 
+     * @return The created ClassLoader
+     */
+    public static ClassLoader getClientClassLoader() {
         try {
             return new URLClassLoader(new URL[]{new URL("jar:file:cache/client.jar!/")});
         } catch (MalformedURLException ex) {
             throw new AssertionError(ex);
         }
     };
-    
-    // This piece of code replaces the standard System.out and System.err with
-    // different ones, to split the Runescape log information from PowerGrid 
-    // log information. This prevents stacktrace contents of obfuscated 
-    // classes from showing up in the console. It saves a lot of searching during
-    // debugging, as obfuscated stack traces are of little use to anyone.
-    static {
-        out = System.out;
-        err = System.err;
-        
-        boolean success = AccessController.doPrivileged(INTERCEPT_OUTPUT);
-        
-        // Set our Loggers to use the original out PrintStream
-        if (success) {
-            Logger.setDefaultTarget(out);
-        }
-        LOGGER = Logger.get("CORE");
-        INSTANCE = new PowerGrid();
-    }
-    
-    /**
-     * Functional Interface wrapper for PrivilegedAction, allowing 
-     * PrivilegedActions to be defined as lambdas.
-     * 
-     * @param <T> the return type of this PrivilegedAction
-     */
-    @FunctionalInterface
-    @SuppressWarnings("MarkerInterface")
-    public static interface Privileged<T> extends PrivilegedAction<T> {}
 }

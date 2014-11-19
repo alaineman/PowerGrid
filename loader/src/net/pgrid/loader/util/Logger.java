@@ -40,12 +40,19 @@ public class Logger {
     
     /**
      * Sets the default target PrintStream used to create new Loggers.
-     * This setting will not affect existing Loggers.
-     * @param target the new target PrintStream
+     * 
+     * If {@code updateExisting} is true, existing Loggers are also reconfigured
+     * to use the provided PrintStream.
+     * 
+     * @param target         The new target PrintStream, not null.
+     * @param updateExisting True to update any existing Loggers as well, false 
+     *                       to skip already existing Loggers
      */
-    public static void setDefaultTarget(PrintStream target) {
-        if (target != null) {
-            defaultTarget = target;
+    public static void setDefaultTarget(PrintStream target, boolean updateExisting) {
+        assert target != null;
+        defaultTarget = target;
+        if (updateExisting) {
+            LOGGERS.keySet().forEach(name -> configure(name, target));
         }
     }
     

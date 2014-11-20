@@ -27,12 +27,15 @@ using namespace jace;
 #include "net/pgrid/loader/pgloader.h"
 using net::pgrid::loader::PGLoader;
 
+#include "java/lang/class.h"
+using namespace java::lang;
+
 int main(int argc, char** argv) {
     initializeLoggers();
 
     try {
         startJavaClient();
-    } catch (JNIException& e) {
+    } catch (const JNIException& e) {
         qCWarning(logLauncher) << "Error starting Java client:" << e.what();
         return EXIT_FAILURE;
     }
@@ -119,6 +122,11 @@ void startJavaClient() throw (JNIException) {
     loader.addOption( CustomOption("-Xcheck:jni") );
 #endif
     loader.startJVM();
+
+    Class c (jace::helper::attach()->FindClass("[Ljava/lang/String;"));
+    JNI_CHECK_AND_THROW("Could not find String[] class");
+    qCDebug(logLauncher) << "String[] class found: " << c.getName().toQString();
+    //throw JNIException("Terminate");
 
     // "-i": Intercept output from System.out / System.err
     // "-e": Allow Exceptions to propagate into the native client (so we can catch them here and exit gracefully).

@@ -61,11 +61,12 @@ void PGLoader::start(const std::initializer_list<QString> args) throw(jace::JNIE
     }
 
     Class pgClass = Class::get<PGLoader>();
-
-    Class stringArray = Class::get<String>().asArray();
-    jmethodID mID = pgClass.getMethodID("main", {stringArray} );
+    jclass stringArrayClass = env->GetObjectClass(arr);
+    JNI_CHECK_AND_THROW("Cannot find Class of String[] object");
+    jmethodID mID = pgClass.getMethodID("main", {Class::fromJNIClass(stringArrayClass)} );
     env->CallStaticVoidMethod(static_cast<jclass>(pgClass.getJavaJniObject()), mID, arr);
     JNI_CHECK_AND_THROW("Exception in Java client");
+    env->DeleteLocalRef(stringArrayClass);
 }
 
 jint PGLoader::computeClientHash() throw(jace::JNIException) {

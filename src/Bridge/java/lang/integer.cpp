@@ -61,7 +61,7 @@ String Integer::toString(jint value) {
 }
 
 Class Integer::getType() {
-    Class integerClass = Class::forName("java.lang.Integer");
+    Class integerClass = Class::get<Integer>();
     jclass javaClass = staticGetJavaJniClass()->getClass();
     jfieldID fID = integerClass.getFieldID("TYPE");
     JNIEnv* env = jace::helper::attach();

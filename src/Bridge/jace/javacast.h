@@ -9,6 +9,28 @@
 
 namespace jace {
 
+/**
+ * Equal to Java's instanceof keyword.
+ * Returns true if obj is non-null and can be cast to type T.
+ *
+ * For example,
+ *
+ *  Object stringAsObject = String( "Hello" );
+ *
+ *  if ( instanceof<String>( stringAsObject ) ) {
+ *    String str = java_cast<String>( stringAsObject );
+ *  }
+ *
+ */
+template <typename T> bool instanceof(jobject object ) {
+    if ( object == NULL ) {
+        return false;
+    }
+    const jace::JClass* resultClass = T::staticGetJavaJniClass();
+    bool isValid = jace::helper::attach()->IsInstanceOf(object, resultClass->getClass());
+    JNI_CHECK_AND_THROW("Failed to invoke instanceof operator");
+    return isValid;
+}
 
 /**
  * Performs a safe cast from one JObject subclass to another.
@@ -22,12 +44,12 @@ namespace jace {
  *
  */
 template <typename T> T java_cast( const ::jace::proxy::JObject& obj ) {
-  return java_cast<T>( obj.getJavaJniObject() );
+    return java_cast<T>( obj.getJavaJniObject() );
 }
 
 
 /**
- * Performs a safe cast from a jobject to a JObject subclass.
+ * @brief Performs a safe cast from a jobject to a JObject subclass.
  *
  * For example,
  *
@@ -35,77 +57,16 @@ template <typename T> T java_cast( const ::jace::proxy::JObject& obj ) {
  *    String str = java_cast<String>( jStringRef );
  *  }
  *
+ * @param obj - The jobject to cast.
  * @throws JNIException if obj is not convertible to type T.
- *
  */
 template <typename T> T java_cast( jobject obj ) {
-
-  JNIEnv* env = ::jace::helper::attach();
-
-  if ( ! obj ) {
-    return T( obj );
-  }
-
-  jclass argClass = env->GetObjectClass( obj );
-
-  if ( ! argClass ) {
-    std::string msg = "[java_cast] Failed to retrieve the class type for obj.";
-    throw JNIException( msg );
-  }
-
-  const ::jace::JClass* resultClass = T::staticGetJavaJniClass();
-
-  bool isValid = env->IsAssignableFrom( argClass, resultClass->getClass() );
-  env->DeleteLocalRef( argClass );
-
-  if ( isValid ) {
-    return T( obj );
-  }
-
-  std::string msg = "Can not cast to " + resultClass->getName();
-  throw JNIException( msg );
-}
-
-
-/**
- * Equal to Java's instanceof keyword.
- * Returns true if obj is non-null and can be cast to type T.
- *
- * For example,
- *
- *  Object stringAsObject = String( "Hello" );
- *
- *  if ( instanceof<String>( stringAsObject ) ) {
- *    String str = java_cast<String>( stringAsObject );
- *  }
- *
- *
- * @throws JNIException if obj is not convertible to type T.
- *
- */
-template <typename T> bool instanceof( const ::jace::proxy::JObject& object ) {
-
-  if ( object.isNull() ) {
-    return false;
-  }
-
-  jobject obj = object.getJavaJniObject();
-
-  JNIEnv* env = ::jace::helper::attach();
-
-  jclass argClass = env->GetObjectClass( obj );
-
-  if ( ! argClass ) {
-    std::string msg = "[instanceof] Failed to retrieve the dynamic class type for object.";
-    throw JNIException( msg );
-  }
-
-  const ::jace::JClass* resultClass = T::staticGetJavaJniClass();
-
-  bool isValid = env->IsAssignableFrom( argClass, resultClass->getClass() );
-  env->DeleteLocalRef( argClass );
-
-  return isValid;
+    if (obj == NULL || instanceof<T>(obj)) {
+        return T( obj );
+    } else {
+        const jace::JClass* resultType = T::staticGetJavaJniClass();
+        throw JNIException("Cannot cast to " + resultType->getName());
+    }
 }
 
 /**

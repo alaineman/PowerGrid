@@ -4,15 +4,18 @@
 namespace {
     //TODO move to utility class / namespace
     template<typename T>
-    jobjectArray convertToJavaArray(const char* type, std::initializer_list<T> list) {
+    jobjectArray convertToJavaArray(QString type, std::initializer_list<T> list) {
         int size = list.size();
         JNIEnv* env = jace::helper::attach();
-        jclass javatype = env->FindClass(type);
+        jclass javatype = env->FindClass(type.toUtf8().constData());
+        JNI_CHECK_AND_THROW("Failed to find class named " % type);
         jobjectArray arr = env->NewObjectArray(size, javatype, NULL);
+        JNI_CHECK_AND_THROW("Failed to allocate array of type " % type);
         int index = 0;
         for (const T* it = list.begin(); it != list.end(); it++) {
             jobject obj = (*it).getJavaJniObject();
             env->SetObjectArrayElement(arr, index, obj);
+            JNI_CHECK_AND_THROW("Failed to set index " % QString::number(index) % " of " % type % " array");
             index++;
         }
         return arr;
@@ -89,43 +92,34 @@ Object Class::getDeclaredMethod(QString name, std::initializer_list<Class> param
 
 jmethodID Class::getMethodID(QString name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException) {
     Object reflectedMethod = getDeclaredMethod(name, paramTypes);
-    if (reflectedMethod.isNull()) {
-        throw jace::JNIException("No such method");
-    }
-    JNIEnv* env = jace::helper::attach();
-    return env->FromReflectedMethod(reflectedMethod.getJavaJniObject());
+    jmethodID mID = jace::helper::attach()->FromReflectedMethod(reflectedMethod.getJavaJniObject());
+    JNI_CHECK_AND_THROW("Could not convert Method object to jmethodID");
+    return mID;
 }
 jmethodID Class::getMethodID(String name, std::initializer_list<Class> paramTypes) const throw(jace::JNIException) {
     Object reflectedMethod = getDeclaredMethod(name, paramTypes);
-    if (reflectedMethod.isNull()) {
-        throw jace::JNIException("No such method");
-    }
-    JNIEnv* env = jace::helper::attach();
-    return env->FromReflectedMethod(reflectedMethod.getJavaJniObject());
+    jmethodID mID = jace::helper::attach()->FromReflectedMethod(reflectedMethod.getJavaJniObject());
+    JNI_CHECK_AND_THROW("Could not convert Method object to jmethodID");
+    return mID;
 }
 jfieldID Class::getFieldID(QString name) const throw(jace::JNIException) {
     Object reflectedField = getDeclaredField(name);
-    if (reflectedField.isNull()) {
-        throw jace::JNIException("No such field");
-    }
-    JNIEnv* env = jace::helper::attach();
-    return env->FromReflectedField(reflectedField.getJavaJniObject());
+    jfieldID fID = jace::helper::attach()->FromReflectedField(reflectedField.getJavaJniObject());
+    JNI_CHECK_AND_THROW("Could not convert Field object to jfieldID");
+    return fID;
 }
 jfieldID Class::getFieldID(String name) const throw(jace::JNIException) {
     Object reflectedField = getDeclaredField(name);
-    if (reflectedField.isNull()) {
-        throw jace::JNIException("No such field");
-    }
-    JNIEnv* env = jace::helper::attach();
-    return env->FromReflectedField(reflectedField.getJavaJniObject());
+    jfieldID fID = jace::helper::attach()->FromReflectedField(reflectedField.getJavaJniObject());
+    JNI_CHECK_AND_THROW("Could not convert Field object to jfieldID");
+    return fID;
 }
 Object Class::getStaticFieldContent(String name) const throw(jace::JNIException) {
     JNIEnv* env = jace::helper::attach();
     Object field = getDeclaredField(name);
     setAccessible(field);
     Class fieldClass  = Class::forName("java.lang.reflect.Field");
-    Class objectClass = Class::forName("java.lang.Object");
-    jmethodID mID = fieldClass.getMethodID("get", {objectClass});
+    jmethodID mID = fieldClass.getMethodID("get", {Class::get<Object>()});
     return env->CallObjectMethod(field.getJavaJniObject(), mID, NULL);
 }
 Object Class::getStaticFieldContent(QString name) const throw(jace::JNIException) {
@@ -142,8 +136,7 @@ Object Class::getFieldContent(String name, Object o) const throw(jace::JNIExcept
     Object field = getDeclaredField(name);
     setAccessible(field);
     Class fieldClass  = Class::forName("java.lang.reflect.Field");
-    Class objectClass = Class::forName("java.lang.Object");
-    jmethodID mID = fieldClass.getMethodID("get", {objectClass});
+    jmethodID mID = fieldClass.getMethodID("get", {Class::get<Object>()});
     return env->CallObjectMethod(field.getJavaJniObject(), mID, o.getJavaJniObject());
 }
 Object Class::getFieldContent(QString name, Object o) const throw(jace::JNIException) {
@@ -154,6 +147,22 @@ Object Class::getFieldContent(QString name, Object o) const throw(jace::JNIExcep
         throw jace::JNIException("Cannot create String");
     }
     return getFieldContent(str, o);
+}
+
+Object Class::invoke(Object caller, Object method, std::initializer_list<Object> params) const throw(jace::JNIException) {
+    jobjectArray array = convertToJavaArray("java/lang/Object", params);
+    Class methodClass  = Class::forName("java/lang/reflect/Method");
+    jmethodID invokeID = methodClass.getMethodID("invoke", {Class::get<Object>(), Class::get<Object>().asArray()});
+    Object result = jace::helper::attach()->CallObjectMethod(method.getJavaJniObject(), invokeID, caller.getJavaJniObject(), array);
+    JNI_CHECK_AND_THROW("Failed to call Method.invoke(...)");
+    return result;
+}
+
+bool Class::isInstance(Object obj) const throw(jace::JNIException) {
+    jclass cls = static_cast<jclass>(getJavaJniObject());
+    bool result = jace::helper::attach()->IsInstanceOf(obj.getJavaJniObject(), cls);
+    JNI_CHECK_AND_THROW("Failed to invoke instanceof operator");
+    return result;
 }
 
 Class Class::asArray() const throw(jace::JNIException) {
@@ -172,39 +181,71 @@ Class Class::asArray() const throw(jace::JNIException) {
 
 void Class::setAccessible(Object obj) throw(jace::JNIException) {
     JNIEnv* env = jace::helper::attach();
-    jclass cls = env->FindClass("java/lang/reflect/AccessibleObject");
-    if (!env->IsInstanceOf(obj.getJavaJniObject(), cls)) {
-        env->DeleteLocalRef(cls);
+    Class accessibleObject = Class::forName("java/lang/reflect/AccessibleObject");
+    if (! accessibleObject.isInstance(obj)) {
         throw jace::JNIException("setAccessible called with no AccessibleObject argument");
     }
-    jmethodID mID = env->GetMethodID(cls, "setAccessible", "(Z)V");
+    jmethodID mID = accessibleObject.getMethodID("setAccessible", {Class::forName("Z")});
     env->CallVoidMethod(obj.getJavaJniObject(), mID, true);
-    env->DeleteLocalRef(cls);
+    JNI_CHECK_AND_THROW("Failed to call AccessibleObject.setAccessible(boolean)");
 }
 
 Class Class::forName(String name) throw(jace::JNIException) {
+    std::string string = name.toStdString();
     JNIEnv* env = jace::helper::attach();
-    jclass classClass = staticGetJavaJniClass()->getClass();
-    jmethodID forName = env->GetStaticMethodID(classClass, "forName", "(Ljava/lang/String;)Ljava/lang/Class;");
-    if (!forName) throw jace::JNIException("Cannot find static Class.forName(String)");
-    jclass result = static_cast<jclass>(env->CallStaticObjectMethod(classClass, forName, name.getJavaJniObject()));
-    JNI_CHECK_AND_THROW("Failed to get Class named " % name.toQString());
-    if (!result) throw jace::JNIException("result == NULL but no Exception thrown from JVM");
-    Class ret (result);
-    if (ret.isNull()) throw jace::JNIException("Class constructor failed");
-    return ret;
+    jclass cls = env->FindClass(string.c_str());
+    JNI_CHECK_AND_THROW(QStringLiteral("Could not find class named ") % string.c_str());
+    return cls;
 }
 Class Class::forName(const QString name) throw(jace::JNIException) {
-    JNIEnv* env = jace::helper::attach();
-    jstring string = env->NewStringUTF(name.toUtf8().constData());
-    return forName(string);
+    QByteArray chars = name.toUtf8();
+    jclass cls = jace::helper::attach()->FindClass(chars.constData());
+    JNI_CHECK_AND_THROW("Could not find class named " % name);
+    return cls;
+}
+
+Class Class::findClass(String name) throw(jace::JNIException) {
+    Class reflection = Class::forName("net/pgrid/loader/Reflection");
+    jmethodID mID = reflection.getMethodID("findClass", {Class::get<String>()});
+    jclass cls = static_cast<jclass>(jace::helper::attach()->CallStaticObjectMethod(
+               static_cast<jclass>(reflection.getJavaJniObject()), mID, name.getJavaJniObject()));
+    JNI_CHECK_AND_THROW("Exception invoking Reflection.findClass(" % name.toQString() % ")");
+    return cls;
+}
+Class Class::findClass(const QString name) throw(jace::JNIException) {
+    return findClass(String::fromQString(name));
+}
+
+QString Class::getClassName(Primitive p) {
+    switch (p) {
+    case Void:    return "java.lang.Void";
+    case Byte:    return "java.lang.Byte";
+    case Boolean: return "java.lang.Boolean";
+    case Char:    return "java.lang.Char";
+    case Short:   return "java.lang.Short";
+    case Integer: return "java.lang.Integer";
+    case Long:    return "java.lang.Long";
+    case Double:  return "java.lang.Double";
+    case Float:   return "java.lang.Float";
+    }
+    throw std::logic_error("Primitive value is none of the enum constants");
+}
+
+Class Class::getPrimitive(Primitive p) throw(jace::JNIException) {
+    QString className = getClassName(p);
+    Class cls = Class::forName(className);
+    jclass jcls = static_cast<jclass>(cls.getJavaJniObject());
+    jfieldID typeField = cls.getFieldID("TYPE");
+    jclass typeClass = static_cast<jclass>(jace::helper::attach()->GetStaticObjectField(jcls, typeField));
+    JNI_CHECK_AND_THROW("Failed to get " % className % ".TYPE field");
+    return typeClass;
 }
 
 Class Class::fromJNIClass(jclass cls) throw(jace::JNIException) {
-    return Class(cls);
+    return cls;
 }
 Class Class::fromJNIClass(const jace::JClass *cls) throw(jace::JNIException) {
-    return Class(cls->getClass());
+    return cls->getClass();
 }
 
 }

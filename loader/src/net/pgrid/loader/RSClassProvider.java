@@ -28,6 +28,11 @@ public class RSClassProvider {
     
     private final ClassLoader classLoader;
     
+    public static void main(String[] args) {
+        Class<?> intType = Integer.TYPE;
+        System.out.println(intType.getSuperclass());
+    }
+    
     /**
      * Creates a new RSClassProvider using the provided ClassLoader.
      * @param loader the ClassLoader to use.

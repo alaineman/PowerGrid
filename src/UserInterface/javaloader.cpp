@@ -27,7 +27,7 @@ void JavaLoader::setLibraryPath(const QString path) {
 #else
     QByteArray libBytes = qgetenv("LD_LIBRARY_PATH");
     // Unixes have a standard way of getting the home directory (~)
-    const char* libPath = std::string(lib_path.constData()).append(":~/").append(qPrintable(path)).c_str();
+    const char* libPath = std::string(libBytes.constData()).append(":~/").append(qPrintable(path)).c_str();
 #endif
     addOption( LibraryPath(libPath) );
 }

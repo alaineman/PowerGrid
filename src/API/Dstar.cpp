@@ -188,8 +188,8 @@ void Dstar::setRHS(const state &u, double rhs) {
  */
 double Dstar::eightCondist(const state &a, const state &b) const {
   double temp;
-  double min = abs(a.x - b.x);
-  double max = abs(a.y - b.y);
+  double min = abs((double) a.x - b.x);
+  double max = abs((double) a.y - b.y);
   if (min > max) {
     temp = min;
     min = max;
@@ -394,8 +394,8 @@ state &Dstar::calculateKey(state &u) const {
  */
 double Dstar::cost(const state &a, const state &b) const {
 
-  int xd = abs(a.x-b.x);
-  int yd = abs(a.y-b.y);
+  int xd = abs((double) a.x-b.x);
+  int yd = abs((double) a.y-b.y);
   double scale = 1;
 
   if (xd+yd>1) scale = M_SQRT2;

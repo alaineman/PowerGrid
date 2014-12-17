@@ -47,11 +47,16 @@ DESTDIR = $$PWD/../../dist
 CONFIG(release, debug|release) {
     win32: QMAKE_POST_LINK += windeployqt $$shell_quote($$shell_path($${DESTDIR}/$${TARGET}.exe)) &
 }
-win32 {
-    QMAKE_POST_LINK += cd $$PWD/../../loader & ant.bat clean jar &
+CONFIG(skipAnt) {
+    warning ("Skipping Ant invocation (skipAnt was defined)")
 }
 else {
-    QMAKE_POST_LINK += cd $$PWD/../../loader; ant clean jar;
+    win32 {
+        QMAKE_POST_LINK += cd $$PWD/../../loader & ant.bat clean jar &
+    }
+    else {
+        QMAKE_POST_LINK += cd $$PWD/../../loader; ant clean jar;
+    }
 }
 
 #------------------------------------------------

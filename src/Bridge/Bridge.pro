@@ -237,7 +237,10 @@ HEADERS += \
     java/lang/class.h \
     java/lang/integer.h \
     java/lang/number.h \
-    java/lang/double.h
+    java/lang/double.h \
+    jace/classmaploader.h \
+    jace/model/classmapping.h \
+    jace/model/classinfo.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -388,7 +391,10 @@ SOURCES += \
     java/lang/class.cpp \
     java/lang/integer.cpp \
     java/lang/number.cpp \
-    java/lang/double.cpp
+    java/lang/double.cpp \
+    jace/classmaploader.cpp \
+    jace/model/classmapping.cpp \
+    jace/model/classinfo.cpp
 
 HEADERS    += \
     jni.h \

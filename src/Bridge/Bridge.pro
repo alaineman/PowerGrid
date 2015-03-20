@@ -240,7 +240,9 @@ HEADERS += \
     java/lang/double.h \
     jace/classmaploader.h \
     jace/model/classmapping.h \
-    jace/model/classinfo.h
+    jace/model/classinfo.h \
+    jace/model/fieldinfo.h \
+    jace/model/mappable.h
 
 SOURCES += \
     jace/MappingUnavailableException.cpp \
@@ -394,7 +396,9 @@ SOURCES += \
     java/lang/double.cpp \
     jace/classmaploader.cpp \
     jace/model/classmapping.cpp \
-    jace/model/classinfo.cpp
+    jace/model/classinfo.cpp \
+    jace/model/fieldinfo.cpp \
+    jace/model/mappable.cpp
 
 HEADERS    += \
     jni.h \

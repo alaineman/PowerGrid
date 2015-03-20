@@ -20,6 +20,11 @@
 #include "drawutils.h"
 #endif
 
+// M_SQRT2 may no longer be defined (if __STRICT_ANSI__ is defined).
+#ifndef M_SQRT2
+#define M_SQRT2	1.41421356237309504880
+#endif
+
 /* void Dstar::Dstar()
  * --------------------------
  * Constructor sets constants.
@@ -188,8 +193,8 @@ void Dstar::setRHS(const state &u, double rhs) {
  */
 double Dstar::eightCondist(const state &a, const state &b) const {
   double temp;
-  double min = abs((double) a.x - b.x);
-  double max = abs((double) a.y - b.y);
+  double min = fabs((double) a.x - b.x);
+  double max = fabs((double) a.y - b.y);
   if (min > max) {
     temp = min;
     min = max;
@@ -394,8 +399,8 @@ state &Dstar::calculateKey(state &u) const {
  */
 double Dstar::cost(const state &a, const state &b) const {
 
-  int xd = abs((double) a.x-b.x);
-  int yd = abs((double) a.y-b.y);
+  int xd = fabs((double) a.x-b.x);
+  int yd = fabs((double) a.y-b.y);
   double scale = 1;
 
   if (xd+yd>1) scale = M_SQRT2;
@@ -404,10 +409,6 @@ double Dstar::cost(const state &a, const state &b) const {
   if( cur == cellHash.end() ) return scale*C1;
   if( (cur->second).cost < 0 ) return INFINITY;
   return scale*(cur->second).cost;
-
-  //if (cellHash.count(a) == 0) return scale*C1;
-  //return scale*cellHash[a].cost;
-
 }
 
 /* void Dstar::updateCell(int x, int y, double val)

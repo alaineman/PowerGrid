@@ -12,20 +12,20 @@ namespace model {
 ClassMapping::ClassMapping(QObject *parent) :
     QObject(parent) {
 }
+ClassMapping::~ClassMapping() {
+}
 
-ClassInfo* ClassMapping::find(const QString name, bool computeIfAbsent) {
+ClassInfo* ClassMapping::findOrCompute(const QString name) {
     auto it = classes.find(name);
     if (it != classes.end()) {
         return it.value();
     }
-    if (computeIfAbsent) {
-        ClassInfo *info = new ClassInfo(name, this);
-        connect(info, SIGNAL(mapped(QString,QString)),
-                this, SLOT(renameClass(QString,QString)));
-        classes.insert(name, info);
-        return info;
-    }
-    return nullptr;
+    ClassInfo *info = new ClassInfo(name, this);
+    Q_CHECK_PTR(info);
+    connect(info, SIGNAL(nameChanged(QString,QString)),
+            this, SLOT(renameClass(QString,QString)));
+    classes.insert(name, info);
+    return info;
 }
 
 ClassInfo* ClassMapping::find(const QString name) const {
@@ -38,11 +38,12 @@ ClassInfo* ClassMapping::find(const QString name) const {
 }
 
 void ClassMapping::renameClass(QString oldName, QString newName) {
-    ClassInfo *info = find(oldName);
-    if (info != nullptr) {
-        classes.remove(oldName);
-        classes.insert(newName, info);
-    } else Q_UNREACHABLE();
+    // If the ClassInfo doesn't exist yet, we simply create it now.
+    ClassInfo *info = findOrCompute(oldName);
+    Q_ASSERT(info != NULL); // findOrCompute should never return NULL.
+    classes.remove(oldName);
+    classes.insert(newName, info);
+    emit classRenamed(oldName, newName);
 }
 
 } // namespace mapping

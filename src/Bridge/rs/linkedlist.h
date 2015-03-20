@@ -16,7 +16,7 @@ class LinkedListNode;
  * It makes use of LinkedListNodes to form the actual list.
  * The LinkedListNodes should be cast to a specific subclass before
  * being used.
- * \see api::bridge::LinkedListNode
+ * \see RS::LinkedListNode
  */
 class LinkedList : public Object {
 public:

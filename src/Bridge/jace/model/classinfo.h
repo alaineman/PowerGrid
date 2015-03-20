@@ -2,24 +2,29 @@
 #define JACE_MODEL_CLASSINFO_H
 
 #include <QObject>
+#include <QString>
+#include <QHash>
+#include "mappable.h"
 
 namespace jace {
 namespace model {
 
-class ClassInfo : public QObject {
+class FieldInfo;
+
+class ClassInfo : public Mappable {
     Q_OBJECT
     Q_DISABLE_COPY(ClassInfo)
 
-    QString real, mapped;
+    QHash<QString, FieldInfo*> fields;
 public:
     explicit ClassInfo(const QString name, QObject *parent = 0);
+    virtual ~ClassInfo();
 
-    QString realName()   const { return real; }
-    QString mappedName() const { return mapped; }
+    FieldInfo* getField(const QString name) const;
 signals:
-    void nameChanged(QString oldName, QString newName);
+    void fieldAdded(FieldInfo* field);
 public slots:
-    void renameClass(const QString mappedName);
+    void addField(const QString name);
 };
 
 } // namespace model

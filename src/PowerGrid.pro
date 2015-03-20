@@ -37,10 +37,12 @@ SUBDIRS += \
     UserInterface \
     PluginFramework \
     TestPlugin \
-    EntityFramework
+    EntityFramework \
+    ClientLoader
 
 API.depends             = Bridge EntityFramework
 UserInterface.depends   = API Bridge EntityFramework
 PluginFramework.depends = Bridge EntityFramework
 TestPlugin.depends      = API PluginFramework Bridge
 EntityFramework.depends = Bridge
+ClientLoader.depends    = Bridge

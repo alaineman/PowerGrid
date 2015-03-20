@@ -12,17 +12,12 @@
 #define DSTAR_H
 
 #include <math.h>
-#include <stack>
+//#include <stack>
 #include <queue>
 #include <list>
 #include <unordered_map>
 
 #define eps (10e-10)
-
-// M_SQRT2 may no longer be defined (if __STRICT_ANSI__ is defined).
-#ifndef M_SQRT2
-#define M_SQRT2	1.41421356237309504880
-#endif
 
 using namespace std;
 

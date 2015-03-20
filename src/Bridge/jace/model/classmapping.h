@@ -12,15 +12,16 @@ class ClassInfo;
 class ClassMapping : public QObject {
     Q_OBJECT
     Q_DISABLE_COPY(ClassMapping)
+
     QMap<QString, ClassInfo*> classes;
 public:
     explicit ClassMapping(QObject *parent = 0);
+    virtual ~ClassMapping();
 
-    ClassInfo* find(const QString name, bool computeIfAbsent = true);
+    ClassInfo* findOrCompute(const QString name);
     ClassInfo* find(const QString name) const;
-
 signals:
-    void mapped(QString oldName, QString newName);
+    void classRenamed(QString oldName, QString newName);
 public slots:
     void renameClass(QString oldName, QString newName);
 };

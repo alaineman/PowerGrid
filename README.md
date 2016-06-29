@@ -18,3 +18,9 @@ Java 8 is required for playing Runescape through PowerGrid. Aside from that, mos
 We believe in the power of free software, and as such we decided to make the entire bot open-source, including the core, api, and applet loader. We believe that together with everyone we can continue to improve PowerGrid, and meet the expectations of our users. Therefore, we licensed the PowerGrid client under the GNU GPL version 3, so that everyone may use it and modify it as they want. The license can be found in the file named 'COPYING' in the root of the PowerGrid repository.
 
 Also, by using PowerGrid you accept that Jagex Co. Ltd. may place restrictions on your use of Runescape including, but not limited to, stat resets, temporary bans, and possibly permanent bans. The authors of PowerGrid do not hold themselves responsible for any damages in any form whatsoever caused by the use of the PowerGrid software. See the GNU GPL version 3 for the details.
+
+
+Hey, saw this project is C++ very intersted in contacting you.
+hegsy3@gmail.com
+
+Cheers
